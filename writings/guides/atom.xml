@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>pwn() - Guides</title>
+    <subtitle>I make and break softwares professionally</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pwnwriter.me/writings/guides/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pwnwriter.me"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-07-19T00:00:00+00:00</updated>
+    <id>https://pwnwriter.me/writings/guides/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Install NixOS on any VPS</title>
+        <published>2024-07-19T00:00:00+00:00</published>
+        <updated>2024-07-19T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/installing-nixos-on-hetzner-vps/"/>
+        <id>https://pwnwriter.me/blog/installing-nixos-on-hetzner-vps/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/installing-nixos-on-hetzner-vps/">&lt;img alt=&quot;Nix Pill&quot; src=&quot;&#x2F;images&#x2F;nix-hetzner&#x2F;nix-pills.png&quot; style=&quot;width: 15rem;&quot;&#x2F;&gt;
+&lt;p&gt;My company has recently provided me with a VPS to test things before deploying
+them to production. This is a great opportunity for me to push the envelope and
+use Nix extensively. &lt;&#x2F;p&gt;
+&lt;p&gt;While most VPS providers don&#x27;t offer Nix as a default OS installation option,
+there is a workaround using &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;nix-community&#x2F;nixos-anywhere&quot;&gt;nixos-anywhere&lt;&#x2F;a&gt;. In this post, I&#x27;ll walk you
+through how to install NixOS on any VPS. &lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS: I&#x27;m using &lt;code&gt;hetzner&lt;&#x2F;code&gt; vps, already running an ubuntu iso.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;how&quot;&gt;How&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;wiki.archlinux.org&#x2F;title&#x2F;kexec&quot;&gt;Kexec&lt;&#x2F;a&gt; is a system call that allows you to load and boot into a new kernel
+directly from the currently running kernel. We will use it to boot into our
+minimal install system without needing a flash drive. Additionally,
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;nix-community&#x2F;nixos-anywhere&quot;&gt;nixos-anywhere&lt;&#x2F;a&gt; allows us to automatically format and
+partition using &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;nix-community&#x2F;disko&quot;&gt;disko&lt;&#x2F;a&gt; declaratively, and install the OS.&lt;&#x2F;p&gt;
+&lt;p&gt;Requirements:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;A nix(os) system&lt;&#x2F;li&gt;
+&lt;li&gt;Root access over the server&lt;&#x2F;li&gt;
+&lt;li&gt;1 gigs of RAM&lt;&#x2F;li&gt;
+&lt;li&gt;1 cores of cpu&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;configuration&quot;&gt;Configuration&lt;&#x2F;h2&gt;
+&lt;p&gt;We&#x27;ll be using &lt;code&gt;flakes&lt;&#x2F;code&gt; to define our overall &lt;code&gt;nixos&lt;&#x2F;code&gt; config.&lt;&#x2F;p&gt;
+&lt;p&gt;The file tree structure should look like this below.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; tree .
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;nixos-on-vps
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; configuration.nix
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; disk-config.nix
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;└──&lt;&#x2F;span&gt;&lt;span&gt; flake.nix
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;flake.lock&lt;&#x2F;code&gt; is similar to &lt;code&gt;cargo.lock,&lt;&#x2F;code&gt; &lt;code&gt;package.json,&lt;&#x2F;code&gt; &lt;code&gt;lazy-lock.json&lt;&#x2F;code&gt; it locks the package git rev hash.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;configuration.nix&lt;&#x2F;code&gt; is used to define our configuration for the nixos.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;disk-config.nix&lt;&#x2F;code&gt; is to define our disko config &lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The initial &lt;code&gt;flake.nix&lt;&#x2F;code&gt; skeleton look like this&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;outputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Inside &lt;code&gt;flake.nix&lt;&#x2F;code&gt;, we&#x27;ll add our input repository url, &lt;code&gt;nixpkgs&lt;&#x2F;code&gt; and &lt;code&gt;disko&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;url &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;github:nixos&#x2F;nixpkgs&#x2F;nixpkgs-unstable&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;url &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;github:nix-community&#x2F;disko&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;follows &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;nixpkgs&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;outputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{  &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;and then we&#x27;ll define our output  servers. For this example, i&#x27;m using my
+server name as &lt;code&gt;wolf&lt;&#x2F;code&gt;, you can name yours anything.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;url &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;github:nixos&#x2F;nixpkgs&#x2F;nixpkgs-unstable&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;url &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;github:nix-community&#x2F;disko&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;follows &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;nixpkgs&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;outputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, ... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixosConfigurations&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;wolf &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;nixosSystem &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;#&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: change server name
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;system &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;x86_64-linux&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: Change arch
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;modules &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;nixosModules&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;disko
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;.&#x2F;configuration.nix
+&lt;&#x2F;span&gt;&lt;span&gt;      ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;My server is &lt;code&gt;x86_64-linux&lt;&#x2F;code&gt; you&#x27;ll want to change that accordingly. &lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;I&#x27;m using the default example &lt;code&gt;disk&lt;&#x2F;code&gt; config from &lt;code&gt;disko&lt;&#x2F;code&gt;. It&#x27;ll create &lt;code&gt;boot&lt;&#x2F;code&gt;
+and &lt;code&gt;root&lt;&#x2F;code&gt; partitions. I also recommend using the default unless you explicitly
+want to change. You&#x27;ll want to change the device name, to know run &lt;code&gt;$ lsblk &lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;disk-config.nix&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, ... &lt;&#x2F;span&gt;&lt;span&gt;}:
+&lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;devices &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disk&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disk1 &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;device &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;mkDefault &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;dev&#x2F;sda&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: do lsblk  and change it to your&amp;#39;s
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;disk&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;content &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;gpt&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;partitions &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;boot &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;name &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;boot&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;size &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;1M&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;EF02&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;esp &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;name &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;ESP&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;size &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;500M&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;EF00&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;content &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;filesystem&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;format &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;vfat&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;mountpoint &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;boot&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;root &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;name &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;root&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;size &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;100%&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;content &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;lvm_pv&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;vg &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;pool&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;      }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;lvm_vg &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;pool &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;lvm_vg&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;lvs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;root &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;size &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;100%FREE&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;content &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;filesystem&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;format &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;ext4&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;mountpoint &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;mountOptions &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;defaults&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;              ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;      }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now the configuration part.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;configuration.nix&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;We&#x27;ll first import &lt;code&gt;qemu-guest&lt;&#x2F;code&gt; module since it&#x27;s a virtual machine.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;config&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, ... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;imports &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    (&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;installer&#x2F;scan&#x2F;not-detected.nix&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    (&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;profiles&#x2F;qemu-guest.nix&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;.&#x2F;disk-config.nix
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;system&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;stateVersion &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;24.05&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I&#x27;ll be using &lt;code&gt;grub&lt;&#x2F;code&gt; as bootloader.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;boot&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;loader&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;grub &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;efiSupport &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;efiInstallAsRemovable &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;code&gt;Openssh&lt;&#x2F;code&gt; is necessary for us to be able to ssh into the new server.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;services&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;openssh&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;enable &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;users&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;users&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;root&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;openssh&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;authorizedKeys&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;keys &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;You&amp;#39;re public ssh key&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;#&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: Add your ssh public key
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;You can define aditional packages to install as follows.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;environment&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;systemPackages &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;map &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lowPrio &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;curl &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: define your more packages here
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;gitMinimal
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now, our final &lt;code&gt;configuration.nix&lt;&#x2F;code&gt; should look like this.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;config&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, ... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;imports &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    (&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;installer&#x2F;scan&#x2F;not-detected.nix&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    (&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;profiles&#x2F;qemu-guest.nix&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;.&#x2F;disk-config.nix
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;boot&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;loader&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;grub &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;efiSupport &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;efiInstallAsRemovable &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;services&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;openssh&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;enable &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;environment&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;systemPackages &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;map &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lowPrio &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;curl
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;gitMinimal
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;users&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;users&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;root&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;openssh&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;authorizedKeys&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;keys &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;You&amp;#39;re public ssh key&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;system&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;stateVersion &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;24.05&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;install-the-os&quot;&gt;Install the os&lt;&#x2F;h2&gt;
+&lt;p&gt;Now, we&#x27;ll have to run our flake to install nixos on the vps.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;nix&lt;&#x2F;span&gt;&lt;span&gt; run github:nix-community&#x2F;nixos-anywhere&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span&gt; --flake .#wolf root@&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span&gt;server-ip&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;It&#x27;ll ask for the root password on installation.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;nix-hetzner&#x2F;nix.png&quot; alt=&quot;&quot; &#x2F;&gt;
+&lt;img src=&quot;&#x2F;images&#x2F;nix-hetzner&#x2F;final.png&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Congratulations!! The nixos has been installed successfully. You should be able to just edit the configuration and run &lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span&gt; nixos-rebuild switch&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; --flake&lt;&#x2F;span&gt;&lt;span&gt; .#wolf
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;the other time on any changes.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;aditional-tips&quot;&gt;Aditional tips...&lt;&#x2F;h2&gt;
+&lt;p&gt;You can use &lt;code&gt;justfile&lt;&#x2F;code&gt; to make this script running easy&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;Makefile&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-Makefile &quot;&gt;&lt;code class=&quot;language-Makefile&quot; data-lang=&quot;Makefile&quot;&gt;&lt;span style=&quot;font-style:italic;color:#cdd6f4;&quot;&gt;set shell &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;[&amp;quot;zsh&amp;quot;, &amp;quot;-c&amp;quot;]
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;_default&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;just&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; -l
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cdd6f4;&quot;&gt;alias g &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;gens
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cdd6f4;&quot;&gt;alias c &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;clean
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cdd6f4;&quot;&gt;alias r &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;rebuild
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# lists build generations
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;gens&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;Listing build generations &amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;nix-env&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; --list-generations
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# cleans up the nix garbage
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;clean&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;Cleaning up unused Nix store items&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span&gt; nix-collect-garbage&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; -d
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# Builds the serer
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;rebuild&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;Rebuilding server configuration&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span&gt; nixos-rebuild switch&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; --flake&lt;&#x2F;span&gt;&lt;span&gt; .#wolf
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The recipe should look like this&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; just
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;Available&lt;&#x2F;span&gt;&lt;span&gt; recipes:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;clean   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# cleans up the nix garbage
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;c       &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# alias for `clean`
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;gens    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# lists build generations
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;g       &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# alias for `gens`
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;rebuild &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# Builds the serer
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;r       &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# alias for `rebuild`
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now, rebuild the os with &lt;code&gt;just r(ebuild)&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Well, it&#x27;s this for now, I&#x27;ll see you in the next one!&lt;&#x2F;p&gt;
+&lt;!--links--&gt;
+</content>
+        
+    </entry>
+</feed>

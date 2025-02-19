@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>pwn() - POSSE</title>
+    <subtitle>I make and break softwares professionally</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pwnwriter.me/syndicate/posse/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pwnwriter.me"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-11-30T00:00:00+00:00</updated>
+    <id>https://pwnwriter.me/syndicate/posse/atom.xml</id>
+    <entry xml:lang="en">
+        <title>The 2024</title>
+        <published>2024-11-30T00:00:00+00:00</published>
+        <updated>2024-11-30T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/syndications/posse-2024/"/>
+        <id>https://pwnwriter.me/syndications/posse-2024/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/syndications/posse-2024/">&lt;p&gt;2024!  Oh my god, I&#x27;ve no complains with you. I started by BS here in US
+and.... and the first semester has already been an absolute blast. I’m actually
+enjoying the assignments—didn’t expect that! A huge thank you to my parents,
+friends, and everyone who has supported me along the way to get here.&lt;&#x2F;p&gt;
+&lt;!-- links --&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>The 2023</title>
+        <published>2024-01-04T00:00:00+00:00</published>
+        <updated>2024-01-04T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/syndications/posse-2023/"/>
+        <id>https://pwnwriter.me/syndications/posse-2023/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/syndications/posse-2023/">&lt;p&gt;I&#x27;ve always wanted to spend more time with my parents. High school and the
+hostel days, I had so little time with them. But 2023 changed that for me. I
+got to stay at home and focus on myself. We have a shop near the school, and I
+spend the whole day there, talking with different people. It&#x27;s such a joy to
+play cricket with the little kids who come by, and my brother and I have so
+much fun together.&lt;&#x2F;p&gt;
+&lt;p&gt;I remember the days when my brother, a few others, and I used to go for early
+morning runs, navigating through the fog with just the light of our mobile
+torches. We would spend the rest of the day playing with the goats.&lt;&#x2F;p&gt;
+&lt;p&gt;While enjoying with my parents, I&#x27;ve done a lot of open source work, especially
+&lt;code&gt;rust&lt;&#x2F;code&gt;. I&#x27;ve written &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pwnwriter&#x2F;haylxon&quot;&gt;&lt;code&gt;haylxon&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pwnwriter&#x2F;hysp&quot;&gt;&lt;code&gt;hysp&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; and explored a lot
+about the Rust&#x27;s core and internals. As previous year, This year as well, i&#x27;ve
+attended &lt;a href=&quot;https:&#x2F;&#x2F;threatcon.io&quot;&gt;&lt;code&gt;Threatcon&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;. It was soo much fun ;o;.&lt;&#x2F;p&gt;
+&lt;p&gt;Yes and bye!&lt;&#x2F;p&gt;
+&lt;!-- links --&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>The 2022</title>
+        <published>2023-01-30T00:00:00+00:00</published>
+        <updated>2023-01-30T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/syndications/posse-2022/"/>
+        <id>https://pwnwriter.me/syndications/posse-2022/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/syndications/posse-2022/">&lt;p&gt;My 2022 was an extraordinary year for me. I launched &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;metis-os&quot;&gt;&lt;code&gt;METISLinux&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, a project I&#x27;m
+proud of, reflecting my dedication. I also met a diverse group of individuals
+at &lt;a href=&quot;https:&#x2F;&#x2F;threatcon.io&quot;&gt;&lt;code&gt;Threatcon&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, gaining valuable connections and insights.&lt;&#x2F;p&gt;
+&lt;p&gt;Academically, I completed my +2 in major science with excellent grades. I
+received recognition from the Dutch government and a letter of appreciation
+from Cambridge University for my bug reports. I also earned the eJPT
+certification and started learning Rust.&lt;&#x2F;p&gt;
+&lt;p&gt;Reuniting with old online friends in person was a highlight, contributing to my
+personal and professional growth.&lt;&#x2F;p&gt;
+&lt;p&gt;Overall, 2022 was a year of progress and achievements. I&#x27;m excited for the
+future. See you next year!&lt;&#x2F;p&gt;
+&lt;p&gt;Ba-bye!&lt;&#x2F;p&gt;
+&lt;!---links --&gt;
+</content>
+        
+    </entry>
+</feed>

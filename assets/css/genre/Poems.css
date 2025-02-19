@@ -1,0 +1,7 @@
+.section {
+  text-align: center;
+}
+
+blockquote:not(.exclude) {
+  text-align: left;
+}

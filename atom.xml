@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>pwn()</title>
+    <subtitle>I make and break softwares professionally</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pwnwriter.me/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pwnwriter.me"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-12-18T00:00:00+00:00</updated>
+    <id>https://pwnwriter.me/atom.xml</id>
+    <entry xml:lang="en">
+        <title>A letter to the Raincoat man</title>
+        <published>2024-12-18T00:00:00+00:00</published>
+        <updated>2024-12-18T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/the-turning-table/"/>
+        <id>https://pwnwriter.me/blog/the-turning-table/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/the-turning-table/">&lt;aside&gt;
+&lt;p&gt;Quill and a parchment&lt;&#x2F;p&gt;
+&lt;img class=&quot;transparent no-hover&quot; style=&quot;margin-block-end: 0; border-radius: 0;&quot; alt=&quot;Quill and a parchment&quot; src=&quot;https:&#x2F;&#x2F;upload.wikimedia.org&#x2F;wikipedia&#x2F;commons&#x2F;thumb&#x2F;b&#x2F;b9&#x2F;%D7%A7%D7%9C%D7%A3%2C_%D7%A0%D7%95%D7%A6%D7%94_%D7%95%D7%93%D7%99%D7%95.jpg&#x2F;326px-%D7%A7%D7%9C%D7%A3%2C_%D7%A0%D7%95%D7%A6%D7%94_%D7%95%D7%93%D7%99%D7%95.jpg&quot; &#x2F;&gt;
+&lt;&#x2F;aside&gt;
+&lt;p&gt;My clock was softly ticking in my dark room. It was 2 AM, and while the world
+outside fell asleep, my mind was racing.&lt;&#x2F;p&gt;
+&lt;p&gt;Each day on the way to university, I would pass by a man who sat by the side of
+the road. He donned a worn raincoat, ready for the rain that never came. He
+talked with himself, the words floating away like forgotten whispers. Somehow,
+it reminded me of the struggles that are similar to mine.&lt;&#x2F;p&gt;
+&lt;p&gt;I suddenly felt such a desperate longing for my parents. They had sacrificed so
+much in order for me to pursue my dreams far away from them. I missed my mom&#x27;s
+protective, warm hugs; I missed my daddy&#x27;s funny, wise stories that made the
+world feel good.&lt;&#x2F;p&gt;
+&lt;p&gt;Never was I in such solitary confinement in a foreign land with nobody known
+around. This man in the raincoat reminded me of my state: his eyes set far
+away, and the old shoes looking strong, where I had become weak due to the
+burden of expectations and distance from family.&lt;&#x2F;p&gt;
+&lt;p&gt;I had closed my eyes and imagined the smile of Mom and Daddy, the void in my
+heart full of their encouragement. Home was so far away, like a burning candle
+in the dark. I yearned for simpler times when love felt more true and my fears
+were smaller.&lt;&#x2F;p&gt;
+&lt;p&gt;As time slowly ticked by, I started to think that this raincoat man wasn&#x27;t just
+mumbling to himself; rather, he was seeking contact-just like me. Silently, I
+wondered why we were so alone in the busy world. How many stories lay hidden
+behind the faces we pass day by day?&lt;&#x2F;p&gt;
+&lt;p&gt;Suddenly compelled, I sat up and took my notebook. I needed to write it all
+down. The violin was still low in the background, but I started spilling my
+soul onto the pages-not my own, but of the raincoat man and all others at that
+jumble of hope and despair. I wrote of love and loss, the unseen ties between
+us, even in our darkest moments.&lt;&#x2F;p&gt;
+&lt;p&gt;Something inside me shifted as the first rays of dawn began to leak into my
+window. The world was about to wake up anew; new things were in store. Then
+again, there was that notion when life seems to whirl around and strike with
+vengeance: how one moment we are alone and then, almost in the very next, find
+our way back into the waiting arms of loved ones.&lt;&#x2F;p&gt;
+&lt;p&gt;Wherever I went, my parents&#x27; love lit up the way back home, remembering that I
+am not alone. The raincoat man and I were two threads interwoven into something
+called humanity, our silent struggles somehow connected. The feeling of peace
+descended upon me as I spoke my last line, knowing every story matters and
+every heart counts.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>The 2024</title>
+        <published>2024-11-30T00:00:00+00:00</published>
+        <updated>2024-11-30T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/syndications/posse-2024/"/>
+        <id>https://pwnwriter.me/syndications/posse-2024/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/syndications/posse-2024/">&lt;p&gt;2024!  Oh my god, I&#x27;ve no complains with you. I started by BS here in US
+and.... and the first semester has already been an absolute blast. I’m actually
+enjoying the assignments—didn’t expect that! A huge thank you to my parents,
+friends, and everyone who has supported me along the way to get here.&lt;&#x2F;p&gt;
+&lt;!-- links --&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>6 Months On the Job: My Takeaway</title>
+        <published>2024-08-06T00:00:00+00:00</published>
+        <updated>2024-08-06T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/job-experience/"/>
+        <id>https://pwnwriter.me/blog/job-experience/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/job-experience/">&lt;h3 id=&quot;background&quot;&gt;Background&lt;&#x2F;h3&gt;
+&lt;p&gt;After high school, I was at home with my parents, doing errands and
+self-learning while preparing for my &lt;strong&gt;USA&lt;&#x2F;strong&gt; visa interview. Out of the blue, a
+well-known company reached out with a job offer. Despite not getting the terms
+I hoped for, I decided to take the opportunity.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-job&quot;&gt;The job&lt;&#x2F;h3&gt;
+&lt;p&gt;There wasn&#x27;t anything specifically like working on just one domain. I used to
+manage linux server&#x27;s, providing technical support and so on.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;what-i-got&quot;&gt;what i got..?&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The best boys:&lt;&#x2F;p&gt;
+&lt;p&gt;It’s probably impossible to find teammates who are both incredibly helpful and equally supportive and encouraging at the same time.&lt;&#x2F;p&gt;
+&lt;p&gt;Gotta miss them 🫡&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;img alt=&quot;we&quot; src=&quot;&#x2F;images&#x2F;mulkot&#x2F;we.png&quot; style=&quot;width: 15rem; height: 20rem; object-fit: cover;&quot;&#x2F;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;A new opportunity :&lt;&#x2F;p&gt;
+&lt;p&gt;I was able to introduce &lt;a href=&quot;https:&#x2F;&#x2F;nixos.org&quot;&gt;&lt;code&gt;nix&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; across my teammates, Not
+just that but 3 of our production servers now use &lt;code&gt;nix&lt;&#x2F;code&gt; as a user level and
+&lt;code&gt;core&lt;&#x2F;code&gt; level. &lt;&#x2F;p&gt;
+&lt;p&gt;It was an absolutely fantastic opportunity for me to learn
+and apply Nix on servers according to user requirements, rather than just
+for personal projects. &lt;&#x2F;p&gt;
+&lt;p&gt;I believe that working to fulfill other’s needs teaches you more than
+working on personal projects alone.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;The Experience :&lt;&#x2F;p&gt;
+&lt;p&gt;While I’m a bit sad this is ending, we had an amazing time exploring different
+places. My first week alone was filled with tours and adventures. The office
+environment was incredibly friendly and helpful, which made the experience even
+better.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;div style=&quot;display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;&quot;&gt;
+    &lt;img alt=&quot;patan&quot; src=&quot;&#x2F;images&#x2F;mulkot&#x2F;patan.png&quot; style=&quot;width: 15rem; height: 20rem; object-fit: cover;&quot;&#x2F;&gt;
+    &lt;img alt=&quot;nix-mac&quot; src=&quot;&#x2F;images&#x2F;mulkot&#x2F;nix.png&quot; style=&quot;width: 15rem; height: 20rem; object-fit: cover;&quot;&#x2F;&gt;
+&lt;&#x2F;div&gt;
+&lt;h3 id=&quot;moving-on&quot;&gt;Moving on ...&lt;&#x2F;h3&gt;
+&lt;p&gt;I&#x27;ve my &lt;strong&gt;USA&lt;&#x2F;strong&gt; flight soon within a very few weeks. I took resign from the job
+but i miss the boys i met there. They were absolute amazing people. I wish to
+work with them later and forever.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Install NixOS on any VPS</title>
+        <published>2024-07-19T00:00:00+00:00</published>
+        <updated>2024-07-19T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/installing-nixos-on-hetzner-vps/"/>
+        <id>https://pwnwriter.me/blog/installing-nixos-on-hetzner-vps/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/installing-nixos-on-hetzner-vps/">&lt;img alt=&quot;Nix Pill&quot; src=&quot;&#x2F;images&#x2F;nix-hetzner&#x2F;nix-pills.png&quot; style=&quot;width: 15rem;&quot;&#x2F;&gt;
+&lt;p&gt;My company has recently provided me with a VPS to test things before deploying
+them to production. This is a great opportunity for me to push the envelope and
+use Nix extensively. &lt;&#x2F;p&gt;
+&lt;p&gt;While most VPS providers don&#x27;t offer Nix as a default OS installation option,
+there is a workaround using &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;nix-community&#x2F;nixos-anywhere&quot;&gt;nixos-anywhere&lt;&#x2F;a&gt;. In this post, I&#x27;ll walk you
+through how to install NixOS on any VPS. &lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS: I&#x27;m using &lt;code&gt;hetzner&lt;&#x2F;code&gt; vps, already running an ubuntu iso.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;how&quot;&gt;How&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;wiki.archlinux.org&#x2F;title&#x2F;kexec&quot;&gt;Kexec&lt;&#x2F;a&gt; is a system call that allows you to load and boot into a new kernel
+directly from the currently running kernel. We will use it to boot into our
+minimal install system without needing a flash drive. Additionally,
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;nix-community&#x2F;nixos-anywhere&quot;&gt;nixos-anywhere&lt;&#x2F;a&gt; allows us to automatically format and
+partition using &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;nix-community&#x2F;disko&quot;&gt;disko&lt;&#x2F;a&gt; declaratively, and install the OS.&lt;&#x2F;p&gt;
+&lt;p&gt;Requirements:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;A nix(os) system&lt;&#x2F;li&gt;
+&lt;li&gt;Root access over the server&lt;&#x2F;li&gt;
+&lt;li&gt;1 gigs of RAM&lt;&#x2F;li&gt;
+&lt;li&gt;1 cores of cpu&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;configuration&quot;&gt;Configuration&lt;&#x2F;h2&gt;
+&lt;p&gt;We&#x27;ll be using &lt;code&gt;flakes&lt;&#x2F;code&gt; to define our overall &lt;code&gt;nixos&lt;&#x2F;code&gt; config.&lt;&#x2F;p&gt;
+&lt;p&gt;The file tree structure should look like this below.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; tree .
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;nixos-on-vps
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; configuration.nix
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; disk-config.nix
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;└──&lt;&#x2F;span&gt;&lt;span&gt; flake.nix
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;flake.lock&lt;&#x2F;code&gt; is similar to &lt;code&gt;cargo.lock,&lt;&#x2F;code&gt; &lt;code&gt;package.json,&lt;&#x2F;code&gt; &lt;code&gt;lazy-lock.json&lt;&#x2F;code&gt; it locks the package git rev hash.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;configuration.nix&lt;&#x2F;code&gt; is used to define our configuration for the nixos.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;disk-config.nix&lt;&#x2F;code&gt; is to define our disko config &lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The initial &lt;code&gt;flake.nix&lt;&#x2F;code&gt; skeleton look like this&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;outputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Inside &lt;code&gt;flake.nix&lt;&#x2F;code&gt;, we&#x27;ll add our input repository url, &lt;code&gt;nixpkgs&lt;&#x2F;code&gt; and &lt;code&gt;disko&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;url &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;github:nixos&#x2F;nixpkgs&#x2F;nixpkgs-unstable&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;url &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;github:nix-community&#x2F;disko&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;follows &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;nixpkgs&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;outputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{  &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;and then we&#x27;ll define our output  servers. For this example, i&#x27;m using my
+server name as &lt;code&gt;wolf&lt;&#x2F;code&gt;, you can name yours anything.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;url &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;github:nixos&#x2F;nixpkgs&#x2F;nixpkgs-unstable&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;url &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;github:nix-community&#x2F;disko&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;inputs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;follows &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;nixpkgs&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;outputs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, ... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;nixosConfigurations&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;wolf &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;nixpkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;nixosSystem &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;#&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: change server name
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;system &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;x86_64-linux&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: Change arch
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;modules &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;nixosModules&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;disko
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;.&#x2F;configuration.nix
+&lt;&#x2F;span&gt;&lt;span&gt;      ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;My server is &lt;code&gt;x86_64-linux&lt;&#x2F;code&gt; you&#x27;ll want to change that accordingly. &lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;I&#x27;m using the default example &lt;code&gt;disk&lt;&#x2F;code&gt; config from &lt;code&gt;disko&lt;&#x2F;code&gt;. It&#x27;ll create &lt;code&gt;boot&lt;&#x2F;code&gt;
+and &lt;code&gt;root&lt;&#x2F;code&gt; partitions. I also recommend using the default unless you explicitly
+want to change. You&#x27;ll want to change the device name, to know run &lt;code&gt;$ lsblk &lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;disk-config.nix&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, ... &lt;&#x2F;span&gt;&lt;span&gt;}:
+&lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disko&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;devices &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disk&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;disk1 &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;device &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;mkDefault &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;dev&#x2F;sda&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: do lsblk  and change it to your&amp;#39;s
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;disk&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;content &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;gpt&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;partitions &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;boot &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;name &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;boot&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;size &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;1M&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;EF02&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;esp &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;name &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;ESP&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;size &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;500M&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;EF00&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;content &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;filesystem&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;format &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;vfat&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;mountpoint &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;boot&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;root &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;name &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;root&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;size &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;100%&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;content &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;lvm_pv&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;vg &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;pool&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;      }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;lvm_vg &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;pool &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;lvm_vg&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;lvs &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;root &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;size &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;100%FREE&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;content &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;filesystem&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;format &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;ext4&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;mountpoint &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;              &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;mountOptions &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;defaults&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;              ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;            }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;          }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;      }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now the configuration part.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;configuration.nix&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;We&#x27;ll first import &lt;code&gt;qemu-guest&lt;&#x2F;code&gt; module since it&#x27;s a virtual machine.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;config&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, ... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;imports &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    (&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;installer&#x2F;scan&#x2F;not-detected.nix&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    (&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;profiles&#x2F;qemu-guest.nix&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;.&#x2F;disk-config.nix
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;system&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;stateVersion &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;24.05&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I&#x27;ll be using &lt;code&gt;grub&lt;&#x2F;code&gt; as bootloader.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;boot&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;loader&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;grub &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;efiSupport &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;efiInstallAsRemovable &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;code&gt;Openssh&lt;&#x2F;code&gt; is necessary for us to be able to ssh into the new server.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;services&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;openssh&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;enable &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;users&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;users&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;root&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;openssh&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;authorizedKeys&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;keys &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;You&amp;#39;re public ssh key&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;#&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: Add your ssh public key
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;You can define aditional packages to install as follows.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;environment&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;systemPackages &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;map &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lowPrio &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;curl &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#eba0ac;&quot;&gt;FIXME&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;: define your more packages here
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;gitMinimal
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now, our final &lt;code&gt;configuration.nix&lt;&#x2F;code&gt; should look like this.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;config&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;, ... &lt;&#x2F;span&gt;&lt;span&gt;}: {
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;imports &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    (&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;installer&#x2F;scan&#x2F;not-detected.nix&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    (&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;modulesPath &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;&#x2F;profiles&#x2F;qemu-guest.nix&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;.&#x2F;disk-config.nix
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;boot&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;loader&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;grub &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;efiSupport &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;efiInstallAsRemovable &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;services&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;openssh&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;enable &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;environment&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;systemPackages &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;map &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;lowPrio &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;curl
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;pkgs&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt;gitMinimal
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;users&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;users&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;root&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;openssh&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;authorizedKeys&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;keys &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;You&amp;#39;re public ssh key&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  ]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;system&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cba6f7;&quot;&gt;stateVersion &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;24.05&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;install-the-os&quot;&gt;Install the os&lt;&#x2F;h2&gt;
+&lt;p&gt;Now, we&#x27;ll have to run our flake to install nixos on the vps.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;nix&lt;&#x2F;span&gt;&lt;span&gt; run github:nix-community&#x2F;nixos-anywhere&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span&gt; --flake .#wolf root@&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span&gt;server-ip&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;It&#x27;ll ask for the root password on installation.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;nix-hetzner&#x2F;nix.png&quot; alt=&quot;&quot; &#x2F;&gt;
+&lt;img src=&quot;&#x2F;images&#x2F;nix-hetzner&#x2F;final.png&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Congratulations!! The nixos has been installed successfully. You should be able to just edit the configuration and run &lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span&gt; nixos-rebuild switch&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; --flake&lt;&#x2F;span&gt;&lt;span&gt; .#wolf
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;the other time on any changes.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;aditional-tips&quot;&gt;Aditional tips...&lt;&#x2F;h2&gt;
+&lt;p&gt;You can use &lt;code&gt;justfile&lt;&#x2F;code&gt; to make this script running easy&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;Makefile&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-Makefile &quot;&gt;&lt;code class=&quot;language-Makefile&quot; data-lang=&quot;Makefile&quot;&gt;&lt;span style=&quot;font-style:italic;color:#cdd6f4;&quot;&gt;set shell &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;[&amp;quot;zsh&amp;quot;, &amp;quot;-c&amp;quot;]
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;_default&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;just&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; -l
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cdd6f4;&quot;&gt;alias g &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;gens
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cdd6f4;&quot;&gt;alias c &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;clean
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#cdd6f4;&quot;&gt;alias r &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;rebuild
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# lists build generations
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;gens&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;Listing build generations &amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;nix-env&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; --list-generations
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# cleans up the nix garbage
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;clean&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;Cleaning up unused Nix store items&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span&gt; nix-collect-garbage&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; -d
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# Builds the serer
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;rebuild&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;color:#89dceb;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e3a1;&quot;&gt;&amp;quot;Rebuilding server configuration&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#b4befe;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span&gt; nixos-rebuild switch&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; --flake&lt;&#x2F;span&gt;&lt;span&gt; .#wolf
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The recipe should look like this&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; just
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;Available&lt;&#x2F;span&gt;&lt;span&gt; recipes:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;clean   &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# cleans up the nix garbage
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;c       &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# alias for `clean`
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;gens    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# lists build generations
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;g       &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# alias for `gens`
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;rebuild &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# Builds the serer
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;r       &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#6c7086;&quot;&gt;# alias for `rebuild`
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now, rebuild the os with &lt;code&gt;just r(ebuild)&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Well, it&#x27;s this for now, I&#x27;ll see you in the next one!&lt;&#x2F;p&gt;
+&lt;!--links--&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Metislinux depreciation</title>
+        <published>2024-07-12T00:00:00+00:00</published>
+        <updated>2024-07-12T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/metislinux/"/>
+        <id>https://pwnwriter.me/blog/metislinux/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/metislinux/">&lt;p&gt;This!, exactly 2 years ago on my 18th birthday, I launched
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;metis-os&quot;&gt;&lt;code&gt;metislinux&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; a beautiful runit based linux distro. I had fun
+working on this project with a few other&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;orgs&#x2F;metis-os&#x2F;people&quot;&gt;&lt;code&gt;guys&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;MetisLinux was essentially my own desktop, featuring a GUI installer and three
+custom-managed package sources: &lt;em&gt;Andromeda, Cosmic, and Recon&lt;&#x2F;em&gt;. While working on
+this project, I received tremendous support from the Plan9 community on Matrix
+and many others. I wanna thank you guys wholeheartly &amp;lt;3.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;the-why&quot;&gt;The why&lt;&#x2F;h4&gt;
+&lt;p&gt;I&#x27;ve planed a lot to bring in metislinux. I&#x27;ve even wrote a package manager
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pwnwriter&#x2F;hysp&quot;&gt;hysp&lt;&#x2F;a&gt;, a custom bar for wayland &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;metis-os&#x2F;heliumbar&quot;&gt;heliumbar&lt;&#x2F;a&gt; in rust btw, but
+then i started working, I had to use &lt;code&gt;Apple silicon&lt;&#x2F;code&gt; for my work, had my
+universities starting soon. Balancing my personal life and the project has
+become increasingly challenging, making it difficult to continue the project
+and hence the project has been archived.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;the-future&quot;&gt;The future&lt;&#x2F;h4&gt;
+&lt;p&gt;Although the project will no longer receive updates, all our work remains
+available at &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;metis-os&quot;&gt;github&#x2F;metis-os&lt;&#x2F;a&gt; under the &lt;a href=&quot;https:&#x2F;&#x2F;opensource.org&#x2F;license&#x2F;mit&quot;&gt;MIT&lt;&#x2F;a&gt; License. The code,
+resources, and tools are free for you to use and build upon. Feel free to fork
+it, learn from it, or create something new.&lt;&#x2F;p&gt;
+&lt;p&gt;To everyone involved in Metislinux; whether you contributed code, reported bugs,
+shared feedback, or simply used it—thank you! Your support has been invaluable,
+and I couldn’t have achieved this without you.&lt;&#x2F;p&gt;
+&lt;!-- links--&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>The 2023</title>
+        <published>2024-01-04T00:00:00+00:00</published>
+        <updated>2024-01-04T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/syndications/posse-2023/"/>
+        <id>https://pwnwriter.me/syndications/posse-2023/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/syndications/posse-2023/">&lt;p&gt;I&#x27;ve always wanted to spend more time with my parents. High school and the
+hostel days, I had so little time with them. But 2023 changed that for me. I
+got to stay at home and focus on myself. We have a shop near the school, and I
+spend the whole day there, talking with different people. It&#x27;s such a joy to
+play cricket with the little kids who come by, and my brother and I have so
+much fun together.&lt;&#x2F;p&gt;
+&lt;p&gt;I remember the days when my brother, a few others, and I used to go for early
+morning runs, navigating through the fog with just the light of our mobile
+torches. We would spend the rest of the day playing with the goats.&lt;&#x2F;p&gt;
+&lt;p&gt;While enjoying with my parents, I&#x27;ve done a lot of open source work, especially
+&lt;code&gt;rust&lt;&#x2F;code&gt;. I&#x27;ve written &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pwnwriter&#x2F;haylxon&quot;&gt;&lt;code&gt;haylxon&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pwnwriter&#x2F;hysp&quot;&gt;&lt;code&gt;hysp&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; and explored a lot
+about the Rust&#x27;s core and internals. As previous year, This year as well, i&#x27;ve
+attended &lt;a href=&quot;https:&#x2F;&#x2F;threatcon.io&quot;&gt;&lt;code&gt;Threatcon&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;. It was soo much fun ;o;.&lt;&#x2F;p&gt;
+&lt;p&gt;Yes and bye!&lt;&#x2F;p&gt;
+&lt;!-- links --&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>My talk on owasp kathmandu 0x03</title>
+        <published>2023-04-25T00:00:00+00:00</published>
+        <updated>2023-04-25T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/owasp-meetup/"/>
+        <id>https://pwnwriter.me/blog/owasp-meetup/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/owasp-meetup/">&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;owasp.org&quot;&gt;OWASP&lt;&#x2F;a&gt; is a non-profit open-source foundation focused on application
+security. They have local and global &lt;a href=&quot;https:&#x2F;&#x2F;owasp.org&#x2F;chapters&#x2F;&quot;&gt;chapters&lt;&#x2F;a&gt; around the world
+aimed at improving community security. We also have a local chapter called
+OWASP Kathmandu, which organizes events to spread awareness within Nepal. I had
+the privilege to speak at OWASP Kathmandu 0x03, where I presented my tool,
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pwnwriter&#x2F;haylxon&quot;&gt;Halyxon&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;If you do not know what haylxon is, simple, it&#x27;s a tool to take screenshots of webpages 
+from terminal using chrome&#x27;s headless feature written in Rust! &lt;&#x2F;p&gt;
+&lt;p&gt;You can simply take a screenshot of a webpage as below!&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;hxn&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; -b &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span&gt;path&#x2F;to&#x2F;chrome&#x2F;bin&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt;u https:&#x2F;&#x2F;example.com
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;But wait, you could do that by just opening a browser and pressing some holy keys?&lt;&#x2F;p&gt;
+&lt;p&gt;I mean yeah? but what would you do when you have &lt;code&gt;hundreds&lt;&#x2F;code&gt; of urls, sub(domains) to take?&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;background&quot;&gt;Background&lt;&#x2F;h4&gt;
+&lt;p&gt;There were already tools like &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;RedSiege&#x2F;EyeWitness&quot;&gt;Eyewitness&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;sensepost&#x2F;gowitness&quot;&gt;Gowitness&lt;&#x2F;a&gt;, which I had used,
+but they either felt slow or lacked my personal touch. Since I wanted to learn
+Rust, it was the perfect time to start a new project, especially since I
+already had a basic knowledge of Rust.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;usages&quot;&gt;Usages&lt;&#x2F;h4&gt;
+&lt;p&gt;Haylxon comes with a lot of options now, reading urls from &lt;code&gt;stdin&lt;&#x2F;code&gt;, &lt;code&gt;defining ports&lt;&#x2F;code&gt;, &lt;code&gt;running arbitary javascript&lt;&#x2F;code&gt; and a lot more.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;owasp&#x2F;haylxon.png&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;You can pass a file containing a list of urls, and define height, width and
+even a delayed screenshot is possible. &lt;&#x2F;p&gt;
+&lt;p&gt;One of the most interesting usages of this tools is that, you can run it on &lt;code&gt;github&lt;&#x2F;code&gt; actions 
+to take screenshot of your subdomain, zip that out upload to &lt;a href=&quot;https:&#x2F;&#x2F;0x0.st&quot;&gt;0x0.st&lt;&#x2F;a&gt; or your own instance.&lt;&#x2F;p&gt;
+&lt;p&gt;After the talk, I was gifted some cute swag and a letter of appreciation. I
+want to thank OWASP for that &amp;lt;3.&lt;&#x2F;p&gt;
+&lt;!---Links--&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>The 2022</title>
+        <published>2023-01-30T00:00:00+00:00</published>
+        <updated>2023-01-30T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/syndications/posse-2022/"/>
+        <id>https://pwnwriter.me/syndications/posse-2022/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/syndications/posse-2022/">&lt;p&gt;My 2022 was an extraordinary year for me. I launched &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;metis-os&quot;&gt;&lt;code&gt;METISLinux&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, a project I&#x27;m
+proud of, reflecting my dedication. I also met a diverse group of individuals
+at &lt;a href=&quot;https:&#x2F;&#x2F;threatcon.io&quot;&gt;&lt;code&gt;Threatcon&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, gaining valuable connections and insights.&lt;&#x2F;p&gt;
+&lt;p&gt;Academically, I completed my +2 in major science with excellent grades. I
+received recognition from the Dutch government and a letter of appreciation
+from Cambridge University for my bug reports. I also earned the eJPT
+certification and started learning Rust.&lt;&#x2F;p&gt;
+&lt;p&gt;Reuniting with old online friends in person was a highlight, contributing to my
+personal and professional growth.&lt;&#x2F;p&gt;
+&lt;p&gt;Overall, 2022 was a year of progress and achievements. I&#x27;m excited for the
+future. See you next year!&lt;&#x2F;p&gt;
+&lt;p&gt;Ba-bye!&lt;&#x2F;p&gt;
+&lt;!---links --&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Chasing Sunlight</title>
+        <published>2022-11-01T00:00:00+00:00</published>
+        <updated>2022-11-01T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/sunlight/"/>
+        <id>https://pwnwriter.me/blog/sunlight/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/sunlight/">&lt;p&gt;I would paint your pictures with the rainbow,&lt;br &#x2F;&gt;
+Just to catch your eye’s gentle light.&lt;br &#x2F;&gt;
+I would gather all the warmth of the sun,&lt;br &#x2F;&gt;
+To hold you close and make everything right.&lt;&#x2F;p&gt;
+&lt;p&gt;The revels and beauty of nature’s embrace,&lt;br &#x2F;&gt;
+Cannot rival your radiant smile.&lt;br &#x2F;&gt;
+Wherever you journey, I wish to follow,&lt;br &#x2F;&gt;
+And love you with every mile.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Arch</title>
+        <published>2021-10-12T00:00:00+00:00</published>
+        <updated>2021-10-12T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/arch/"/>
+        <id>https://pwnwriter.me/blog/arch/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/arch/">&lt;p&gt;Switching to Linux was soo easy....&lt;br &#x2F;&gt;
+Btw, switching to Arch is  crazy..&lt;br &#x2F;&gt;
+Yo Yooooo.&lt;br &#x2F;&gt;
+&#x27;CLI&#x27; was massive.&lt;br &#x2F;&gt;
+I felt Soo aggressive.&lt;&#x2F;p&gt;
+&lt;p&gt;Never had soo tension..&lt;br &#x2F;&gt;
+Switching to win wasn&#x27;t my intention&lt;br &#x2F;&gt;
+I felt the pain..&lt;br &#x2F;&gt;
+Ended up with no gain.&lt;&#x2F;p&gt;
+&lt;p&gt;I felt Soo lately..&lt;br &#x2F;&gt;
+Finally, entered &#x27;GUI&#x27; greatly.&lt;br &#x2F;&gt;
+I pressed enter &amp;amp; go.&lt;br &#x2F;&gt;
+GUI was  nice tho!&lt;br &#x2F;&gt;
+Ever since I started using.&lt;br &#x2F;&gt;
+The peace was missing.&lt;&#x2F;p&gt;
+&lt;p&gt;I switched to arch.&lt;br &#x2F;&gt;
+Took January to march.&lt;br &#x2F;&gt;
+I stopped distro hoping.&lt;br &#x2F;&gt;
+Now just being De Hoppp..&lt;&#x2F;p&gt;
+&lt;p&gt;I wasn&#x27;t wasting my  time.&lt;br &#x2F;&gt;
+It seems like a crime?&lt;br &#x2F;&gt;
+Yo yoooooo.&lt;br &#x2F;&gt;
+Let them go bad.&lt;br &#x2F;&gt;
+Arch wiki cares if you&#x27;re sad.&lt;&#x2F;p&gt;
+&lt;p&gt;Don&#x27;t be serious.&lt;br &#x2F;&gt;
+Be curious,&lt;br &#x2F;&gt;
+Go dark.&lt;br &#x2F;&gt;
+Use arch ;)&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>
