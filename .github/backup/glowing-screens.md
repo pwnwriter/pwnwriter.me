@@ -1,11 +1,3 @@
-+++
-title = "The Weight of Glowing Screens"
-date = 2025-02-12
-[taxonomies]
-writings=["Stories"]
-
-+++
-
 Lately, I feel like I’m disappearing into a screen. My life is split in two—one inside the glow of my phone, the other in the real world. And somehow, the first one is winning.  
 
 The moment I wake up, before I even stretch or feel the cold floor under my feet, my hand reaches for my phone. Not because I need to. Not because someone is waiting for me. Just… because. It’s a habit, a reflex. Like my day can’t start without that cold blue light hitting my face. My eyes are barely open, and I’m already scrolling through a world that isn’t even real.  
