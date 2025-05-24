@@ -1,0 +1,58 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><title>pwn::musings</title><link href=/assets/css/fonts.css rel=stylesheet><link href=/assets/css/themes.css rel=stylesheet><link href=/assets/css/readable.css rel=stylesheet><link href=/assets/css/global.css rel=stylesheet><link href=/assets/css/logo.css rel=stylesheet><link href=/assets/css/genre/Reports.css rel=stylesheet><script defer src=/assets/js/themeSelector.js></script><link href=https://pwnwriter.me/atom.xml rel=alternate title=RSS type=application/atom+xml><meta content=Reports property=og:type><meta content=pwnwriter.me property=og:site_name><meta content=https://pwnwriter.me/res/thumbnail-light.png property=og:image><title>My talk on owasp kathmandu 0x03</title><meta content="My talk on owasp kathmandu 0x03" name=og:title><meta content="OWASP is a non-profit open-source foundation focused on application
+security. They have local and global chapters around the world
+aimed at improving community security. We also have a local chapter called
+OWASP Kathmandu, which organizes events to spread awareness within Nepal. I had
+the privilege to speak at OWASP Kathmandu 0x03, where I presented my tool,
+Halyxon.
+If you do not know what haylxon is, simple, it's a tool to take screenshots of webpages 
+from terminal using chrome's headless feature written in Rust! 
+You can simply take a screenshot of a webpage as below!
+hxn -b &amplt;path/to/chrome/bin&ampgt; -u https://example.com
+
+But wait, you could do that by just opening a browser and pressing some holy keys?
+I mean yeah? but what would you do when you have hundreds of urls, sub(domains) to take?
+Background
+There were already tools like Eyewitness and Gowitness, which I had used,
+but they either felt slow or lacked my personal touch. Since I wanted to learn
+Rust, it was the perfect time to start a new project, especially since I
+already had a basic knowledge of Rust.
+Usages
+Haylxon comes with a lot of options now, reading urls from stdin, defining ports, running arbitary javascript and a lot more.
+
+You can pass a file containing a list of urls, and define height, width and
+even a delayed screenshot is possible. 
+One of the most interesting usages of this tools is that, you can run it on github actions 
+to take screenshot of your subdomain, zip that out upload to 0x0.st or your own instance.
+After the talk, I was gifted some cute swag and a letter of appreciation. I
+want to thank OWASP for that &amplt;3.
+
+" name=description><meta content="OWASP is a non-profit open-source foundation focused on application
+security. They have local and global chapters around the world
+aimed at improving community security. We also have a local chapter called
+OWASP Kathmandu, which organizes events to spread awareness within Nepal. I had
+the privilege to speak at OWASP Kathmandu 0x03, where I presented my tool,
+Halyxon.
+If you do not know what haylxon is, simple, it's a tool to take screenshots of webpages 
+from terminal using chrome's headless feature written in Rust! 
+You can simply take a screenshot of a webpage as below!
+hxn -b &amplt;path/to/chrome/bin&ampgt; -u https://example.com
+
+But wait, you could do that by just opening a browser and pressing some holy keys?
+I mean yeah? but what would you do when you have hundreds of urls, sub(domains) to take?
+Background
+There were already tools like Eyewitness and Gowitness, which I had used,
+but they either felt slow or lacked my personal touch. Since I wanted to learn
+Rust, it was the perfect time to start a new project, especially since I
+already had a basic knowledge of Rust.
+Usages
+Haylxon comes with a lot of options now, reading urls from stdin, defining ports, running arbitary javascript and a lot more.
+
+You can pass a file containing a list of urls, and define height, width and
+even a delayed screenshot is possible. 
+One of the most interesting usages of this tools is that, you can run it on github actions 
+to take screenshot of your subdomain, zip that out upload to 0x0.st or your own instance.
+After the talk, I was gifted some cute swag and a letter of appreciation. I
+want to thank OWASP for that &amplt;3.
+
+" name=og:description><link rel="shortcut icon" href=/res/logo.svg type=image/x-icon><meta content="width=device-width,initial-scale=1" name=viewport><meta content="rgb(253, 246, 227)" name=theme-color><link href=https://github.com/pwnwriter rel=me><link href=mailto:hi@pwnwriter.me rel=me><link href=https://webmention.io/pwnwriter.me/webmention rel=webmention><link href=https://webmention.io/pwnwriter.me/xmlrpc rel=pingback><body onload="updateThemeSelector(); updateLinkSelector();"><nav data-style=classy><span class=main-li><a href=/>Main</a></span><span><a href=/writings>Writings</a></span><span><a href=/syndications>POSSE</a></span><span><a href=/more/pwnware>pwnware</a></span></nav><section class=section-body><div class=container><div class=pagedate><code class=dateandtag>2023-04-25</code><code class=dateandtag>Genre: Reports</code></div><div class=section><h1 class=title>My talk on owasp kathmandu 0x03</h1><p><a href=https://owasp.org>OWASP</a> is a non-profit open-source foundation focused on application security. They have local and global <a href=https://owasp.org/chapters/>chapters</a> around the world aimed at improving community security. We also have a local chapter called OWASP Kathmandu, which organizes events to spread awareness within Nepal. I had the privilege to speak at OWASP Kathmandu 0x03, where I presented my tool, <a href=https://github.com/pwnwriter/haylxon>Halyxon</a>.<p>If you do not know what haylxon is, simple, it's a tool to take screenshots of webpages from terminal using chrome's headless feature written in Rust!<p>You can simply take a screenshot of a webpage as below!<pre class=language-bash data-lang=bash style=background:#1e1e2e;color:#cdd6f4><code class=language-bash data-lang=bash><span style=font-style:italic;color:#89b4fa>hxn</span><span style=font-style:italic;color:#f5e0dc> -b </span><span style=font-weight:700;color:#89dceb><</span><span>path/to/chrome/bin</span><span style=font-weight:700;color:#89dceb>> </span><span style=color:#94e2d5>-</span><span>u https://example.com
+</span></code></pre><p>But wait, you could do that by just opening a browser and pressing some holy keys?<p>I mean yeah? but what would you do when you have <code>hundreds</code> of urls, sub(domains) to take?<h4 id=background>Background</h4><p>There were already tools like <a href=https://github.com/RedSiege/EyeWitness>Eyewitness</a> and <a href=https://github.com/sensepost/gowitness>Gowitness</a>, which I had used, but they either felt slow or lacked my personal touch. Since I wanted to learn Rust, it was the perfect time to start a new project, especially since I already had a basic knowledge of Rust.<h4 id=usages>Usages</h4><p>Haylxon comes with a lot of options now, reading urls from <code>stdin</code>, <code>defining ports</code>, <code>running arbitary javascript</code> and a lot more.<p><img alt src=/images/owasp/haylxon.png><p>You can pass a file containing a list of urls, and define height, width and even a delayed screenshot is possible.<p>One of the most interesting usages of this tools is that, you can run it on <code>github</code> actions to take screenshot of your subdomain, zip that out upload to <a href=https://0x0.st>0x0.st</a> or your own instance.<p>After the talk, I was gifted some cute swag and a letter of appreciation. I want to thank OWASP for that &LT3.</div></div></section><div class=hidden><a href=https://www.linkedin.com/in/pwnwriter rel=me>Linkedin</a></div><div class="hidden h-card"><img class="u-photo icon" alt=pwnwriter src=/res/thumbnail.png><a class="p-name u-url" href=https://pwnwriter.me>pwnwriter</a><p class=p-note>I make and break softwares professionally</div><footer><p class=codewithlove>This website does not collect your data.<span class=main-background>No languages models</span>were involved in writing the content here except where explicitly noted.<p class=footer-links><a href=/atom.xml>RSS</a> | <a href=https://github.com/pwnwriter.gpg>pgp::signature</a> | <a href=https://github.com/pwnwriter/wood target=_blank>Source Code</a></footer><ol id=themeSelector reversed></ol><script defer src=/assets/js/linkSelector.js></script><ol id=linkSelector></ol>

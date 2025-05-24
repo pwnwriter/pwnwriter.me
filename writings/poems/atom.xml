@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>pwn() - Poems</title>
+    <subtitle>I make and break softwares professionally</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pwnwriter.me/writings/poems/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pwnwriter.me"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2022-11-01T00:00:00+00:00</updated>
+    <id>https://pwnwriter.me/writings/poems/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Chasing Sunlight</title>
+        <published>2022-11-01T00:00:00+00:00</published>
+        <updated>2022-11-01T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/sunlight/"/>
+        <id>https://pwnwriter.me/blog/sunlight/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/sunlight/">&lt;p&gt;I would paint your pictures with the rainbow,&lt;br &#x2F;&gt;
+Just to catch your eye’s gentle light.&lt;br &#x2F;&gt;
+I would gather all the warmth of the sun,&lt;br &#x2F;&gt;
+To hold you close and make everything right.&lt;&#x2F;p&gt;
+&lt;p&gt;The revels and beauty of nature’s embrace,&lt;br &#x2F;&gt;
+Cannot rival your radiant smile.&lt;br &#x2F;&gt;
+Wherever you journey, I wish to follow,&lt;br &#x2F;&gt;
+And love you with every mile.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Arch</title>
+        <published>2021-10-12T00:00:00+00:00</published>
+        <updated>2021-10-12T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/arch/"/>
+        <id>https://pwnwriter.me/blog/arch/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/arch/">&lt;p&gt;Switching to Linux was soo easy....&lt;br &#x2F;&gt;
+Btw, switching to Arch is  crazy..&lt;br &#x2F;&gt;
+Yo Yooooo.&lt;br &#x2F;&gt;
+&#x27;CLI&#x27; was massive.&lt;br &#x2F;&gt;
+I felt Soo aggressive.&lt;&#x2F;p&gt;
+&lt;p&gt;Never had soo tension..&lt;br &#x2F;&gt;
+Switching to win wasn&#x27;t my intention&lt;br &#x2F;&gt;
+I felt the pain..&lt;br &#x2F;&gt;
+Ended up with no gain.&lt;&#x2F;p&gt;
+&lt;p&gt;I felt Soo lately..&lt;br &#x2F;&gt;
+Finally, entered &#x27;GUI&#x27; greatly.&lt;br &#x2F;&gt;
+I pressed enter &amp;amp; go.&lt;br &#x2F;&gt;
+GUI was  nice tho!&lt;br &#x2F;&gt;
+Ever since I started using.&lt;br &#x2F;&gt;
+The peace was missing.&lt;&#x2F;p&gt;
+&lt;p&gt;I switched to arch.&lt;br &#x2F;&gt;
+Took January to march.&lt;br &#x2F;&gt;
+I stopped distro hoping.&lt;br &#x2F;&gt;
+Now just being De Hoppp..&lt;&#x2F;p&gt;
+&lt;p&gt;I wasn&#x27;t wasting my  time.&lt;br &#x2F;&gt;
+It seems like a crime?&lt;br &#x2F;&gt;
+Yo yoooooo.&lt;br &#x2F;&gt;
+Let them go bad.&lt;br &#x2F;&gt;
+Arch wiki cares if you&#x27;re sad.&lt;&#x2F;p&gt;
+&lt;p&gt;Don&#x27;t be serious.&lt;br &#x2F;&gt;
+Be curious,&lt;br &#x2F;&gt;
+Go dark.&lt;br &#x2F;&gt;
+Use arch ;)&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

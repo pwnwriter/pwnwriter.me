@@ -1,0 +1,382 @@
+:root[data-theme] {
+    --background-color: var(--background-color-0);
+    --color-comments: var(--color);
+}
+
+:root[data-theme="gruvbox-light"] {
+    --background-image: #fbf1c7;
+    --background-color-0: #fbf1c7;
+    --background-color-1: #ebdbb2;
+    --color: #3c3836;
+    --color-comments: #928374;
+    --text-highlight-0: #9d0006;
+    --text-highlight-1: #076678;
+    --text-highlight-2: #8f3f71;
+    --text-highlight-3: #427b58;
+    --text-highlight-4: #b57614;
+    --text-highlight-5: #79740e;
+    --note-color: #427b58;
+    --tip-color: #076678;
+    --important-color: #8f3f71;
+    --warning-color: #9d0006;
+    --caution-color: #b57614;
+    --logo-mode: url('/res/colors/logo-gruvbox-light.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="gruvbox-dark"] {
+    --background-image: #282828;
+    --background-color-0: #282828;
+    --background-color-1: #504945;
+    --color: #ebdbb2;
+    --color-comments: #a8a8a8;
+    --text-highlight-0: #fb4934;
+    --text-highlight-1: #83a598;
+    --text-highlight-2: #d3869b;
+    --text-highlight-3: #8ec07c;
+    --text-highlight-4: #fabd2f;
+    --text-highlight-5: #b8bb26;
+    --note-color: #8ec07c;
+    --tip-color: #83a598;
+    --important-color: #d3869b;
+    --warning-color: #fb4934;
+    --caution-color: #fabd2f;
+    --logo-mode: url('/res/colors/logo-gruvbox-dark.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="night-solis"] {
+    --background-image: #161512;
+    --background-color-0: #161512;
+    --background-color-1: #312f2b;
+    --color: #ebebea;
+    --color-comments: #c9c8c5;
+    --text-highlight-0: #d71010;
+    --text-highlight-1: #38a78c;
+    --text-highlight-2: #ed851c;
+    --text-highlight-3: #19c434;
+    --text-highlight-4: #f8cb2b;
+    --text-highlight-5: #e6994a;
+    --note-color: #19c434;
+    --tip-color: #38a78c;
+    --important-color: #ed851c;
+    --warning-color: #d71010;
+    --caution-color: #f8cb2b;
+    --logo-mode: url('/res/colors/logo-night-solis.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="night-spaceduck"] {
+    --background-image: #0f111b;
+    --background-color-0: #0f111b;
+    --background-color-1: #1b1c36;
+    --color: #ecf0c1;
+    --color-comments: #818596;
+    --text-highlight-0: #b3a1e6;
+    --text-highlight-1: #5ccc96;
+    --text-highlight-2: #7a5ccc;
+    --text-highlight-3: #ce6f8f;
+    --text-highlight-4: #f2ce00;
+    --text-highlight-5: #00a3cc;
+    --note-color: #5ccc96;
+    --tip-color: #00a3cc;
+    --important-color: #7a5ccc;
+    --warning-color: #ce6f8f;
+    --caution-color: #f2ce00;
+    --logo-mode: url('/res/colors/logo-night-spaceduck.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="nord-dark"] {
+    --background-image: #2e3440;
+    --background-color-0: #2e3440;
+    --background-color-1: #3b4252;
+    --color: #eceff4;
+    --color-comments: #eceff4aa;
+    --text-highlight-0: #8fbcbb;
+    --text-highlight-1: #81a1c1;
+    --text-highlight-2: #5e81ac;
+    --text-highlight-3: #88c0d0;
+    --text-highlight-4: #ebcb8b;
+    --text-highlight-5: #a3be8c;
+    --note-color: #a3be8c;
+    --tip-color: #8fbcbb;
+    --important-color: #5e81ac;
+    --warning-color: #ebcb8b;
+    --caution-color: #cea1c1;
+    --logo-mode: url('/res/colors/logo-nord.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="nord-light"] {
+    --background-image: #ffffff;
+    --background-color-0: #ffffff;
+    --background-color-1: #eceff4;
+    --color: #2e3440;
+    --color-comments: #2e344088;
+    --text-highlight-0: #8fbcbb;
+    --text-highlight-1: #81a1c1;
+    --text-highlight-2: #5e81ac;
+    --text-highlight-3: #88c0d0;
+    --text-highlight-4: #ebcb8b;
+    --text-highlight-5: #a3be8c;
+    --note-color: #a3be8c;
+    --tip-color: #8fbcbb;
+    --important-color: #5e81ac;
+    --warning-color: #ebcb8b;
+    --caution-color: #cea1c1;
+    --logo-mode: url('/res/colors/logo-nord.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="everforest-light"] {
+    --background-image: #fdf6e3;
+    --background-color-0: #fdf6e3;
+    --background-color-1: #efebd4;
+    --color: #5c6a72;
+    --color-comments: #a6b0a0;
+    --text-highlight-0: #8da101;
+    --text-highlight-1: #3a94c5;
+    --text-highlight-2: #df69ba;
+    --text-highlight-3: #f85552;
+    --text-highlight-4: #dfa000;
+    --text-highlight-5: #35a77c;
+    --note-color: #8da101;
+    --tip-color: #3a94c5;
+    --important-color: #df69ba;
+    --warning-color: #f85552;
+    --caution-color: #dfa000;
+    --logo-mode: url('/res/colors/logo-everforest-light.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="everforest-dark"] {
+    --background-image: #2d353b;
+    --background-color-0: #2d353b;
+    --background-color-1: #232a2e;
+    --color: #d3c6aa;
+    --color-comments: #859289;
+    --text-highlight-0: #a7c080;
+    --text-highlight-1: #7fbbb3;
+    --text-highlight-2: #d699b6;
+    --text-highlight-3: #e67e80;
+    --text-highlight-4: #dbbc7f;
+    --text-highlight-5: #83c092;
+    --note-color: #a7c080;
+    --tip-color: #7fbbb3;
+    --important-color: #d699b6;
+    --warning-color: #e67e80;
+    --caution-color: #dbbc7f;
+    --logo-mode: url('/res/colors/logo-everforest-dark.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="night-gotham"] {
+    --background-image: #0c1014;
+    --background-color-0: #0c1014;
+    --background-color-1: #091f2e;
+    --color: #d3ebe9;
+    --color-comments: #599cab;
+    --text-highlight-0: #d26937;
+    --text-highlight-1: #599cab;
+    --text-highlight-2: #888ca6;
+    --text-highlight-3: #99d1ce;
+    --text-highlight-4: #edb443;
+    --text-highlight-5: #2aa889;
+    --note-color: #2aa889;
+    --tip-color: #599cab;
+    --important-color: #888ca6;
+    --warning-color: #d26937;
+    --caution-color: #edb443;
+    --logo-mode: url('/res/colors/logo-night-gotham.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="one-dark"] {
+    --background-image: #282c34;
+    --background-color-0: #282c34;
+    --background-color-1: #1d1e25;
+    --color: #abb2bf;
+    --color-comments: #5c6370;
+    --text-highlight-0: #e06c75;
+    --text-highlight-1: #61afef;
+    --text-highlight-2: #c678dd;
+    --text-highlight-3: #01bfdf;
+    --text-highlight-4: #e5c07b;
+    --text-highlight-5: #98c379;
+    --note-color: #98c379;
+    --tip-color: #61afef;
+    --important-color: #c678dd;
+    --warning-color: #e06c75;
+    --caution-color: #e5c07b;
+    --logo-mode: url('/res/colors/logo-one-dark.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="one-light"] {
+    --background-image: #fafafa;
+    --background-color-0: #fafafa;
+    --background-color-1: #efeceb;
+    --color: #383a42;
+    --color-comments: #a0a1a7;
+    --text-highlight-0: #e45649;
+    --text-highlight-1: #4078f2;
+    --text-highlight-2: #a626a4;
+    --text-highlight-3: #0184bc;
+    --text-highlight-4: #cb7701;
+    --text-highlight-5: #50a14f;
+    --note-color: #50a14f;
+    --tip-color: #4078f2;
+    --important-color: #a626a4;
+    --warning-color: #e45649;
+    --caution-color: #cb7701;
+    --logo-mode: url('/res/olors/logo-one-light.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="tokyo-night"] {
+    --background-image: #1a1b26;
+    --background-color-0: #1a1b26;
+    --background-color-1: #24283b;
+    --color: #a9b1d6;
+    --color-comments: #565f89;
+    --text-highlight-0: #f7768e;
+    --text-highlight-1: #7dcfff;
+    --text-highlight-2: #bb9af7;
+    --text-highlight-3: #7aa2f7;
+    --text-highlight-4: #e0af68;
+    --text-highlight-5: #9ece6a;
+    --note-color: #9ece6a;
+    --tip-color: #7dcfff;
+    --important-color: #bb9af7;
+    --warning-color: #f7768e;
+    --caution-color: #e0af68;
+    --logo-mode: url('/res/colors/logo-tokio-night.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="tokyo-night-light"] {
+    --background-image: #f3f3f5;
+    --background-color-0: #f3f3f5;
+    --background-color-1: #d5d6db;
+    --color: #343b58;
+    --color-comments: #9699a3;
+    --text-highlight-0: #8c4351;
+    --text-highlight-1: #0f4b6e;
+    --text-highlight-2: #5a4a78;
+    --text-highlight-3: #34548a;
+    --text-highlight-4: #8f5e15;
+    --text-highlight-5: #485e30;
+    --note-color: #485e30;
+    --tip-color: #0f4b6e;
+    --important-color: #5a4a78;
+    --warning-color: #8c4351;
+    --caution-color: #8f5e15;
+    --logo-mode: url('/res/colors/logo-tokio-night-light.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="catppuccin-latte"] {
+    --background-image: #eff1f5;
+    --background-color-0: #eff1f5;
+    --background-color-1: #e6e9ef;
+    --color: #4c4f69;
+    --color-comments: #8c8fa1;
+    --text-highlight-0: #7287fd;
+    --text-highlight-1: #1e66f5;
+    --text-highlight-2: #8839ef;
+    --text-highlight-3: #179299;
+    --text-highlight-4: #df8e1d;
+    --text-highlight-5: #40a02b;
+    --note-color: #40a02b;
+    --tip-color: #1e66f5;
+    --important-color: #8839ef;
+    --warning-color: #d20f39;
+    --caution-color: #df8e1d;
+    --logo-mode: url('/res/colors/logo-catppuccin-latte.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="catppuccin-frappe"] {
+    --background-image: #303446;
+    --background-color-0: #303446;
+    --background-color-1: #292c3c;
+    --color: #c6d0f5;
+    --color-comments: #737994;
+    --text-highlight-0: #babbf1;
+    --text-highlight-1: #8caaee;
+    --text-highlight-2: #ca9ee6;
+    --text-highlight-3: #81c8be;
+    --text-highlight-4: #e5c890;
+    --text-highlight-5: #a6d189;
+    --note-color: #a6d189;
+    --tip-color: #8caaee;
+    --important-color: #ca9ee6;
+    --warning-color: #e78284;
+    --caution-color: #e5c890;
+    --logo-mode: url('/res/colors/logo-catppuccin-frappe.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="catppuccin-macchiato"] {
+    --background-image: #24273a;
+    --background-color-0: #24273a;
+    --background-color-1: #1e2030;
+    --color: #cad3f5;
+    --color-comments: #6e738d;
+    --text-highlight-0: #b7bdf8;
+    --text-highlight-1: #8aadf4;
+    --text-highlight-2: #c6a0f6;
+    --text-highlight-3: #8bd5ca;
+    --text-highlight-4: #eed49f;
+    --text-highlight-5: #a6da95;
+    --note-color: #a6da95;
+    --tip-color: #8aadf4;
+    --important-color: #c6a0f6;
+    --warning-color: #ed8796;
+    --caution-color: #eed49f;
+    --logo-mode: url('/res/colors/logo-catppuccin-macchiato.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="catppuccin-mocha"] {
+    --background-image: #1e1e2e;
+    --background-color-0: #1e1e2e;
+    --background-color-1: #181825;
+    --color: #cdd6f4;
+    --color-comments: #6c7086;
+    --text-highlight-0: #b4befe;
+    --text-highlight-1: #89b4fa;
+    --text-highlight-2: #cba6f7;
+    --text-highlight-3: #94e2d5;
+    --text-highlight-4: #f9e2af;
+    --text-highlight-5: #a6e3a1;
+    --note-color: #a6e3a1;
+    --tip-color: #89b4fa;
+    --important-color: #cba6f7;
+    --warning-color: #f38ba8;
+    --caution-color: #f9e2af;
+    --logo-mode: url('/res/colors/logo-catppuccin-mocha.svg');
+    --font-family-swap: Latin Modern;
+}
+
+:root[data-theme="night-dracula"] {
+    --background-image: #282a36;
+    --background-color-0: #282a36;
+    --background-color-1: #44475a;
+    --color: #f8f8f2;
+    --color-comments: #6272a4;
+    --text-highlight-0: #ff79c6;
+    --text-highlight-1: #8be9fd;
+    --text-highlight-2: #bd93f9;
+    --text-highlight-3: #50fa7b;
+    --text-highlight-4: #ffb86c;
+    --text-highlight-5: #f1fa8c;
+    --note-color: #50fa7b;
+    --tip-color: #8be9fd;
+    --important-color: #bd93f9;
+    --warning-color: #ff79c6;
+    --caution-color: #f1fa8c;
+    --logo-mode: url('/res/colors/logo-dracula.svg');
+    --font-family-swap: Latin Modern;
+}

@@ -1,0 +1,23 @@
+.logo-container
+{
+    max-width: 45rem;
+    min-width: 8rem;
+    height: 7rem;
+    margin: auto;
+    position: centre;
+}
+
+.inner-logo-container
+{
+    width: 20%;
+    min-width: 8rem;
+    height: 8rem;
+    display: block;
+    align-items: center;
+    margin: auto;
+    background-image: var(--logo-mode);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+

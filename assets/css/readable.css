@@ -1,0 +1,285 @@
+/* readable.css 1.1.0, licensed 0BSD */
+
+/* Font family support */
+html, html[data-font-family="serif"] {
+  --font-family: serif;
+}
+html[data-font-family="sans-serif"] {
+  --font-family: sans-serif;
+}
+html[data-font-family="monospace"] {
+  --font-family: monospace;
+}
+
+/* Color scheme support */
+html, html[data-theme="light"] {
+  --background-color: snow;
+  --color: #000;
+}
+html[data-high-contrast="on"], html[data-theme="light"][data-high-contrast="on"] {
+	--background-color: #fff;
+}
+
+html[data-theme="dark"] {
+  --background-color: #1f272d;
+  --color: #fff;
+}
+html[data-theme="dark"][data-high-contrast="on"] {
+	--background-color: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    --background-color: #222830;
+    --color: #fff;
+  }
+	html[data-high-contrast="on"] {
+		--background-color: #000;
+	}
+}
+
+@media (prefers-contrast: more) {
+	:is(html, html[data-theme="light"]):not([data-high-contrast="off"]) {
+		--background-color: #fff;
+	}
+
+	html[data-theme="dark"]:not([data-high-contrast="off"]) {
+		--background-color: #000;
+	}
+}
+
+/* Generic styles */
+:root {
+  --column-width: 67ch;
+  --form-width: 50ch;
+  --line-width: 0.125rem;
+  --line-height: 1.5;
+
+  --one-line: calc(var(--line-height) * 1rem);
+  --half-line: calc(var(--one-line) * 0.5);
+
+  font-family: var(--font-family);
+
+  background-color: var(--background-color);
+  color: var(--color);
+}
+
+a {
+  color: inherit;
+}
+
+a:active {
+  color: red;
+}
+
+header, footer, h1, h2 {
+  text-align: center;
+}
+
+footer:not(.exclude) {
+  border-top: var(--line-width) solid;
+}
+
+summary {
+  cursor: pointer;
+}
+
+blockquote:not(.exclude) {
+  padding-left: var(--one-line);
+  border-left: var(--line-width) solid;
+}
+
+ul, ol {
+  padding-left: calc(var(--line-height) * 2rem);
+}
+
+:is(body, article, main, figure) > :is(img, video):not(.exclude) {
+  max-width: 100%;
+}
+
+figure:not(.exclude) {
+  text-align: center;
+}
+
+figure:not(.exclude) > * + figcaption {
+  margin-top: 0;
+  font-style: italic;
+}
+
+article aside:not(.exclude) {
+  border: var(--line-width) solid;
+  padding: 0 var(--one-line);
+  border-radius: var(--half-line);
+}
+
+pre {
+  max-width: 100%;
+  overflow: auto;
+}
+
+hr {
+  color: inherit;
+  border: 0;
+  border-top: var(--line-width) solid;
+}
+
+/* Vertical Rhythm */
+p, ul, ol, figcaption, nav, td, th, label {
+  line-height: var(--line-height);
+}
+
+h1, h2, h3, h4, h5, h6, p, blockquote, hr, footer, header, nav, figure, figcaption, :is(ul, ol):not(li > *), :is(body, article, main) > :is(img, video, details):not(.exclude), table, article > aside, article > aside {
+  margin: var(--one-line) 0;
+}
+
+/* Headings */
+
+header h1 {
+  font-weight: normal;
+}
+
+h1, h2 {
+  line-height: calc(var(--line-height) * 2rem);
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+}
+
+h3, h4, h5, h6 {
+  line-height: var(--one-line);
+  padding-top: calc(var(--line-height) * 0.75rem);
+  margin-bottom: calc(var(--line-height) * 0.25rem);
+}
+
+:is(h3, h4, h5, h6) + * {
+  margin-top: 0;
+}
+
+/* Navbar */
+nav:not(.exclude:not([data-style]), [data-style="none"]) { /* This styling only affects the first nav element that is the direct child of the body */
+  text-align: center;
+  border-width: var(--line-width) 0;
+  border-style: solid;
+  line-height: var(--line-height);
+  display: flex;
+  flex-flow: row wrap;
+}
+
+nav:not(.exclude:not([data-style]), [data-style="none"]) > * {
+  flex-grow: 1;
+  margin: calc((var(--line-height) * 0.5rem) - var(--line-width)) var(--half-line); /* Put half a line's height on both top and bottom, then remove the width of the border */
+  text-transform: uppercase;
+}
+
+nav[data-style="blockout"],
+nav:is([data-style="boxes"], [data-style="roundesque"]) a:is(:hover, :focus) {
+	background-color: var(--color);
+	color: var(--background-color);
+}
+
+nav[data-style="blockout"] a {
+	text-decoration: none;
+}
+
+nav[data-style="blockout"] a:is(:hover, :focus) {
+	background-color: var(--background-color);
+	color: var(--color);
+}
+
+nav[data-style]:is([data-style="boxes"], [data-style="roundesque"]) {
+	border: 0;
+}
+
+nav:is([data-style="boxes"], [data-style="roundesque"]) a {
+	text-decoration: none;
+	border: var(--line-width) solid;
+}
+
+nav[data-style="roundesque"] a {
+	border-radius: calc(0.25 * var(--one-line));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  nav[data-style="classy"] span > a {
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  nav[data-style="classy"] span > a::after {
+    content: '';
+    width: 0;
+    height: var(--line-width);
+    display: block;
+    background: var(--color);
+    transition: 150ms;
+  }
+
+  nav[data-style="classy"] span > a:is(:hover, :focus)::after {
+    width: 100%;
+  }
+}
+
+/* Column */
+body {
+  margin: 0 auto;
+  width: min(95%, var(--column-width));
+}
+
+/* Justification (default off; use data-justify="on" on <html> to enable) */
+/* 67ch (var(--column-width) / 95% (column max-width) === 70.526315789ch */
+@media (min-width: 70.5ch) {
+  [data-justify="on"] body {
+    text-align: justify;
+    text-justify: inter-character;
+  }
+}
+
+/* Tables */
+table:not(.exclude) {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  border-collapse: collapse;
+}
+
+table:not(.exclude) :is(td, th) {
+  padding: calc(var(--line-height) * 0.25rem);
+  border: var(--line-width) solid;
+}
+
+table:not(.exclude) td {
+  word-wrap: break-word;
+}
+
+/* Forms */
+form {
+  max-width: var(--form-width)
+}
+
+form:not(.exclude) :is(label:not(input:is([type="checkbox"], [type="radio"]) + label), input:not([type="checkbox"], [type="radio"]), textarea, select) {
+  display: block;
+  margin: var(--half-line) 0;
+}
+
+form:not(.exclude) :is(input:not([type="checkbox"], [type="radio"]), textarea, select), button {
+  box-sizing: border-box;
+  padding: var(--half-line);
+  background: transparent;
+  border: var(--line-width) solid;
+  color: inherit;
+  font: inherit;
+  width: 100%;
+}
+
+button {
+	width: initial;
+}
+
+form:not(.exclude) label:not(input:is([type="checkbox"], [type="radio"]) + label) {
+  font-weight: bold;
+}

@@ -1,0 +1,698 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><title>pwn::musings</title><link href=/assets/css/fonts.css rel=stylesheet><link href=/assets/css/themes.css rel=stylesheet><link href=/assets/css/readable.css rel=stylesheet><link href=/assets/css/global.css rel=stylesheet><link href=/assets/css/logo.css rel=stylesheet><link href=/assets/css/genre/Guides.css rel=stylesheet><script defer src=/assets/js/themeSelector.js></script><link href=https://pwnwriter.me/atom.xml rel=alternate title=RSS type=application/atom+xml><meta content=Guides property=og:type><meta content=pwnwriter.me property=og:site_name><meta content=https://pwnwriter.me/res/thumbnail-light.png property=og:image><title>Install NixOS on any VPS</title><meta content="Install NixOS on any VPS" name=og:title><meta content="
+My company has recently provided me with a VPS to test things before deploying
+them to production. This is a great opportunity for me to push the envelope and
+use Nix extensively. 
+While most VPS providers don't offer Nix as a default OS installation option,
+there is a workaround using nixos-anywhere. In this post, I'll walk you
+through how to install NixOS on any VPS. 
+
+PS: I'm using hetzner vps, already running an ubuntu iso.
+
+How
+Kexec is a system call that allows you to load and boot into a new kernel
+directly from the currently running kernel. We will use it to boot into our
+minimal install system without needing a flash drive. Additionally,
+nixos-anywhere allows us to automatically format and
+partition using disko declaratively, and install the OS.
+Requirements:
+
+A nix(os) system
+Root access over the server
+1 gigs of RAM
+1 cores of cpu
+
+Configuration
+We'll be using flakes to define our overall nixos config.
+The file tree structure should look like this below.
+$ tree .
+   nixos-on-vps
+   ├── configuration.nix
+   ├── disk-config.nix
+   └── flake.nix
+
+
+flake.lock is similar to cargo.lock, package.json, lazy-lock.json it locks the package git rev hash.
+configuration.nix is used to define our configuration for the nixos.
+disk-config.nix is to define our disko config 
+
+The initial flake.nix skeleton look like this
+{
+  inputs = {
+
+  };
+
+  outputs = { ... }: {
+
+  };
+}
+
+
+Inside flake.nix, we'll add our input repository url, nixpkgs and disko.
+{
+  inputs = {
+    nixpkgs.url = &ampquot;github:nixos/nixpkgs/nixpkgs-unstable&ampquot;;
+    disko.url = &ampquot;github:nix-community/disko&ampquot;;
+    disko.inputs.nixpkgs.follows = &ampquot;nixpkgs&ampquot;;
+  };
+
+  outputs = {  ... }: {
+
+  };
+}
+
+and then we'll define our output  servers. For this example, i'm using my
+server name as wolf, you can name yours anything.
+{
+  inputs = {
+    nixpkgs.url = &ampquot;github:nixos/nixpkgs/nixpkgs-unstable&ampquot;;
+    disko.url = &ampquot;github:nix-community/disko&ampquot;;
+    disko.inputs.nixpkgs.follows = &ampquot;nixpkgs&ampquot;;
+  };
+
+  outputs = { nixpkgs, disko, ... }: {
+    nixosConfigurations.wolf = nixpkgs.lib.nixosSystem { #FIXME: change server name
+      system = &ampquot;x86_64-linux&ampquot;; # FIXME: Change arch
+      modules = [
+        disko.nixosModules.disko
+        ./configuration.nix
+      ];
+    };
+  };
+}
+
+
+My server is x86_64-linux you'll want to change that accordingly. 
+
+I'm using the default example disk config from disko. It'll create boot
+and root partitions. I also recommend using the default unless you explicitly
+want to change. You'll want to change the device name, to know run $ lsblk 
+
+disk-config.nix
+
+{ lib, ... }:
+{
+  disko.devices = {
+    disk.disk1 = {
+      device = lib.mkDefault &ampquot;/dev/sda&ampquot;; # FIXME: do lsblk  and change it to your&amp#39;s
+      type = &ampquot;disk&ampquot;;
+      content = {
+        type = &ampquot;gpt&ampquot;;
+        partitions = {
+          boot = {
+            name = &ampquot;boot&ampquot;;
+            size = &ampquot;1M&ampquot;;
+            type = &ampquot;EF02&ampquot;;
+          };
+          esp = {
+            name = &ampquot;ESP&ampquot;;
+            size = &ampquot;500M&ampquot;;
+            type = &ampquot;EF00&ampquot;;
+            content = {
+              type = &ampquot;filesystem&ampquot;;
+              format = &ampquot;vfat&ampquot;;
+              mountpoint = &ampquot;/boot&ampquot;;
+            };
+          };
+          root = {
+            name = &ampquot;root&ampquot;;
+            size = &ampquot;100%&ampquot;;
+            content = {
+              type = &ampquot;lvm_pv&ampquot;;
+              vg = &ampquot;pool&ampquot;;
+            };
+          };
+        };
+      };
+    };
+    lvm_vg = {
+      pool = {
+        type = &ampquot;lvm_vg&ampquot;;
+        lvs = {
+          root = {
+            size = &ampquot;100%FREE&ampquot;;
+            content = {
+              type = &ampquot;filesystem&ampquot;;
+              format = &ampquot;ext4&ampquot;;
+              mountpoint = &ampquot;/&ampquot;;
+              mountOptions = [
+                &ampquot;defaults&ampquot;
+              ];
+            };
+          };
+        };
+      };
+    };
+  };
+}
+
+Now the configuration part.
+
+configuration.nix
+
+We'll first import qemu-guest module since it's a virtual machine.
+{ modulesPath, config, lib, pkgs, ... }: {
+  imports = [
+    (modulesPath + &ampquot;/installer/scan/not-detected.nix&ampquot;)
+    (modulesPath + &ampquot;/profiles/qemu-guest.nix&ampquot;)
+    ./disk-config.nix
+  ];
+  system.stateVersion = &ampquot;24.05&ampquot;;
+}
+
+I'll be using grub as bootloader.
+{
+  boot.loader.grub = {
+        efiSupport = true;
+        efiInstallAsRemovable = true;
+    };
+}
+
+Openssh is necessary for us to be able to ssh into the new server.
+{
+  services.openssh.enable = true;
+  users.users.root.openssh.authorizedKeys.keys = [
+    &ampquot;You&amp#39;re public ssh key&ampquot; #FIXME: Add your ssh public key
+  ];
+
+You can define aditional packages to install as follows.
+{
+environment.systemPackages = map lib.lowPrio [
+    pkgs.curl # FIXME: define your more packages here
+    pkgs.gitMinimal
+  ];
+}
+
+Now, our final configuration.nix should look like this.
+{ modulesPath, config, lib, pkgs, ... }: {
+  imports = [
+    (modulesPath + &ampquot;/installer/scan/not-detected.nix&ampquot;)
+    (modulesPath + &ampquot;/profiles/qemu-guest.nix&ampquot;)
+    ./disk-config.nix
+  ];
+  boot.loader.grub = {
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+  };
+  services.openssh.enable = true;
+
+  environment.systemPackages = map lib.lowPrio [
+    pkgs.curl
+    pkgs.gitMinimal
+  ];
+
+  users.users.root.openssh.authorizedKeys.keys = [
+    &ampquot;You&amp#39;re public ssh key&ampquot;
+  ];
+
+  system.stateVersion = &ampquot;24.05&ampquot;;
+}
+
+Install the os
+Now, we'll have to run our flake to install nixos on the vps.
+ nix run github:nix-community/nixos-anywhere -- --flake .#wolf root@&amplt;server-ip&ampgt;
+
+It'll ask for the root password on installation.
+
+
+Congratulations!! The nixos has been installed successfully. You should be able to just edit the configuration and run 
+sudo nixos-rebuild switch --flake .#wolf
+
+the other time on any changes.
+Aditional tips...
+You can use justfile to make this script running easy
+set shell := [&ampquot;zsh&ampquot;, &ampquot;-c&ampquot;]
+
+_default:
+    @just -l
+
+alias g := gens
+alias c := clean
+alias r := rebuild
+
+# lists build generations
+gens:
+    @echo &ampquot;Listing build generations &ampquot;
+    @nix-env --list-generations
+
+# cleans up the nix garbage
+clean:
+    @echo &ampquot;Cleaning up unused Nix store items&ampquot;
+    @sudo nix-collect-garbage -d
+
+# Builds the serer
+rebuild:
+    @echo &ampquot;Rebuilding server configuration&ampquot;
+    @sudo nixos-rebuild switch --flake .#wolf
+
+The recipe should look like this
+$ just
+Available recipes:
+    clean   # cleans up the nix garbage
+    c       # alias for `clean`
+    gens    # lists build generations
+    g       # alias for `gens`
+    rebuild # Builds the serer
+    r       # alias for `rebuild`
+
+Now, rebuild the os with just r(ebuild)
+Well, it's this for now, I'll see you in the next one!
+
+" name=description><meta content="
+My company has recently provided me with a VPS to test things before deploying
+them to production. This is a great opportunity for me to push the envelope and
+use Nix extensively. 
+While most VPS providers don't offer Nix as a default OS installation option,
+there is a workaround using nixos-anywhere. In this post, I'll walk you
+through how to install NixOS on any VPS. 
+
+PS: I'm using hetzner vps, already running an ubuntu iso.
+
+How
+Kexec is a system call that allows you to load and boot into a new kernel
+directly from the currently running kernel. We will use it to boot into our
+minimal install system without needing a flash drive. Additionally,
+nixos-anywhere allows us to automatically format and
+partition using disko declaratively, and install the OS.
+Requirements:
+
+A nix(os) system
+Root access over the server
+1 gigs of RAM
+1 cores of cpu
+
+Configuration
+We'll be using flakes to define our overall nixos config.
+The file tree structure should look like this below.
+$ tree .
+   nixos-on-vps
+   ├── configuration.nix
+   ├── disk-config.nix
+   └── flake.nix
+
+
+flake.lock is similar to cargo.lock, package.json, lazy-lock.json it locks the package git rev hash.
+configuration.nix is used to define our configuration for the nixos.
+disk-config.nix is to define our disko config 
+
+The initial flake.nix skeleton look like this
+{
+  inputs = {
+
+  };
+
+  outputs = { ... }: {
+
+  };
+}
+
+
+Inside flake.nix, we'll add our input repository url, nixpkgs and disko.
+{
+  inputs = {
+    nixpkgs.url = &ampquot;github:nixos/nixpkgs/nixpkgs-unstable&ampquot;;
+    disko.url = &ampquot;github:nix-community/disko&ampquot;;
+    disko.inputs.nixpkgs.follows = &ampquot;nixpkgs&ampquot;;
+  };
+
+  outputs = {  ... }: {
+
+  };
+}
+
+and then we'll define our output  servers. For this example, i'm using my
+server name as wolf, you can name yours anything.
+{
+  inputs = {
+    nixpkgs.url = &ampquot;github:nixos/nixpkgs/nixpkgs-unstable&ampquot;;
+    disko.url = &ampquot;github:nix-community/disko&ampquot;;
+    disko.inputs.nixpkgs.follows = &ampquot;nixpkgs&ampquot;;
+  };
+
+  outputs = { nixpkgs, disko, ... }: {
+    nixosConfigurations.wolf = nixpkgs.lib.nixosSystem { #FIXME: change server name
+      system = &ampquot;x86_64-linux&ampquot;; # FIXME: Change arch
+      modules = [
+        disko.nixosModules.disko
+        ./configuration.nix
+      ];
+    };
+  };
+}
+
+
+My server is x86_64-linux you'll want to change that accordingly. 
+
+I'm using the default example disk config from disko. It'll create boot
+and root partitions. I also recommend using the default unless you explicitly
+want to change. You'll want to change the device name, to know run $ lsblk 
+
+disk-config.nix
+
+{ lib, ... }:
+{
+  disko.devices = {
+    disk.disk1 = {
+      device = lib.mkDefault &ampquot;/dev/sda&ampquot;; # FIXME: do lsblk  and change it to your&amp#39;s
+      type = &ampquot;disk&ampquot;;
+      content = {
+        type = &ampquot;gpt&ampquot;;
+        partitions = {
+          boot = {
+            name = &ampquot;boot&ampquot;;
+            size = &ampquot;1M&ampquot;;
+            type = &ampquot;EF02&ampquot;;
+          };
+          esp = {
+            name = &ampquot;ESP&ampquot;;
+            size = &ampquot;500M&ampquot;;
+            type = &ampquot;EF00&ampquot;;
+            content = {
+              type = &ampquot;filesystem&ampquot;;
+              format = &ampquot;vfat&ampquot;;
+              mountpoint = &ampquot;/boot&ampquot;;
+            };
+          };
+          root = {
+            name = &ampquot;root&ampquot;;
+            size = &ampquot;100%&ampquot;;
+            content = {
+              type = &ampquot;lvm_pv&ampquot;;
+              vg = &ampquot;pool&ampquot;;
+            };
+          };
+        };
+      };
+    };
+    lvm_vg = {
+      pool = {
+        type = &ampquot;lvm_vg&ampquot;;
+        lvs = {
+          root = {
+            size = &ampquot;100%FREE&ampquot;;
+            content = {
+              type = &ampquot;filesystem&ampquot;;
+              format = &ampquot;ext4&ampquot;;
+              mountpoint = &ampquot;/&ampquot;;
+              mountOptions = [
+                &ampquot;defaults&ampquot;
+              ];
+            };
+          };
+        };
+      };
+    };
+  };
+}
+
+Now the configuration part.
+
+configuration.nix
+
+We'll first import qemu-guest module since it's a virtual machine.
+{ modulesPath, config, lib, pkgs, ... }: {
+  imports = [
+    (modulesPath + &ampquot;/installer/scan/not-detected.nix&ampquot;)
+    (modulesPath + &ampquot;/profiles/qemu-guest.nix&ampquot;)
+    ./disk-config.nix
+  ];
+  system.stateVersion = &ampquot;24.05&ampquot;;
+}
+
+I'll be using grub as bootloader.
+{
+  boot.loader.grub = {
+        efiSupport = true;
+        efiInstallAsRemovable = true;
+    };
+}
+
+Openssh is necessary for us to be able to ssh into the new server.
+{
+  services.openssh.enable = true;
+  users.users.root.openssh.authorizedKeys.keys = [
+    &ampquot;You&amp#39;re public ssh key&ampquot; #FIXME: Add your ssh public key
+  ];
+
+You can define aditional packages to install as follows.
+{
+environment.systemPackages = map lib.lowPrio [
+    pkgs.curl # FIXME: define your more packages here
+    pkgs.gitMinimal
+  ];
+}
+
+Now, our final configuration.nix should look like this.
+{ modulesPath, config, lib, pkgs, ... }: {
+  imports = [
+    (modulesPath + &ampquot;/installer/scan/not-detected.nix&ampquot;)
+    (modulesPath + &ampquot;/profiles/qemu-guest.nix&ampquot;)
+    ./disk-config.nix
+  ];
+  boot.loader.grub = {
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+  };
+  services.openssh.enable = true;
+
+  environment.systemPackages = map lib.lowPrio [
+    pkgs.curl
+    pkgs.gitMinimal
+  ];
+
+  users.users.root.openssh.authorizedKeys.keys = [
+    &ampquot;You&amp#39;re public ssh key&ampquot;
+  ];
+
+  system.stateVersion = &ampquot;24.05&ampquot;;
+}
+
+Install the os
+Now, we'll have to run our flake to install nixos on the vps.
+ nix run github:nix-community/nixos-anywhere -- --flake .#wolf root@&amplt;server-ip&ampgt;
+
+It'll ask for the root password on installation.
+
+
+Congratulations!! The nixos has been installed successfully. You should be able to just edit the configuration and run 
+sudo nixos-rebuild switch --flake .#wolf
+
+the other time on any changes.
+Aditional tips...
+You can use justfile to make this script running easy
+set shell := [&ampquot;zsh&ampquot;, &ampquot;-c&ampquot;]
+
+_default:
+    @just -l
+
+alias g := gens
+alias c := clean
+alias r := rebuild
+
+# lists build generations
+gens:
+    @echo &ampquot;Listing build generations &ampquot;
+    @nix-env --list-generations
+
+# cleans up the nix garbage
+clean:
+    @echo &ampquot;Cleaning up unused Nix store items&ampquot;
+    @sudo nix-collect-garbage -d
+
+# Builds the serer
+rebuild:
+    @echo &ampquot;Rebuilding server configuration&ampquot;
+    @sudo nixos-rebuild switch --flake .#wolf
+
+The recipe should look like this
+$ just
+Available recipes:
+    clean   # cleans up the nix garbage
+    c       # alias for `clean`
+    gens    # lists build generations
+    g       # alias for `gens`
+    rebuild # Builds the serer
+    r       # alias for `rebuild`
+
+Now, rebuild the os with just r(ebuild)
+Well, it's this for now, I'll see you in the next one!
+
+" name=og:description><link rel="shortcut icon" href=/res/logo.svg type=image/x-icon><meta content="width=device-width,initial-scale=1" name=viewport><meta content="rgb(253, 246, 227)" name=theme-color><link href=https://github.com/pwnwriter rel=me><link href=mailto:hi@pwnwriter.me rel=me><link href=https://webmention.io/pwnwriter.me/webmention rel=webmention><link href=https://webmention.io/pwnwriter.me/xmlrpc rel=pingback><body onload="updateThemeSelector(); updateLinkSelector();"><nav data-style=classy><span class=main-li><a href=/>Main</a></span><span><a href=/writings>Writings</a></span><span><a href=/syndications>POSSE</a></span><span><a href=/more/pwnware>pwnware</a></span></nav><section class=section-body><div class=container><div class=pagedate><code class=dateandtag>2024-07-19</code><code class=dateandtag>Genre: Guides</code></div><div class=section><h1 class=title>Install NixOS on any VPS</h1><img alt="Nix Pill" src=/images/nix-hetzner/nix-pills.png style=width:15rem><p>My company has recently provided me with a VPS to test things before deploying them to production. This is a great opportunity for me to push the envelope and use Nix extensively.<p>While most VPS providers don't offer Nix as a default OS installation option, there is a workaround using <a href=https://github.com/nix-community/nixos-anywhere>nixos-anywhere</a>. In this post, I'll walk you through how to install NixOS on any VPS.<blockquote><p>PS: I'm using <code>hetzner</code> vps, already running an ubuntu iso.</blockquote><h2 id=how>How</h2><p><a href=https://wiki.archlinux.org/title/kexec>Kexec</a> is a system call that allows you to load and boot into a new kernel directly from the currently running kernel. We will use it to boot into our minimal install system without needing a flash drive. Additionally, <a href=https://github.com/nix-community/nixos-anywhere>nixos-anywhere</a> allows us to automatically format and partition using <a href=https://github.com/nix-community/disko>disko</a> declaratively, and install the OS.<p>Requirements:<ul><li>A nix(os) system<li>Root access over the server<li>1 gigs of RAM<li>1 cores of cpu</ul><h2 id=configuration>Configuration</h2><p>We'll be using <code>flakes</code> to define our overall <code>nixos</code> config.<p>The file tree structure should look like this below.<pre class=language-bash data-lang=bash style=background:#1e1e2e;color:#cdd6f4><code class=language-bash data-lang=bash><span style=font-style:italic;color:#89b4fa>$</span><span> tree .
+</span><span>   </span><span style=font-style:italic;color:#89b4fa>nixos-on-vps
+</span><span>   </span><span style=font-style:italic;color:#89b4fa>├──</span><span> configuration.nix
+</span><span>   </span><span style=font-style:italic;color:#89b4fa>├──</span><span> disk-config.nix
+</span><span>   </span><span style=font-style:italic;color:#89b4fa>└──</span><span> flake.nix
+</span></code></pre><ul><li><code>flake.lock</code> is similar to <code>cargo.lock,</code> <code>package.json,</code> <code>lazy-lock.json</code> it locks the package git rev hash.<li><code>configuration.nix</code> is used to define our configuration for the nixos.<li><code>disk-config.nix</code> is to define our disko config</ul><p>The initial <code>flake.nix</code> skeleton look like this<pre class=language-nix data-lang=nix style=background:#1e1e2e;color:#cdd6f4><code class=language-nix data-lang=nix><span>{
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>inputs </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>
+</span><span>  }</span><span style=color:#94e2d5>;
+</span><span>
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>outputs </span><span style=font-weight:700;color:#89dceb>= </span><span>{ </span><span style=font-weight:700;color:#89dceb>... </span><span>}: {
+</span><span>
+</span><span>  }</span><span style=color:#94e2d5>;
+</span><span>}
+</span><span>
+</span></code></pre><p>Inside <code>flake.nix</code>, we'll add our input repository url, <code>nixpkgs</code> and <code>disko</code>.<pre class=language-nix data-lang=nix style=background:#1e1e2e;color:#cdd6f4><code class=language-nix data-lang=nix><span>{
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>inputs </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>nixpkgs</span><span>.</span><span style=font-style:italic;color:#cba6f7>url </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"github:nixos/nixpkgs/nixpkgs-unstable"</span><span style=color:#94e2d5>;
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>disko</span><span>.</span><span style=font-style:italic;color:#cba6f7>url </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"github:nix-community/disko"</span><span style=color:#94e2d5>;
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>disko</span><span>.</span><span style=font-style:italic;color:#cba6f7>inputs</span><span>.</span><span style=font-style:italic;color:#cba6f7>nixpkgs</span><span>.</span><span style=font-style:italic;color:#cba6f7>follows </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"nixpkgs"</span><span style=color:#94e2d5>;
+</span><span>  }</span><span style=color:#94e2d5>;
+</span><span>
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>outputs </span><span style=font-weight:700;color:#89dceb>= </span><span>{  </span><span style=font-weight:700;color:#89dceb>... </span><span>}: {
+</span><span>
+</span><span>  }</span><span style=color:#94e2d5>;
+</span><span>}
+</span></code></pre><p>and then we'll define our output servers. For this example, i'm using my server name as <code>wolf</code>, you can name yours anything.<pre class=language-nix data-lang=nix style=background:#1e1e2e;color:#cdd6f4><code class=language-nix data-lang=nix><span>{
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>inputs </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>nixpkgs</span><span>.</span><span style=font-style:italic;color:#cba6f7>url </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"github:nixos/nixpkgs/nixpkgs-unstable"</span><span style=color:#94e2d5>;
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>disko</span><span>.</span><span style=font-style:italic;color:#cba6f7>url </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"github:nix-community/disko"</span><span style=color:#94e2d5>;
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>disko</span><span>.</span><span style=font-style:italic;color:#cba6f7>inputs</span><span>.</span><span style=font-style:italic;color:#cba6f7>nixpkgs</span><span>.</span><span style=font-style:italic;color:#cba6f7>follows </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"nixpkgs"</span><span style=color:#94e2d5>;
+</span><span>  }</span><span style=color:#94e2d5>;
+</span><span>
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>outputs </span><span style=font-weight:700;color:#89dceb>= </span><span>{ </span><span style=font-style:italic;color:#f5e0dc>nixpkgs</span><span style=font-weight:700;color:#89dceb>, </span><span style=font-style:italic;color:#f5e0dc>disko</span><span style=font-weight:700;color:#89dceb>, ... </span><span>}: {
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>nixosConfigurations</span><span>.</span><span style=font-style:italic;color:#cba6f7>wolf </span><span style=font-weight:700;color:#89dceb>= </span><span style=font-style:italic;color:#f5e0dc>nixpkgs</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>lib</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>nixosSystem </span><span>{ </span><span style=font-style:italic;color:#6c7086>#</span><span style=font-weight:700;color:#eba0ac>FIXME</span><span style=font-style:italic;color:#6c7086>: change server name
+</span><span>      </span><span style=font-style:italic;color:#cba6f7>system </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"x86_64-linux"</span><span style=color:#94e2d5>; </span><span style=font-style:italic;color:#6c7086># </span><span style=font-weight:700;color:#eba0ac>FIXME</span><span style=font-style:italic;color:#6c7086>: Change arch
+</span><span>      </span><span style=font-style:italic;color:#cba6f7>modules </span><span style=font-weight:700;color:#89dceb>= </span><span>[
+</span><span>        </span><span style=font-style:italic;color:#f5e0dc>disko</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>nixosModules</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>disko
+</span><span>        </span><span style=color:#a6e3a1>./configuration.nix
+</span><span>      ]</span><span style=color:#94e2d5>;
+</span><span>    }</span><span style=color:#94e2d5>;
+</span><span>  }</span><span style=color:#94e2d5>;
+</span><span>}
+</span></code></pre><blockquote><p>My server is <code>x86_64-linux</code> you'll want to change that accordingly.</blockquote><p>I'm using the default example <code>disk</code> config from <code>disko</code>. It'll create <code>boot</code> and <code>root</code> partitions. I also recommend using the default unless you explicitly want to change. You'll want to change the device name, to know run <code>$ lsblk </code><ul><li><code>disk-config.nix</code></ul><pre class=language-nix data-lang=nix style=background:#1e1e2e;color:#cdd6f4><code class=language-nix data-lang=nix><span>{ </span><span style=font-style:italic;color:#f5e0dc>lib</span><span style=font-weight:700;color:#89dceb>, ... </span><span>}:
+</span><span>{
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>disko</span><span>.</span><span style=font-style:italic;color:#cba6f7>devices </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>disk</span><span>.</span><span style=font-style:italic;color:#cba6f7>disk1 </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>      </span><span style=font-style:italic;color:#cba6f7>device </span><span style=font-weight:700;color:#89dceb>= </span><span style=font-style:italic;color:#f5e0dc>lib</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>mkDefault </span><span style=color:#a6e3a1>"/dev/sda"</span><span style=color:#94e2d5>; </span><span style=font-style:italic;color:#6c7086># </span><span style=font-weight:700;color:#eba0ac>FIXME</span><span style=font-style:italic;color:#6c7086>: do lsblk  and change it to your's
+</span><span>      </span><span style=font-style:italic;color:#cba6f7>type </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"disk"</span><span style=color:#94e2d5>;
+</span><span>      </span><span style=font-style:italic;color:#cba6f7>content </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>        </span><span style=font-style:italic;color:#cba6f7>type </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"gpt"</span><span style=color:#94e2d5>;
+</span><span>        </span><span style=font-style:italic;color:#cba6f7>partitions </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>          </span><span style=font-style:italic;color:#cba6f7>boot </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>name </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"boot"</span><span style=color:#94e2d5>;
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>size </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"1M"</span><span style=color:#94e2d5>;
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>type </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"EF02"</span><span style=color:#94e2d5>;
+</span><span>          }</span><span style=color:#94e2d5>;
+</span><span>          </span><span style=font-style:italic;color:#cba6f7>esp </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>name </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"ESP"</span><span style=color:#94e2d5>;
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>size </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"500M"</span><span style=color:#94e2d5>;
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>type </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"EF00"</span><span style=color:#94e2d5>;
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>content </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>              </span><span style=font-style:italic;color:#cba6f7>type </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"filesystem"</span><span style=color:#94e2d5>;
+</span><span>              </span><span style=font-style:italic;color:#cba6f7>format </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"vfat"</span><span style=color:#94e2d5>;
+</span><span>              </span><span style=font-style:italic;color:#cba6f7>mountpoint </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"/boot"</span><span style=color:#94e2d5>;
+</span><span>            }</span><span style=color:#94e2d5>;
+</span><span>          }</span><span style=color:#94e2d5>;
+</span><span>          </span><span style=font-style:italic;color:#cba6f7>root </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>name </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"root"</span><span style=color:#94e2d5>;
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>size </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"100%"</span><span style=color:#94e2d5>;
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>content </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>              </span><span style=font-style:italic;color:#cba6f7>type </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"lvm_pv"</span><span style=color:#94e2d5>;
+</span><span>              </span><span style=font-style:italic;color:#cba6f7>vg </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"pool"</span><span style=color:#94e2d5>;
+</span><span>            }</span><span style=color:#94e2d5>;
+</span><span>          }</span><span style=color:#94e2d5>;
+</span><span>        }</span><span style=color:#94e2d5>;
+</span><span>      }</span><span style=color:#94e2d5>;
+</span><span>    }</span><span style=color:#94e2d5>;
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>lvm_vg </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>      </span><span style=font-style:italic;color:#cba6f7>pool </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>        </span><span style=font-style:italic;color:#cba6f7>type </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"lvm_vg"</span><span style=color:#94e2d5>;
+</span><span>        </span><span style=font-style:italic;color:#cba6f7>lvs </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>          </span><span style=font-style:italic;color:#cba6f7>root </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>size </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"100%FREE"</span><span style=color:#94e2d5>;
+</span><span>            </span><span style=font-style:italic;color:#cba6f7>content </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>              </span><span style=font-style:italic;color:#cba6f7>type </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"filesystem"</span><span style=color:#94e2d5>;
+</span><span>              </span><span style=font-style:italic;color:#cba6f7>format </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"ext4"</span><span style=color:#94e2d5>;
+</span><span>              </span><span style=font-style:italic;color:#cba6f7>mountpoint </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"/"</span><span style=color:#94e2d5>;
+</span><span>              </span><span style=font-style:italic;color:#cba6f7>mountOptions </span><span style=font-weight:700;color:#89dceb>= </span><span>[
+</span><span>                </span><span style=color:#a6e3a1>"defaults"
+</span><span>              ]</span><span style=color:#94e2d5>;
+</span><span>            }</span><span style=color:#94e2d5>;
+</span><span>          }</span><span style=color:#94e2d5>;
+</span><span>        }</span><span style=color:#94e2d5>;
+</span><span>      }</span><span style=color:#94e2d5>;
+</span><span>    }</span><span style=color:#94e2d5>;
+</span><span>  }</span><span style=color:#94e2d5>;
+</span><span>}
+</span></code></pre><p>Now the configuration part.<ul><li><code>configuration.nix</code></ul><p>We'll first import <code>qemu-guest</code> module since it's a virtual machine.<pre class=language-nix data-lang=nix style=background:#1e1e2e;color:#cdd6f4><code class=language-nix data-lang=nix><span>{ </span><span style=font-style:italic;color:#f5e0dc>modulesPath</span><span style=font-weight:700;color:#89dceb>, </span><span style=font-style:italic;color:#f5e0dc>config</span><span style=font-weight:700;color:#89dceb>, </span><span style=font-style:italic;color:#f5e0dc>lib</span><span style=font-weight:700;color:#89dceb>, </span><span style=font-style:italic;color:#f5e0dc>pkgs</span><span style=font-weight:700;color:#89dceb>, ... </span><span>}: {
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>imports </span><span style=font-weight:700;color:#89dceb>= </span><span>[
+</span><span>    (</span><span style=font-style:italic;color:#f5e0dc>modulesPath </span><span style=font-weight:700;color:#89dceb>+ </span><span style=color:#a6e3a1>"/installer/scan/not-detected.nix"</span><span>)
+</span><span>    (</span><span style=font-style:italic;color:#f5e0dc>modulesPath </span><span style=font-weight:700;color:#89dceb>+ </span><span style=color:#a6e3a1>"/profiles/qemu-guest.nix"</span><span>)
+</span><span>    </span><span style=color:#a6e3a1>./disk-config.nix
+</span><span>  ]</span><span style=color:#94e2d5>;
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>system</span><span>.</span><span style=font-style:italic;color:#cba6f7>stateVersion </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"24.05"</span><span style=color:#94e2d5>;
+</span><span>}
+</span></code></pre><p>I'll be using <code>grub</code> as bootloader.<pre class=language-nix data-lang=nix style=background:#1e1e2e;color:#cdd6f4><code class=language-nix data-lang=nix><span>{
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>boot</span><span>.</span><span style=font-style:italic;color:#cba6f7>loader</span><span>.</span><span style=font-style:italic;color:#cba6f7>grub </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>        </span><span style=font-style:italic;color:#cba6f7>efiSupport </span><span style=font-weight:700;color:#89dceb>= </span><span style=font-style:italic;color:#b4befe>true</span><span style=color:#94e2d5>;
+</span><span>        </span><span style=font-style:italic;color:#cba6f7>efiInstallAsRemovable </span><span style=font-weight:700;color:#89dceb>= </span><span style=font-style:italic;color:#b4befe>true</span><span style=color:#94e2d5>;
+</span><span>    }</span><span style=color:#94e2d5>;
+</span><span>}
+</span></code></pre><p><code>Openssh</code> is necessary for us to be able to ssh into the new server.<pre class=language-nix data-lang=nix style=background:#1e1e2e;color:#cdd6f4><code class=language-nix data-lang=nix><span>{
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>services</span><span>.</span><span style=font-style:italic;color:#cba6f7>openssh</span><span>.</span><span style=font-style:italic;color:#cba6f7>enable </span><span style=font-weight:700;color:#89dceb>= </span><span style=font-style:italic;color:#b4befe>true</span><span style=color:#94e2d5>;
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>users</span><span>.</span><span style=font-style:italic;color:#cba6f7>users</span><span>.</span><span style=font-style:italic;color:#cba6f7>root</span><span>.</span><span style=font-style:italic;color:#cba6f7>openssh</span><span>.</span><span style=font-style:italic;color:#cba6f7>authorizedKeys</span><span>.</span><span style=font-style:italic;color:#cba6f7>keys </span><span style=font-weight:700;color:#89dceb>= </span><span>[
+</span><span>    </span><span style=color:#a6e3a1>"You're public ssh key" </span><span style=font-style:italic;color:#6c7086>#</span><span style=font-weight:700;color:#eba0ac>FIXME</span><span style=font-style:italic;color:#6c7086>: Add your ssh public key
+</span><span>  ]</span><span style=color:#94e2d5>;
+</span></code></pre><p>You can define aditional packages to install as follows.<pre class=language-nix data-lang=nix style=background:#1e1e2e;color:#cdd6f4><code class=language-nix data-lang=nix><span>{
+</span><span style=font-style:italic;color:#cba6f7>environment</span><span>.</span><span style=font-style:italic;color:#cba6f7>systemPackages </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#89dceb>map </span><span style=font-style:italic;color:#f5e0dc>lib</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>lowPrio </span><span>[
+</span><span>    </span><span style=font-style:italic;color:#f5e0dc>pkgs</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>curl </span><span style=font-style:italic;color:#6c7086># </span><span style=font-weight:700;color:#eba0ac>FIXME</span><span style=font-style:italic;color:#6c7086>: define your more packages here
+</span><span>    </span><span style=font-style:italic;color:#f5e0dc>pkgs</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>gitMinimal
+</span><span>  ]</span><span style=color:#94e2d5>;
+</span><span>}
+</span></code></pre><p>Now, our final <code>configuration.nix</code> should look like this.<pre class=language-nix data-lang=nix style=background:#1e1e2e;color:#cdd6f4><code class=language-nix data-lang=nix><span>{ </span><span style=font-style:italic;color:#f5e0dc>modulesPath</span><span style=font-weight:700;color:#89dceb>, </span><span style=font-style:italic;color:#f5e0dc>config</span><span style=font-weight:700;color:#89dceb>, </span><span style=font-style:italic;color:#f5e0dc>lib</span><span style=font-weight:700;color:#89dceb>, </span><span style=font-style:italic;color:#f5e0dc>pkgs</span><span style=font-weight:700;color:#89dceb>, ... </span><span>}: {
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>imports </span><span style=font-weight:700;color:#89dceb>= </span><span>[
+</span><span>    (</span><span style=font-style:italic;color:#f5e0dc>modulesPath </span><span style=font-weight:700;color:#89dceb>+ </span><span style=color:#a6e3a1>"/installer/scan/not-detected.nix"</span><span>)
+</span><span>    (</span><span style=font-style:italic;color:#f5e0dc>modulesPath </span><span style=font-weight:700;color:#89dceb>+ </span><span style=color:#a6e3a1>"/profiles/qemu-guest.nix"</span><span>)
+</span><span>    </span><span style=color:#a6e3a1>./disk-config.nix
+</span><span>  ]</span><span style=color:#94e2d5>;
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>boot</span><span>.</span><span style=font-style:italic;color:#cba6f7>loader</span><span>.</span><span style=font-style:italic;color:#cba6f7>grub </span><span style=font-weight:700;color:#89dceb>= </span><span>{
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>efiSupport </span><span style=font-weight:700;color:#89dceb>= </span><span style=font-style:italic;color:#b4befe>true</span><span style=color:#94e2d5>;
+</span><span>    </span><span style=font-style:italic;color:#cba6f7>efiInstallAsRemovable </span><span style=font-weight:700;color:#89dceb>= </span><span style=font-style:italic;color:#b4befe>true</span><span style=color:#94e2d5>;
+</span><span>  }</span><span style=color:#94e2d5>;
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>services</span><span>.</span><span style=font-style:italic;color:#cba6f7>openssh</span><span>.</span><span style=font-style:italic;color:#cba6f7>enable </span><span style=font-weight:700;color:#89dceb>= </span><span style=font-style:italic;color:#b4befe>true</span><span style=color:#94e2d5>;
+</span><span>
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>environment</span><span>.</span><span style=font-style:italic;color:#cba6f7>systemPackages </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#89dceb>map </span><span style=font-style:italic;color:#f5e0dc>lib</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>lowPrio </span><span>[
+</span><span>    </span><span style=font-style:italic;color:#f5e0dc>pkgs</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>curl
+</span><span>    </span><span style=font-style:italic;color:#f5e0dc>pkgs</span><span style=font-weight:700;color:#89dceb>.</span><span style=font-style:italic;color:#f5e0dc>gitMinimal
+</span><span>  ]</span><span style=color:#94e2d5>;
+</span><span>
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>users</span><span>.</span><span style=font-style:italic;color:#cba6f7>users</span><span>.</span><span style=font-style:italic;color:#cba6f7>root</span><span>.</span><span style=font-style:italic;color:#cba6f7>openssh</span><span>.</span><span style=font-style:italic;color:#cba6f7>authorizedKeys</span><span>.</span><span style=font-style:italic;color:#cba6f7>keys </span><span style=font-weight:700;color:#89dceb>= </span><span>[
+</span><span>    </span><span style=color:#a6e3a1>"You're public ssh key"
+</span><span>  ]</span><span style=color:#94e2d5>;
+</span><span>
+</span><span>  </span><span style=font-style:italic;color:#cba6f7>system</span><span>.</span><span style=font-style:italic;color:#cba6f7>stateVersion </span><span style=font-weight:700;color:#89dceb>= </span><span style=color:#a6e3a1>"24.05"</span><span style=color:#94e2d5>;
+</span><span>}
+</span></code></pre><h2 id=install-the-os>Install the os</h2><p>Now, we'll have to run our flake to install nixos on the vps.<pre class=language-bash data-lang=bash style=background:#1e1e2e;color:#cdd6f4><code class=language-bash data-lang=bash><span> </span><span style=font-style:italic;color:#89b4fa>nix</span><span> run github:nix-community/nixos-anywhere</span><span style=font-weight:700;color:#89dceb> --</span><span> --flake .#wolf root@</span><span style=font-weight:700;color:#89dceb><</span><span>server-ip</span><span style=font-weight:700;color:#89dceb>>
+</span></code></pre><p>It'll ask for the root password on installation.<p><img alt src=/images/nix-hetzner/nix.png> <img alt src=/images/nix-hetzner/final.png><p>Congratulations!! The nixos has been installed successfully. You should be able to just edit the configuration and run<pre class=language-bash data-lang=bash style=background:#1e1e2e;color:#cdd6f4><code class=language-bash data-lang=bash><span style=font-style:italic;color:#89b4fa>sudo</span><span> nixos-rebuild switch</span><span style=font-style:italic;color:#f5e0dc> --flake</span><span> .#wolf
+</span></code></pre><p>the other time on any changes.<h2 id=aditional-tips>Aditional tips...</h2><p>You can use <code>justfile</code> to make this script running easy<pre class=language-Makefile data-lang=Makefile style=background:#1e1e2e;color:#cdd6f4><code class=language-Makefile data-lang=Makefile><span style=font-style:italic;color:#cdd6f4>set shell </span><span style=font-weight:700;color:#89dceb>:= </span><span style=color:#a6e3a1>["zsh", "-c"]
+</span><span>
+</span><span style=font-style:italic;color:#89b4fa>_default</span><span style=font-weight:700;color:#89dceb>:
+</span><span>    </span><span style=font-style:italic;color:#b4befe>@</span><span style=font-style:italic;color:#89b4fa>just</span><span style=font-style:italic;color:#f5e0dc> -l
+</span><span>
+</span><span style=font-style:italic;color:#cdd6f4>alias g </span><span style=font-weight:700;color:#89dceb>:= </span><span style=color:#a6e3a1>gens
+</span><span style=font-style:italic;color:#cdd6f4>alias c </span><span style=font-weight:700;color:#89dceb>:= </span><span style=color:#a6e3a1>clean
+</span><span style=font-style:italic;color:#cdd6f4>alias r </span><span style=font-weight:700;color:#89dceb>:= </span><span style=color:#a6e3a1>rebuild
+</span><span>
+</span><span style=font-style:italic;color:#6c7086># lists build generations
+</span><span style=font-style:italic;color:#89b4fa>gens</span><span style=font-weight:700;color:#89dceb>:
+</span><span>    </span><span style=font-style:italic;color:#b4befe>@</span><span style=color:#89dceb>echo </span><span style=color:#a6e3a1>"Listing build generations "
+</span><span>    </span><span style=font-style:italic;color:#b4befe>@</span><span style=font-style:italic;color:#89b4fa>nix-env</span><span style=font-style:italic;color:#f5e0dc> --list-generations
+</span><span>
+</span><span style=font-style:italic;color:#6c7086># cleans up the nix garbage
+</span><span style=font-style:italic;color:#89b4fa>clean</span><span style=font-weight:700;color:#89dceb>:
+</span><span>    </span><span style=font-style:italic;color:#b4befe>@</span><span style=color:#89dceb>echo </span><span style=color:#a6e3a1>"Cleaning up unused Nix store items"
+</span><span>    </span><span style=font-style:italic;color:#b4befe>@</span><span style=font-style:italic;color:#89b4fa>sudo</span><span> nix-collect-garbage</span><span style=font-style:italic;color:#f5e0dc> -d
+</span><span>
+</span><span style=font-style:italic;color:#6c7086># Builds the serer
+</span><span style=font-style:italic;color:#89b4fa>rebuild</span><span style=font-weight:700;color:#89dceb>:
+</span><span>    </span><span style=font-style:italic;color:#b4befe>@</span><span style=color:#89dceb>echo </span><span style=color:#a6e3a1>"Rebuilding server configuration"
+</span><span>    </span><span style=font-style:italic;color:#b4befe>@</span><span style=font-style:italic;color:#89b4fa>sudo</span><span> nixos-rebuild switch</span><span style=font-style:italic;color:#f5e0dc> --flake</span><span> .#wolf
+</span></code></pre><p>The recipe should look like this<pre class=language-bash data-lang=bash style=background:#1e1e2e;color:#cdd6f4><code class=language-bash data-lang=bash><span style=font-style:italic;color:#89b4fa>$</span><span> just
+</span><span style=font-style:italic;color:#89b4fa>Available</span><span> recipes:
+</span><span>    </span><span style=font-style:italic;color:#89b4fa>clean   </span><span style=font-style:italic;color:#6c7086># cleans up the nix garbage
+</span><span>    </span><span style=font-style:italic;color:#89b4fa>c       </span><span style=font-style:italic;color:#6c7086># alias for `clean`
+</span><span>    </span><span style=font-style:italic;color:#89b4fa>gens    </span><span style=font-style:italic;color:#6c7086># lists build generations
+</span><span>    </span><span style=font-style:italic;color:#89b4fa>g       </span><span style=font-style:italic;color:#6c7086># alias for `gens`
+</span><span>    </span><span style=font-style:italic;color:#89b4fa>rebuild </span><span style=font-style:italic;color:#6c7086># Builds the serer
+</span><span>    </span><span style=font-style:italic;color:#89b4fa>r       </span><span style=font-style:italic;color:#6c7086># alias for `rebuild`
+</span></code></pre><p>Now, rebuild the os with <code>just r(ebuild)</code><p>Well, it's this for now, I'll see you in the next one!</div></div></section><div class=hidden><a href=https://www.linkedin.com/in/pwnwriter rel=me>Linkedin</a></div><div class="hidden h-card"><img class="u-photo icon" alt=pwnwriter src=/res/thumbnail.png><a class="p-name u-url" href=https://pwnwriter.me>pwnwriter</a><p class=p-note>I make and break softwares professionally</div><footer><p class=codewithlove>This website does not collect your data.<span class=main-background>No languages models</span>were involved in writing the content here except where explicitly noted.<p class=footer-links><a href=/atom.xml>RSS</a> | <a href=https://github.com/pwnwriter.gpg>pgp::signature</a> | <a href=https://github.com/pwnwriter/wood target=_blank>Source Code</a></footer><ol id=themeSelector reversed></ol><script defer src=/assets/js/linkSelector.js></script><ol id=linkSelector></ol>

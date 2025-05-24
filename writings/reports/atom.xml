@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>pwn() - Reports</title>
+    <subtitle>I make and break softwares professionally</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pwnwriter.me/writings/reports/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pwnwriter.me"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-08-06T00:00:00+00:00</updated>
+    <id>https://pwnwriter.me/writings/reports/atom.xml</id>
+    <entry xml:lang="en">
+        <title>6 Months On the Job: My Takeaway</title>
+        <published>2024-08-06T00:00:00+00:00</published>
+        <updated>2024-08-06T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/job-experience/"/>
+        <id>https://pwnwriter.me/blog/job-experience/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/job-experience/">&lt;h3 id=&quot;background&quot;&gt;Background&lt;&#x2F;h3&gt;
+&lt;p&gt;After high school, I was at home with my parents, doing errands and
+self-learning while preparing for my &lt;strong&gt;USA&lt;&#x2F;strong&gt; visa interview. Out of the blue, a
+well-known company reached out with a job offer. Despite not getting the terms
+I hoped for, I decided to take the opportunity.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-job&quot;&gt;The job&lt;&#x2F;h3&gt;
+&lt;p&gt;There wasn&#x27;t anything specifically like working on just one domain. I used to
+manage linux server&#x27;s, providing technical support and so on.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;what-i-got&quot;&gt;what i got..?&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The best boys:&lt;&#x2F;p&gt;
+&lt;p&gt;It’s probably impossible to find teammates who are both incredibly helpful and equally supportive and encouraging at the same time.&lt;&#x2F;p&gt;
+&lt;p&gt;Gotta miss them 🫡&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;img alt=&quot;we&quot; src=&quot;&#x2F;images&#x2F;mulkot&#x2F;we.png&quot; style=&quot;width: 15rem; height: 20rem; object-fit: cover;&quot;&#x2F;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;A new opportunity :&lt;&#x2F;p&gt;
+&lt;p&gt;I was able to introduce &lt;a href=&quot;https:&#x2F;&#x2F;nixos.org&quot;&gt;&lt;code&gt;nix&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; across my teammates, Not
+just that but 3 of our production servers now use &lt;code&gt;nix&lt;&#x2F;code&gt; as a user level and
+&lt;code&gt;core&lt;&#x2F;code&gt; level. &lt;&#x2F;p&gt;
+&lt;p&gt;It was an absolutely fantastic opportunity for me to learn
+and apply Nix on servers according to user requirements, rather than just
+for personal projects. &lt;&#x2F;p&gt;
+&lt;p&gt;I believe that working to fulfill other’s needs teaches you more than
+working on personal projects alone.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;The Experience :&lt;&#x2F;p&gt;
+&lt;p&gt;While I’m a bit sad this is ending, we had an amazing time exploring different
+places. My first week alone was filled with tours and adventures. The office
+environment was incredibly friendly and helpful, which made the experience even
+better.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;div style=&quot;display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;&quot;&gt;
+    &lt;img alt=&quot;patan&quot; src=&quot;&#x2F;images&#x2F;mulkot&#x2F;patan.png&quot; style=&quot;width: 15rem; height: 20rem; object-fit: cover;&quot;&#x2F;&gt;
+    &lt;img alt=&quot;nix-mac&quot; src=&quot;&#x2F;images&#x2F;mulkot&#x2F;nix.png&quot; style=&quot;width: 15rem; height: 20rem; object-fit: cover;&quot;&#x2F;&gt;
+&lt;&#x2F;div&gt;
+&lt;h3 id=&quot;moving-on&quot;&gt;Moving on ...&lt;&#x2F;h3&gt;
+&lt;p&gt;I&#x27;ve my &lt;strong&gt;USA&lt;&#x2F;strong&gt; flight soon within a very few weeks. I took resign from the job
+but i miss the boys i met there. They were absolute amazing people. I wish to
+work with them later and forever.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Metislinux depreciation</title>
+        <published>2024-07-12T00:00:00+00:00</published>
+        <updated>2024-07-12T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/metislinux/"/>
+        <id>https://pwnwriter.me/blog/metislinux/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/metislinux/">&lt;p&gt;This!, exactly 2 years ago on my 18th birthday, I launched
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;metis-os&quot;&gt;&lt;code&gt;metislinux&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; a beautiful runit based linux distro. I had fun
+working on this project with a few other&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;orgs&#x2F;metis-os&#x2F;people&quot;&gt;&lt;code&gt;guys&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;MetisLinux was essentially my own desktop, featuring a GUI installer and three
+custom-managed package sources: &lt;em&gt;Andromeda, Cosmic, and Recon&lt;&#x2F;em&gt;. While working on
+this project, I received tremendous support from the Plan9 community on Matrix
+and many others. I wanna thank you guys wholeheartly &amp;lt;3.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;the-why&quot;&gt;The why&lt;&#x2F;h4&gt;
+&lt;p&gt;I&#x27;ve planed a lot to bring in metislinux. I&#x27;ve even wrote a package manager
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pwnwriter&#x2F;hysp&quot;&gt;hysp&lt;&#x2F;a&gt;, a custom bar for wayland &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;metis-os&#x2F;heliumbar&quot;&gt;heliumbar&lt;&#x2F;a&gt; in rust btw, but
+then i started working, I had to use &lt;code&gt;Apple silicon&lt;&#x2F;code&gt; for my work, had my
+universities starting soon. Balancing my personal life and the project has
+become increasingly challenging, making it difficult to continue the project
+and hence the project has been archived.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;the-future&quot;&gt;The future&lt;&#x2F;h4&gt;
+&lt;p&gt;Although the project will no longer receive updates, all our work remains
+available at &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;metis-os&quot;&gt;github&#x2F;metis-os&lt;&#x2F;a&gt; under the &lt;a href=&quot;https:&#x2F;&#x2F;opensource.org&#x2F;license&#x2F;mit&quot;&gt;MIT&lt;&#x2F;a&gt; License. The code,
+resources, and tools are free for you to use and build upon. Feel free to fork
+it, learn from it, or create something new.&lt;&#x2F;p&gt;
+&lt;p&gt;To everyone involved in Metislinux; whether you contributed code, reported bugs,
+shared feedback, or simply used it—thank you! Your support has been invaluable,
+and I couldn’t have achieved this without you.&lt;&#x2F;p&gt;
+&lt;!-- links--&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>My talk on owasp kathmandu 0x03</title>
+        <published>2023-04-25T00:00:00+00:00</published>
+        <updated>2023-04-25T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              pwnwriter
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pwnwriter.me/blog/owasp-meetup/"/>
+        <id>https://pwnwriter.me/blog/owasp-meetup/</id>
+        
+        <content type="html" xml:base="https://pwnwriter.me/blog/owasp-meetup/">&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;owasp.org&quot;&gt;OWASP&lt;&#x2F;a&gt; is a non-profit open-source foundation focused on application
+security. They have local and global &lt;a href=&quot;https:&#x2F;&#x2F;owasp.org&#x2F;chapters&#x2F;&quot;&gt;chapters&lt;&#x2F;a&gt; around the world
+aimed at improving community security. We also have a local chapter called
+OWASP Kathmandu, which organizes events to spread awareness within Nepal. I had
+the privilege to speak at OWASP Kathmandu 0x03, where I presented my tool,
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pwnwriter&#x2F;haylxon&quot;&gt;Halyxon&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;If you do not know what haylxon is, simple, it&#x27;s a tool to take screenshots of webpages 
+from terminal using chrome&#x27;s headless feature written in Rust! &lt;&#x2F;p&gt;
+&lt;p&gt;You can simply take a screenshot of a webpage as below!&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#1e1e2e;color:#cdd6f4;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;font-style:italic;color:#89b4fa;&quot;&gt;hxn&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#f5e0dc;&quot;&gt; -b &lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span&gt;path&#x2F;to&#x2F;chrome&#x2F;bin&lt;&#x2F;span&gt;&lt;span style=&quot;font-weight:bold;color:#89dceb;&quot;&gt;&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#94e2d5;&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt;u https:&#x2F;&#x2F;example.com
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;But wait, you could do that by just opening a browser and pressing some holy keys?&lt;&#x2F;p&gt;
+&lt;p&gt;I mean yeah? but what would you do when you have &lt;code&gt;hundreds&lt;&#x2F;code&gt; of urls, sub(domains) to take?&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;background&quot;&gt;Background&lt;&#x2F;h4&gt;
+&lt;p&gt;There were already tools like &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;RedSiege&#x2F;EyeWitness&quot;&gt;Eyewitness&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;sensepost&#x2F;gowitness&quot;&gt;Gowitness&lt;&#x2F;a&gt;, which I had used,
+but they either felt slow or lacked my personal touch. Since I wanted to learn
+Rust, it was the perfect time to start a new project, especially since I
+already had a basic knowledge of Rust.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;usages&quot;&gt;Usages&lt;&#x2F;h4&gt;
+&lt;p&gt;Haylxon comes with a lot of options now, reading urls from &lt;code&gt;stdin&lt;&#x2F;code&gt;, &lt;code&gt;defining ports&lt;&#x2F;code&gt;, &lt;code&gt;running arbitary javascript&lt;&#x2F;code&gt; and a lot more.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;owasp&#x2F;haylxon.png&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;You can pass a file containing a list of urls, and define height, width and
+even a delayed screenshot is possible. &lt;&#x2F;p&gt;
+&lt;p&gt;One of the most interesting usages of this tools is that, you can run it on &lt;code&gt;github&lt;&#x2F;code&gt; actions 
+to take screenshot of your subdomain, zip that out upload to &lt;a href=&quot;https:&#x2F;&#x2F;0x0.st&quot;&gt;0x0.st&lt;&#x2F;a&gt; or your own instance.&lt;&#x2F;p&gt;
+&lt;p&gt;After the talk, I was gifted some cute swag and a letter of appreciation. I
+want to thank OWASP for that &amp;lt;3.&lt;&#x2F;p&gt;
+&lt;!---Links--&gt;
+</content>
+        
+    </entry>
+</feed>
