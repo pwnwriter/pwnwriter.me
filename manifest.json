@@ -1,0 +1,12 @@
+// info: https://medium.com/swlh/are-you-using-svg-favicons-yet-a-guide-for-modern-browsers-836a6aace3df
+{
+	"name": "pwnwriter",
+	"short_name": "pwn",
+	"icons": [
+		{
+			"src": "/favicon-xl.svg",
+			"sizes": "512x512"
+		}
+	],
+	"display": "fullscreen"
+}

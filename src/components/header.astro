@@ -1,0 +1,61 @@
+---
+// import NationalPark from '~/components/icons/national-park.astro';
+import Link from '~/components/link.astro';
+import Wrapper from '~/components/wrapper.astro';
+
+const { title } = Astro.props;
+let path = Astro.url.pathname;
+if (path.charAt(path.length - 1) == '/') {
+	path = path.slice(0, -1);
+}
+let subpaths = path.split('/').slice(0, -1);
+let isHome = path == '/';
+
+let subpathList = subpaths.reduce(
+	(acc, subpath, i) => [
+		...acc,
+		{
+			text: subpath == '' ? '~' : subpath,
+			link: subpaths.slice(0, i + 1).join('/') || '/',
+		},
+	],
+	[] as { text: string; link: string }[],
+);
+---
+
+<header class="sticky top-0 z-20 mt-xl bg-background py-2">
+	<nav class="relative">
+		<div
+			class="absolute -top-4 left-0 h-14 w-8 bg-gradient-to-r from-background"
+		>
+		</div>
+		<div
+			class="absolute -top-4 right-0 h-14 w-8 bg-gradient-to-l from-background"
+		>
+		</div>
+		<div class="overflow-x-auto py-2">
+			<Wrapper>
+				<ul class="inline-grid grid-flow-col items-center space-x-2">
+					{
+						!isHome &&
+							subpathList.map((subpath) => (
+								<>
+									<li>
+										<Link href={subpath.link} scheme="f-low">
+											{subpath.text}
+										</Link>
+									</li>
+									<span>/</span>
+								</>
+							))
+					}
+					<li class="shrink-0 whitespace-nowrap pr-8">
+						<Link href="#">
+							{title}
+						</Link>
+					</li>
+				</ul>
+			</Wrapper>
+		</div>
+	</nav>
+</header>

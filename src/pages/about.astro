@@ -1,0 +1,123 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Wrapper from '~/components/wrapper.astro';
+import Heading from '~/components/text/heading.astro';
+import Paragraph from '~/components/text/paragraph.astro';
+import Subheading from '~/components/text/subheading.astro';
+import Link from '~/components/link.astro';
+
+import Cancer from '~/components/icons/cancer.astro';
+import Leo from '~/components/icons/leo.astro';
+import Scorpio from '~/components/icons/scorpio.astro';
+
+const bio =
+	'https://avatars.githubusercontent.com/u/90331517?s=400&u=69e445f801cc183e3657c7890b3178987577c5fa&v=4';
+
+const message = '🍃 we pwn';
+---
+
+<Layout
+	title="About"
+	description="pwnwriter is a cybersecurity enthusist with the focus on devops, I love nix, nixos and repdrodicibility"
+>
+	<Wrapper>
+		<div class="group relative w-fit">
+			<img
+				src={bio}
+				alt="pwnwriter"
+				class="mb-md w-36 rounded-xl grayscale transition-all duration-500 ease-out group-hover:rotate-1 group-hover:scale-105 group-hover:shadow-xl group-hover:grayscale-0 sm:relative sm:top-1 sm:float-left sm:mb-4 sm:mr-12"
+			/>
+
+			<div
+				class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-neutral-800 px-3 py-1 text-sm text-white opacity-0 shadow-md transition-opacity duration-300 group-hover:opacity-100"
+			>
+				{message}
+			</div>
+
+			<Heading Element="h1">About me</Heading>
+			<Paragraph>
+				<Paragraph>
+					I am <span
+						class="font-semibold italic underline decoration-blue-400 underline-offset-4"
+						>Nabeen Tiwaree</span
+					>, 20 y/o, Online i go by <span
+						class="font-semibold italic underline decoration-purple-400 underline-offset-4"
+						>pwnwriter</span
+					>.
+				</Paragraph>
+			</Paragraph>
+			<Paragraph>
+				I’m a student who loves minimalism, open-source, and occasionally
+				playing cricket. I enjoy digging into how things work under the hood and
+				breaking softwares.. I'm also into personal discipline, calisthenics,
+				and I draw a lot of inspiration from <span class="whitespace-nowrap"
+					><Link href="https://www.instagram.com/davidlaid/" underline>@davidlaid</Link></span
+				>.
+			</Paragraph>
+			<Paragraph>
+				Feel free to reach out via <Link
+					href="https://x.com/pwnwriter"
+					underline>X (formerly Twitter)</Link
+				> or <Link href="mailto:hi@pwnwriter.me" underline>email</Link>.
+			</Paragraph>
+			<div class="h-sm"></div>
+			<Heading Element="h2">Miscellany</Heading>
+			<div class="grid grid-flow-row grid-cols-1 gap-4 md:grid-cols-2">
+				<div>
+					<Subheading Element="h3">Pronouns</Subheading>
+					<Paragraph>He / him</Paragraph>
+				</div>
+				<!-- <div> -->
+				<!-- 	<Subheading Element="h3">Listening</Subheading> -->
+				<!-- 	<Paragraph> -->
+				<!-- 		Yuna // -->
+				<!-- 		<Link -->
+				<!-- 			href="https://www.youtube.com/watch?v=JRtwYJM3gJ8&lc=UgwLqw1Uu72EPn1n2gV4AaABAg" -->
+				<!-- 			underline -->
+				<!-- 		> -->
+				<!-- 			Cyanide -->
+				<!-- 		</Link> -->
+				<!-- 	</Paragraph> -->
+				<!-- </div> -->
+				<div>
+					<Subheading Element="h3">Signs</Subheading>
+					<Paragraph Element="div">
+						<ul>
+							<li class="flex items-center space-x-2">
+								<Cancer size={16} />
+								<span>Sun in Cancer</span>
+							</li>
+							<li class="flex items-center space-x-2">
+								<Leo size={16} />
+								<span>Moon in Sagittarius</span>
+							</li>
+							<li class="flex items-center space-x-2">
+								<Scorpio size={16} />
+								<span>Scorpio Rising </span>
+							</li>
+						</ul>
+					</Paragraph>
+				</div>
+				<!-- <div> -->
+				<!-- 	<Subheading Element="h3">Reading</Subheading> -->
+				<!-- 	<Paragraph> -->
+				<!-- 		Bernd Heinrich // -->
+				<!-- 		<Link -->
+				<!-- 			href="https://literal.club/book/bernd-heinrich-why-we-run-6pelg" -->
+				<!-- 			underline -->
+				<!-- 		> -->
+				<!-- 			Why We Run -->
+				<!-- 		</Link> -->
+				<!-- 	</Paragraph> -->
+				<!-- 	<Paragraph> -->
+				<!-- 		(<Link href="https://literal.club/oat/" underline> -->
+				<!-- 			literal.club: @oat -->
+				<!-- 		</Link>) -->
+				<!-- 	</Paragraph> -->
+				<!-- </div> -->
+			</div>
+			<div class="h-xl"></div>
+			<Link href="/">&Larr;&nbsp;&nbsp;Back home</Link>
+		</div>
+	</Wrapper>
+</Layout>

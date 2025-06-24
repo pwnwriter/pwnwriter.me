@@ -1,0 +1,87 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Wrapper from '~/components/wrapper.astro';
+import Prose from '~/components/prose.astro';
+import Link from '~/components/link.astro';
+import Heading from '~/components/text/heading.astro';
+import { Image } from 'astro:assets';
+import type { Post } from '~/content/config';
+// info: https://docs.astro.build/en/guides/imports/#node-builtins
+
+type Props = {
+	frontmatter: Post;
+};
+
+const { title, pubDate, modDate, description, cover, tags } =
+	Astro.props.frontmatter;
+const { slug } = Astro.params;
+console.log({ modDate, pubDate });
+
+function formatDate(date: Date) {
+	return date.toLocaleString(undefined, {
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+	});
+}
+
+let formattedPubDate = formatDate(pubDate);
+let formattedModDate = formatDate(modDate);
+---
+
+<Layout {title} {description}>
+	<Wrapper>
+		<Heading Element="h1">{title}</Heading>
+		<div class="flex items-center text-sm font-bold">
+			<p
+				class="inline-flex pr-2 italic text-f-high after:-mt-px after:pl-2 after:text-f-low after:content-['|']"
+			>
+				Note
+			</p>
+
+			<div class="flex flex-wrap items-center gap-1.5">
+				<p class="tabular-nums text-f-high">{formattedPubDate}</p>
+
+				{
+					formattedModDate !== formattedPubDate && (
+						<p class="tabular-nums">(modified {formattedModDate})</p>
+					)
+				}
+			</div>
+		</div>
+
+		<div class="h-xs"></div>
+
+		<ul class="flex flex-wrap gap-2 text-sm">
+			{
+				tags.map((tag: string) => (
+					<li class="shrink-0">
+						<Link href={`/notes/tags/${tag}`} scheme="accent" underline>
+							#{tag}
+						</Link>
+					</li>
+				))
+			}
+		</ul>
+		{
+			cover && cover.src && (
+				<>
+					<div class="h-lg" />
+					<div class="flex max-h-[600px] max-w-full items-center overflow-hidden rounded-xl">
+						<Image
+							class="h-auto max-w-full rounded-xl"
+							src={cover.src}
+							alt={cover.alt}
+						/>
+					</div>
+				</>
+			)
+		}
+		<div class="h-lg"></div>
+		<Prose>
+			<slot />
+		</Prose>
+		<div class="h-xl"></div>
+		<Link href="/notes">&Larr;&nbsp;&nbsp;Back to notes</Link>
+	</Wrapper>
+</Layout>

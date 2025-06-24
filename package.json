@@ -1,0 +1,32 @@
+{
+	"name": "@example/basics",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "astro dev",
+		"start": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"astro": "astro",
+		"format": "prettier --write --plugin-search-dir=. ."
+	},
+	"devDependencies": {
+		"@astrojs/rss": "^4.0.7",
+		"@astrojs/tailwind": "^5.1.1",
+		"@tailwindcss/line-clamp": "^0.4.4",
+		"@tailwindcss/typography": "^0.5.15",
+		"@types/node": "^22.7.4",
+		"astro": "^4.15.9",
+		"prettier": "^3.3.3",
+		"prettier-plugin-astro": "^0.14.1",
+		"prettier-plugin-tailwindcss": "^0.6.8",
+		"prismjs": "^1.29.0",
+		"rehype-raw": "^7.0.0",
+		"rehype-stringify": "^10.0.1",
+		"rehype-urls": "^1.2.0",
+		"remark-parse": "^11.0.0",
+		"remark-rehype": "^11.1.1",
+		"tailwindcss": "^3.4.13",
+		"unified": "^11.0.5"
+	}
+}

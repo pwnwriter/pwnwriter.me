@@ -1,0 +1,75 @@
+<div
+	class="prose-code:bg-b-code prose prose-custom max-w-none prose-headings:mt-10 prose-h2:text-lg prose-h3:text-base prose-h3:font-bold prose-h4:text-sm prose-h4:font-bold prose-a:italic prose-figcaption:mt-4 prose-figcaption:mb-8 prose-figcaption:text-xs prose-figcaption:uppercase prose-strong:text-f-high prose-code:rounded-md prose-code:py-1 prose-code:px-2 prose-code:font-normal prose-pre:rounded-xl prose-pre:text-base prose-img:rounded-xl"
+>
+	<slot />
+</div>
+
+<style>
+	.prose :global(p) {
+		@apply font-normal leading-[1.85] text-f-low;
+	}
+
+	.prose :global(a) {
+		@apply italic underline decoration-f-low;
+	}
+
+	.prose :global(a:hover) {
+		@apply no-underline;
+	}
+
+	.prose :global(blockquote) {
+		@apply border-f-low;
+	}
+
+	.prose :global(blockquote > p) {
+		@apply font-normal leading-[1.85] text-f-low;
+	}
+
+	.prose :global(blockquote > p::before),
+	.prose :global(blockquote > p::after) {
+		@apply hidden;
+	}
+
+	.prose :global(pre) {
+		@apply relative mb-4 bg-b-med p-8 font-mono;
+	}
+
+	.prose :global(code) {
+		@apply bg-b-high font-mono font-semibold;
+	}
+
+	.prose :global(code::before),
+	.prose :global(code::after) {
+		@apply hidden;
+	}
+
+	.prose :global(pre > code) {
+		@apply bg-b-med p-0 text-sm leading-relaxed;
+	}
+
+	.prose :global(pre::before) {
+		@apply absolute right-6 top-3 font-bold text-accent;
+	}
+
+	.prose :global(pre.language-javascript::before),
+	.prose :global(pre.language-js::before) {
+		content: 'js';
+	}
+
+	.prose :global(pre.language-html::before) {
+		content: 'html';
+	}
+
+	.prose :global(pre.language-css::before) {
+		content: 'css';
+	}
+
+	.prose :global(pre.language-typescript::before),
+	.prose :global(pre.language-ts::before) {
+		content: 'ts';
+	}
+
+	.prose :global(pre.language-svelte::before) {
+		content: 'svelte';
+	}
+</style>

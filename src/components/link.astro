@@ -1,0 +1,31 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+const schemes = {
+	'f-low': 'text-f-low',
+	'f-high': 'text-f-high',
+	accent: 'text-accent',
+};
+
+export interface Props extends HTMLAttributes<'a'> {
+	underline?: boolean;
+	title?: string;
+	// scheme?: 'f-low' | 'f-high' | 'accent';
+	scheme?: keyof typeof schemes;
+}
+
+const { underline = false, title = '', scheme = 'f-high', href } = Astro.props;
+let isExternal = href?.toString().startsWith('http') || null;
+---
+
+<a
+	href={href}
+	rel={isExternal ? 'external' : undefined}
+	target={isExternal ? '_blank' : undefined}
+	title={title}
+	class={`italic inline-flex ${
+		underline ? 'underline hover:no-underline' : 'no-underline hover:underline'
+	} ${schemes[scheme]}`}
+>
+	<slot /></a
+>

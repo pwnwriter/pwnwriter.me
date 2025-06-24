@@ -1,0 +1,264 @@
+:root {
+	--text: #575279;
+	--surface: #fffaf3;
+	--highlightMed: #dfdad9;
+	--subtle: #797593;
+	--pine: #286983;
+	--foam: #56949f;
+	--rose: #d7827e;
+	--gold: #ea9d34;
+	--iris: #907aa9;
+	--love: #b4637a;
+	--foamHighlight: #56949f1f;
+	--loveHighlight: #b4637a1f;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--text: #e0def4;
+		--surface: #1f1d2e;
+		--highlightMed: #403d52;
+		--subtle: #908caa;
+		--pine: #31748f;
+		--foam: #9ccfd8;
+		--rose: #ebbcba;
+		--gold: #f6c177;
+		--iris: #c4a7e7;
+		--love: #eb6f92;
+		--foamHighlight: #9ccfd81f;
+		--loveHighlight: #eb6f921f;
+	}
+}
+
+.light:root {
+	--text: #575279;
+	--surface: #fffaf3;
+	--highlightMed: #dfdad9;
+	--subtle: #797593;
+	--pine: #286983;
+	--foam: #56949f;
+	--rose: #d7827e;
+	--gold: #ea9d34;
+	--iris: #907aa9;
+	--love: #b4637a;
+	--foamHighlight: #56949f1f;
+	--loveHighlight: #b4637a1f;
+}
+
+.dark:root {
+	--text: #e0def4;
+	--surface: #1f1d2e;
+	--highlightMed: #403d52;
+	--subtle: #908caa;
+	--pine: #31748f;
+	--foam: #9ccfd8;
+	--rose: #ebbcba;
+	--gold: #f6c177;
+	--iris: #c4a7e7;
+	--love: #eb6f92;
+	--foamHighlight: #9ccfd81f;
+	--loveHighlight: #eb6f921f;
+}
+
+/**
+ * MIT License
+ * Rosé Pine Theme
+ * https://github.com/rose-pine
+ */
+
+code[class*='language-'],
+pre[class*='language-'] {
+	color: var(--text);
+	background: var(--surface);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+		'Liberation Mono', 'Courier New', monospace;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+
+	@media print {
+		text-shadow: none;
+	}
+}
+
+/* Selection */
+code[class*='language-']::-moz-selection,
+pre[class*='language-']::-moz-selection,
+code[class*='language-'] ::-moz-selection,
+pre[class*='language-'] ::-moz-selection {
+	background: var(--highlightMed);
+	color: var(--text);
+}
+
+code[class*='language-']::selection,
+pre[class*='language-']::selection,
+code[class*='language-'] ::selection,
+pre[class*='language-'] ::selection {
+	color: var(--text);
+	background: var(--highlightMed);
+}
+
+/* Code (block & inline) */
+:not(pre) > code[class*='language-'],
+pre[class*='language-'] {
+	color: var(--text);
+	background: var(--surface);
+}
+
+/* Code blocks */
+pre[class*='language-'] {
+	padding: 1em;
+	margin: 0.5em 0;
+	overflow: auto;
+}
+
+/* Inline code */
+:not(pre) > code[class*='language-'] {
+	padding: 0.1em;
+	border-radius: 0.3em;
+	white-space: normal;
+	color: var(--text);
+	background: var(--surface);
+}
+
+/* Text style & opacity */
+.token.entity {
+	cursor: help;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+
+.token.italic,
+.token.selector,
+.token.doctype,
+.token.attr-name,
+.token.inserted,
+.token.deleted,
+.token.comment,
+.token.prolog,
+.token.cdata,
+.token.constant,
+.token.parameter,
+.token.url {
+	font-style: italic;
+}
+
+.token.url {
+	text-decoration: underline;
+}
+
+.namespace {
+	opacity: 0.7;
+}
+
+/* Syntax highlighting */
+.token.constant {
+	color: var(--text);
+}
+
+.token.comment,
+.token.prolog,
+.token.cdata,
+.token.punctuation {
+	color: var(--subtle);
+}
+
+.token.delimiter,
+.token.important,
+.token.atrule,
+.token.operator,
+.token.keyword {
+	color: var(--pine);
+}
+
+.token.tag,
+.token.tag .punctuation,
+.token.doctype,
+.token.variable,
+.token.regex,
+.token.class-name,
+.token.selector,
+.token.inserted {
+	color: var(--foam);
+}
+
+.token.boolean,
+.token.entity,
+.token.number,
+.token.symbol,
+.token.function {
+	color: var(--rose);
+}
+
+.token.string,
+.token.char,
+.token.property,
+.token.attr-value,
+.token.attr-value .punctuation {
+	color: var(--gold);
+}
+
+.token.parameter,
+.token.url,
+.token.name,
+.token.attr-name,
+.token.builtin {
+	color: var(--iris);
+}
+
+.token.deleted {
+	color: var(--love);
+}
+
+/* Insertions & deletions */
+.token.inserted {
+	background: var(--foamHighlight);
+}
+
+.token.deleted {
+	background: var(--loveHighlight);
+}
+
+/* Line highlighting */
+pre[data-line] {
+	position: relative;
+}
+
+pre[class*='language-'] > code[class*='language-'] {
+	position: relative;
+	z-index: 1;
+}
+
+.line-highlight,
+.highlight-lines .highlighted {
+	position: absolute;
+	left: 0;
+	right: 0;
+	padding: inherit 0;
+	margin-top: 1em;
+
+	background: var(--highlightMed);
+	box-shadow: inset 5px 0 0 $text;
+
+	z-index: 0;
+
+	pointer-events: none;
+
+	line-height: inherit;
+	white-space: pre;
+}

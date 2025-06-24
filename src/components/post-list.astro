@@ -1,0 +1,50 @@
+---
+import { CollectionEntry, getCollection } from 'astro:content';
+import Link from '~/components/link.astro';
+
+interface Props {
+	tag?: string;
+	max?: number;
+}
+
+let { tag, max } = Astro.props;
+
+// get all unique tags
+const allPosts = await getCollection('posts');
+const allTags = new Set<string>();
+allPosts.map((post) => {
+	post.data.tags.map((tag) => allTags.add(tag));
+});
+
+const sortPosts = (posts: CollectionEntry<'posts'>[]) =>
+	posts.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+// get posts for current tag
+const posts: CollectionEntry<'posts'>[] = tag
+	? sortPosts(allPosts.filter(({ data }) => data.tags.includes(tag)))
+	: sortPosts(allPosts);
+
+if (!max) max = posts.length + 1;
+---
+
+<div>
+	<ul role="list" class="mb-4">
+		{
+			posts.slice(0, max).map((post) => (
+				<li class="mb-1 grid max-w-fit">
+					<Link href={`/notes/${post.slug}`}>
+						<div class="flex items-start gap-12">
+							<span class="text-nowrap font-mono text-f-low">
+								{post.data.pubDate.toLocaleDateString(undefined, {
+									month: 'short',
+									year: 'numeric',
+								})}
+							</span>
+							<span>{post.data.title}</span>
+						</div>
+					</Link>
+				</li>
+			))
+		}
+	</ul>
+</div>

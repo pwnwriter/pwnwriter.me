@@ -1,0 +1,32 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Wrapper from '~/components/wrapper.astro';
+import Heading from '~/components/text/heading.astro';
+import Subheading from '~/components/text/subheading.astro';
+import Paragraph from '~/components/text/paragraph.astro';
+import Link from '~/components/link.astro';
+import PostList from '~/components/post-list.astro';
+---
+
+<Layout title="~" description="a portfolio for pwn::musings.">
+	<Wrapper>
+		<Heading Element="h1">Hi, I'm Nabeen </Heading>
+		<Paragraph>
+			I'm currently exploring <strong>Rust</strong> and <strong>Nix</strong> ecosystems,
+		</Paragraph>
+		<Paragraph>
+			Think of this place like a Finsta but for thoughts and projects — lowkey,
+			messy, and all mine.
+		</Paragraph>
+
+		<div class="h-xs"></div>
+		<Link href="/about">{'{Biography}'}&nbsp;&nbsp;&Rarr;</Link>
+
+		<div class="h-lg"></div>
+		<Subheading Element="h2">Notes</Subheading>
+		<PostList max={3} />
+
+		<div class="h-xs"></div>
+		<Link href="/notes">{'{ All notes }'}&nbsp;&nbsp;&Rarr;</Link>
+	</Wrapper>
+</Layout>

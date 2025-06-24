@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/Layout.astro';
+import PostList from '~/components/post-list.astro';
+import Wrapper from '~/components/wrapper.astro';
+import Heading from '~/components/text/heading.astro';
+import Link from '~/components/link.astro';
+
+export async function getStaticPaths() {
+	const allPosts = await getCollection('posts');
+	const uniqueTags = [
+		...new Set(allPosts.map((post) => post.data.tags).flat()),
+	];
+
+	return uniqueTags.map((tag) => {
+		const filteredPosts = allPosts.filter((post) =>
+			post.data.tags.includes(tag)
+		);
+		return {
+			params: { tag },
+			props: { posts: filteredPosts },
+		};
+	});
+}
+
+const { tag = '' } = Astro.params;
+---
+
+<Layout title={tag} description={`Posts tagged with #${tag}`}>
+	<Wrapper>
+		<main>
+			<Heading>#{tag}</Heading>
+			<PostList tag={tag} />
+			<div class="h-xl"></div>
+			<Link href="/notes/tags">&Larr;&nbsp;&nbsp;All tags</Link>
+		</main>
+	</Wrapper>
+</Layout>

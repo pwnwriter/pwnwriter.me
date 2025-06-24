@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import Link from '~/components/link.astro';
+import Heading from '~/components/text/heading.astro';
+import Wrapper from '~/components/wrapper.astro';
+import Layout from '~/layouts/Layout.astro';
+
+// get all unique tags
+const allPosts = await getCollection('posts');
+const allTags = new Set<string>();
+allPosts.map((post) => {
+	post.data.tags.map((tag) => allTags.add(tag));
+});
+
+const sortTags = (tags: string[]) => tags.sort();
+
+const sortedTags = sortTags([...allTags]);
+---
+
+<Layout title="tags" description="list of tags for notes from pwn()">
+	<Wrapper>
+		<Heading Element="h1">Tags</Heading>
+		<ul>
+			{
+				sortedTags.map((tag: string) => (
+					<li class="mb-1">
+						<Link scheme="accent" underline href={`/notes/tags/${tag}`}>
+							#{tag}
+						</Link>
+					</li>
+				))
+			}
+		</ul>
+		<div class="h-xl"></div>
+		<Link href="/notes">&Larr;&nbsp;&nbsp;Back to notes</Link>
+	</Wrapper>
+</Layout>

@@ -1,0 +1,15 @@
+---
+export interface Props {
+	Element?: string;
+	id?: string;
+}
+
+const { Element = 'p', id = undefined } = Astro.props;
+---
+
+<Element
+	id={id}
+	class="mb-6 text-2xl font-bold font-serif text-f-high tracking-tight"
+>
+	<slot />
+</Element>

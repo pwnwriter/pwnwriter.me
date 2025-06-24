@@ -1,0 +1,64 @@
+---
+import Link from '~/components/link.astro';
+import Wrapper from '~/components/wrapper.astro';
+import Subheading from './text/subheading.astro';
+
+let links = {
+	main: [
+		{ text: '~', href: '/' },
+		{ text: 'About', href: '/about' },
+		{ text: 'Notes', href: '/notes' },
+		{ text: 'Tags', href: '/notes/tags' },
+		{
+			text: 'RSS',
+			href: import.meta.env.DEV ? `/rss.xml?${Date.now()}` : '/rss.xml',
+		},
+	],
+	social: [
+		{ text: 'X', href: 'https://x.com/pwnwriter' },
+		{ text: 'GitHub', href: 'https://github.com/pwnwriter' },
+		{ text: 'Linkedin', href: 'https://www.linkedin.com/in/pwnwriter' },
+	],
+};
+---
+
+<Wrapper>
+	<footer>
+		<!--  h-28 -->
+		<nav class="mb-md flex justify-between text-sm">
+			<div class="flex flex-col">
+				<Subheading id="pwn" Element="h2">pwn::musings</Subheading>
+				<ul aria-labelledby="pwn" class="space-y-0.5">
+					{
+						links.main.map(({ text, href }) => (
+							<li>
+								<Link href={href}>{text}</Link>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+			<div class="flex flex-col">
+				<Subheading id="social" Element="h2">Elsewhere</Subheading>
+				<ul aria-labelledby="social" class="space-y-0.5">
+					{
+						links.social.map(({ text, href }) => (
+							<li>
+								<Link href={href}>{text}</Link>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+			<div class="max-w-[96px] xs:max-w-[160px]">
+				<Subheading Element="h2">Stats</Subheading>
+				<p>
+					<Link
+						href="https://cloud.umami.is/share/3FljmQNfiFVwxEqa/pwnwriter.me"
+						>Umami stats</Link
+					>
+				</p>
+			</div>
+		</nav>
+	</footer>
+</Wrapper>
