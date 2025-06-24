@@ -23,6 +23,12 @@ const { title, description } = Astro.props;
 		<title>{title} · pwn</title>
 		<meta name="description" content={description} />
 
+		<!-- KaTeX stylesheet for math rendering -->
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+		/>
+
 		<!-- umami tracker-->
 		<script
 			defer

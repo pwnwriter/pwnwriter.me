@@ -1,4 +1,6 @@
 @import url('./prism-rose-pine.css');
+@import "katex/dist/katex.min.css";
+
 
 @tailwind base;
 @tailwind components;
