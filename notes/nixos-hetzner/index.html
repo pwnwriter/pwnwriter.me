@@ -1,0 +1,264 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="/favicon.png"><link rel="mask-icon" href="/favicon-transparent.svg" color="#191724"><link rel="apple-touch-icon" href="/favicon-lg.svg"><meta name="generator" content="Astro v4.16.18"><title>{NixOS on a VPS} · pwn</title><meta name="description"><!-- umami tracker--><script defer src="https://cloud.umami.is/script.js" data-website-id="ba6c60e5-68de-45c5-b4a9-6520b565d5f7"></script><link rel="stylesheet" href="/_astro/about.CRovUWxm.css">
+<link rel="stylesheet" href="/_astro/_slug_.BiaWoYz8.css">
+<style>.prose[data-astro-cid-7mwzjf2o] p{font-weight:400;line-height:1.85;color:var(--f-low)}.prose[data-astro-cid-7mwzjf2o] a{font-style:italic;text-decoration-line:underline;text-decoration-color:var(--f-low)}.prose[data-astro-cid-7mwzjf2o] a:hover{text-decoration-line:none}.prose[data-astro-cid-7mwzjf2o] blockquote{border-color:var(--f-low)}.prose[data-astro-cid-7mwzjf2o] blockquote>p{font-weight:400;line-height:1.85;color:var(--f-low)}.prose[data-astro-cid-7mwzjf2o] blockquote>p:before,.prose[data-astro-cid-7mwzjf2o] blockquote>p:after{display:none}.prose[data-astro-cid-7mwzjf2o] pre{position:relative;margin-bottom:1rem;background-color:var(--b-med);padding:2rem;font-family:Menlo,ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}.prose[data-astro-cid-7mwzjf2o] code{background-color:var(--b-high);font-family:Menlo,ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-weight:600}.prose[data-astro-cid-7mwzjf2o] code:before,.prose[data-astro-cid-7mwzjf2o] code:after{display:none}.prose[data-astro-cid-7mwzjf2o] pre>code{background-color:var(--b-med);padding:0;font-size:.875rem;line-height:1.25rem;line-height:1.625}.prose[data-astro-cid-7mwzjf2o] pre:before{position:absolute;right:1.5rem;top:.75rem;font-weight:700;color:var(--accent)}.prose[data-astro-cid-7mwzjf2o] pre.language-javascript:before,.prose[data-astro-cid-7mwzjf2o] pre.language-js:before{content:"js"}.prose[data-astro-cid-7mwzjf2o] pre.language-html:before{content:"html"}.prose[data-astro-cid-7mwzjf2o] pre.language-css:before{content:"css"}.prose[data-astro-cid-7mwzjf2o] pre.language-typescript:before,.prose[data-astro-cid-7mwzjf2o] pre.language-ts:before{content:"ts"}.prose[data-astro-cid-7mwzjf2o] pre.language-svelte:before{content:"svelte"}
+</style></head> <body class="flex min-h-screen flex-col"> <header class="sticky top-0 z-20 mt-xl bg-background py-2"> <nav class="relative"> <div class="absolute -top-4 left-0 h-14 w-8 bg-gradient-to-r from-background"></div> <div class="absolute -top-4 right-0 h-14 w-8 bg-gradient-to-l from-background"></div> <div class="overflow-x-auto py-2"> <div class="mx-auto w-full max-w-3xl px-8 sm:px-12">  <ul class="inline-grid grid-flow-col items-center space-x-2">  <li> <a href="/" title="" class="italic inline-flex no-underline hover:underline text-f-low"> ~</a> </li> <span>/</span>  <li> <a href="/notes" title="" class="italic inline-flex no-underline hover:underline text-f-low"> notes</a> </li> <span>/</span>  <li class="shrink-0 whitespace-nowrap pr-8"> <a href="#" title="" class="italic inline-flex no-underline hover:underline text-f-high"> {NixOS on a VPS}</a> </li> </ul>  </div> </div> </nav> </header> <div class="h-xl"></div> <main class="relative flex-1">  <div class="mx-auto w-full max-w-3xl px-8 sm:px-12">  <h1 class="mb-6 text-2xl font-bold font-serif text-f-high tracking-tight"> {NixOS on a VPS} </h1> <div class="flex items-center text-sm font-bold"> <p class="inline-flex pr-2 italic text-f-high after:-mt-px after:pl-2 after:text-f-low after:content-['|']">
+Note
+</p> <div class="flex flex-wrap items-center gap-1.5"> <p class="tabular-nums text-f-high">Jul 19, 2024</p>  </div> </div> <div class="h-xs"></div> <ul class="flex flex-wrap gap-2 text-sm"> <li class="shrink-0"> <a href="/notes/tags/guide" title="" class="italic inline-flex underline hover:no-underline text-accent"> 
+#guide</a> </li> </ul>  <div class="h-lg"></div> <div class="flex max-h-[600px] max-w-full items-center overflow-hidden rounded-xl"> <img src="/_astro/nix-pills.DFDk_uot_Z2lk8Rt.webp" class="h-auto max-w-full rounded-xl" alt="pwnwriter's talk in owasp Kathmandu" width="1080" height="1080" loading="lazy" decoding="async"> </div> <div class="h-lg"></div> <div class="prose-code:bg-b-code prose prose-custom max-w-none prose-headings:mt-10 prose-h2:text-lg prose-h3:text-base prose-h3:font-bold prose-h4:text-sm prose-h4:font-bold prose-a:italic prose-figcaption:mt-4 prose-figcaption:mb-8 prose-figcaption:text-xs prose-figcaption:uppercase prose-strong:text-f-high prose-code:rounded-md prose-code:py-1 prose-code:px-2 prose-code:font-normal prose-pre:rounded-xl prose-pre:text-base prose-img:rounded-xl" data-astro-cid-7mwzjf2o>   <p>My company has recently provided me with a VPS to test things before deploying
+them to production. This is a great opportunity for me to push the envelope and
+use Nix extensively.</p>
+<p>While most VPS providers don’t offer Nix as a default OS installation option,
+there is a workaround using <a href="https://github.com/nix-community/nixos-anywhere">nixos-anywhere</a>. In this post, I’ll walk you
+through how to install NixOS on any VPS.</p>
+<blockquote>
+<p>PS: I’m using <code>hetzner</code> vps, already running an ubuntu iso.</p>
+</blockquote>
+<h2 id="how">How</h2>
+<p><a href="https://wiki.archlinux.org/title/kexec">Kexec</a> is a system call that allows you to load and boot into a new kernel
+directly from the currently running kernel. We will use it to boot into our
+minimal install system without needing a flash drive. Additionally,
+<a href="https://github.com/nix-community/nixos-anywhere">nixos-anywhere</a> allows us to automatically format and
+partition using <a href="https://github.com/nix-community/disko">disko</a> declaratively, and install the OS.</p>
+<p>Requirements:</p>
+<ul>
+<li>A nix(os) system</li>
+<li>Root access over the server</li>
+<li>1 gigs of RAM</li>
+<li>1 cores of cpu</li>
+</ul>
+<h2 id="configuration">Configuration</h2>
+<p>We’ll be using <code>flakes</code> to define our overall <code>nixos</code> config.</p>
+<p>The file tree structure should look like this below.</p>
+<pre class="language-bash" data-language="bash"><code is:raw="" class="language-bash">$ tree <span class="token builtin class-name">.</span>
+   nixos-on-vps
+   ├── configuration.nix
+   ├── disk-config.nix
+   └── flake.nix
+</code></pre>
+<ul>
+<li><code>flake.lock</code> is similar to <code>cargo.lock,</code> <code>package.json,</code> <code>lazy-lock.json</code> it locks the package git rev hash.</li>
+<li><code>configuration.nix</code> is used to define our configuration for the nixos.</li>
+<li><code>disk-config.nix</code> is to define our disko config</li>
+</ul>
+<p>The initial <code>flake.nix</code> skeleton look like this</p>
+<pre class="language-nix" data-language="nix"><code is:raw="" class="language-nix"><span class="token punctuation">{</span>
+  inputs <span class="token operator">=</span> <span class="token punctuation">{</span>
+
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  outputs <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+</code></pre>
+<p>Inside <code>flake.nix</code>, we’ll add our input repository url, <code>nixpkgs</code> and <code>disko</code>.</p>
+<pre class="language-nix" data-language="nix"><code is:raw="" class="language-nix"><span class="token punctuation">{</span>
+  inputs <span class="token operator">=</span> <span class="token punctuation">{</span>
+    nixpkgs<span class="token punctuation">.</span>url <span class="token operator">=</span> <span class="token string">"github:nixos/nixpkgs/nixpkgs-unstable"</span><span class="token punctuation">;</span>
+    disko<span class="token punctuation">.</span>url <span class="token operator">=</span> <span class="token string">"github:nix-community/disko"</span><span class="token punctuation">;</span>
+    disko<span class="token punctuation">.</span>inputs<span class="token punctuation">.</span>nixpkgs<span class="token punctuation">.</span>follows <span class="token operator">=</span> <span class="token string">"nixpkgs"</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  outputs <span class="token operator">=</span> <span class="token punctuation">{</span>  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>and then we’ll define our output  servers. For this example, i’m using my
+server name as <code>wolf</code>, you can name yours anything.</p>
+<pre class="language-nix" data-language="nix"><code is:raw="" class="language-nix"><span class="token punctuation">{</span>
+  inputs <span class="token operator">=</span> <span class="token punctuation">{</span>
+    nixpkgs<span class="token punctuation">.</span>url <span class="token operator">=</span> <span class="token string">"github:nixos/nixpkgs/nixpkgs-unstable"</span><span class="token punctuation">;</span>
+    disko<span class="token punctuation">.</span>url <span class="token operator">=</span> <span class="token string">"github:nix-community/disko"</span><span class="token punctuation">;</span>
+    disko<span class="token punctuation">.</span>inputs<span class="token punctuation">.</span>nixpkgs<span class="token punctuation">.</span>follows <span class="token operator">=</span> <span class="token string">"nixpkgs"</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  outputs <span class="token operator">=</span> <span class="token punctuation">{</span> nixpkgs<span class="token punctuation">,</span> disko<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    nixosConfigurations<span class="token punctuation">.</span>wolf <span class="token operator">=</span> nixpkgs<span class="token punctuation">.</span>lib<span class="token punctuation">.</span>nixosSystem <span class="token punctuation">{</span> <span class="token comment">#FIXME: change server name</span>
+      system <span class="token operator">=</span> <span class="token string">"x86_64-linux"</span><span class="token punctuation">;</span> <span class="token comment"># FIXME: Change arch</span>
+      modules <span class="token operator">=</span> <span class="token punctuation">[</span>
+        disko<span class="token punctuation">.</span>nixosModules<span class="token punctuation">.</span>disko
+        <span class="token url">./configuration.nix</span>
+      <span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<blockquote>
+<p>My server is <code>x86_64-linux</code> you’ll want to change that accordingly.</p>
+</blockquote>
+<p>I’m using the default example <code>disk</code> config from <code>disko</code>. It’ll create <code>boot</code>
+and <code>root</code> partitions. I also recommend using the default unless you explicitly
+want to change. You’ll want to change the device name, to know run <code>$ lsblk </code></p>
+<ul>
+<li><code>disk-config.nix</code></li>
+</ul>
+<pre class="language-nix" data-language="nix"><code is:raw="" class="language-nix"><span class="token punctuation">{</span> lib<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span><span class="token punctuation">:</span>
+<span class="token punctuation">{</span>
+  disko<span class="token punctuation">.</span>devices <span class="token operator">=</span> <span class="token punctuation">{</span>
+    disk<span class="token punctuation">.</span>disk1 <span class="token operator">=</span> <span class="token punctuation">{</span>
+      device <span class="token operator">=</span> lib<span class="token punctuation">.</span>mkDefault <span class="token string">"/dev/sda"</span><span class="token punctuation">;</span> <span class="token comment"># FIXME: do lsblk  and change it to your's</span>
+      type <span class="token operator">=</span> <span class="token string">"disk"</span><span class="token punctuation">;</span>
+      content <span class="token operator">=</span> <span class="token punctuation">{</span>
+        type <span class="token operator">=</span> <span class="token string">"gpt"</span><span class="token punctuation">;</span>
+        partitions <span class="token operator">=</span> <span class="token punctuation">{</span>
+          boot <span class="token operator">=</span> <span class="token punctuation">{</span>
+            name <span class="token operator">=</span> <span class="token string">"boot"</span><span class="token punctuation">;</span>
+            size <span class="token operator">=</span> <span class="token string">"1M"</span><span class="token punctuation">;</span>
+            type <span class="token operator">=</span> <span class="token string">"EF02"</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">;</span>
+          esp <span class="token operator">=</span> <span class="token punctuation">{</span>
+            name <span class="token operator">=</span> <span class="token string">"ESP"</span><span class="token punctuation">;</span>
+            size <span class="token operator">=</span> <span class="token string">"500M"</span><span class="token punctuation">;</span>
+            type <span class="token operator">=</span> <span class="token string">"EF00"</span><span class="token punctuation">;</span>
+            content <span class="token operator">=</span> <span class="token punctuation">{</span>
+              type <span class="token operator">=</span> <span class="token string">"filesystem"</span><span class="token punctuation">;</span>
+              format <span class="token operator">=</span> <span class="token string">"vfat"</span><span class="token punctuation">;</span>
+              mountpoint <span class="token operator">=</span> <span class="token string">"/boot"</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">;</span>
+          root <span class="token operator">=</span> <span class="token punctuation">{</span>
+            name <span class="token operator">=</span> <span class="token string">"root"</span><span class="token punctuation">;</span>
+            size <span class="token operator">=</span> <span class="token string">"100%"</span><span class="token punctuation">;</span>
+            content <span class="token operator">=</span> <span class="token punctuation">{</span>
+              type <span class="token operator">=</span> <span class="token string">"lvm_pv"</span><span class="token punctuation">;</span>
+              vg <span class="token operator">=</span> <span class="token string">"pool"</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    lvm_vg <span class="token operator">=</span> <span class="token punctuation">{</span>
+      pool <span class="token operator">=</span> <span class="token punctuation">{</span>
+        type <span class="token operator">=</span> <span class="token string">"lvm_vg"</span><span class="token punctuation">;</span>
+        lvs <span class="token operator">=</span> <span class="token punctuation">{</span>
+          root <span class="token operator">=</span> <span class="token punctuation">{</span>
+            size <span class="token operator">=</span> <span class="token string">"100%FREE"</span><span class="token punctuation">;</span>
+            content <span class="token operator">=</span> <span class="token punctuation">{</span>
+              type <span class="token operator">=</span> <span class="token string">"filesystem"</span><span class="token punctuation">;</span>
+              format <span class="token operator">=</span> <span class="token string">"ext4"</span><span class="token punctuation">;</span>
+              mountpoint <span class="token operator">=</span> <span class="token string">"/"</span><span class="token punctuation">;</span>
+              mountOptions <span class="token operator">=</span> <span class="token punctuation">[</span>
+                <span class="token string">"defaults"</span>
+              <span class="token punctuation">]</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Now the configuration part.</p>
+<ul>
+<li><code>configuration.nix</code></li>
+</ul>
+<p>We’ll first import <code>qemu-guest</code> module since it’s a virtual machine.</p>
+<pre class="language-nix" data-language="nix"><code is:raw="" class="language-nix"><span class="token punctuation">{</span> modulesPath<span class="token punctuation">,</span> config<span class="token punctuation">,</span> lib<span class="token punctuation">,</span> pkgs<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+  imports <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">(</span>modulesPath <span class="token operator">+</span> <span class="token string">"/installer/scan/not-detected.nix"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">(</span>modulesPath <span class="token operator">+</span> <span class="token string">"/profiles/qemu-guest.nix"</span><span class="token punctuation">)</span>
+    <span class="token url">./disk-config.nix</span>
+  <span class="token punctuation">]</span><span class="token punctuation">;</span>
+  system<span class="token punctuation">.</span>stateVersion <span class="token operator">=</span> <span class="token string">"24.05"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>I’ll be using <code>grub</code> as bootloader.</p>
+<pre class="language-nix" data-language="nix"><code is:raw="" class="language-nix"><span class="token punctuation">{</span>
+  boot<span class="token punctuation">.</span>loader<span class="token punctuation">.</span>grub <span class="token operator">=</span> <span class="token punctuation">{</span>
+        efiSupport <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        efiInstallAsRemovable <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><code>Openssh</code> is necessary for us to be able to ssh into the new server.</p>
+<pre class="language-nix" data-language="nix"><code is:raw="" class="language-nix"><span class="token punctuation">{</span>
+  services<span class="token punctuation">.</span>openssh<span class="token punctuation">.</span>enable <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+  users<span class="token punctuation">.</span>users<span class="token punctuation">.</span>root<span class="token punctuation">.</span>openssh<span class="token punctuation">.</span>authorizedKeys<span class="token punctuation">.</span>keys <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token string">"You're public ssh key"</span> <span class="token comment">#FIXME: Add your ssh public key</span>
+  <span class="token punctuation">]</span><span class="token punctuation">;</span>
+</code></pre>
+<p>You can define aditional packages to install as follows.</p>
+<pre class="language-nix" data-language="nix"><code is:raw="" class="language-nix"><span class="token punctuation">{</span>
+environment<span class="token punctuation">.</span>systemPackages <span class="token operator">=</span> <span class="token function">map</span> lib<span class="token punctuation">.</span>lowPrio <span class="token punctuation">[</span>
+    pkgs<span class="token punctuation">.</span>curl <span class="token comment"># FIXME: define your more packages here</span>
+    pkgs<span class="token punctuation">.</span>gitMinimal
+  <span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Now, our final <code>configuration.nix</code> should look like this.</p>
+<pre class="language-nix" data-language="nix"><code is:raw="" class="language-nix"><span class="token punctuation">{</span> modulesPath<span class="token punctuation">,</span> config<span class="token punctuation">,</span> lib<span class="token punctuation">,</span> pkgs<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+  imports <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">(</span>modulesPath <span class="token operator">+</span> <span class="token string">"/installer/scan/not-detected.nix"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">(</span>modulesPath <span class="token operator">+</span> <span class="token string">"/profiles/qemu-guest.nix"</span><span class="token punctuation">)</span>
+    <span class="token url">./disk-config.nix</span>
+  <span class="token punctuation">]</span><span class="token punctuation">;</span>
+  boot<span class="token punctuation">.</span>loader<span class="token punctuation">.</span>grub <span class="token operator">=</span> <span class="token punctuation">{</span>
+    efiSupport <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    efiInstallAsRemovable <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  services<span class="token punctuation">.</span>openssh<span class="token punctuation">.</span>enable <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+
+  environment<span class="token punctuation">.</span>systemPackages <span class="token operator">=</span> <span class="token function">map</span> lib<span class="token punctuation">.</span>lowPrio <span class="token punctuation">[</span>
+    pkgs<span class="token punctuation">.</span>curl
+    pkgs<span class="token punctuation">.</span>gitMinimal
+  <span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+  users<span class="token punctuation">.</span>users<span class="token punctuation">.</span>root<span class="token punctuation">.</span>openssh<span class="token punctuation">.</span>authorizedKeys<span class="token punctuation">.</span>keys <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token string">"You're public ssh key"</span>
+  <span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+  system<span class="token punctuation">.</span>stateVersion <span class="token operator">=</span> <span class="token string">"24.05"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="install-the-os">Install the os</h2>
+<p>Now, we’ll have to run our flake to install nixos on the vps.</p>
+<pre class="language-bash" data-language="bash"><code is:raw="" class="language-bash"> nix run github:nix-community/nixos-anywhere -- <span class="token parameter variable">--flake</span> <span class="token builtin class-name">.</span><span class="token comment">#wolf root@&#x3C;server-ip></span>
+</code></pre>
+<p>It’ll ask for the root password on installation.</p>
+<p><img  src="/_astro/ssh-upload.iusYIfr7_11CGFT.webp" alt="" width="2118" height="1304" loading="lazy" decoding="async">
+<img  src="/_astro/final.DXa8EgJy_JrLpb.webp" alt="" width="2002" height="638" loading="lazy" decoding="async"></p>
+<p>Congratulations!! The nixos has been installed successfully. You should be able to just edit the configuration and run</p>
+<pre class="language-bash" data-language="bash"><code is:raw="" class="language-bash"><span class="token function">sudo</span> nixos-rebuild switch <span class="token parameter variable">--flake</span> <span class="token builtin class-name">.</span><span class="token comment">#wolf</span>
+</code></pre>
+<p>the other time on any changes.</p>
+<h2 id="aditional-tips">Aditional tips…</h2>
+<p>You can use <code>justfile</code> to make this script running easy</p>
+<pre class="language-Makefile" data-language="Makefile"><code is:raw="" class="language-Makefile">set shell := ["zsh", "-c"]
+
+_default:
+    @just -l
+
+alias g := gens
+alias c := clean
+alias r := rebuild
+
+# lists build generations
+gens:
+    @echo "Listing build generations "
+    @nix-env --list-generations
+
+# cleans up the nix garbage
+clean:
+    @echo "Cleaning up unused Nix store items"
+    @sudo nix-collect-garbage -d
+
+# Builds the serer
+rebuild:
+    @echo "Rebuilding server configuration"
+    @sudo nixos-rebuild switch --flake .#wolf
+</code></pre>
+<p>The recipe should look like this</p>
+<pre class="language-bash" data-language="bash"><code is:raw="" class="language-bash">$ just
+Available recipes:
+    clean   <span class="token comment"># cleans up the nix garbage</span>
+    c       <span class="token comment"># alias for `clean`</span>
+    gens    <span class="token comment"># lists build generations</span>
+    g       <span class="token comment"># alias for `gens`</span>
+    rebuild <span class="token comment"># Builds the serer</span>
+    r       <span class="token comment"># alias for `rebuild`</span>
+</code></pre>
+<p>Now, rebuild the os with <code>just r(ebuild)</code></p>
+<p>Well, it’s this for now, I’ll see you in the next one!</p>
+<!--links-->   </div>  <div class="h-xl"></div> <a href="/notes" title="" class="italic inline-flex no-underline hover:underline text-f-high"> &Larr;&nbsp;&nbsp;Back to notes</a>  </div>  </main> <div class="h-xl"></div> <div class="mx-auto w-full max-w-3xl px-8 sm:px-12">  <footer> <!--  h-28 --> <nav class="mb-md flex justify-between text-sm"> <div class="flex flex-col"> <h2 id="pwn" class="mb-2 text-base tracking-tight font-bold text-f-high"> pwn::musings </h2> <ul aria-labelledby="pwn" class="space-y-0.5"> <li> <a href="/" title="" class="italic inline-flex no-underline hover:underline text-f-high"> ~</a> </li><li> <a href="/about" title="" class="italic inline-flex no-underline hover:underline text-f-high"> About</a> </li><li> <a href="/notes" title="" class="italic inline-flex no-underline hover:underline text-f-high"> Notes</a> </li><li> <a href="/notes/tags" title="" class="italic inline-flex no-underline hover:underline text-f-high"> Tags</a> </li><li> <a href="/rss.xml" title="" class="italic inline-flex no-underline hover:underline text-f-high"> RSS</a> </li> </ul> </div> <div class="flex flex-col"> <h2 id="social" class="mb-2 text-base tracking-tight font-bold text-f-high"> Elsewhere </h2> <ul aria-labelledby="social" class="space-y-0.5"> <li> <a href="https://x.com/pwnwriter" rel="external" target="_blank" title="" class="italic inline-flex no-underline hover:underline text-f-high"> X</a> </li><li> <a href="https://github.com/pwnwriter" rel="external" target="_blank" title="" class="italic inline-flex no-underline hover:underline text-f-high"> GitHub</a> </li><li> <a href="https://www.linkedin.com/in/pwnwriter" rel="external" target="_blank" title="" class="italic inline-flex no-underline hover:underline text-f-high"> Linkedin</a> </li> </ul> </div> <div class="max-w-[96px] xs:max-w-[160px]"> <h2 class="mb-2 text-base tracking-tight font-bold text-f-high"> Stats </h2> <p> <a href="https://cloud.umami.is/share/xJ8npXaGprZKlooV/pwnwriter.me" rel="external" target="_blank" title="" class="italic inline-flex no-underline hover:underline text-f-high"> Umami stats</a> </p> </div> </nav> </footer>  </div> </body></html>
