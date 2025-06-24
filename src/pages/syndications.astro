@@ -1,0 +1,55 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Wrapper from '~/components/wrapper.astro';
+import Heading from '~/components/text/heading.astro';
+import Paragraph from '~/components/text/paragraph.astro';
+import Subheading from '~/components/text/subheading.astro';
+import Link from '~/components/link.astro';
+
+const updates = [
+	{
+		year: '2024',
+		body: `Started my BS in the US and it’s already been wild—in a good way. Surprisingly, I’m actually enjoying the assignments. Huge thanks to everyone who helped me get here.`,
+	},
+	{
+		year: '2023',
+		body: `Finally got to slow down and spend real time with my family. Played cricket with the neighborhood kids, ran foggy mornings with my brother, and dove deep into Rust, building tools like haylxon and hysp. Also made it to Threatcon again—always a blast.`,
+	},
+	{
+		year: '2022',
+		body: `Big year: launched METISLinux, earned eJPT, and got shoutouts from both the Dutch government and Cambridge for my bug reports. Graduated +2 with strong grades and met amazing people at Threatcon. Oh, and started learning Rust.`,
+	},
+];
+---
+
+<Layout
+	title="Syndications"
+	description="Personal yearly updates and reflections."
+>
+	<Wrapper>
+		<Heading Element="h1">Syndications</Heading>
+		<Paragraph>
+			Logs of life — kind of like changelogs, just whenever I feel like it
+		</Paragraph>
+
+		<div class="h-md"></div>
+
+		<div class="space-y-12">
+			{
+				updates.map((update) => (
+					<div class="space-y-2 border-l-2 border-purple-400 pl-4">
+						<Subheading Element="h2">{update.year}</Subheading>
+						<Paragraph Element="div">
+							{update.body.split('\n\n').map((para) => (
+								<p class="mb-4">{para}</p>
+							))}
+						</Paragraph>
+					</div>
+				))
+			}
+		</div>
+
+		<div class="h-xl"></div>
+		<Link href="/">&larr;&nbsp;&nbsp;Back home</Link>
+	</Wrapper>
+</Layout>
