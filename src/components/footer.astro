@@ -8,10 +8,17 @@ let links = {
 		{ text: '~', href: '/' },
 		{ text: 'About', href: '/about' },
 		{ text: 'Notes', href: '/notes' },
+		{ text: 'Syndications', href: '/syndications' },
+	],
+	meta: [
 		{ text: 'Tags', href: '/notes/tags' },
 		{
 			text: 'RSS',
 			href: import.meta.env.DEV ? `/rss.xml?${Date.now()}` : '/rss.xml',
+		},
+		{
+			text: 'Umami stats',
+			href: 'https://cloud.umami.is/share/tNl4j2DN3BMN3xwq/pwnwriter.me',
 		},
 	],
 	social: [
@@ -24,10 +31,9 @@ let links = {
 
 <Wrapper>
 	<footer>
-		<!--  h-28 -->
 		<nav class="mb-md flex justify-between text-sm">
 			<div class="flex flex-col">
-				<Subheading id="pwn" Element="h2">pwn::musings</Subheading>
+				<Subheading id="pwn" Element="h2">musings</Subheading>
 				<ul aria-labelledby="pwn" class="space-y-0.5">
 					{
 						links.main.map(({ text, href }) => (
@@ -50,14 +56,17 @@ let links = {
 					}
 				</ul>
 			</div>
-			<div class="max-w-[96px] xs:max-w-[160px]">
-				<Subheading Element="h2">Stats</Subheading>
-				<p>
-					<Link
-						href="https://cloud.umami.is/share/tNl4j2DN3BMN3xwq/pwnwriter.me"
-						>Umami stats</Link
-					>
-				</p>
+			<div class="flex max-w-[96px] flex-col xs:max-w-[160px]">
+				<Subheading id="meta" Element="h2">Meta</Subheading>
+				<ul aria-labelledby="meta" class="space-y-0.5">
+					{
+						links.meta.map(({ text, href }) => (
+							<li>
+								<Link href={href}>{text}</Link>
+							</li>
+						))
+					}
+				</ul>
 			</div>
 		</nav>
 	</footer>
