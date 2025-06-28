@@ -22,34 +22,42 @@ const updates = [
 ];
 ---
 
-<Layout
-	title="Syndications"
-	description="Personal yearly updates and reflections."
->
+<Layout title="Syndications" description="Personal yearly updates and reflections.">
 	<Wrapper>
 		<Heading Element="h1">Syndications</Heading>
-		<Paragraph>
-			Logs of life — kind of like changelogs, just whenever I feel like it
-		</Paragraph>
+		<Paragraph>Logs of life — like changelogs, but for vibes.</Paragraph>
 
-		<div class="h-md"></div>
+		<div class="relative mt-12">
+			<!-- Center trunk line -->
+			<div class="absolute left-1/2 top-0 bottom-0 w-1 bg-purple-400 dark:bg-purple-500 transform -translate-x-1/2"></div>
 
-		<div class="space-y-12">
-			{
-				updates.map((update) => (
-					<div class="space-y-2 border-l-2 border-purple-400 pl-4">
-						<Subheading Element="h2">{update.year}</Subheading>
-						<Paragraph Element="div">
-							{update.body.split('\n\n').map((para) => (
-								<p class="mb-4">{para}</p>
-							))}
-						</Paragraph>
+			<div class="space-y-16">
+				{updates.map((update, index) => (
+					<div class={`relative flex ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
+						<div class="w-full md:w-1/2 px-4">
+							<div class="relative">
+								<!-- Branch dot -->
+								<div class="absolute top-3 -left-5 w-4 h-4 bg-purple-600 dark:bg-purple-400 rounded-full border-2 border-white dark:border-gray-900"></div>
+
+								<Subheading Element="h2" class="text-purple-700 dark:text-purple-300 mb-2">{update.year}</Subheading>
+
+								<!-- Text Box -->
+								<div class="bg-purple-50 dark:bg-purple-900 border border-purple-200 dark:border-purple-700 rounded-xl p-4 shadow-sm">
+									<div class="text-gray-800 dark:text-gray-200 space-y-2 leading-relaxed">
+										{update.body.split('\n\n').map((para) => (
+											<p>{para}</p>
+										))}
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-				))
-			}
+				))}
+			</div>
 		</div>
 
-		<div class="h-xl"></div>
-		<Link href="/">&larr;&nbsp;&nbsp;Back home</Link>
+		<div class="mt-16">
+			<Link href="/">&larr;&nbsp;Back home</Link>
+		</div>
 	</Wrapper>
 </Layout>

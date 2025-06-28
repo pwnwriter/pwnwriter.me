@@ -6,7 +6,7 @@ Dev with nix
 - DevShell
 
 
-`$ nix develop (use flake)`
+  `$ nix develop (use flake)`
 
 - Site
 

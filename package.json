@@ -30,6 +30,7 @@
 		"unified": "^11.0.5"
 	},
 	"dependencies": {
+		"cmdk": "^1.1.1",
 		"katex": "^0.16.22",
 		"rehype-katex": "^7.0.1",
 		"remark-math": "^6.0.0"
