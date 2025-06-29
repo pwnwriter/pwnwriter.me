@@ -1,5 +1,5 @@
 ---
-title: "{Owasp - my talk}"
+title: "Owasp - my talk"
 pubDate: 2023-04-25T15:32:00-05:00
 modDate: 2023-04-25T15:32:00-05:00
 cover:

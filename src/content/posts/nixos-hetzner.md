@@ -1,5 +1,5 @@
 ---
-title: "{NixOS on a VPS}"
+title: "NixOS on a VPS"
 pubDate: 2024-07-19T18:32:00-05:00
 modDate: 2024-07-19T18:32:00-05:00
 cover:

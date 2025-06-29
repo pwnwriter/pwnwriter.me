@@ -1,5 +1,5 @@
 ---
-title: "{A Year in Corporate}"
+title: "A Year in Corporate"
 pubDate: 2024-08-19T18:32:00-05:00
 modDate: 2024-08-22T18:32:00-05:00
 tags: ['experience']
