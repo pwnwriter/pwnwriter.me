@@ -15,11 +15,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Nix
-        uses: cachix/install-nix-action@v24
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/determinate-nix-action@v3
 
       - name: Build with Nix DevShell
         run: |
