@@ -23,6 +23,7 @@
             bun
             typescript-language-server
             astro-language-server
+            tailwindcss-language-server
           ];
 
           buildInputs = with pkgs; [ pkg-config ];
