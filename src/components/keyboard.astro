@@ -2,50 +2,46 @@
 
 ---
 
-<a href="/" id="home-link" style="display:none;"></a>
-<a href="/about" id="about-link" style="display:none;"></a>
-<a href="/syndications" id="syndications-link" style="display:none;"></a>
-<a href="/notes" id="notes-link" style="display:none;"></a>
+<a href="/" id="home-link" hidden></a>
+<a href="/about" id="about-link" hidden></a>
+<a href="/syndications" id="syndications-link" hidden></a>
+<a href="/notes" id="notes-link" hidden></a>
 
 <script>
   document.addEventListener("keydown", (e) => {
-    // ignore if typing in a form field
-    if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
-
     const scrollAmount = 50;
 
+    if (e.ctrlKey || e.metaKey || e.altKey) return; // Ignore if modifier keys
+
+    const routes: Record<"h" | "~" | "a" | "s" | "n", string> = {
+      h: "home-link",
+      "~": "home-link",
+      a: "about-link",
+      s: "syndications-link",
+      n: "notes-link",
+    };
+
+    if (e.key in routes) {
+      const linkId = routes[e.key as keyof typeof routes];
+      const link = document.getElementById(linkId);
+      if (link) link.click();
+      return;
+    }
+
     switch (e.key) {
-      case "h": // Home
-      case "~":
-        document.getElementById("home-link")?.click();
-        break;
-
-      case "a": // About
-        document.getElementById("about-link")?.click();
-        break;
-
-      case "s": // Syndications
-        document.getElementById("syndications-link")?.click();
-        break;
-
-      case "n": // notes
-        document.getElementById("notes-link")?.click();
-        break;
-
-      case "j": // Scroll down
+      case "j":
         window.scrollBy({ top: scrollAmount, behavior: "smooth" });
         break;
 
-      case "k": // Scroll up
+      case "k":
         window.scrollBy({ top: -scrollAmount, behavior: "smooth" });
         break;
 
-      case "g": // go to top
-        if (e.ctrlKey || e.metaKey) return; // skip if Ctrl+G
+      case "g":
         window.scrollTo({ top: 0, behavior: "smooth" });
         break;
 
-      case "G": // go to bottom
+      case "G":
         window.scrollTo({
           top: document.body.scrollHeight,
           behavior: "smooth",
