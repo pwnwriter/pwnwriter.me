@@ -1,0 +1,26 @@
+---
+export interface Props {
+	size?: number;
+}
+
+const { size = 24 } = Astro.props;
+---
+
+<!-- info: https://tabler-icons.io -->
+<svg
+	aria-label="location"
+	width={size}
+	height={size}
+	xmlns="http://www.w3.org/2000/svg"
+	viewBox="0 0 24 24"
+	stroke-width="2"
+	stroke="currentColor"
+	fill="none"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+>
+	<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+	<path d="M12 21c-4.418 -4.418 -7 -7.582 -7 -11a7 7 0 1 1 14 0c0 3.418 -2.582 6.582 -7 11z"></path>
+	<circle cx="12" cy="10" r="3"></circle>
+</svg>
+
