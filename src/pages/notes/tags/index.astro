@@ -6,9 +6,9 @@ import Wrapper from '~/components/wrapper.astro';
 import Layout from '~/layouts/Layout.astro';
 
 // get all unique tags
-const allnotes = await getCollection('notes');
+const allPosts = await getCollection('posts');
 const allTags = new Set<string>();
-allnotes.map((post) => {
+allPosts.map((post) => {
 	post.data.tags.map((tag) => allTags.add(tag));
 });
 
