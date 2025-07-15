@@ -7,18 +7,18 @@ import Heading from '~/components/text/heading.astro';
 import Link from '~/components/link.astro';
 
 export async function getStaticPaths() {
-	const allPosts = await getCollection('posts');
+	const allnotes = await getCollection('notes');
 	const uniqueTags = [
-		...new Set(allPosts.map((post) => post.data.tags).flat()),
+		...new Set(allnotes.map((post) => post.data.tags).flat()),
 	];
 
 	return uniqueTags.map((tag) => {
-		const filteredPosts = allPosts.filter((post) =>
+		const filterednotes = allnotes.filter((post) =>
 			post.data.tags.includes(tag)
 		);
 		return {
 			params: { tag },
-			props: { posts: filteredPosts },
+			props: { notes: filterednotes },
 		};
 	});
 }
@@ -26,7 +26,7 @@ export async function getStaticPaths() {
 const { tag = '' } = Astro.params;
 ---
 
-<Layout title={tag} description={`Posts tagged with #${tag}`}>
+<Layout title={tag} description={`notes tagged with #${tag}`}>
 	<Wrapper>
 		<main>
 			<Heading>#{tag}</Heading>
