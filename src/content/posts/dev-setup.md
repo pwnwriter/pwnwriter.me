@@ -8,3 +8,5 @@ tags: ['setup']
 <img src="/images/setup/nix-setup.jpg" alt="we" style="width: 100%; max-width: 500px; height: auto;" />
 
 I spend quite a few time building, breaking and rebuilding software - so having a productive workspace on my finger tips matters. 
+
+It's been like 2 years since i've started using nix over a regular distribution. I use nix on my Macbook and NixOS as a daily driver. Here's breakdown of the stuffs i use daily as a cybersecurity enthusiast and an undergrad student.
