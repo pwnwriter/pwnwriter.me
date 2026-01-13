@@ -2,11 +2,85 @@
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import Heading from "~/components/text/heading.astro";
+
+const photos = [
+  {
+    src: "/images/photos/2025/IMG_3735.JPG",
+    alt: "Corolla",
+    date: "2026-01-03",
+  },
+  {
+    src: "/images/photos/2025/IMG_6296.JPG",
+    alt: "Ski day",
+    date: "2025-12-23",
+  },
+  {
+    src: "/images/photos/2025/IMG_6296.JPG",
+    alt: "Ski day",
+    date: "2025-12-23",
+  },
+  {
+    src: "/images/photos/2025/IMG_6296.JPG",
+    alt: "Ski day",
+    date: "2025-12-23",
+  },
+  {
+    src: "/images/photos/2025/IMG_6296.JPG",
+    alt: "Ski day",
+    date: "2025-12-23",
+  },
+  {
+    src: "/images/photos/2025/IMG_6296.JPG",
+    alt: "Ski day",
+    date: "2025-12-23",
+  },
+  {
+    src: "/images/photos/2025/IMG_3735.JPG",
+    alt: "Corolla",
+    date: "2026-01-03",
+  },
+  {
+    src: "/images/photos/2025/IMG_3735.JPG",
+    alt: "Corolla",
+    date: "2026-01-03",
+  },
+  {
+    src: "/images/photos/2025/IMG_3735.JPG",
+    alt: "Corolla",
+    date: "2026-01-03",
+  },
+];
+
+// newest first
+photos.sort((a, b) => (a.date < b.date ? 1 : -1));
 ---
 
-<Layout title="photos" description="Notes from pwn::musings.">
+<Layout title="photos" description="A small archive of my photos.">
   <Wrapper>
     <Heading Element="h1">Photos</Heading>
-    <h3>'m workin on it</h3>
+    <p class="mt-2 text-white/60">tiny archive. click any photo to open it.</p>
+
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        photos.map((p) => (
+          <figure class="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
+            <a href={p.src} target="_blank" rel="noreferrer" class="block">
+              <img
+                src={p.src}
+                alt={p.alt}
+                loading="lazy"
+                class="aspect-[4/5] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+              />
+            </a>
+
+            <figcaption class="p-3 text-xs text-white/55">
+              {p.date} · {p.alt}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    {photos.length === 0 && <p class="mt-6 text-white/50">'m workin on it</p>}
   </Wrapper>
 </Layout>
