@@ -8,50 +8,52 @@ export type Photo = {
 export const photos: Photo[] = [
 
 
+  // {
+  //   src: "/images/photos/2025/1.JPG",
+  //   alt: "rust",
+  //   date: "2026-01-03",
+  // },
   {
-    src: "/images/photos/2025/IMG_3735.JPG",
-    alt: "Corolla",
+    src: "/images/photos/2025/2.JPG",
+    alt: "friends",
     date: "2026-01-03",
   },
+
   {
-    src: "/images/photos/2025/IMG_6296.JPG",
-    alt: "Ski day",
-    date: "2025-12-23",
-  },
-  {
-    src: "/images/photos/2025/IMG_6296.JPG",
-    alt: "Ski day",
-    date: "2025-12-23",
-  },
-  {
-    src: "/images/photos/2025/IMG_6296.JPG",
-    alt: "Ski day",
-    date: "2025-12-23",
-  },
-  {
-    src: "/images/photos/2025/IMG_6296.JPG",
-    alt: "Ski day",
-    date: "2025-12-23",
-  },
-  {
-    src: "/images/photos/2025/IMG_6296.JPG",
-    alt: "Ski day",
-    date: "2025-12-23",
-  },
-  {
-    src: "/images/photos/2025/IMG_3735.JPG",
-    alt: "Corolla",
+    src: "/images/photos/2025/3.JPG",
+    alt: "patan",
     date: "2026-01-03",
   },
+
+
   {
-    src: "/images/photos/2025/IMG_3735.JPG",
-    alt: "Corolla",
+    src: "/images/photos/2025/4.JPG",
+    alt: "patan",
     date: "2026-01-03",
   },
+
   {
-    src: "/images/photos/2025/IMG_3735.JPG",
-    alt: "Corolla",
+    src: "/images/photos/2026/roads.jpg",
+    alt: "patan",
     date: "2026-01-03",
   },
+
+
+  {
+    src: "/images/photos/2026/goat-me.png",
+    alt: "patan",
+    date: "2026-01-03",
+  },
+
+  {
+    src: "/images/photos/2026/b-w.png",
+    alt: "patan",
+    date: "2026-01-03",
+  },
+
+
+  // b-w.png
+  // goat-me.png
+  // roads.jpg
 
 ];
