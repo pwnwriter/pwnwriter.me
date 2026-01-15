@@ -22,4 +22,4 @@ things you might later regret.
 Remaining silent has helped me focus on what really matters. It gives me time
 to  reflect and keeps me out of unnecessary conflicts.
 
-Not every moment needs words. Sometimes, silence says they have a gf but now i do have a gf .
+Not every moment needs words. Sometimes, silence says enough.
