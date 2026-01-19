@@ -6,5 +6,5 @@ return {
     event = { "BufReadPost", "BufNewFile" },
   },
 
-  vim.lsp.enable({ 'ts_ls', 'astro', 'tailwindcss', 'tinymist' }),
+  vim.lsp.enable({ 'ts_ls', 'astro', 'tailwindcss', 'tinymist', 'harper_ls' }),
 }

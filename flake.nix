@@ -24,6 +24,7 @@
             typescript-language-server
             astro-language-server
             tailwindcss-language-server
+            harper
           ];
 
           buildInputs = with pkgs; [ pkg-config ];

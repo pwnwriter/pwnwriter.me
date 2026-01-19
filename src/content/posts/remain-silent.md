@@ -8,9 +8,8 @@ tags: ['opinion']
 *Staying silent is powerful. Not every question needs an answer. Not every
 comment deserves a reply. And not every situation needs your voice in it.*
 
-I was watching [this video by Ron
-White](https://www.youtube.com/watch?v=neUaSTSKFZc), where he says,  ***“You have
-the right to remain silent, and I wish to God you’d use it.”***.  It’s a joke,
+I was watching [this video by Ron White](https://www.youtube.com/watch?v=neUaSTSKFZc), where he says,***“You have
+the right to remain silent, and I wish to God you’d use it.”***.It’s a joke,
 but it really stuck with me. Silence is a choice, one that can save you from
 unnecessary trouble and help you stay in control of yourself.
 
@@ -20,6 +19,6 @@ things you might later regret.
 
 
 Remaining silent has helped me focus on what really matters. It gives me time
-to  reflect and keeps me out of unnecessary conflicts.
+to reflect and keeps me out of unnecessary conflicts.
 
 Not every moment needs words. Sometimes, silence says enough.
