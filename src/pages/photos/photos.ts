@@ -14,20 +14,20 @@ export const photos: Photo[] = [
   //   date: "2026-01-03",
   // },
   {
-    src: "/images/photos/2025/2.JPG",
+    src: "/images/photos/2025/2.jpg",
     alt: "friends",
     date: "2026-01-03",
   },
 
   {
-    src: "/images/photos/2025/3.JPG",
+    src: "/images/photos/2025/3.jpg",
     alt: "patan",
     date: "2026-01-03",
   },
 
 
   {
-    src: "/images/photos/2025/4.JPG",
+    src: "/images/photos/2025/4.jpg",
     alt: "patan",
     date: "2026-01-03",
   },
