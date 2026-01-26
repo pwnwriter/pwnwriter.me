@@ -1,0 +1,91 @@
+---
+const isHomePage = Astro.url.pathname === '/';
+---
+
+{!isHomePage && (
+  <div id="vim-indicator" class="fixed right-4 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-1 z-50">
+    <div class="grid grid-cols-3 gap-1">
+      <div></div>
+      <div id="key-k" class="vim-key" data-key="k">
+        <span class="key-label">k</span>
+        <span class="key-hint">up</span>
+      </div>
+      <div></div>
+    </div>
+    <div class="grid grid-cols-3 gap-1">
+      <div id="key-h" class="vim-key" data-key="h">
+        <span class="key-label">h</span>
+        <span class="key-hint">home</span>
+      </div>
+      <div id="key-j" class="vim-key" data-key="j">
+        <span class="key-label">j</span>
+        <span class="key-hint">down</span>
+      </div>
+      <div id="key-l" class="vim-key" data-key="l">
+        <span class="key-label">l</span>
+        <span class="key-hint">theme</span>
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .vim-key {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--b-high);
+    border-radius: 0.25rem;
+    background: var(--b-low);
+    color: var(--f-low);
+    font-family: monospace;
+    font-size: 0.75rem;
+    transition: all 0.1s ease;
+    user-select: none;
+  }
+
+  .vim-key.active {
+    background: var(--accent);
+    color: var(--b-low);
+    border-color: var(--accent);
+    transform: scale(0.95);
+  }
+
+  .key-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .key-hint {
+    font-size: 0.5rem;
+    opacity: 0.7;
+    line-height: 1;
+    margin-top: 0.125rem;
+  }
+</style>
+
+<script>
+  const keys = ['h', 'j', 'k', 'l'] as const;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+    const key = e.key.toLowerCase();
+    if (keys.includes(key as typeof keys[number])) {
+      const el = document.getElementById(`key-${key}`);
+      if (el) el.classList.add('active');
+    }
+  });
+
+  document.addEventListener('keyup', (e) => {
+    const key = e.key.toLowerCase();
+    if (keys.includes(key as typeof keys[number])) {
+      const el = document.getElementById(`key-${key}`);
+      if (el) el.classList.remove('active');
+    }
+  });
+</script>

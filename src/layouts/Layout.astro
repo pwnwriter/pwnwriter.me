@@ -3,6 +3,7 @@ import '~/styles/global.css';
 import Header from '~/components/header.astro';
 import Footer from '~/components/footer.astro';
 import KeyboardNav from '~/components/keyboard.astro';
+import VimIndicator from '~/components/vim-indicator.astro';
 
 export interface Props {
 	title: string;
@@ -29,6 +30,13 @@ const { title, description } = Astro.props;
 			href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
 		/>
 
+		<script is:inline>
+			const theme = localStorage.getItem('theme');
+			if (theme) {
+				document.documentElement.classList.add(theme);
+			}
+		</script>
+
 		<script
 			defer
 			src="https://cloud.umami.is/script.js"
@@ -47,5 +55,6 @@ const { title, description } = Astro.props;
 		<Footer />
 
 		<KeyboardNav />
+		<VimIndicator />
 	</body>
 </html>

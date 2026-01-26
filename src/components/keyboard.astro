@@ -39,6 +39,27 @@
         window.scrollBy({ top: -scrollAmount, behavior: "smooth" });
         break;
 
+      case "l":
+        const root = document.documentElement;
+        const isDark = root.classList.contains("dark");
+        const isLight = root.classList.contains("light");
+
+        if (isDark) {
+          root.classList.remove("dark");
+          root.classList.add("light");
+          localStorage.setItem("theme", "light");
+        } else if (isLight) {
+          root.classList.remove("light");
+          root.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+        } else {
+          // No explicit class, check system preference
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          root.classList.add(prefersDark ? "light" : "dark");
+          localStorage.setItem("theme", prefersDark ? "light" : "dark");
+        }
+        break;
+
       case "g":
         window.scrollTo({ top: 0, behavior: "smooth" });
         break;
