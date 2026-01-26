@@ -1,0 +1,118 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Wrapper from "~/components/wrapper.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+const syndications: CollectionEntry<"syndications">[] =
+  await getCollection("syndications");
+
+// Sort by date descending (newest first)
+syndications.sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+
+// Generate a short hash from slug (like git commit hash)
+function generateHash(slug: string): string {
+  let hash = 0;
+  for (let i = 0; i < slug.length; i++) {
+    const char = slug.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(16).padStart(7, "0").slice(0, 7);
+}
+
+const msPerDay = 24 * 60 * 60 * 1000;
+
+// Format commit entries
+const commits = syndications.map((s) => ({
+  hash: generateHash(s.slug),
+  slug: s.slug,
+  title: s.data.title,
+  date: s.data.pubDate,
+  tags: s.data.tags || [],
+  formattedDate: s.data.pubDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }),
+  relativeTime: getRelativeTime(s.data.pubDate),
+}));
+
+function getRelativeTime(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / msPerDay);
+
+  if (diffDays === 0) return "today";
+  if (diffDays === 1) return "yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+  return `${Math.floor(diffDays / 365)} years ago`;
+}
+
+---
+
+<Layout
+  title="Syndications"
+  description="Personal updates and reflections."
+>
+  <Wrapper>
+    <div>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="text-accent">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold text-f-high font-mono">life log</h1>
+          <span class="text-f-low text-sm">({commits.length} commits)</span>
+        </div>
+
+        <!-- Git log style list -->
+        <div class="relative">
+          <!-- Vertical branch line -->
+          <div class="absolute left-[11px] top-4 bottom-4 w-[2px] bg-accent/20"></div>
+
+          <div class="space-y-1">
+            {commits.map((commit, index) => (
+              <a
+                href={`/syndications/${commit.slug}`}
+                class="group block relative pl-8 py-3 rounded-lg hover:bg-b-med/50 transition-colors"
+              >
+                <!-- Commit node -->
+                <div class="absolute left-[7px] top-1/2 -translate-y-1/2 w-[10px] h-[10px] rounded-full bg-accent border-2 border-background group-hover:scale-125 transition-transform"></div>
+
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
+                  <!-- Hash -->
+                  <code class="text-accent text-sm font-mono shrink-0">{commit.hash}</code>
+
+                  <!-- Title -->
+                  <span class="text-f-high group-hover:text-accent transition-colors font-medium truncate">
+                    {commit.title}
+                  </span>
+
+                  <!-- Date -->
+                  <span class="text-f-low/60 text-xs sm:ml-auto shrink-0">
+                    {commit.relativeTime}
+                  </span>
+                </div>
+
+                {commit.tags.length > 0 && (
+                  <div class="flex gap-2 mt-1.5 flex-wrap">
+                    {commit.tags.map((tag) => (
+                      <span class="text-xs px-1.5 py-0.5 rounded bg-b-high/50 text-f-low font-mono">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </Wrapper>
+</Layout>

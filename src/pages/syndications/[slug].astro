@@ -1,0 +1,58 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "~/layouts/Layout.astro";
+import Wrapper from "~/components/wrapper.astro";
+import Prose from "~/components/prose.astro";
+
+export async function getStaticPaths() {
+  const syndications = await getCollection("syndications");
+  return syndications.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const formattedDate = entry.data.pubDate.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Layout
+  title={entry.data.title}
+  description={`Syndication: ${entry.data.title}`}
+>
+  <Wrapper>
+    <article>
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-f-high mt-4">{entry.data.title}</h1>
+
+        <div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-f-low">
+          <time datetime={entry.data.pubDate.toISOString()}>
+            {formattedDate}
+          </time>
+
+          {
+            entry.data.tags && entry.data.tags.length > 0 && (
+              <div class="flex gap-2">
+                {entry.data.tags.map((tag) => (
+                  <span class="px-2 py-0.5 bg-b-med text-f-high rounded text-xs">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )
+          }
+        </div>
+      </header>
+
+      <Prose>
+        <Content />
+      </Prose>
+    </article>
+  </Wrapper>
+</Layout>
