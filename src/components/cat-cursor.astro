@@ -1,0 +1,238 @@
+---
+// Cute cat that follows the cursor
+---
+
+<div id="neko" class="neko" aria-hidden="true">
+  <div class="neko-sprite"></div>
+</div>
+
+<style>
+  .neko {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  .neko.active {
+    opacity: 1;
+  }
+
+  .neko-sprite {
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+
+  /* Cat sprite states using CSS */
+  .neko[data-state="idle"] .neko-sprite {
+    animation: idle 1s steps(1) infinite;
+  }
+
+  .neko[data-state="alert"] .neko-sprite {
+    animation: alert 0.5s steps(1) infinite;
+  }
+
+  .neko[data-state="running"] .neko-sprite {
+    animation: running 0.15s steps(1) infinite;
+  }
+
+  .neko[data-state="sleeping"] .neko-sprite {
+    animation: sleeping 1s steps(1) infinite;
+  }
+
+  @keyframes idle {
+    0%, 50% { content: ""; }
+  }
+
+  @keyframes alert {
+    0%, 50% { content: ""; }
+  }
+
+  @keyframes running {
+    0%, 50% { content: ""; }
+  }
+
+  @keyframes sleeping {
+    0%, 50% { content: ""; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .neko {
+      display: none;
+    }
+  }
+
+  /* Hide on mobile/touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    .neko {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const neko = document.getElementById('neko') as HTMLElement;
+  const sprite = neko?.querySelector('.neko-sprite') as HTMLElement;
+
+  if (neko && sprite) {
+    let nekoX = 0;
+    let nekoY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let frameCount = 0;
+    let idleTime = 0;
+    let idleAnimation: string | null = null;
+    let idleAnimationFrame = 0;
+    let lastFrameTimestamp: number | null = null;
+
+    // Pixel art cat sprites (base64 encoded tiny PNGs)
+    const sprites: Record<string, string> = {
+      // Idle sitting cat
+      idle: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><style>.a{fill:#e0def4}.b{fill:#c4a7e7}.c{fill:#191724}.d{fill:#eb6f92}</style><path class="a" d="M8 8h2v2H8zM22 8h2v2h-2zM10 10h2v2h-2zM20 10h2v2h-2zM10 12h12v2H10zM8 14h16v2H8zM8 16h16v4H8zM10 20h12v2H10zM12 22h8v2h-8z"/><path class="b" d="M10 14h4v2h-4zM18 14h4v2h-4z"/><path class="c" d="M12 16h2v2h-2zM18 16h2v2h-2z"/><path class="d" d="M14 18h4v2h-4z"/></svg>`)}`,
+
+      // Alert cat
+      alert: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><style>.a{fill:#e0def4}.b{fill:#c4a7e7}.c{fill:#191724}.d{fill:#eb6f92}</style><path class="a" d="M6 6h2v2H6zM24 6h2v2h-2zM8 8h2v2H8zM22 8h2v2h-2zM10 10h12v2H10zM8 12h16v2H8zM8 14h16v4H8zM10 18h12v2H10zM12 20h8v2h-2z"/><path class="b" d="M10 12h4v2h-4zM18 12h4v2h-4z"/><path class="c" d="M11 14h3v3h-3zM18 14h3v3h-3z"/><path class="d" d="M14 16h4v2h-4z"/></svg>`)}`,
+
+      // Running right
+      runRight1: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><style>.a{fill:#e0def4}.b{fill:#c4a7e7}.c{fill:#191724}.d{fill:#eb6f92}</style><path class="a" d="M6 10h2v2H6zM24 10h2v2h-2zM8 12h16v2H8zM6 14h20v4H6zM8 18h16v2H8zM6 20h4v2H6zM22 20h4v2h-4z"/><path class="b" d="M8 14h4v2H8zM18 14h4v2h-4z"/><path class="c" d="M10 16h2v2h-2zM20 16h2v2h-2z"/><path class="d" d="M14 16h4v2h-4z"/></svg>`)}`,
+
+      runRight2: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><style>.a{fill:#e0def4}.b{fill:#c4a7e7}.c{fill:#191724}.d{fill:#eb6f92}</style><path class="a" d="M6 10h2v2H6zM24 10h2v2h-2zM8 12h16v2H8zM6 14h20v4H6zM8 18h16v2H8zM10 20h4v2h-4zM18 20h4v2h-4z"/><path class="b" d="M8 14h4v2H8zM18 14h4v2h-4z"/><path class="c" d="M10 16h2v2h-2zM20 16h2v2h-2z"/><path class="d" d="M14 16h4v2h-4z"/></svg>`)}`,
+
+      // Running left
+      runLeft1: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" style="transform:scaleX(-1)"><style>.a{fill:#e0def4}.b{fill:#c4a7e7}.c{fill:#191724}.d{fill:#eb6f92}</style><path class="a" d="M6 10h2v2H6zM24 10h2v2h-2zM8 12h16v2H8zM6 14h20v4H6zM8 18h16v2H8zM6 20h4v2H6zM22 20h4v2h-4z"/><path class="b" d="M8 14h4v2H8zM18 14h4v2h-4z"/><path class="c" d="M10 16h2v2h-2zM20 16h2v2h-2z"/><path class="d" d="M14 16h4v2h-4z"/></svg>`)}`,
+
+      runLeft2: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" style="transform:scaleX(-1)"><style>.a{fill:#e0def4}.b{fill:#c4a7e7}.c{fill:#191724}.d{fill:#eb6f92}</style><path class="a" d="M6 10h2v2H6zM24 10h2v2h-2zM8 12h16v2H8zM6 14h20v4H6zM8 18h16v2H8zM10 20h4v2h-4zM18 20h4v2h-4z"/><path class="b" d="M8 14h4v2H8zM18 14h4v2h-4z"/><path class="c" d="M10 16h2v2h-2zM20 16h2v2h-2z"/><path class="d" d="M14 16h4v2h-4z"/></svg>`)}`,
+
+      // Sleeping cat
+      sleeping1: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><style>.a{fill:#e0def4}.b{fill:#c4a7e7}.d{fill:#eb6f92}</style><path class="a" d="M6 16h2v2H6zM24 16h2v2h-2zM8 18h16v2H8zM6 20h20v4H6z"/><path class="b" d="M10 20h4v2h-4zM18 20h4v2h-4z"/><path class="d" d="M14 22h4v2h-4z"/><text x="20" y="14" font-size="8" fill="#c4a7e7">z</text></svg>`)}`,
+
+      sleeping2: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><style>.a{fill:#e0def4}.b{fill:#c4a7e7}.d{fill:#eb6f92}</style><path class="a" d="M6 16h2v2H6zM24 16h2v2h-2zM8 18h16v2H8zM6 20h20v4H6z"/><path class="b" d="M10 20h4v2h-4zM18 20h4v2h-4z"/><path class="d" d="M14 22h4v2h-4z"/><text x="22" y="12" font-size="10" fill="#c4a7e7">Z</text></svg>`)}`,
+    };
+
+    function setSprite(name: string) {
+      if (sprites[name]) {
+        sprite.style.backgroundImage = `url("${sprites[name]}")`;
+      }
+    }
+
+    function resetIdleAnimation() {
+      idleAnimation = null;
+      idleAnimationFrame = 0;
+    }
+
+    function idle() {
+      idleTime += 1;
+
+      // Start sleeping after being idle for a while
+      if (idleTime > 10 && idleAnimation === null) {
+        idleAnimation = 'sleeping';
+        idleAnimationFrame = 0;
+      }
+
+      if (idleAnimation === 'sleeping') {
+        if (idleAnimationFrame % 8 < 4) {
+          setSprite('sleeping1');
+        } else {
+          setSprite('sleeping2');
+        }
+        idleAnimationFrame += 1;
+      } else {
+        setSprite('idle');
+      }
+    }
+
+    function frame(timestamp: number) {
+      if (lastFrameTimestamp === null) {
+        lastFrameTimestamp = timestamp;
+      }
+
+      // Run at ~30fps for snappier movement
+      if (timestamp - lastFrameTimestamp < 33) {
+        requestAnimationFrame(frame);
+        return;
+      }
+      lastFrameTimestamp = timestamp;
+
+      frameCount += 1;
+
+      const diffX = targetX - nekoX;
+      const diffY = targetY - nekoY;
+      const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
+
+      // If close enough to target, idle
+      if (distance < 32) {
+        idle();
+        requestAnimationFrame(frame);
+        return;
+      }
+
+      idleTime = 0;
+      resetIdleAnimation();
+
+      // Determine direction and set sprite
+      if (diffX > 0) {
+        // Moving right
+        if (frameCount % 4 < 2) {
+          setSprite('runRight1');
+        } else {
+          setSprite('runRight2');
+        }
+      } else {
+        // Moving left
+        if (frameCount % 4 < 2) {
+          setSprite('runLeft1');
+        } else {
+          setSprite('runLeft2');
+        }
+      }
+
+      // Move towards target with easing
+      const speed = 20;
+      nekoX += (diffX / distance) * speed;
+      nekoY += (diffY / distance) * speed;
+
+      neko.style.left = `${nekoX - 16}px`;
+      neko.style.top = `${nekoY - 16}px`;
+
+      requestAnimationFrame(frame);
+    }
+
+    // Track mouse position
+    document.addEventListener('mousemove', (e) => {
+      targetX = e.clientX;
+      targetY = e.clientY;
+
+      if (!neko.classList.contains('active')) {
+        // Initialize position near cursor on first move
+        nekoX = e.clientX - 100;
+        nekoY = e.clientY + 50;
+        neko.style.left = `${nekoX - 16}px`;
+        neko.style.top = `${nekoY - 16}px`;
+        neko.classList.add('active');
+        setSprite('alert');
+
+        // Start animation loop
+        requestAnimationFrame(frame);
+      }
+    });
+
+    // Handle mouse leaving window
+    document.addEventListener('mouseleave', () => {
+      neko.classList.remove('active');
+    });
+
+    document.addEventListener('mouseenter', () => {
+      if (targetX || targetY) {
+        neko.classList.add('active');
+      }
+    });
+  }
+</script>
