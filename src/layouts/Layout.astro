@@ -33,7 +33,7 @@ const { title, description } = Astro.props;
 
 		<script is:inline>
 			const theme = localStorage.getItem('theme');
-			if (theme) {
+			if (theme && theme !== 'system') {
 				document.documentElement.classList.add(theme);
 			}
 		</script>

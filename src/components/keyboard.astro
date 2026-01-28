@@ -41,22 +41,20 @@
 
       case "l":
         const root = document.documentElement;
-        const isDark = root.classList.contains("dark");
-        const isLight = root.classList.contains("light");
+        const currentTheme = localStorage.getItem("theme") || "system";
 
-        if (isDark) {
+        // Cycle: system → dark → light → system
+        if (currentTheme === "system") {
+          root.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+        } else if (currentTheme === "dark") {
           root.classList.remove("dark");
           root.classList.add("light");
           localStorage.setItem("theme", "light");
-        } else if (isLight) {
-          root.classList.remove("light");
-          root.classList.add("dark");
-          localStorage.setItem("theme", "dark");
         } else {
-          // No explicit class, check system preference
-          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          root.classList.add(prefersDark ? "light" : "dark");
-          localStorage.setItem("theme", prefersDark ? "light" : "dark");
+          // light → back to system
+          root.classList.remove("light");
+          localStorage.setItem("theme", "system");
         }
         break;
 
