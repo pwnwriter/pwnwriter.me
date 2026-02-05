@@ -17,7 +17,6 @@ When you’re quiet, you notice more, not just what people say, but how they
 feel. You give yourself space to think before reacting, and you avoid saying
 things you might later regret.
 
-
 Remaining silent has helped me focus on what really matters. It gives me time
 to reflect and keeps me out of unnecessary conflicts.
 

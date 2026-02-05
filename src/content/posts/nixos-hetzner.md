@@ -8,14 +8,13 @@ cover:
 tags: ['guide']
 ---
 
-
 My company has recently provided me with a VPS to test things before deploying
 them to production. This is a great opportunity for me to push the envelope and
-use Nix extensively. 
+use Nix extensively.
 
 While most VPS providers don't offer Nix as a default OS installation option,
 there is a workaround using [nixos-anywhere]. In this post, I'll walk you
-through how to install NixOS on any VPS. 
+through how to install NixOS on any VPS.
 
 > PS: I'm using `hetzner` vps, already running an ubuntu iso.
 
@@ -27,8 +26,8 @@ minimal install system without needing a flash drive. Additionally,
 [nixos-anywhere][nixos-anywhere] allows us to automatically format and
 partition using [disko] declaratively, and install the OS.
 
-
 Requirements:
+
 - A nix(os) system
 - Root access over the server
 - 1 gigs of RAM
@@ -50,7 +49,7 @@ $ tree .
 
 - `flake.lock` is similar to `cargo.lock,` `package.json,` `lazy-lock.json` it locks the package git rev hash.
 - `configuration.nix` is used to define our configuration for the nixos.
-- `disk-config.nix` is to define our disko config 
+- `disk-config.nix` is to define our disko config
 
 The initial `flake.nix` skeleton look like this
 
@@ -69,7 +68,6 @@ The initial `flake.nix` skeleton look like this
 
 Inside `flake.nix`, we'll add our input repository url, `nixpkgs` and `disko`.
 
-
 ```nix
 {
   inputs = {
@@ -84,7 +82,7 @@ Inside `flake.nix`, we'll add our input repository url, `nixpkgs` and `disko`.
 }
 ```
 
-and then we'll define our output  servers. For this example, i'm using my
+and then we'll define our output servers. For this example, i'm using my
 server name as `wolf`, you can name yours anything.
 
 ```nix
@@ -107,12 +105,11 @@ server name as `wolf`, you can name yours anything.
 }
 ```
 
-> My server is `x86_64-linux` you'll want to change that accordingly. 
+> My server is `x86_64-linux` you'll want to change that accordingly.
 
 I'm using the default example `disk` config from `disko`. It'll create `boot`
 and `root` partitions. I also recommend using the default unless you explicitly
-want to change. You'll want to change the device name, to know run `$ lsblk
-`
+want to change. You'll want to change the device name, to know run `$ lsblk`
 
 - `disk-config.nix`
 
@@ -223,7 +220,6 @@ environment.systemPackages = map lib.lowPrio [
 }
 ```
 
-
 Now, our final `configuration.nix` should look like this.
 
 ```nix
@@ -265,14 +261,15 @@ It'll ask for the root password on installation.
 ![][nix-pass]
 ![][nix-final]
 
-Congratulations!! The nixos has been installed successfully. You should be able to just edit the configuration and run 
+Congratulations!! The nixos has been installed successfully. You should be able to just edit the configuration and run
 
 ```bash
 sudo nixos-rebuild switch --flake .#wolf
 ```
+
 the other time on any changes.
 
-## Aditional tips...
+## Aditional tips
 
 You can use `justfile` to make this script running easy
 
@@ -318,7 +315,6 @@ Available recipes:
 Now, rebuild the os with `just r(ebuild)`
 
 Well, it's this for now, I'll see you in the next one!
-
 
 <!--links-->
 [nixos-anywhere]: https://github.com/nix-community/nixos-anywhere

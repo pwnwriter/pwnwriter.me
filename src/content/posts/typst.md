@@ -4,6 +4,7 @@ pubDate: 2025-07-17T08:26:54-04:00
 modDate: 2025-07-17T08:26:54-04:00
 tags: ['guide', 'typst', 'productivity']
 ---
+
 > _“Your assignments look so beautiful — do you spend hours making them?”_  
 My professor once asked me this with genuine curiosity.
 
@@ -11,13 +12,13 @@ The truth? **Not really.** I just take my rough class notes, clean them up a bit
 
 ---
 
-### Why I moved from Markdown to Typst
+## Why I moved from Markdown to Typst
 
 In my first two semesters, I relied on [Markdown] and [Obsidian] to take notes, [Git] to version them, and [GitHub] to back them up. I exported them as PDFs when needed. It worked — but it always felt like a patchwork solution.
 
 Then I discovered [Typst] — a modern typesetting system built for simplicity and power. The moment I tried it, I knew this was the upgrade I needed. Typst gives me **beautiful PDFs, powerful macros, and math support** — all without the friction I had with Markdown.
 
->  _Here’s a screenshot of a CSIT assignment I did using Typst:_
+> _Here’s a screenshot of a CSIT assignment I did using Typst:_
 
 ![Typst Assignment][typst-assignment]
 
@@ -103,17 +104,14 @@ return {
 }
 ```
 
-
 With this, I get inline errors, autocompletion, signature help, and quick formatting — exactly what I want.
 Here’s how it feels in action:
 
 ![typst-nvim]
 
-
 ---
 
 ### Final Thoughts
-
 
 At this point, Typst feels like the real OG. A couple of years ago, my older
 brothers introduced me to LaTeX — and I thought that was the gold standard. But
@@ -125,7 +123,6 @@ even now, it’s already changed how I work.
 
 If you’re a student, especially one who writes a lot of math-heavy content, I
 can’t recommend Typst enough.
-
 
 <!-- Links -->
 
