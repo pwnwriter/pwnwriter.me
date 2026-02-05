@@ -24,7 +24,8 @@
             typescript-language-server
             astro-language-server
             tailwindcss-language-server
-            harper
+            harper # Spelling check
+            rumdl # Markdown formating and check
           ];
 
           buildInputs = with pkgs; [ pkg-config ];
