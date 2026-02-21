@@ -1,0 +1,212 @@
+/* ── Syndications git-log page ── */
+
+.syn {
+  font-family: "SF Mono", "Fira Code", "JetBrains Mono", ui-monospace, monospace;
+  color: var(--f-high);
+  padding: 2.5rem 0 4rem;
+}
+
+/* ── Header ── */
+
+.syn-header {
+  margin-bottom: 1.25rem;
+}
+
+.syn-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--f-high);
+  margin: 0;
+  display: inline;
+  letter-spacing: -0.01em;
+}
+
+.syn-ref {
+  font-size: 0.75rem;
+  color: var(--accent);
+  opacity: 0.6;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+/* ── Filter chips ── */
+
+.syn-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 2.25rem;
+}
+
+.syn-chip {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--f-low);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.7rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  border-radius: 2px;
+  line-height: 1.6;
+}
+
+.syn-chip:hover,
+.syn-chip--active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Log container ── */
+
+.syn-log {
+  position: relative;
+}
+
+.syn-line {
+  position: absolute;
+  left: 5px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* ── Year group ── */
+
+.syn-year {
+  position: relative;
+}
+
+.syn-year + .syn-year {
+  margin-top: 0.75rem;
+}
+
+.syn-year-label {
+  font-size: 0.65rem;
+  color: var(--f-low);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.6rem 0 0.3rem 1.75rem;
+  opacity: 0.7;
+}
+
+/* ── Entry ── */
+
+.syn-entry {
+  position: relative;
+  padding: 0.55rem 0 0.55rem 1.75rem;
+}
+
+/* ── Dot ── */
+
+.syn-dot {
+  position: absolute;
+  left: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: transform 0.2s ease;
+  z-index: 1;
+}
+
+.syn-entry:hover .syn-dot {
+  transform: translateY(-50%) scale(1.35);
+}
+
+/* ── Body ── */
+
+.syn-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.syn-link {
+  text-decoration: none;
+  color: var(--f-high);
+  display: inline;
+  line-height: 1.45;
+}
+
+.syn-link:hover .syn-msg {
+  text-decoration: underline;
+  text-decoration-color: var(--f-low);
+  text-underline-offset: 3px;
+}
+
+.syn-hash {
+  color: var(--accent);
+  font-size: 0.78rem;
+  margin-right: 0.6rem;
+  opacity: 0.7;
+}
+
+.syn-msg {
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: text-decoration 0.15s;
+}
+
+/* ── Metadata ── */
+
+.syn-meta {
+  font-size: 0.7rem;
+  color: var(--f-low);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.syn-tag {
+  color: var(--accent);
+  opacity: 0.65;
+}
+
+.syn-date {
+  opacity: 0.55;
+}
+
+/* ── Filter hide/show ── */
+
+.syn-entry[data-hidden] {
+  display: none;
+}
+
+.syn-year[data-hidden] {
+  display: none;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 480px) {
+  .syn {
+    padding: 1.5rem 0 3rem;
+  }
+
+  .syn-entry {
+    padding-left: 1.4rem;
+  }
+
+  .syn-year-label {
+    padding-left: 1.4rem;
+  }
+
+  .syn-dot {
+    width: 8px;
+    height: 8px;
+    left: 2px;
+  }
+
+  .syn-hash {
+    display: none;
+  }
+
+  .syn-ref {
+    display: none;
+  }
+}

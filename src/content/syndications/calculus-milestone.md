@@ -1,8 +1,8 @@
 ---
-modDate: 2026-02-12
-title: "Calculus reaches 1M+"
+title: "milestone(community): calculus reaches 1M+ members"
 pubDate: 2026-02-12
-tags: [growth]
+modDate: 2026-02-12
+tags: [learning, life]
 ---
 
 <img src="/images/syndications/calculus/calculus-1m.png" alt="we" style="width: 100%; max-width: 500px; height: auto;" />

@@ -1,9 +1,9 @@
 ---
-title: "Resigned from job"
+title: "refactor(career): resigned from job"
 pubDate: 2024-07-25
 modDate: 2024-07-25
-tags: [growth]
+tags: [life, dev]
 ---
-Wrapped up my job, said goodbye to colleagues, i feel both sad and excited at the same  time.
+Wrapped up my job, said goodbye to colleagues. I feel both sad and excited at the same time.
 
 >  [Read my full blog post »](/notes/job)

@@ -1,8 +1,8 @@
 ---
-title: "PostgreSQL with Nix flake"
+title: "feat(nix): local postgresql with nix flake"
 pubDate: 2026-02-15
 modDate: 2026-02-15
-tags: [nix]
+tags: [nix, infra, dev]
 ---
 
 Was working on a project that needed postgres. Didn't want to install it globally or spin up docker for something this simple. So I wrote a flake that gives me a local postgres instance — data stays in `.pg/`, auto-starts when I enter the shell, stops when I leave.

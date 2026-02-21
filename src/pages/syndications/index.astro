@@ -1,4 +1,5 @@
 ---
+import "~/styles/syndications.css";
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
@@ -6,12 +7,25 @@ import { getCollection, type CollectionEntry } from "astro:content";
 const syndications: CollectionEntry<"syndications">[] =
   await getCollection("syndications");
 
-// Sort by date descending
 syndications.sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
 );
 
-// Generate short git-like hash
+// Group by year
+const grouped: Record<number, CollectionEntry<"syndications">[]> = {};
+for (const s of syndications) {
+  const year = s.data.pubDate.getFullYear();
+  if (!grouped[year]) grouped[year] = [];
+  grouped[year].push(s);
+}
+const years = Object.keys(grouped)
+  .map(Number)
+  .sort((a, b) => b - a);
+
+// Collect unique tags for filter chips
+const allTags = [...new Set(syndications.flatMap((s) => s.data.tags || []))].sort();
+
+// Generate short git-like hash from slug
 function generateHash(slug: string): string {
   let hash = 0;
   for (let i = 0; i < slug.length; i++) {
@@ -22,118 +36,90 @@ function generateHash(slug: string): string {
   return Math.abs(hash).toString(16).padStart(7, "0").slice(0, 7);
 }
 
-const msPerDay = 24 * 60 * 60 * 1000;
-
-function getRelativeTime(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / msPerDay);
-
-  if (diffDays === 0) return "today";
-  if (diffDays === 1) return "yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
-  return `${Math.floor(diffDays / 365)} years ago`;
+function formatDate(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
-
-/* -------- content preview helpers -------- */
-
-// strip markdown + extra whitespace
-function stripMarkdown(md: string): string {
-  return md
-    .replace(/```[\s\S]*?```/g, "")   // code blocks
-    .replace(/`[^`]*`/g, "")         // inline code
-    .replace(/!\[.*?\]\(.*?\)/g, "") // images
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links
-    .replace(/[#>*_~\-]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-// grab first 1–2 sentences
-function extractPreview(body: string, maxLength = 160): string {
-  const clean = stripMarkdown(body);
-  const sentences = clean.match(/[^.!?]+[.!?]+/g) || [clean];
-  const preview = sentences.slice(0, 2).join(" ").trim();
-  return preview.length > maxLength
-    ? preview.slice(0, maxLength).trim() + "…"
-    : preview;
-}
-
-// Format commits
-const commits = syndications.map((s) => {
-  const tags = s.data.tags || [];
-  const primaryTag = tags[0] ?? "life";
-
-  return {
-    hash: generateHash(s.slug),
-    slug: s.slug,
-    title: s.data.title,
-    primaryTag,
-    preview: extractPreview(s.body),
-    relativeTime: getRelativeTime(s.data.pubDate),
-  };
-});
 ---
 
 <Layout title="Syndications" description="Personal updates and reflections.">
   <Wrapper>
-    <div>
-      <div class="flex items-center gap-3 mb-6">
-        <div class="text-accent">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        </div>
-        <h1 class="text-2xl font-bold text-f-high font-mono">life log</h1>
-        <span class="text-f-low text-sm">({commits.length} commits)</span>
+    <div class="syn">
+      <div class="syn-header">
+        <h1 class="syn-title">syndications</h1>
+        <span class="syn-ref">(HEAD &rarr; main, origin/main)</span>
       </div>
 
-      <!-- Git log -->
-      <div class="relative">
-        <!-- Tree line -->
-        <div class="absolute left-[11px] top-0 bottom-0 w-[2px] bg-accent/20"></div>
+      <div class="syn-filters" role="tablist">
+        <button class="syn-chip syn-chip--active" data-filter="all">all</button>
+        {allTags.map((tag) => (
+          <button class="syn-chip" data-filter={tag}>{tag}</button>
+        ))}
+      </div>
 
-        <div class="space-y-1">
-          {commits.map((commit) => (
-            <a
-              href={`/syndications/${commit.slug}`}
-              class="group block relative pl-8 py-3 rounded-lg hover:bg-b-med/50 transition-colors"
-            >
-              <!-- Node -->
-              <div class="absolute left-[7px] top-1/2 -translate-y-1/2 w-[10px] h-[10px] rounded-full bg-accent border-2 border-background group-hover:scale-125 transition-transform"></div>
+      <div class="syn-log">
+        <div class="syn-line" aria-hidden="true"></div>
 
-              <!-- Header row -->
-              <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
-                <code class="text-accent text-sm font-mono shrink-0">
-                  {commit.hash}
-                </code>
+        {years.map((year) => (
+          <div class="syn-year" data-year={year}>
+            <div class="syn-year-label">{year}</div>
 
-                <span class="text-f-high group-hover:text-accent transition-colors font-medium truncate">
-                  <span class="text-f-low font-mono">{commit.primaryTag}</span>
-                  <span class="text-f-low/70 font-mono"> : </span>
-                  <span>{commit.title}</span>
-                </span>
-
-                <span class="text-f-low/60 text-xs sm:ml-auto shrink-0">
-                  {commit.relativeTime}
-                </span>
-              </div>
-
-              <!-- Content preview -->
-              <p class="mt-1 text-sm text-f-low/70 font-black leading-snug line-clamp-1">
-                {commit.preview}
-              </p>
-            </a>
-          ))}
-        </div>
+            {grouped[year].map((entry) => {
+              const tags = entry.data.tags || [];
+              const hash = generateHash(entry.slug);
+              return (
+                <div class="syn-entry" data-tags={tags.join(",")}>
+                  <div class="syn-dot" aria-hidden="true" />
+                  <div class="syn-body">
+                    <a href={`/syndications/${entry.slug}`} class="syn-link">
+                      <code class="syn-hash">{hash}</code>
+                      <span class="syn-msg">{entry.data.title}</span>
+                    </a>
+                    <div class="syn-meta">
+                      {tags.map((t) => (
+                        <span class="syn-tag">#{t}</span>
+                      ))}
+                      <span class="syn-date">&middot; {formatDate(entry.data.pubDate)}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   </Wrapper>
 </Layout>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>(".syn-chip");
+  const entries = document.querySelectorAll<HTMLElement>(".syn-entry");
+  const yearGroups = document.querySelectorAll<HTMLElement>(".syn-year");
+
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      chips.forEach((c) => c.classList.remove("syn-chip--active"));
+      chip.classList.add("syn-chip--active");
+
+      const filter = chip.dataset.filter ?? "all";
+
+      entries.forEach((entry) => {
+        const tags = entry.dataset.tags?.split(",") ?? [];
+        if (filter === "all" || tags.includes(filter)) {
+          entry.removeAttribute("data-hidden");
+        } else {
+          entry.setAttribute("data-hidden", "");
+        }
+      });
+
+      yearGroups.forEach((group) => {
+        const hasVisible = group.querySelector(".syn-entry:not([data-hidden])");
+        group.toggleAttribute("data-hidden", !hasVisible);
+      });
+    });
+  });
+</script>

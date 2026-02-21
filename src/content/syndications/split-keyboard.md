@@ -1,8 +1,8 @@
 ---
-title: "I got my first split keyboard"
+title: "feat(gear): got my first split keyboard"
 pubDate: 2026-01-12
 modDate: 2026-01-12
-tags: [pwnware]
+tags: [dev]
 ---
 
 Got my split keyboard today. Still slow, but enjoying every keystroke.

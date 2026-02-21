@@ -1,40 +1,65 @@
 ---
-import Link from "~/components/link.astro";
 import Wrapper from "~/components/wrapper.astro";
 
-const mainLinks = [
+const links = [
   { text: "~", href: "/" },
-  { text: "About", href: "/about" },
-  { text: "Notes", href: "/notes" },
-  { text: "Syndications", href: "/syndications" },
-  { text: "Photos", href: "/photos" },
+  { text: "about", href: "/about" },
+  { text: "notes", href: "/notes" },
+  { text: "syndications", href: "/syndications" },
+  { text: "photos", href: "/photos" },
   {
-    text: "RSS",
+    text: "rss",
     href: import.meta.env.DEV ? `/rss.xml?${Date.now()}` : "/rss.xml",
   },
   {
-    text: "Stats",
+    text: "stats",
     href: "https://cloud.umami.is/share/tNl4j2DN3BMN3xwq/pwnwriter.me",
   },
 ];
 ---
 
 <Wrapper>
-  <footer class="py-md text-sm text-center">
-    <ul class="flex flex-wrap justify-center gap-4">
+  <footer class="py-md text-center font-mono">
+    <nav class="flex flex-wrap justify-center gap-2">
       {
-        mainLinks.map(({ text, href }) => (
-          <li>
-            <Link href={href} class="underline hover:text-accent">
+        links.map(({ text, href }) => {
+          const isExternal = href.startsWith("http");
+          return (
+            <a
+              href={href}
+              rel={isExternal ? "external" : undefined}
+              target={isExternal ? "_blank" : undefined}
+              class="footer-chip"
+            >
               {text}
-            </Link>
-          </li>
-        ))
+            </a>
+          );
+        })
       }
-    </ul>
+    </nav>
 
-    <p class="mt-4 text-xs text-f-low">
-      © {new Date().getFullYear()} PwnWriter
+    <p class="mt-4 text-xs text-f-low opacity-50">
+      &copy; {new Date().getFullYear()} pwnwriter
     </p>
   </footer>
 </Wrapper>
+
+<style>
+  .footer-chip {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.72rem;
+    color: var(--f-low);
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    border-radius: 2px;
+    text-decoration: none;
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .footer-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>

@@ -1,8 +1,8 @@
 ---
-title: "First semester"
+title: "log(college): first semester done"
 pubDate: 2024-11-28
 modDate: 2024-11-28
-tags: [reflections]
+tags: [life, learning]
 ---
 
 First semester done! 

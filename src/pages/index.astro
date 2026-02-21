@@ -11,13 +11,7 @@ import PostList from "~/components/post-list.astro";
 <Layout title="~" description="pwn::musings.">
   <Wrapper>
     <Heading Element="h1">
-      Hi! I am
-      <span
-        set:html={`<span
-					class="cursor-pointer rounded-sm font-semibold underline decoration-fuchsia-500 decoration-2 underline-offset-2 transition duration-200 text-zinc-800 hover:text-fuchsia-500 dark:text-white dark:hover:text-fuchsia-400 hover:decoration-fuchsia-500/30 dark:decoration-fuchsia-400 dark:hover:decoration-fuchsia-400/40">
-					Nabeen
-				</span>`}
-      />
+      Hi! I am <span class="shimmer">Nabeen</span>
     </Heading>
 
     <Paragraph>
@@ -39,3 +33,38 @@ import PostList from "~/components/post-list.astro";
     <Link href="/notes">{"{ All notes }"}&nbsp;&nbsp;&Rarr;</Link>
   </Wrapper>
 </Layout>
+
+<style>
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--f-high) 0%,
+      var(--accent) 40%,
+      var(--f-high) 60%,
+      var(--accent) 100%
+    );
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s ease-in-out infinite;
+    font-weight: 700;
+  }
+
+  @keyframes shimmer {
+    0%,
+    100% {
+      background-position: 200% center;
+    }
+    50% {
+      background-position: 0% center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shimmer {
+      animation: none;
+      background-position: 0% center;
+    }
+  }
+</style>
