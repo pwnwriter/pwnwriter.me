@@ -10,9 +10,14 @@
 
 <script>
   document.addEventListener("keydown", (e) => {
-    const scrollAmount = 50;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
 
-    if (e.ctrlKey || e.metaKey || e.altKey) return; // Ignore if modifier keys
+    // don't hijack typing in form fields
+    const tag = (e.target as HTMLElement)?.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+    if ((e.target as HTMLElement)?.isContentEditable) return;
+
+    const scrollAmount = Math.round(window.innerHeight * 0.15);
 
     const routes: Record<"h" | "~" | "a" | "s" | "n" | "p", string> = {
       h: "home-link",
@@ -39,7 +44,7 @@
         window.scrollBy({ top: -scrollAmount, behavior: "smooth" });
         break;
 
-      case "l":
+      case "t":
         const root = document.documentElement;
         const currentTheme = localStorage.getItem("theme") || "system";
 

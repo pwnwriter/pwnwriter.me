@@ -1,91 +1,144 @@
 ---
+import '~/styles/vim-indicator.css';
 const isHomePage = Astro.url.pathname === '/';
 ---
 
 {!isHomePage && (
-  <div id="vim-indicator" class="fixed right-4 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-1 z-50">
+  <div id="vim-indicator" class="vim-indicator fixed right-4 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-1 z-50">
+
+    {/* help panel — sits above the key grid */}
+    <div id="vim-help" class="vim-help">
+      <div class="vim-help-row">
+        <span class="vim-help-key">~</span>
+        <span>home</span>
+      </div>
+      <div class="vim-help-row">
+        <span class="vim-help-key">a</span>
+        <span>about</span>
+      </div>
+      <div class="vim-help-row">
+        <span class="vim-help-key">s</span>
+        <span>syndications</span>
+      </div>
+      <div class="vim-help-row">
+        <span class="vim-help-key">n</span>
+        <span>notes</span>
+      </div>
+      <div class="vim-help-row">
+        <span class="vim-help-key">p</span>
+        <span>photos</span>
+      </div>
+    </div>
+
+    {/* row 1: g / k / ? */}
     <div class="grid grid-cols-3 gap-1">
-      <div></div>
-      <div id="key-k" class="vim-key" data-key="k">
+      <div id="key-g" class="vim-key">
+        <span class="key-label">g</span>
+        <span class="key-hint">top</span>
+      </div>
+      <div id="key-k" class="vim-key">
         <span class="key-label">k</span>
         <span class="key-hint">up</span>
       </div>
-      <div></div>
+      <div id="key-help" class="vim-key">
+        <span class="key-label">?</span>
+        <span class="key-hint">help</span>
+      </div>
     </div>
+
+    {/* row 2: h / j / l */}
     <div class="grid grid-cols-3 gap-1">
-      <div id="key-h" class="vim-key" data-key="h">
+      <div id="key-h" class="vim-key">
         <span class="key-label">h</span>
         <span class="key-hint">home</span>
       </div>
-      <div id="key-j" class="vim-key" data-key="j">
+      <div id="key-j" class="vim-key">
         <span class="key-label">j</span>
         <span class="key-hint">down</span>
       </div>
-      <div id="key-l" class="vim-key" data-key="l">
-        <span class="key-label">l</span>
+      <div id="key-t" class="vim-key">
+        <span class="key-label">t</span>
         <span class="key-hint">theme</span>
       </div>
+    </div>
+
+    {/* row 3: G (centered) */}
+    <div class="grid grid-cols-3 gap-1">
+      <div></div>
+      <div id="key-G" class="vim-key">
+        <span class="key-label">G</span>
+        <span class="key-hint">bottom</span>
+      </div>
+      <div></div>
     </div>
   </div>
 )}
 
-<style>
-  .vim-key {
-    width: 2.5rem;
-    height: 2.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--b-high);
-    border-radius: 0.25rem;
-    background: var(--b-low);
-    color: var(--f-low);
-    font-family: monospace;
-    font-size: 0.75rem;
-    transition: all 0.1s ease;
-    user-select: none;
-  }
-
-  .vim-key.active {
-    background: var(--accent);
-    color: var(--b-low);
-    border-color: var(--accent);
-    transform: scale(0.95);
-  }
-
-  .key-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1;
-  }
-
-  .key-hint {
-    font-size: 0.5rem;
-    opacity: 0.7;
-    line-height: 1;
-    margin-top: 0.125rem;
-  }
-</style>
-
 <script>
-  const keys = ['h', 'j', 'k', 'l'] as const;
+  const indicator = document.getElementById('vim-indicator');
+  const helpPanel = document.getElementById('vim-help');
+  if (!indicator) throw new Error('missing #vim-indicator');
+
+  // keys that light up on press
+  const highlightKeys = new Set(['h', 'j', 'k', 't', 'g']);
+
+  let idleTimer: ReturnType<typeof setTimeout> | null = null;
+  const IDLE_MS = 3000;
+
+  function resetIdle() {
+    indicator!.classList.remove('idle');
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => indicator!.classList.add('idle'), IDLE_MS);
+  }
+
+  // start fading on load
+  resetIdle();
 
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    resetIdle();
 
-    const key = e.key.toLowerCase();
-    if (keys.includes(key as typeof keys[number])) {
-      const el = document.getElementById(`key-${key}`);
-      if (el) el.classList.add('active');
+    const key = e.key;
+
+    // ? toggles help
+    if (key === '?') {
+      helpPanel?.classList.toggle('visible');
+      return;
+    }
+
+    // any other key closes help
+    helpPanel?.classList.remove('visible');
+
+    // highlight the pressed key
+    if (highlightKeys.has(key)) {
+      document.getElementById(`key-${key}`)?.classList.add('active');
+    }
+
+    // G needs special handling — keyup fires as "Shift", not "G"
+    if (key === 'G') {
+      const el = document.getElementById('key-G');
+      el?.classList.add('active');
+      setTimeout(() => el?.classList.remove('active'), 150);
     }
   });
 
   document.addEventListener('keyup', (e) => {
-    const key = e.key.toLowerCase();
-    if (keys.includes(key as typeof keys[number])) {
-      const el = document.getElementById(`key-${key}`);
-      if (el) el.classList.remove('active');
+    const key = e.key;
+    if (highlightKeys.has(key)) {
+      document.getElementById(`key-${key}`)?.classList.remove('active');
+    }
+  });
+
+  // ? button is also clickable
+  document.getElementById('key-help')?.addEventListener('click', () => {
+    helpPanel?.classList.toggle('visible');
+    resetIdle();
+  });
+
+  // click outside closes help
+  document.addEventListener('click', (e) => {
+    if (!indicator?.contains(e.target as Node)) {
+      helpPanel?.classList.remove('visible');
     }
   });
 </script>

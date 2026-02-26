@@ -1,0 +1,97 @@
+/* ── Vim indicator ── */
+
+.vim-indicator {
+  transition: opacity 0.3s ease;
+}
+
+.vim-indicator.idle {
+  opacity: 0.2;
+}
+
+/* ── Key ── */
+
+.vim-key {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--b-high);
+  border-radius: 0.25rem;
+  background: var(--b-low);
+  color: var(--f-low);
+  font-family: monospace;
+  font-size: 0.75rem;
+  transition: all 0.1s ease;
+  user-select: none;
+  cursor: default;
+}
+
+.vim-key.active {
+  background: var(--accent);
+  color: var(--b-low);
+  border-color: var(--accent);
+  transform: scale(0.95);
+}
+
+.key-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.key-hint {
+  font-size: 0.5rem;
+  opacity: 0.7;
+  line-height: 1;
+  margin-top: 0.125rem;
+}
+
+/* ── Help overlay ── */
+
+.vim-help {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  right: 0;
+  background: var(--b-med);
+  border: 1px solid var(--b-high);
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: var(--f-low);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.vim-help.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.vim-help-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.15rem 0;
+}
+
+.vim-help-key {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── Accessibility ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .vim-indicator,
+  .vim-key,
+  .vim-help {
+    transition: none;
+  }
+}
