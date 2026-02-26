@@ -36,6 +36,7 @@ const links = [
           );
         })
       }
+      <button id="theme-toggle" class="footer-chip" type="button">theme</button>
     </nav>
 
     <p class="mt-4 text-xs text-f-low opacity-50">
@@ -62,4 +63,31 @@ const links = [
     border-color: var(--accent);
     color: var(--accent);
   }
+
+  /* desktop has the keyboard indicator, so hide this */
+  @media (min-width: 1024px) {
+    #theme-toggle {
+      display: none;
+    }
+  }
 </style>
+
+<script>
+  // cycle: system → dark → light → system
+  document.getElementById("theme-toggle")?.addEventListener("click", () => {
+    const root = document.documentElement;
+    const current = localStorage.getItem("theme") || "system";
+
+    if (current === "system") {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else if (current === "dark") {
+      root.classList.remove("dark");
+      root.classList.add("light");
+      localStorage.setItem("theme", "light");
+    } else {
+      root.classList.remove("light");
+      localStorage.setItem("theme", "system");
+    }
+  });
+</script>
