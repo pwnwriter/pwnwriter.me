@@ -5,10 +5,9 @@ modDate: 2026-02-26
 tags: [nix, rust, dev, infra]
 ---
 
-
 A small bug in [`haylxon`](https://github.com/pwnwriter/haylxon)caused screenshots to fail with this warning:
 
-```warning: oneshot canceled```
+`warning: oneshot canceled`
 
 But the tool still said:
 

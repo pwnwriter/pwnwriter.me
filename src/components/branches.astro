@@ -23,16 +23,10 @@
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-
-    function resize() {
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-      render();
-    }
+    let animationId: number | null = null;
 
     // Seeded random for consistent look per session
-    let seed = Math.random() * 10000;
+    let seed = 42;
     function rand() {
       seed = (seed * 16807) % 2147483647;
       return (seed - 1) / 2147483646;
@@ -45,111 +39,175 @@
       return window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
 
-    function branch(
-      x: number,
-      y: number,
-      angle: number,
-      length: number,
-      width: number,
-      depth: number,
-      dark: boolean,
+    interface Segment {
+      x1: number; y1: number;
+      cx: number; cy: number;
+      x2: number; y2: number;
+      width: number;
+      alpha: number;
+      depth: number;
+    }
+
+    // Collect all branch segments into an array (depth-first order)
+    function collectBranch(
+      x: number, y: number, angle: number,
+      length: number, width: number, depth: number,
+      segments: Segment[],
     ) {
       if (depth <= 0 || length < 2 || width < 0.3) return;
 
       const endX = x + Math.cos(angle) * length;
       const endY = y + Math.sin(angle) * length;
-
-      ctx!.beginPath();
-      ctx!.moveTo(x, y);
-
-      // Slight curve via quadratic bezier
       const cx = (x + endX) / 2 + (rand() - 0.5) * length * 0.3;
       const cy = (y + endY) / 2 + (rand() - 0.5) * length * 0.3;
-      ctx!.quadraticCurveTo(cx, cy, endX, endY);
-
       const a = 0.3 + depth * 0.06;
-      ctx!.strokeStyle = dark
-        ? `rgba(255, 255, 255, ${a})`
-        : `rgba(0, 0, 0, ${a})`;
-      ctx!.lineWidth = width;
-      ctx!.lineCap = "round";
-      ctx!.stroke();
 
-      // Spawn sub-branches
+      segments.push({ x1: x, y1: y, cx, cy, x2: endX, y2: endY, width, alpha: a, depth });
+
       const branches = depth > 4 ? 2 : Math.floor(rand() * 2) + 1;
       for (let i = 0; i < branches; i++) {
         const spread = (rand() - 0.5) * 0.9;
         const newAngle = angle + spread;
         const shrink = 0.65 + rand() * 0.15;
-
-        branch(
-          endX,
-          endY,
-          newAngle,
-          length * shrink,
-          width * 0.7,
-          depth - 1,
-          dark,
-        );
+        collectBranch(endX, endY, newAngle, length * shrink, width * 0.7, depth - 1, segments);
       }
 
-      // Occasional extra twig
       if (rand() > 0.6 && depth > 2) {
         const twigAngle = angle + (rand() > 0.5 ? 1 : -1) * (0.5 + rand() * 0.7);
-        branch(
-          endX,
-          endY,
-          twigAngle,
-          length * 0.4,
-          width * 0.4,
-          depth - 2,
-          dark,
-        );
+        collectBranch(endX, endY, twigAngle, length * 0.4, width * 0.4, depth - 2, segments);
       }
     }
 
-    function render() {
+    function drawSegment(seg: Segment, progress: number, dark: boolean) {
+      // progress: 0..1, how much of this segment to draw
+      const t = Math.max(0, Math.min(1, progress));
+      if (t <= 0) return;
+
+      // Interpolate along the quadratic bezier up to t
+      // B(t) = (1-t)^2*P0 + 2(1-t)t*C + t^2*P1
+      ctx!.beginPath();
+      ctx!.moveTo(seg.x1, seg.y1);
+
+      if (t >= 1) {
+        ctx!.quadraticCurveTo(seg.cx, seg.cy, seg.x2, seg.y2);
+      } else {
+        // Split bezier at t using De Casteljau
+        const p0x = seg.x1, p0y = seg.y1;
+        const p1x = seg.cx, p1y = seg.cy;
+        const p2x = seg.x2, p2y = seg.y2;
+
+        const q0x = p0x + (p1x - p0x) * t;
+        const q0y = p0y + (p1y - p0y) * t;
+        const q1x = p1x + (p2x - p1x) * t;
+        const q1y = p1y + (p2y - p1y) * t;
+
+        const rx = q0x + (q1x - q0x) * t;
+        const ry = q0y + (q1y - q0y) * t;
+
+        ctx!.quadraticCurveTo(q0x, q0y, rx, ry);
+      }
+
+      ctx!.strokeStyle = dark
+        ? `rgba(255, 255, 255, ${seg.alpha})`
+        : `rgba(0, 0, 0, ${seg.alpha})`;
+      ctx!.lineWidth = seg.width;
+      ctx!.lineCap = "round";
+      ctx!.stroke();
+    }
+
+    let allSegments: Segment[] = [];
+    let growStart = 0;
+    const GROW_DURATION = 2200; // ms for full tree to grow
+    const STAGGER_PER_SEGMENT = 0.7; // fraction of duration each segment takes
+
+    function buildSegments() {
+      allSegments = [];
+      seed = 42;
       const w = window.innerWidth;
       const h = window.innerHeight;
-      ctx!.clearRect(0, 0, w, h);
 
-      // Reset seed so branches look the same on resize
-      seed = 42;
+      collectBranch(w * 0.05, h * 0.95, -Math.PI / 4, Math.min(w, h) * 0.25, 2.2, 8, allSegments);
+      collectBranch(w * 0.92, h * 0.08, Math.PI * 0.75, Math.min(w, h) * 0.2, 1.8, 7, allSegments);
+    }
 
-      // Cache theme once per render instead of per stroke
+    function animateGrow(timestamp: number) {
+      if (!growStart) growStart = timestamp;
+      const elapsed = timestamp - growStart;
+      const globalT = Math.min(elapsed / GROW_DURATION, 1);
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
       const dark = isDark();
 
-      // Bottom-left branch growing toward upper-right
-      branch(
-        w * 0.05,
-        h * 0.95,
-        -Math.PI / 4,     // ~45° toward upper-right
-        Math.min(w, h) * 0.25,
-        2.2,
-        8,
-        dark,
-      );
+      ctx!.clearRect(0, 0, w, h);
 
-      // Top-right branch growing toward lower-left
-      branch(
-        w * 0.92,
-        h * 0.08,
-        Math.PI * 0.75,   // ~135° toward lower-left
-        Math.min(w, h) * 0.2,
-        1.8,
-        7,
-        dark,
-      );
+      const total = allSegments.length;
+      for (let i = 0; i < total; i++) {
+        // Each segment starts growing at a staggered time based on its index
+        const segStart = (i / total) * (1 - STAGGER_PER_SEGMENT);
+        const segProgress = (globalT - segStart) / STAGGER_PER_SEGMENT;
+        if (segProgress <= 0) continue;
+
+        // Ease-out for organic feel
+        const eased = 1 - Math.pow(1 - Math.min(segProgress, 1), 2);
+        drawSegment(allSegments[i], eased, dark);
+      }
+
+      if (globalT < 1) {
+        animationId = requestAnimationFrame(animateGrow);
+      }
+    }
+
+    function startGrowAnimation() {
+      if (animationId) cancelAnimationFrame(animationId);
+      growStart = 0;
+      buildSegments();
+      animationId = requestAnimationFrame(animateGrow);
+    }
+
+    // Instant render (used on resize after initial animation)
+    let hasGrown = false;
+
+    function renderInstant() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const dark = isDark();
+      ctx!.clearRect(0, 0, w, h);
+      buildSegments();
+      for (const seg of allSegments) {
+        drawSegment(seg, 1, dark);
+      }
+    }
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      if (hasGrown) {
+        renderInstant();
+      } else {
+        hasGrown = true;
+        startGrowAnimation();
+      }
     }
 
     resize();
     window.addEventListener("resize", resize, { passive: true });
 
-    // Re-render when theme changes (class mutation on <html>)
-    new MutationObserver(() => render()).observe(document.documentElement, {
+    // Re-render when theme changes
+    new MutationObserver(() => {
+      if (hasGrown) renderInstant();
+    }).observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class"],
     });
+
+    // Respect reduced motion
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      hasGrown = true;
+      renderInstant();
+    }
   }
 
   document.addEventListener("DOMContentLoaded", drawBranches);
