@@ -5,7 +5,7 @@ modDate: 2024-11-28
 tags: [life, learning]
 ---
 
-First semester done! 
+First semester done!
 
 Sometimes I miss home, the food, the people, but it’s okay.
 

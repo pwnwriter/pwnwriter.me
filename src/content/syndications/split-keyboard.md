@@ -8,7 +8,3 @@ tags: [dev]
 Got my split keyboard today. Still slow, but enjoying every keystroke.
 
 <img src="/images/syndications/split-keyboard.jpg" alt="we" style="width: 100%; max-width: 500px; height: auto;" />
-
-
-
-

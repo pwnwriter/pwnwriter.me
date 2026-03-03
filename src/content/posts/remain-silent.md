@@ -2,14 +2,14 @@
 title: "Remaining silent"
 pubDate: 2025-07-15T00:49:36-04:00
 modDate: 2025-07-15T00:49:36-04:00
-tags: ['opinion']
+tags: ["opinion"]
 ---
 
-*Staying silent is powerful. Not every question needs an answer. Not every
-comment deserves a reply. And not every situation needs your voice in it.*
+_Staying silent is powerful. Not every question needs an answer. Not every
+comment deserves a reply. And not every situation needs your voice in it._
 
-I was watching [this video by Ron White](https://www.youtube.com/watch?v=neUaSTSKFZc), where he says,***“You have
-the right to remain silent, and I wish to God you’d use it.”***.It’s a joke,
+I was watching [this video by Ron White](https://www.youtube.com/watch?v=neUaSTSKFZc), where he says,**_“You have
+the right to remain silent, and I wish to God you’d use it.”_**.It’s a joke,
 but it really stuck with me. Silence is a choice, one that can save you from
 unnecessary trouble and help you stay in control of yourself.
 

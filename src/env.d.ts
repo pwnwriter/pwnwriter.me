@@ -2,6 +2,6 @@
 /// <reference types="astro/client" />
 
 interface Frontmatter {
-	title: string;
-	description: string;
+  title: string;
+  description: string;
 }

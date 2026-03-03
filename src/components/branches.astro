@@ -1,0 +1,157 @@
+<canvas id="branches-canvas" class="branches-canvas" aria-hidden="true"></canvas>
+
+<style>
+  .branches-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.15;
+  }
+</style>
+
+<script>
+  function drawBranches() {
+    const canvas = document.getElementById(
+      "branches-canvas",
+    ) as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      render();
+    }
+
+    // Seeded random for consistent look per session
+    let seed = Math.random() * 10000;
+    function rand() {
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    }
+
+    function isDark() {
+      const html = document.documentElement;
+      if (html.classList.contains("dark")) return true;
+      if (html.classList.contains("light")) return false;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    function branch(
+      x: number,
+      y: number,
+      angle: number,
+      length: number,
+      width: number,
+      depth: number,
+      dark: boolean,
+    ) {
+      if (depth <= 0 || length < 2 || width < 0.3) return;
+
+      const endX = x + Math.cos(angle) * length;
+      const endY = y + Math.sin(angle) * length;
+
+      ctx!.beginPath();
+      ctx!.moveTo(x, y);
+
+      // Slight curve via quadratic bezier
+      const cx = (x + endX) / 2 + (rand() - 0.5) * length * 0.3;
+      const cy = (y + endY) / 2 + (rand() - 0.5) * length * 0.3;
+      ctx!.quadraticCurveTo(cx, cy, endX, endY);
+
+      const a = 0.3 + depth * 0.06;
+      ctx!.strokeStyle = dark
+        ? `rgba(255, 255, 255, ${a})`
+        : `rgba(0, 0, 0, ${a})`;
+      ctx!.lineWidth = width;
+      ctx!.lineCap = "round";
+      ctx!.stroke();
+
+      // Spawn sub-branches
+      const branches = depth > 4 ? 2 : Math.floor(rand() * 2) + 1;
+      for (let i = 0; i < branches; i++) {
+        const spread = (rand() - 0.5) * 0.9;
+        const newAngle = angle + spread;
+        const shrink = 0.65 + rand() * 0.15;
+
+        branch(
+          endX,
+          endY,
+          newAngle,
+          length * shrink,
+          width * 0.7,
+          depth - 1,
+          dark,
+        );
+      }
+
+      // Occasional extra twig
+      if (rand() > 0.6 && depth > 2) {
+        const twigAngle = angle + (rand() > 0.5 ? 1 : -1) * (0.5 + rand() * 0.7);
+        branch(
+          endX,
+          endY,
+          twigAngle,
+          length * 0.4,
+          width * 0.4,
+          depth - 2,
+          dark,
+        );
+      }
+    }
+
+    function render() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      ctx!.clearRect(0, 0, w, h);
+
+      // Reset seed so branches look the same on resize
+      seed = 42;
+
+      // Cache theme once per render instead of per stroke
+      const dark = isDark();
+
+      // Bottom-left branch growing toward upper-right
+      branch(
+        w * 0.05,
+        h * 0.95,
+        -Math.PI / 4,     // ~45° toward upper-right
+        Math.min(w, h) * 0.25,
+        2.2,
+        8,
+        dark,
+      );
+
+      // Top-right branch growing toward lower-left
+      branch(
+        w * 0.92,
+        h * 0.08,
+        Math.PI * 0.75,   // ~135° toward lower-left
+        Math.min(w, h) * 0.2,
+        1.8,
+        7,
+        dark,
+      );
+    }
+
+    resize();
+    window.addEventListener("resize", resize, { passive: true });
+
+    // Re-render when theme changes (class mutation on <html>)
+    new MutationObserver(() => render()).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", drawBranches);
+  if (document.readyState !== "loading") drawBranches();
+</script>

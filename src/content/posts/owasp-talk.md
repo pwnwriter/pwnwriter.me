@@ -5,7 +5,7 @@ modDate: 2023-04-25T15:32:00-05:00
 cover:
   src: ~/assets/owasp/cover.jpg
   alt: pwnwriter's talk in owasp Kathmandu
-tags: ['talks']
+tags: ["talks"]
 ---
 
 [OWASP][owasp] is a non-profit open-source foundation focused on application
@@ -52,6 +52,7 @@ After the talk, I was gifted some cute swag and a letter of appreciation. I
 want to thank OWASP for that <3.
 
 <!---Links-->
+
 [owasp]: https://owasp.org
 [profile]: /images/owasp/owasp.jpg
 [hxn]: ~/assets/owasp/haylxon.png

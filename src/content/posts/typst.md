@@ -2,11 +2,11 @@
 title: "Typst for University Notes"
 pubDate: 2025-07-17T08:26:54-04:00
 modDate: 2025-07-17T08:26:54-04:00
-tags: ['guide', 'typst', 'productivity']
+tags: ["guide", "typst", "productivity"]
 ---
 
 > _“Your assignments look so beautiful — do you spend hours making them?”_  
-My professor once asked me this with genuine curiosity.
+> My professor once asked me this with genuine curiosity.
 
 The truth? **Not really.** I just take my rough class notes, clean them up a bit, and turn them into polished PDFs — all in far less time than most of my classmates.
 
@@ -72,7 +72,7 @@ Now, you'd be asking, why this complex setup??
       });
     };
 }
-````
+```
 
 ---
 

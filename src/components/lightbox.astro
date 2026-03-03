@@ -1,0 +1,159 @@
+<!-- Lightbox overlay — drop into any page with clickable .photo-item figures -->
+<div id="lightbox" class="lightbox" aria-hidden="true">
+  <button id="lb-close" class="lb-close" type="button" aria-label="Close"
+    >&times;</button
+  >
+  <button id="lb-prev" class="lb-nav lb-prev" type="button" aria-label="Previous"
+    >&lsaquo;</button
+  >
+  <button id="lb-next" class="lb-nav lb-next" type="button" aria-label="Next"
+    >&rsaquo;</button
+  >
+  <img id="lb-img" class="lb-img" src="" alt="" />
+  <div id="lb-caption" class="lb-caption"></div>
+</div>
+
+<style>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .lightbox[aria-hidden="false"] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lb-img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 6px;
+    user-select: none;
+  }
+
+  .lb-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    font-size: 2rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.6);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .lb-close:hover {
+    color: white;
+  }
+
+  .lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.5rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.5);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.5rem;
+  }
+
+  .lb-nav:hover {
+    color: white;
+  }
+
+  .lb-prev {
+    left: 1rem;
+  }
+
+  .lb-next {
+    right: 1rem;
+  }
+
+  .lb-caption {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    white-space: nowrap;
+  }
+</style>
+
+<script>
+  function initLightbox() {
+    const lightbox = document.getElementById("lightbox")!;
+    const lbImg = document.getElementById("lb-img") as HTMLImageElement;
+    const lbCaption = document.getElementById("lb-caption")!;
+    const lbClose = document.getElementById("lb-close")!;
+    const lbPrev = document.getElementById("lb-prev")!;
+    const lbNext = document.getElementById("lb-next")!;
+    const items = document.querySelectorAll<HTMLElement>(".photo-item");
+
+    if (!items.length) return;
+
+    let current = 0;
+
+    function show(index: number) {
+      current = ((index % items.length) + items.length) % items.length;
+      const item = items[current];
+      const img = item.querySelector("img")!;
+      const alt = img.alt;
+      const cap = item.querySelector(".photo-meta")!;
+      const date = cap?.querySelector("span:last-child")?.textContent || "";
+
+      lbImg.src = img.src;
+      lbImg.alt = alt;
+      lbCaption.textContent = alt + (date ? ` · ${date}` : "");
+      lightbox.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      lightbox.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    items.forEach((item, i) => {
+      item.addEventListener("click", () => show(i));
+    });
+
+    lbClose.addEventListener("click", close);
+    lbPrev.addEventListener("click", () => show(current - 1));
+    lbNext.addEventListener("click", () => show(current + 1));
+
+    // Close on backdrop click
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) close();
+    });
+
+    // Keyboard navigation
+    document.addEventListener("keydown", (e) => {
+      if (lightbox.getAttribute("aria-hidden") !== "false") return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowLeft") show(current - 1);
+      if (e.key === "ArrowRight") show(current + 1);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initLightbox);
+  if (document.readyState !== "loading") initLightbox();
+</script>

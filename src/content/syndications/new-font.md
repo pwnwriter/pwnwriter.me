@@ -5,7 +5,6 @@ modDate: 2026-02-24
 tags: ["infra", "nix", "nvim"]
 ---
 
-
 Today I finally switched to `Lilex Nerd Font Mono`.
 
 Feels weird… but also kinda refreshing.

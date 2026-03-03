@@ -1,7 +1,8 @@
 /* ── Syndications git-log page ── */
 
 .syn {
-  font-family: "SF Mono", "Fira Code", "JetBrains Mono", ui-monospace, monospace;
+  font-family:
+    "SF Mono", "Fira Code", "JetBrains Mono", ui-monospace, monospace;
   color: var(--f-high);
   padding: 2.5rem 0 4rem;
 }
@@ -46,7 +47,9 @@
   font-size: 0.7rem;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
   border-radius: 2px;
   line-height: 1.6;
 }

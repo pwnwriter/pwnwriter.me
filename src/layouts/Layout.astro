@@ -5,6 +5,7 @@ import Footer from '~/components/footer.astro';
 import KeyboardNav from '~/components/keyboard.astro';
 import VimIndicator from '~/components/vim-indicator.astro';
 import CatCursor from '~/components/cat-cursor.astro';
+import Branches from '~/components/branches.astro';
 
 export interface Props {
 	title: string;
@@ -58,5 +59,6 @@ const { title, description } = Astro.props;
 		<KeyboardNav />
 		<VimIndicator />
 		<CatCursor />
+		<Branches />
 	</body>
 </html>

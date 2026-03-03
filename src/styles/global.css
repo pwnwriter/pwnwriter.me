@@ -1,6 +1,5 @@
-@import url('./prism-rose-pine.css');
+@import url("./prism-rose-pine.css");
 @import "katex/dist/katex.min.css";
-
 
 @tailwind base;
 @tailwind components;
@@ -8,87 +7,89 @@
 
 /* dark by default */
 :root {
-	--f-high: #e0def4;
-	--f-low: #b0acc8;
+  --f-high: #e0def4;
+  --f-low: #b0acc8;
 
-	--b-high: #26233a;
-	--b-med: #1f1d2e;
-	--b-low: #191724;
+  --b-high: #26233a;
+  --b-med: #1f1d2e;
+  --b-low: #191724;
 
-	--background: var(--b-low);
-	--accent: #c4a7e7;
+  --background: var(--b-low);
+  --accent: #c4a7e7;
 }
 
 @media (prefers-color-scheme: light) {
-	:root {
-		--f-high: #413c60;
-		--f-low: #575279;
+  :root {
+    --f-high: #413c60;
+    --f-low: #575279;
 
-		--b-high: #fffcf8;
-		--b-med: #fffaf3;
-		--b-low: #faf4ed;
+    --b-high: #fffcf8;
+    --b-med: #fffaf3;
+    --b-low: #faf4ed;
 
-		--accent: #d7827e;
-		--border: var(--b-low);
-		--background: var(--b-low);
-	}
+    --accent: #d7827e;
+    --border: var(--b-low);
+    --background: var(--b-low);
+  }
 }
 
 .dark:root {
-	--f-high: #e0def4;
-	--f-low: #b0acc8;
+  --f-high: #e0def4;
+  --f-low: #b0acc8;
 
-	--b-high: #26233a;
-	--b-med: #1f1d2e;
-	--b-low: #191724;
+  --b-high: #26233a;
+  --b-med: #1f1d2e;
+  --b-low: #191724;
 
-	--accent: #c4a7e7;
-	--border: var(--b-low);
-	--background: var(--b-low);
+  --accent: #c4a7e7;
+  --border: var(--b-low);
+  --background: var(--b-low);
 }
 
 .light:root {
-	--f-high: #413c60;
-	--f-low: #575279;
+  --f-high: #413c60;
+  --f-low: #575279;
 
-	--b-high: #fffcf8;
-	--b-med: #fffaf3;
-	--b-low: #faf4ed;
+  --b-high: #fffcf8;
+  --b-med: #fffaf3;
+  --b-low: #faf4ed;
 
-	--accent: #d7827e;
-	--border: var(--b-low);
-	--background: var(--b-low);
+  --accent: #d7827e;
+  --border: var(--b-low);
+  --background: var(--b-low);
 }
 
 :root {
-	color-scheme: light dark;
+  color-scheme: light dark;
 }
 
 :not(pre)::selection {
-	background-color: var(--f-high);
-	color: var(--b-med);
+  background-color: var(--f-high);
+  color: var(--b-med);
 }
 
 * {
-	@apply underline-offset-2;
-}
-
-html,
-body {
-	@apply bg-background;
-}
-
-body {
-	@apply font-sans text-base text-f-low antialiased;
+  @apply underline-offset-2;
 }
 
 html {
-	scroll-behavior: smooth;
+  @apply bg-background;
+}
+
+body {
+  background: transparent;
+}
+
+body {
+  @apply font-sans text-base text-f-low antialiased;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	html {
-		scroll-behavior: auto;
-	}
+  html {
+    scroll-behavior: auto;
+  }
 }
-

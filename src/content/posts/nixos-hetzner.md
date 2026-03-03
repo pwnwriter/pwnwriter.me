@@ -5,7 +5,7 @@ modDate: 2024-07-19T18:32:00-05:00
 cover:
   src: ~/assets/nix-vps/nix-pills.png
   alt: pwnwriter's talk in owasp Kathmandu
-tags: ['guide']
+tags: ["guide"]
 ---
 
 My company has recently provided me with a VPS to test things before deploying
@@ -317,6 +317,7 @@ Now, rebuild the os with `just r(ebuild)`
 Well, it's this for now, I'll see you in the next one!
 
 <!--links-->
+
 [nixos-anywhere]: https://github.com/nix-community/nixos-anywhere
 [disko]: https://github.com/nix-community/disko
 [Kexec]: https://wiki.archlinux.org/title/kexec
