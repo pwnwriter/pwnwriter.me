@@ -6,17 +6,17 @@ export type Photo = {
 
 export const photos: Photo[] = [
   {
-    src: "/images/photos/2025/2.jpg",
+    src: "/images/photos/2025/friends-patan.jpg",
     alt: "friends",
     date: "2026-01-03",
   },
   {
-    src: "/images/photos/2025/3.jpg",
+    src: "/images/photos/2025/patan-temple.jpg",
     alt: "patan",
     date: "2026-01-03",
   },
   {
-    src: "/images/photos/2025/4.jpg",
+    src: "/images/photos/2025/patan.jpg",
     alt: "patan",
     date: "2026-01-03",
   },
