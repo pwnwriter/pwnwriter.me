@@ -23,8 +23,8 @@ let isExternal = href?.toString().startsWith('http') || null;
 	rel={isExternal ? 'external' : undefined}
 	target={isExternal ? '_blank' : undefined}
 	title={title}
-	class={`italic inline-flex ${
-		underline ? 'underline hover:no-underline' : 'no-underline hover:underline'
+	class={`link-animated italic inline-flex ${
+		underline ? 'link-underlined' : ''
 	} ${schemes[scheme]}`}
 >
 	<slot /></a

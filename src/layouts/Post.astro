@@ -10,12 +10,15 @@ import type { Post } from '~/content/config';
 
 type Props = {
 	frontmatter: Post;
+	body?: string;
 };
 
 const { title, pubDate, modDate, description, cover, tags } =
 	Astro.props.frontmatter;
 const { slug } = Astro.params;
-console.log({ modDate, pubDate });
+
+const words = Astro.props.body?.trim().split(/\s+/).length ?? 0;
+const readingTime = Math.max(1, Math.round(words / 200));
 
 function formatDate(date: Date) {
 	return date.toLocaleString(undefined, {
@@ -47,6 +50,8 @@ let formattedModDate = formatDate(modDate);
 						<p class="tabular-nums">(modified {formattedModDate})</p>
 					)
 				}
+
+				<span class="font-mono text-f-low">&middot; ~{readingTime} min read</span>
 			</div>
 		</div>
 

@@ -1,98 +1,46 @@
+import fs from "node:fs";
+import path from "node:path";
+
 export type Photo = {
   src: string;
   alt: string;
   date: string;
 };
 
-export const photos: Photo[] = [
-  {
-    src: "/images/photos/2025/friends-patan.jpg",
-    alt: "friends",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2025/patan-temple.jpg",
-    alt: "patan",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2025/patan.jpg",
-    alt: "patan",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/roads.jpg",
-    alt: "patan",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/goat-me.png",
-    alt: "patan",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/b-w.png",
-    alt: "patan",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_1516.jpeg",
-    alt: "IMG_1516",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_3101.JPG",
-    alt: "IMG_3101",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_3104.JPG",
-    alt: "IMG_3104",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_3381.JPG",
-    alt: "IMG_3381",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_3503.JPG",
-    alt: "IMG_3503",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_3512.JPG",
-    alt: "IMG_3512",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_4038.JPG",
-    alt: "IMG_4038",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_5734.JPG",
-    alt: "IMG_5734",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_5780.JPG",
-    alt: "IMG_5780",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_5868.JPG",
-    alt: "IMG_5868",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_7523.JPG",
-    alt: "IMG_7523",
-    date: "2026-01-03",
-  },
-  {
-    src: "/images/photos/2026/IMG_7525.jpeg",
-    alt: "IMG_7525",
-    date: "2026-01-03",
-  },
-];
+const PHOTOS_DIR = path.join(process.cwd(), "public/images/photos");
+const IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif"]);
+
+function discoverPhotos(): Photo[] {
+  if (!fs.existsSync(PHOTOS_DIR)) return [];
+
+  const yearDirs = fs
+    .readdirSync(PHOTOS_DIR, { withFileTypes: true })
+    .filter((d) => d.isDirectory());
+
+  const photos: Photo[] = [];
+
+  for (const yearDir of yearDirs) {
+    const dirPath = path.join(PHOTOS_DIR, yearDir.name);
+    const files = fs.readdirSync(dirPath, { withFileTypes: true });
+
+    for (const file of files) {
+      const ext = path.extname(file.name).toLowerCase();
+      if (!file.isFile() || !IMAGE_EXTS.has(ext)) continue;
+
+      const filePath = path.join(dirPath, file.name);
+      const stat = fs.statSync(filePath);
+      const name = path.basename(file.name, path.extname(file.name));
+      const alt = name.replace(/[-_]/g, " ");
+
+      photos.push({
+        src: `/images/photos/${yearDir.name}/${file.name}`,
+        alt,
+        date: stat.mtime.toISOString().slice(0, 10),
+      });
+    }
+  }
+
+  return photos;
+}
+
+export const photos: Photo[] = discoverPhotos();

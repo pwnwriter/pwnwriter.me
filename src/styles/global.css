@@ -93,3 +93,32 @@ html {
     scroll-behavior: auto;
   }
 }
+
+/* Animated link underline: draws left-to-right on hover */
+.link-animated {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 0.3s ease;
+}
+
+.link-animated:hover {
+  background-size: 100% 1px;
+}
+
+/* Links that start with an underline: reverse the animation on hover */
+.link-animated.link-underlined {
+  background-size: 100% 1px;
+}
+
+.link-animated.link-underlined:hover {
+  background-size: 0% 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-animated {
+    transition: none;
+  }
+}

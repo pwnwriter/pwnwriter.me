@@ -25,26 +25,79 @@ const posts: CollectionEntry<"posts">[] = tag
   : sortPosts(allPosts);
 
 if (!max) max = posts.length + 1;
+
+const ONE_DAY = 1000 * 60 * 60 * 24;
+
+function relativeTime(date: Date): string {
+  const diff = Date.now() - date.getTime();
+  const days = Math.floor(diff / ONE_DAY);
+  if (days < 1) return "updated today";
+  if (days < 30) return `updated ${days}d ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `updated ${months}mo ago`;
+  const years = Math.floor(months / 12);
+  return `updated ${years}y ago`;
+}
 ---
 
 <div>
   <ul role="list" class="mb-4">
     {
-      posts.slice(0, max).map((post) => (
-        <li class="mb-1 grid max-w-fit">
-          <Link href={`/notes/${post.slug}`}>
-            <div class="flex items-start gap-12">
-              <span class="text-nowrap font-mono text-f-low">
-                {post.data.pubDate.toLocaleDateString(undefined, {
-                  month: "short",
-                  year: "numeric",
-                })}
-              </span>
-              <span>{`{ ${post.data.title} }`}</span>
-            </div>
-          </Link>
-        </li>
-      ))
+      posts.slice(0, max).map((post, i) => {
+        const wasUpdated =
+          Math.abs(post.data.modDate.getTime() - post.data.pubDate.getTime()) > ONE_DAY;
+
+        return (
+          <li
+            class="post-item mb-1 grid max-w-fit"
+            style={`animation-delay: ${i * 50}ms`}
+          >
+            <Link href={`/notes/${post.slug}`}>
+              <div class="flex items-start gap-12">
+                <span class="text-nowrap font-mono text-f-low">
+                  {post.data.pubDate.toLocaleDateString(undefined, {
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+                <span>
+                  {`{ ${post.data.title} }`}
+                  {wasUpdated && (
+                    <span class="ml-2 text-xs text-f-low">
+                      {relativeTime(post.data.modDate)}
+                    </span>
+                  )}
+                </span>
+              </div>
+            </Link>
+          </li>
+        );
+      })
     }
   </ul>
 </div>
+
+<style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .post-item {
+    opacity: 0;
+    animation: fadeInUp 0.4s ease forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-item {
+      opacity: 1;
+      animation: none;
+    }
+  }
+</style>
