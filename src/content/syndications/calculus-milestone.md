@@ -1,5 +1,5 @@
 ---
-title: "milestone(community): calculus reaches 1M+ members"
+title: "milestone: calculus reaches 1M+ members"
 pubDate: 2026-02-12
 modDate: 2026-02-12
 tags: [learning, life]

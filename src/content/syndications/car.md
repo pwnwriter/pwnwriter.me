@@ -1,5 +1,5 @@
 ---
-title: "milestone(life): bought my first car"
+title: "milestone: bought my first car"
 pubDate: 2025-10-13
 modDate: 2025-10-13
 tags: [life]

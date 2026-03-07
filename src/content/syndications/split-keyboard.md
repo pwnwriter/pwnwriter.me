@@ -1,5 +1,5 @@
 ---
-title: "feat(gear): got my first split keyboard"
+title: "gadget: got my first split keyboard"
 pubDate: 2026-01-12
 modDate: 2026-01-12
 tags: [dev]

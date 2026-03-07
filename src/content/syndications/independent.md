@@ -1,5 +1,5 @@
 ---
-title: "thought(life): gratitude without chains"
+title: "thought: gratitude without chains"
 pubDate: 2025-09-17
 modDate: 2025-09-17
 tags: [life]

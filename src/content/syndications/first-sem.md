@@ -1,5 +1,5 @@
 ---
-title: "log(college): first semester done"
+title: "college: first semester done"
 pubDate: 2024-11-28
 modDate: 2024-11-28
 tags: [life, learning]

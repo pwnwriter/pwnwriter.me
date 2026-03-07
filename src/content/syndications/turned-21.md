@@ -1,5 +1,5 @@
 ---
-title: "milestone(life): turned 21"
+title: "life: turned 21"
 pubDate: 2025-07-11
 modDate: 2025-07-11
 tags: [life]

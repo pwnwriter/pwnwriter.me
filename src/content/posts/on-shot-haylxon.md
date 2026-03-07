@@ -1,5 +1,5 @@
 ---
-title: "fix(hxn): Oneshot canceled haylxon"
+title: "Oneshot canceled haylxon"
 pubDate: 2026-02-26
 modDate: 2026-02-26
 tags: [nix, rust, dev, infra]

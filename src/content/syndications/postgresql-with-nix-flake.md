@@ -1,5 +1,5 @@
 ---
-title: "feat(nix): local postgresql with nix flake"
+title: "nix: local postgresql with nix flake"
 pubDate: 2026-02-15
 modDate: 2026-02-15
 tags: [nix, infra, dev]

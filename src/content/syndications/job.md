@@ -1,5 +1,5 @@
 ---
-title: "refactor(career): resigned from job"
+title: "career: resigned from job"
 pubDate: 2024-07-25
 modDate: 2024-07-25
 tags: [life, dev]
