@@ -9,6 +9,39 @@
 <a href="/photos" id="photos-link" hidden></a>
 
 <script>
+  function cycleTheme() {
+    const root = document.documentElement;
+    const current = localStorage.getItem("theme") || "system";
+
+    if (current === "system") {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else if (current === "dark") {
+      root.classList.remove("dark");
+      root.classList.add("light");
+      localStorage.setItem("theme", "light");
+    } else {
+      root.classList.remove("light");
+      localStorage.setItem("theme", "system");
+    }
+  }
+
+  // Double-tap to toggle theme on touch devices
+  let lastTap = 0;
+  document.addEventListener("touchend", (e) => {
+    const tag = (e.target as HTMLElement)?.closest("a, button, input, textarea, select, [contenteditable]");
+    if (tag) return;
+
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      e.preventDefault();
+      cycleTheme();
+      lastTap = 0;
+    } else {
+      lastTap = now;
+    }
+  });
+
   document.addEventListener("keydown", (e) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
 
@@ -45,22 +78,7 @@
         break;
 
       case "t":
-        const root = document.documentElement;
-        const currentTheme = localStorage.getItem("theme") || "system";
-
-        // Cycle: system → dark → light → system
-        if (currentTheme === "system") {
-          root.classList.add("dark");
-          localStorage.setItem("theme", "dark");
-        } else if (currentTheme === "dark") {
-          root.classList.remove("dark");
-          root.classList.add("light");
-          localStorage.setItem("theme", "light");
-        } else {
-          // light → back to system
-          root.classList.remove("light");
-          localStorage.setItem("theme", "system");
-        }
+        cycleTheme();
         break;
 
       case "g":
