@@ -6,10 +6,18 @@ import Subheading from "~/components/text/subheading.astro";
 import Paragraph from "~/components/text/paragraph.astro";
 import Link from "~/components/link.astro";
 import PostList from "~/components/post-list.astro";
+import "~/styles/index.css";
 ---
 
 <Layout title="~" description="pwn::musings.">
   <Wrapper>
+    <div class="glitch sm:float-left sm:mr-14 sm:mb-4">
+      <img class="glitch-main" src="https://avatars.githubusercontent.com/u/90331517?s=400&u=69e445f801cc183e3657c7890b3178987577c5fa&v=4" alt="pwnwriter" />
+      <img class="glitch-r" src="https://avatars.githubusercontent.com/u/90331517?s=400&u=69e445f801cc183e3657c7890b3178987577c5fa&v=4" alt="" aria-hidden="true" />
+      <img class="glitch-b" src="https://avatars.githubusercontent.com/u/90331517?s=400&u=69e445f801cc183e3657c7890b3178987577c5fa&v=4" alt="" aria-hidden="true" />
+      <div class="glitch-scanlines" aria-hidden="true"></div>
+      <span class="glitch-label">pwnwriter<span class="cursor">_</span></span>
+    </div>
     <Heading Element="h1">
       Hi! I am <span class="shimmer">Nabeen</span>
     </Heading>
@@ -23,7 +31,7 @@ import PostList from "~/components/post-list.astro";
     </Paragraph>
 
     <div class="h-xs"></div>
-    <Link href="/about">{"{Biography}"}&nbsp;&nbsp;&Rarr;</Link>
+    <!-- <Link href="/about">{"{Biography}"}&nbsp;&nbsp;&Rarr;</Link> -->
 
     <div class="h-lg"></div>
     <Subheading Element="h2">Notes</Subheading>
@@ -33,38 +41,3 @@ import PostList from "~/components/post-list.astro";
     <Link href="/notes">{"{ All notes }"}&nbsp;&nbsp;&Rarr;</Link>
   </Wrapper>
 </Layout>
-
-<style>
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      var(--f-high) 0%,
-      var(--accent) 40%,
-      var(--f-high) 60%,
-      var(--accent) 100%
-    );
-    background-size: 200% 100%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shimmer 4s ease-in-out infinite;
-    font-weight: 700;
-  }
-
-  @keyframes shimmer {
-    0%,
-    100% {
-      background-position: 200% center;
-    }
-    50% {
-      background-position: 0% center;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .shimmer {
-      animation: none;
-      background-position: 0% center;
-    }
-  }
-</style>
