@@ -205,7 +205,7 @@ I'll be using `grub` as bootloader.
 {
   services.openssh.enable = true;
   users.users.root.openssh.authorizedKeys.keys = [
-    "You're public ssh key" #FIXME: Add your ssh public key
+    "Your public ssh key" #FIXME: Add your ssh public key
   ];
 ```
 
