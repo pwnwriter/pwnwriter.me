@@ -26,6 +26,7 @@
             tailwindcss-language-server
             harper # Spelling check
             rumdl # Markdown formating and check
+            nodejs
           ];
 
           buildInputs = with pkgs; [ pkg-config ];
