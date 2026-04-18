@@ -33,6 +33,7 @@
     "cmdk": "^1.1.1",
     "katex": "^0.16.27",
     "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0"
+    "remark-math": "^6.0.0",
+    "sharp": "0.32.6"
   }
 }
