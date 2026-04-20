@@ -5,7 +5,10 @@ modDate: 2025-12-10T09:52:14-05:00
 tags: ["setup"]
 ---
 
-<img src="/images/setup/nix-setup.jpg" alt="we" style="width: 100%; max-width: 500px; height: auto;" />
+<div style="display: flex; gap: 10px;">
+  <img src="/images/setup/nix-setup.jpg" style="width: 50%; height: auto;" />
+  <img src="/images/setup/server.jpg" style="width: 50%; height: auto;" />
+</div>
 
 I spend a lot of time building, breaking, and rebuilding software, so my workspace matters.
 
