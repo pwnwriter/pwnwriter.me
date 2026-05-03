@@ -70,6 +70,11 @@
 
 * {
   @apply underline-offset-2;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cdefs%3E%3Cfilter id='g' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3CfeGaussianBlur in='SourceGraphic' stdDeviation='1'/%3E%3C/filter%3E%3C/defs%3E%3Ccircle cx='10' cy='10' r='6' fill='%23c4a7e7' filter='url(%23g)' opacity='0.4'/%3E%3Cpath d='M10 3 L11.8 7.5 L16.5 7.5 L12.7 10.5 L14 15 L10 12 L6 15 L7.3 10.5 L3.5 7.5 L8.2 7.5 Z' fill='%23c4a7e7'/%3E%3C/svg%3E") 10 10, auto;
+}
+
+a, button, [role="button"], input[type="submit"], select {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cdefs%3E%3Cfilter id='g' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3CfeGaussianBlur in='SourceGraphic' stdDeviation='1.5'/%3E%3C/filter%3E%3C/defs%3E%3Ccircle cx='12' cy='12' r='8' fill='%23c4a7e7' filter='url(%23g)' opacity='0.5'/%3E%3Cpath d='M12 3 L14.2 9 L20 9 L15.3 12.8 L17 19 L12 15 L7 19 L8.7 12.8 L4 9 L9.8 9 Z' fill='%23e0def4'/%3E%3C/svg%3E") 12 12, pointer;
 }
 
 html {

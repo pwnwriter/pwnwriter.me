@@ -32,7 +32,6 @@
   "dependencies": {
     "baseline-browser-mapping": "^2.10.20",
     "caniuse-lite": "^1.0.30001788",
-    "cmdk": "^1.1.1",
     "katex": "^0.16.27",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0"
