@@ -1,0 +1,112 @@
+---
+// Paw print trail + click sparkles
+---
+
+<style is:global>
+  .paw-print {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9997;
+    width: 18px;
+    height: 18px;
+    margin-left: -9px;
+    margin-top: -9px;
+    opacity: 0;
+    animation: paw-fade 1.4s ease forwards;
+  }
+
+  @keyframes paw-fade {
+    0%   { opacity: 0;    transform: rotate(var(--rot)) scaleX(var(--flip)) scale(0.5); }
+    15%  { opacity: 0.6;  transform: rotate(var(--rot)) scaleX(var(--flip)) scale(1);   }
+    70%  { opacity: 0.4; }
+    100% { opacity: 0;    transform: rotate(var(--rot)) scaleX(var(--flip)) scale(0.85); }
+  }
+
+  .sparkle-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    line-height: 1;
+    animation: sparkle-out 0.65s ease forwards;
+  }
+
+  @keyframes sparkle-out {
+    0%   { opacity: 1; transform: translate(0, 0) scale(1.2); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2); }
+  }
+</style>
+
+<script>
+  if (!window.matchMedia('(hover: none)').matches) {
+
+    // ── Paw print trail ────────────────────────────────────────────────
+
+    const PAW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 22" width="18" height="18" fill="var(--accent)">
+      <ellipse cx="10" cy="14.5" rx="6" ry="5" opacity="0.85"/>
+      <ellipse cx="3.5"  cy="8.5"  rx="2.4" ry="2"   opacity="0.85"/>
+      <ellipse cx="8.5"  cy="5.5"  rx="2.4" ry="2"   opacity="0.85"/>
+      <ellipse cx="14"   cy="6"    rx="2.4" ry="2"   opacity="0.85"/>
+      <ellipse cx="18"   cy="10.5" rx="2"   ry="1.8" opacity="0.85"/>
+    </svg>`;
+
+    let lastX = 0, lastY = 0, leftFoot = false;
+    const STEP = 65;
+
+    document.addEventListener('mousemove', (e) => {
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      if (Math.sqrt(dx * dx + dy * dy) < STEP) return;
+
+      const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+      const offset = leftFoot ? -8 : 8;
+      // perpendicular offset so paws alternate left/right of path
+      const perp = angle - 90;
+      const px = e.clientX + Math.cos(perp * Math.PI / 180) * offset;
+      const py = e.clientY + Math.sin(perp * Math.PI / 180) * offset;
+
+      const el = document.createElement('div');
+      el.className = 'paw-print';
+      el.style.left = px + 'px';
+      el.style.top  = py + 'px';
+      el.style.setProperty('--rot',  angle + 'deg');
+      el.style.setProperty('--flip', leftFoot ? '-1' : '1');
+      el.innerHTML = PAW_SVG;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1500);
+
+      leftFoot = !leftFoot;
+      lastX = e.clientX;
+      lastY = e.clientY;
+    });
+
+    // ── Click sparkles ─────────────────────────────────────────────────
+
+    const GLYPHS = ['✦', '✧', '♥', '★', '✦', '✧', '♡', '✶'];
+    const COUNT  = 10;
+
+    document.addEventListener('click', (e) => {
+      for (let i = 0; i < COUNT; i++) {
+        const el = document.createElement('span');
+        el.className = 'sparkle-particle';
+
+        const angle = (i / COUNT) * 360 + Math.random() * 20;
+        const dist  = 28 + Math.random() * 32;
+        const tx    = Math.cos(angle * Math.PI / 180) * dist;
+        const ty    = Math.sin(angle * Math.PI / 180) * dist;
+
+        el.style.left   = e.clientX + 'px';
+        el.style.top    = e.clientY + 'px';
+        el.style.color  = 'var(--accent)';
+        el.style.fontSize = (9 + Math.random() * 9) + 'px';
+        el.style.animationDelay = (i * 0.03) + 's';
+        el.style.setProperty('--tx', tx + 'px');
+        el.style.setProperty('--ty', ty + 'px');
+        el.textContent  = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 800);
+      }
+    });
+
+  }
+</script>
