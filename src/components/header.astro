@@ -74,6 +74,229 @@ let subpathList = subpaths.reduce(
 		) as HTMLElement[];
 		if (headings.length === 0) return;
 
+		let activePicker: HTMLElement | null = null;
+		let activeCrumbIdx = -1;
+		let pickerFocusIdx = -1;
+		let pickerItems: HTMLAnchorElement[] = [];
+		// Store crumb data so h/l can navigate between levels
+		let crumbs: { wrap: HTMLElement; heading: HTMLElement }[] = [];
+
+		function closePicker() {
+			if (activePicker) {
+				activePicker.remove();
+				activePicker = null;
+				pickerItems = [];
+				pickerFocusIdx = -1;
+				activeCrumbIdx = -1;
+			}
+		}
+
+		function getSiblings(target: HTMLElement): HTMLElement[] {
+			const tag = target.tagName;
+			if (tag === 'H2') {
+				return headings.filter((h) => h.tagName === 'H2');
+			}
+			const parentTag = tag === 'H3' ? 'H2' : 'H3';
+			let parent: HTMLElement | null = null;
+			for (const h of headings) {
+				if (h === target) break;
+				if (h.tagName === parentTag) parent = h;
+			}
+			const siblings: HTMLElement[] = [];
+			let inScope = parent === null;
+			for (const h of headings) {
+				if (h === parent) { inScope = true; continue; }
+				if (inScope && h.tagName === parentTag) break;
+				if (inScope && h.tagName === tag) siblings.push(h);
+			}
+			return siblings;
+		}
+
+		function highlightItem(idx: number) {
+			pickerItems.forEach((item, i) => {
+				const indicator = item.querySelector('span:first-child') as HTMLElement;
+				const label = item.querySelector('span:last-child') as HTMLElement;
+				if (i === idx) {
+					item.style.background = 'var(--b-high)';
+					if (indicator) indicator.style.color = 'var(--accent)';
+					if (label) label.style.color = 'var(--accent)';
+					item.scrollIntoView({ block: 'nearest' });
+				} else {
+					item.style.background = 'transparent';
+					if (indicator) indicator.style.color = 'transparent';
+					if (label) label.style.color = 'var(--f-low)';
+				}
+			});
+		}
+
+		function openPickerAt(crumbIdx: number) {
+			closePicker();
+			if (crumbIdx < 0 || crumbIdx >= crumbs.length) return;
+
+			activeCrumbIdx = crumbIdx;
+			const { wrap, heading: target } = crumbs[crumbIdx];
+			const siblings = getSiblings(target);
+			if (siblings.length <= 1) return;
+
+			const picker = document.createElement('div');
+			picker.className = 'dropbar-picker';
+
+			// Position below the breadcrumb button
+			const btnRect = wrap.getBoundingClientRect();
+			picker.style.cssText = `
+				position: fixed;
+				top: ${btnRect.bottom + 4}px;
+				left: ${btnRect.left}px;
+				z-index: 50;
+				min-width: 12rem;
+				max-width: 22rem;
+				max-height: 16rem;
+				overflow-y: auto;
+				background: var(--b-med);
+				border: 1px solid var(--b-high);
+				border-radius: 0.5rem;
+				padding: 0.25rem 0;
+				box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+				font-size: 0.8rem;
+			`;
+
+			pickerFocusIdx = -1;
+			pickerItems = [];
+
+			for (let si = 0; si < siblings.length; si++) {
+				const h = siblings[si];
+				const isActive = h === target;
+				if (isActive) pickerFocusIdx = si;
+
+				const item = document.createElement('a');
+				item.href = h.id ? `#${h.id}` : '#';
+				const text = h.textContent?.trim() || '';
+				item.title = text;
+				item.style.cssText = `
+					display: flex;
+					align-items: center;
+					gap: 0.5rem;
+					padding: 0.35rem 0.75rem;
+					color: var(--f-low);
+					text-decoration: none;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					outline: none;
+				`;
+
+				const indicator = document.createElement('span');
+				indicator.textContent = '>';
+				indicator.style.cssText = `
+					flex-shrink: 0;
+					font-weight: bold;
+					color: transparent;
+					width: 0.75rem;
+				`;
+
+				const label = document.createElement('span');
+				label.textContent = text;
+				label.style.cssText = `
+					overflow: hidden;
+					text-overflow: ellipsis;
+					color: var(--f-low);
+				`;
+
+				item.appendChild(indicator);
+				item.appendChild(label);
+
+				item.addEventListener('mouseenter', () => {
+					pickerFocusIdx = si;
+					highlightItem(pickerFocusIdx);
+				});
+				item.addEventListener('click', (e) => {
+					e.preventDefault();
+					closePicker();
+					if (h.id) {
+						document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' });
+					}
+				});
+
+				picker.appendChild(item);
+				pickerItems.push(item);
+			}
+
+			document.body.appendChild(picker);
+			highlightItem(pickerFocusIdx);
+			activePicker = picker;
+		}
+
+		function handlePickerKeys(e: KeyboardEvent) {
+			if (!activePicker) return;
+
+			if (e.key === 'j' || e.key === 'ArrowDown') {
+				e.preventDefault();
+				pickerFocusIdx = (pickerFocusIdx + 1) % pickerItems.length;
+				highlightItem(pickerFocusIdx);
+			} else if (e.key === 'k' || e.key === 'ArrowUp') {
+				e.preventDefault();
+				pickerFocusIdx = (pickerFocusIdx - 1 + pickerItems.length) % pickerItems.length;
+				highlightItem(pickerFocusIdx);
+			} else if (e.key === 'h' || e.key === 'ArrowLeft') {
+				e.preventDefault();
+				if (activeCrumbIdx > 0) {
+					openPickerAt(activeCrumbIdx - 1);
+				}
+			} else if (e.key === 'l' || e.key === 'ArrowRight') {
+				e.preventDefault();
+				if (activeCrumbIdx < crumbs.length - 1) {
+					openPickerAt(activeCrumbIdx + 1);
+				}
+			} else if (e.key === 'Enter') {
+				e.preventDefault();
+				pickerItems[pickerFocusIdx]?.click();
+			} else if (e.key === 'Escape' || e.key === 'q') {
+				e.preventDefault();
+				closePicker();
+			}
+		}
+
+		document.addEventListener('keydown', handlePickerKeys);
+
+		// Leader key: Space then ; (within 300ms) opens picker on deepest crumb
+		let leaderPending = false;
+		let leaderTimer: ReturnType<typeof setTimeout> | null = null;
+
+		document.addEventListener('keydown', (e) => {
+			// Don't trigger when typing in inputs
+			const tag = (e.target as HTMLElement).tagName;
+			if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable) return;
+
+			if (e.key === ' ' && !leaderPending) {
+				leaderPending = true;
+				if (leaderTimer) clearTimeout(leaderTimer);
+				leaderTimer = setTimeout(() => { leaderPending = false; }, 300);
+				return;
+			}
+
+			if (leaderPending && e.key === ';') {
+				e.preventDefault();
+				leaderPending = false;
+				if (leaderTimer) clearTimeout(leaderTimer);
+				if (activePicker) {
+					closePicker();
+				} else if (crumbs.length > 0) {
+					openPickerAt(crumbs.length - 1);
+				}
+				return;
+			}
+
+			leaderPending = false;
+		});
+
+		document.addEventListener('click', (e) => {
+			if (activePicker && !activePicker.contains(e.target as Node)) {
+				// Check if clicking a crumb button
+				const clickedCrumb = crumbs.some((c) => c.wrap.contains(e.target as Node));
+				if (!clickedCrumb) closePicker();
+			}
+		});
+
 		function getActiveHeadings(): HTMLElement[] {
 			const offset = 120;
 			let active: HTMLElement[] = [];
@@ -100,8 +323,8 @@ let subpathList = subpaths.reduce(
 		function render() {
 			const active = getActiveHeadings();
 
-			// Clear old crumbs
 			container.innerHTML = '';
+			crumbs = [];
 
 			if (active.length === 0) return;
 
@@ -115,24 +338,42 @@ let subpathList = subpaths.reduce(
 				container.appendChild(sep);
 
 				const text = h.textContent?.trim() || '';
-				const link = document.createElement('a');
-				link.href = h.id ? `#${h.id}` : '#';
-				link.className = 'whitespace-nowrap text-accent link-animated';
+				const crumbWrap = document.createElement('span');
+
+				const btn = document.createElement('button');
+				btn.className = 'whitespace-nowrap text-accent link-animated';
+				btn.style.cssText = 'background: none; border: none; font: inherit; cursor: pointer; padding: 0;';
 
 				if (!isLast && text.length > 16) {
-					link.textContent = text.slice(0, 16) + '\u2026';
-					link.title = text;
+					btn.textContent = text.slice(0, 16) + '\u2026';
+					btn.title = text;
 				} else if (isLast && text.length > 28) {
-					link.textContent = text.slice(0, 28) + '\u2026';
-					link.title = text;
+					btn.textContent = text.slice(0, 28) + '\u2026';
+					btn.title = text;
 				} else {
-					link.textContent = text;
+					btn.textContent = text;
 				}
 
-				container.appendChild(link);
+				const crumbIdx = i;
+				btn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					if (activePicker && activeCrumbIdx === crumbIdx) {
+						closePicker();
+					} else {
+						openPickerAt(crumbIdx);
+					}
+				});
+
+				crumbWrap.appendChild(btn);
+				container.appendChild(crumbWrap);
+				crumbs.push({ wrap: crumbWrap, heading: h });
 			}
 
-			// Auto-scroll the breadcrumb to the end
+			// Add trailing padding so scroll fade doesn't clip last crumb
+			const pad = document.createElement('span');
+			pad.style.paddingRight = '2rem';
+			container.appendChild(pad);
+
 			const scrollable = container.closest('.overflow-x-auto');
 			if (scrollable) {
 				scrollable.scrollLeft = scrollable.scrollWidth;
