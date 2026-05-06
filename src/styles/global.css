@@ -72,7 +72,11 @@
   @apply underline-offset-2;
 }
 
-a, button, [role="button"], input[type="submit"], select {
+a,
+button,
+[role="button"],
+input[type="submit"],
+select {
   cursor: pointer;
 }
 

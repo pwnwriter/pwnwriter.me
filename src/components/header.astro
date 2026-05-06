@@ -1,5 +1,4 @@
 ---
-// import NationalPark from '~/components/icons/national-park.astro';
 import Link from '~/components/link.astro';
 import Wrapper from '~/components/wrapper.astro';
 
@@ -45,7 +44,7 @@ let subpathList = subpaths.reduce(
 											{subpath.text}
 										</Link>
 									</li>
-									<span>/</span>
+									<span>›</span>
 								</>
 							))
 					}
@@ -62,50 +61,58 @@ let subpathList = subpaths.reduce(
 </header>
 
 <script>
+	const ICONS: Record<string, string> = {
+		H2: '\u2726',
+		H3: '\u2727',
+		H4: '\u2219',
+	};
+	const SEP = '\u203a';
+	const LEADER_TIMEOUT = 300;
+
 	function initDropbar() {
 		const container = document.getElementById('dropbar-crumbs');
-		if (!container) return;
-
 		const prose = document.querySelector('.prose');
-		if (!prose) return;
+		if (!container || !prose) return;
 
 		const headings = Array.from(
 			prose.querySelectorAll('h2, h3, h4'),
 		) as HTMLElement[];
-		if (headings.length === 0) return;
+		if (!headings.length) return;
 
 		let activePicker: HTMLElement | null = null;
 		let activeCrumbIdx = -1;
 		let pickerFocusIdx = -1;
 		let pickerItems: HTMLAnchorElement[] = [];
-		// Store crumb data so h/l can navigate between levels
 		let crumbs: { wrap: HTMLElement; heading: HTMLElement }[] = [];
+		let leaderPending = false;
+		let leaderTimer: ReturnType<typeof setTimeout> | null = null;
 
 		function closePicker() {
-			if (activePicker) {
-				activePicker.remove();
-				activePicker = null;
-				pickerItems = [];
-				pickerFocusIdx = -1;
-				activeCrumbIdx = -1;
-			}
+			activePicker?.remove();
+			activePicker = null;
+			pickerItems = [];
+			pickerFocusIdx = -1;
+			activeCrumbIdx = -1;
 		}
 
 		function getSiblings(target: HTMLElement): HTMLElement[] {
 			const tag = target.tagName;
-			if (tag === 'H2') {
-				return headings.filter((h) => h.tagName === 'H2');
-			}
+			if (tag === 'H2') return headings.filter((h) => h.tagName === 'H2');
+
 			const parentTag = tag === 'H3' ? 'H2' : 'H3';
 			let parent: HTMLElement | null = null;
 			for (const h of headings) {
 				if (h === target) break;
 				if (h.tagName === parentTag) parent = h;
 			}
+
 			const siblings: HTMLElement[] = [];
-			let inScope = parent === null;
+			let inScope = !parent;
 			for (const h of headings) {
-				if (h === parent) { inScope = true; continue; }
+				if (h === parent) {
+					inScope = true;
+					continue;
+				}
 				if (inScope && h.tagName === parentTag) break;
 				if (inScope && h.tagName === tag) siblings.push(h);
 			}
@@ -114,18 +121,17 @@ let subpathList = subpaths.reduce(
 
 		function highlightItem(idx: number) {
 			pickerItems.forEach((item, i) => {
-				const indicator = item.querySelector('span:first-child') as HTMLElement;
+				const indicator = item.querySelector(
+					'span:first-child',
+				) as HTMLElement;
 				const label = item.querySelector('span:last-child') as HTMLElement;
-				if (i === idx) {
-					item.style.background = 'var(--b-high)';
-					if (indicator) indicator.style.color = 'var(--accent)';
-					if (label) label.style.color = 'var(--accent)';
-					item.scrollIntoView({ block: 'nearest' });
-				} else {
-					item.style.background = 'transparent';
-					if (indicator) indicator.style.color = 'transparent';
-					if (label) label.style.color = 'var(--f-low)';
-				}
+				const active = i === idx;
+				item.style.background = active ? 'var(--b-high)' : 'transparent';
+				if (indicator)
+					indicator.style.color = active ? 'var(--accent)' : 'transparent';
+				if (label)
+					label.style.color = active ? 'var(--accent)' : 'var(--f-low)';
+				if (active) item.scrollIntoView({ block: 'nearest' });
 			});
 		}
 
@@ -139,9 +145,6 @@ let subpathList = subpaths.reduce(
 			if (siblings.length <= 1) return;
 
 			const picker = document.createElement('div');
-			picker.className = 'dropbar-picker';
-
-			// Position below the breadcrumb button
 			const btnRect = wrap.getBoundingClientRect();
 			picker.style.cssText = `
 				position: fixed;
@@ -163,47 +166,36 @@ let subpathList = subpaths.reduce(
 			pickerFocusIdx = -1;
 			pickerItems = [];
 
-			for (let si = 0; si < siblings.length; si++) {
-				const h = siblings[si];
+			siblings.forEach((h, si) => {
 				const isActive = h === target;
 				if (isActive) pickerFocusIdx = si;
 
+				const text = h.textContent?.trim() || '';
 				const item = document.createElement('a');
 				item.href = h.id ? `#${h.id}` : '#';
-				const text = h.textContent?.trim() || '';
 				item.title = text;
 				item.style.cssText = `
-					display: flex;
-					align-items: center;
-					gap: 0.5rem;
-					padding: 0.35rem 0.75rem;
-					color: var(--f-low);
-					text-decoration: none;
-					white-space: nowrap;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					outline: none;
+					display: flex; align-items: center; gap: 0.5rem;
+					padding: 0.35rem 0.75rem; color: var(--f-low);
+					text-decoration: none; white-space: nowrap;
+					overflow: hidden; text-overflow: ellipsis; outline: none;
 				`;
 
 				const indicator = document.createElement('span');
-				indicator.textContent = '>';
-				indicator.style.cssText = `
-					flex-shrink: 0;
-					font-weight: bold;
-					color: transparent;
-					width: 0.75rem;
-				`;
+				indicator.textContent = SEP;
+				indicator.style.cssText =
+					'flex-shrink: 0; font-weight: bold; color: transparent; width: 0.75rem;';
+
+				const iconSpan = document.createElement('span');
+				iconSpan.textContent = ICONS[h.tagName] || ICONS.H4;
+				iconSpan.style.cssText = 'flex-shrink: 0; color: var(--accent);';
 
 				const label = document.createElement('span');
 				label.textContent = text;
-				label.style.cssText = `
-					overflow: hidden;
-					text-overflow: ellipsis;
-					color: var(--f-low);
-				`;
+				label.style.cssText =
+					'overflow: hidden; text-overflow: ellipsis; color: var(--f-low);';
 
-				item.appendChild(indicator);
-				item.appendChild(label);
+				item.append(indicator, iconSpan, label);
 
 				item.addEventListener('mouseenter', () => {
 					pickerFocusIdx = si;
@@ -212,14 +204,15 @@ let subpathList = subpaths.reduce(
 				item.addEventListener('click', (e) => {
 					e.preventDefault();
 					closePicker();
-					if (h.id) {
-						document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' });
-					}
+					if (h.id)
+						document
+							.getElementById(h.id)
+							?.scrollIntoView({ behavior: 'smooth' });
 				});
 
 				picker.appendChild(item);
 				pickerItems.push(item);
-			}
+			});
 
 			document.body.appendChild(picker);
 			highlightItem(pickerFocusIdx);
@@ -229,48 +222,56 @@ let subpathList = subpaths.reduce(
 		function handlePickerKeys(e: KeyboardEvent) {
 			if (!activePicker) return;
 
-			if (e.key === 'j' || e.key === 'ArrowDown') {
+			const actions: Record<string, () => void> = {
+				j: () => {
+					pickerFocusIdx = (pickerFocusIdx + 1) % pickerItems.length;
+					highlightItem(pickerFocusIdx);
+				},
+				ArrowDown: () => actions.j(),
+				k: () => {
+					pickerFocusIdx =
+						(pickerFocusIdx - 1 + pickerItems.length) % pickerItems.length;
+					highlightItem(pickerFocusIdx);
+				},
+				ArrowUp: () => actions.k(),
+				h: () => {
+					if (activeCrumbIdx > 0) openPickerAt(activeCrumbIdx - 1);
+				},
+				ArrowLeft: () => actions.h(),
+				l: () => {
+					if (activeCrumbIdx < crumbs.length - 1)
+						openPickerAt(activeCrumbIdx + 1);
+				},
+				ArrowRight: () => actions.l(),
+				Enter: () => pickerItems[pickerFocusIdx]?.click(),
+				Escape: () => closePicker(),
+				q: () => closePicker(),
+			};
+
+			const action = actions[e.key];
+			if (action) {
 				e.preventDefault();
-				pickerFocusIdx = (pickerFocusIdx + 1) % pickerItems.length;
-				highlightItem(pickerFocusIdx);
-			} else if (e.key === 'k' || e.key === 'ArrowUp') {
-				e.preventDefault();
-				pickerFocusIdx = (pickerFocusIdx - 1 + pickerItems.length) % pickerItems.length;
-				highlightItem(pickerFocusIdx);
-			} else if (e.key === 'h' || e.key === 'ArrowLeft') {
-				e.preventDefault();
-				if (activeCrumbIdx > 0) {
-					openPickerAt(activeCrumbIdx - 1);
-				}
-			} else if (e.key === 'l' || e.key === 'ArrowRight') {
-				e.preventDefault();
-				if (activeCrumbIdx < crumbs.length - 1) {
-					openPickerAt(activeCrumbIdx + 1);
-				}
-			} else if (e.key === 'Enter') {
-				e.preventDefault();
-				pickerItems[pickerFocusIdx]?.click();
-			} else if (e.key === 'Escape' || e.key === 'q') {
-				e.preventDefault();
-				closePicker();
+				action();
 			}
 		}
 
 		document.addEventListener('keydown', handlePickerKeys);
 
-		// Leader key: Space then ; (within 300ms) opens picker on deepest crumb
-		let leaderPending = false;
-		let leaderTimer: ReturnType<typeof setTimeout> | null = null;
-
 		document.addEventListener('keydown', (e) => {
-			// Don't trigger when typing in inputs
 			const tag = (e.target as HTMLElement).tagName;
-			if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable) return;
+			if (
+				tag === 'INPUT' ||
+				tag === 'TEXTAREA' ||
+				(e.target as HTMLElement).isContentEditable
+			)
+				return;
 
 			if (e.key === ' ' && !leaderPending) {
 				leaderPending = true;
 				if (leaderTimer) clearTimeout(leaderTimer);
-				leaderTimer = setTimeout(() => { leaderPending = false; }, 300);
+				leaderTimer = setTimeout(() => {
+					leaderPending = false;
+				}, LEADER_TIMEOUT);
 				return;
 			}
 
@@ -290,11 +291,11 @@ let subpathList = subpaths.reduce(
 		});
 
 		document.addEventListener('click', (e) => {
-			if (activePicker && !activePicker.contains(e.target as Node)) {
-				// Check if clicking a crumb button
-				const clickedCrumb = crumbs.some((c) => c.wrap.contains(e.target as Node));
-				if (!clickedCrumb) closePicker();
-			}
+			if (!activePicker) return;
+			const target = e.target as Node;
+			if (activePicker.contains(target)) return;
+			if (crumbs.some((c) => c.wrap.contains(target))) return;
+			closePicker();
 		});
 
 		function getActiveHeadings(): HTMLElement[] {
@@ -322,37 +323,33 @@ let subpathList = subpaths.reduce(
 
 		function render() {
 			const active = getActiveHeadings();
-
 			container.innerHTML = '';
 			crumbs = [];
 
-			if (active.length === 0) return;
+			if (!active.length) return;
 
-			for (let i = 0; i < active.length; i++) {
-				const h = active[i];
+			active.forEach((h, i) => {
 				const isLast = i === active.length - 1;
+				const text = h.textContent?.trim() || '';
 
 				const sep = document.createElement('span');
-				sep.textContent = '/';
+				sep.textContent = SEP;
 				sep.className = 'text-f-low mx-1';
-				container.appendChild(sep);
 
-				const text = h.textContent?.trim() || '';
+				const icon = document.createElement('span');
+				icon.textContent = ICONS[h.tagName] || ICONS.H4;
+				icon.style.cssText = 'color: var(--accent); margin-right: 0.3rem;';
+
 				const crumbWrap = document.createElement('span');
-
 				const btn = document.createElement('button');
 				btn.className = 'whitespace-nowrap text-accent link-animated';
-				btn.style.cssText = 'background: none; border: none; font: inherit; cursor: pointer; padding: 0;';
+				btn.style.cssText =
+					'background: none; border: none; font: inherit; cursor: pointer; padding: 0;';
 
-				if (!isLast && text.length > 16) {
-					btn.textContent = text.slice(0, 16) + '\u2026';
-					btn.title = text;
-				} else if (isLast && text.length > 28) {
-					btn.textContent = text.slice(0, 28) + '\u2026';
-					btn.title = text;
-				} else {
-					btn.textContent = text;
-				}
+				const maxLen = isLast ? 28 : 16;
+				btn.textContent =
+					text.length > maxLen ? text.slice(0, maxLen) + '\u2026' : text;
+				if (text.length > maxLen) btn.title = text;
 
 				const crumbIdx = i;
 				btn.addEventListener('click', (e) => {
@@ -365,19 +362,16 @@ let subpathList = subpaths.reduce(
 				});
 
 				crumbWrap.appendChild(btn);
-				container.appendChild(crumbWrap);
+				container.append(sep, icon, crumbWrap);
 				crumbs.push({ wrap: crumbWrap, heading: h });
-			}
+			});
 
-			// Add trailing padding so scroll fade doesn't clip last crumb
 			const pad = document.createElement('span');
 			pad.style.paddingRight = '2rem';
 			container.appendChild(pad);
 
 			const scrollable = container.closest('.overflow-x-auto');
-			if (scrollable) {
-				scrollable.scrollLeft = scrollable.scrollWidth;
-			}
+			if (scrollable) scrollable.scrollLeft = scrollable.scrollWidth;
 		}
 
 		let ticking = false;

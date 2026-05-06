@@ -1,6 +1,6 @@
 ---
 title: "nvim: per project configuration"
-pubDate: 2026-04-02 
+pubDate: 2026-04-02
 modDate: 2026-04-02
 tags: [nvim, lua, dev]
 ---
@@ -9,7 +9,7 @@ I recently flipped the switch and upgraded to **Neovim 0.12**, and it’s a mean
 
 <img src="/images/syndications/neovim-11-12/neovim-11-12.png" alt="neovim 12" style="width: 100%; max-width: 500px; height: auto;" />
 
-The standout change for me is the **built-in package manager**. 
+The standout change for me is the **built-in package manager**.
 
 ### Leaving `lazy.nvim` Behind
 
@@ -38,8 +38,8 @@ return {}
 
 ### What This Does
 
-* Installs `nvim-lspconfig` using the built-in package manager
-* Enables a set of LSP servers with default config from upstream lspconfig plugin.
+- Installs `nvim-lspconfig` using the built-in package manager
+- Enables a set of LSP servers with default config from upstream lspconfig plugin.
 
 <img src="/images/syndications/neovim-11-12/lsp.mov" alt="lsp usages" style="width: 100%; max-width: 500px; height: auto;" />
 

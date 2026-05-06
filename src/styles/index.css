@@ -15,8 +15,13 @@
 }
 
 @keyframes shimmer {
-  0%, 100% { background-position: 200% center; }
-  50% { background-position: 0% center; }
+  0%,
+  100% {
+    background-position: 200% center;
+  }
+  50% {
+    background-position: 0% center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

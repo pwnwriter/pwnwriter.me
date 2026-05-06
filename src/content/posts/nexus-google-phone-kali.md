@@ -32,14 +32,12 @@ Bootloader `03.61`. This one is weak. Safe version is `03.64` and above. When I 
 It's a High risk cve and was already fixed in January 2017, but the phone wasn't even updated since then. A big plus point for me ;P
 So, to summarize this,
 
-
-| **CVE**       | **`CVE-2016-8467`**                 |
-|---------------|-------------------------------------|
-| **Type**      | **`Boot mode bypass`**              |
-| **Risk**      | **`High`**                          |
-| **Affected**  | **`Nexus 6P bootloader < 03.64`**   |
-| **Need**      | **`Physical access only, no PIN`**  |
-
+| **CVE**      | **`CVE-2016-8467`**                |
+| ------------ | ---------------------------------- |
+| **Type**     | **`Boot mode bypass`**             |
+| **Risk**     | **`High`**                         |
+| **Affected** | **`Nexus 6P bootloader < 03.64`**  |
+| **Need**     | **`Physical access only, no PIN`** |
 
 So basically: this phone has hidden boot modes that Huawei put inside for factory testing. One of them called `bp-tools`. When you turn it on, phone open ADB connection **even if you already disable developer mode**, because the system enable it from boot level, not from the settings toggle.
 
@@ -84,7 +82,6 @@ $ fastboot devices
 
 Full access on a locked phone. Can flash anything.
 
-
 ### Unlock and Flash
 
 ```bash
@@ -126,7 +123,7 @@ Full Kali Linux. On a phone. For $10. Cannot believe.
 
 ### What It Can Do
 
-WiFi monitor mode work on built-in WiFi, can run full `aircrack-ng`, no need extra hardware. Can also do USB attack where target computer think phone is a keyboard, i always wanted to try this and it did work, i might write an another blog for the same if i get a chance from these college assignments.. 
+WiFi monitor mode work on built-in WiFi, can run full `aircrack-ng`, no need extra hardware. Can also do USB attack where target computer think phone is a keyboard, i always wanted to try this and it did work, i might write an another blog for the same if i get a chance from these college assignments..
 
 I guess that's it for this. See ya :\/
 
