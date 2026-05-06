@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import Prose from "~/components/prose.astro";
-
 export async function getStaticPaths() {
   const syndications = await getCollection("syndications");
   return syndications.map((entry) => ({

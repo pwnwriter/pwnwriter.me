@@ -49,13 +49,110 @@ let subpathList = subpaths.reduce(
 								</>
 							))
 					}
-					<li class="shrink-0 whitespace-nowrap pr-8">
+					<li class="shrink-0 whitespace-nowrap">
 						<Link href="#">
 							{title}
 						</Link>
 					</li>
+					<li id="dropbar-crumbs" class="contents"></li>
 				</ul>
 			</Wrapper>
 		</div>
 	</nav>
 </header>
+
+<script>
+	function initDropbar() {
+		const container = document.getElementById('dropbar-crumbs');
+		if (!container) return;
+
+		const prose = document.querySelector('.prose');
+		if (!prose) return;
+
+		const headings = Array.from(
+			prose.querySelectorAll('h2, h3, h4'),
+		) as HTMLElement[];
+		if (headings.length === 0) return;
+
+		function getActiveHeadings(): HTMLElement[] {
+			const offset = 120;
+			let active: HTMLElement[] = [];
+
+			for (const heading of headings) {
+				const top = heading.getBoundingClientRect().top + window.scrollY;
+				if (top - offset <= window.scrollY) {
+					const tag = heading.tagName;
+					if (tag === 'H2') {
+						active = [heading];
+					} else if (tag === 'H3') {
+						const h2 = active.find((h) => h.tagName === 'H2');
+						active = h2 ? [h2, heading] : [heading];
+					} else if (tag === 'H4') {
+						const h2 = active.find((h) => h.tagName === 'H2');
+						const h3 = active.find((h) => h.tagName === 'H3');
+						active = [h2, h3, heading].filter(Boolean) as HTMLElement[];
+					}
+				}
+			}
+			return active;
+		}
+
+		function render() {
+			const active = getActiveHeadings();
+
+			// Clear old crumbs
+			container.innerHTML = '';
+
+			if (active.length === 0) return;
+
+			for (let i = 0; i < active.length; i++) {
+				const h = active[i];
+				const isLast = i === active.length - 1;
+
+				const sep = document.createElement('span');
+				sep.textContent = '/';
+				sep.className = 'text-f-low mx-1';
+				container.appendChild(sep);
+
+				const text = h.textContent?.trim() || '';
+				const link = document.createElement('a');
+				link.href = h.id ? `#${h.id}` : '#';
+				link.className = 'whitespace-nowrap text-accent link-animated';
+
+				if (!isLast && text.length > 16) {
+					link.textContent = text.slice(0, 16) + '\u2026';
+					link.title = text;
+				} else if (isLast && text.length > 28) {
+					link.textContent = text.slice(0, 28) + '\u2026';
+					link.title = text;
+				} else {
+					link.textContent = text;
+				}
+
+				container.appendChild(link);
+			}
+
+			// Auto-scroll the breadcrumb to the end
+			const scrollable = container.closest('.overflow-x-auto');
+			if (scrollable) {
+				scrollable.scrollLeft = scrollable.scrollWidth;
+			}
+		}
+
+		let ticking = false;
+		window.addEventListener('scroll', () => {
+			if (!ticking) {
+				requestAnimationFrame(() => {
+					render();
+					ticking = false;
+				});
+				ticking = true;
+			}
+		});
+
+		render();
+	}
+
+	initDropbar();
+	document.addEventListener('astro:after-swap', initDropbar);
+</script>
