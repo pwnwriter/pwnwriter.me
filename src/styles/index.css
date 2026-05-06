@@ -26,96 +26,13 @@
   }
 }
 
-.glitch {
-  position: relative;
+.profile-pic {
   width: fit-content;
   margin-bottom: 1.5rem;
 }
 
-.glitch-main,
-.glitch-r,
-.glitch-b {
+.profile-pic img {
   display: block;
   width: 9rem;
   border-radius: 4px;
-}
-
-.glitch-main {
-  filter: grayscale(1);
-  transition: filter 0.4s ease;
-}
-
-.glitch:hover .glitch-main {
-  filter: grayscale(0);
-}
-
-.glitch-r,
-.glitch-b {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  mix-blend-mode: screen;
-}
-
-.glitch-r { filter: saturate(800%) hue-rotate(300deg) brightness(0.8); }
-.glitch-b { filter: saturate(800%) hue-rotate(180deg) brightness(0.8); }
-
-.glitch:hover .glitch-r {
-  opacity: 0.6;
-  animation: glitch-r 0.5s steps(1) infinite;
-}
-
-.glitch:hover .glitch-b {
-  opacity: 0.6;
-  animation: glitch-b 0.5s steps(1) infinite;
-}
-
-@keyframes glitch-r {
-  0%   { clip-path: inset(0 0 92% 0);   transform: translate(-5px, 0); }
-  20%  { clip-path: inset(40% 0 45% 0); transform: translate(4px, 0); }
-  40%  { clip-path: inset(65% 0 18% 0); transform: translate(-3px, 0); }
-  60%  { clip-path: inset(20% 0 70% 0); transform: translate(5px, 0); }
-  80%  { clip-path: inset(78% 0 8% 0);  transform: translate(-4px, 0); }
-  100% { clip-path: inset(0 0 92% 0);   transform: translate(-5px, 0); }
-}
-
-@keyframes glitch-b {
-  0%   { clip-path: inset(78% 0 8% 0);  transform: translate(5px, 0); }
-  20%  { clip-path: inset(0 0 92% 0);   transform: translate(-4px, 0); }
-  40%  { clip-path: inset(20% 0 70% 0); transform: translate(3px, 0); }
-  60%  { clip-path: inset(65% 0 18% 0); transform: translate(-5px, 0); }
-  80%  { clip-path: inset(40% 0 45% 0); transform: translate(4px, 0); }
-  100% { clip-path: inset(78% 0 8% 0);  transform: translate(5px, 0); }
-}
-
-.glitch-scanlines {
-  position: absolute;
-  inset: 0;
-  border-radius: 4px;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 3px,
-    rgba(0, 0, 0, 0.08) 3px,
-    rgba(0, 0, 0, 0.08) 4px
-  );
-  pointer-events: none;
-}
-
-.glitch-label {
-  display: block;
-  margin-top: 0.4rem;
-  font-family: monospace;
-  font-size: 0.75rem;
-  color: var(--f-low);
-  letter-spacing: 0.08em;
-}
-
-.cursor {
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
 }
