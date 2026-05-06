@@ -1,0 +1,110 @@
+---
+// Cute cat that follows your cursor
+---
+
+<div id="cat-cursor" aria-hidden="true">
+  <svg width="36" height="40" viewBox="0 0 64 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Tail (animated) -->
+    <g id="cat-tail-wrap">
+      <path d="M 40 62 C 58 54 56 38 48 32" stroke="var(--accent)" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <!-- Body -->
+    <ellipse cx="30" cy="52" rx="19" ry="15" fill="var(--accent)"/>
+    <!-- Head -->
+    <circle cx="30" cy="26" r="17" fill="var(--accent)"/>
+    <!-- Left ear outer -->
+    <polygon points="14,14 10,1 24,10" fill="var(--accent)"/>
+    <!-- Right ear outer -->
+    <polygon points="46,14 50,1 36,10" fill="var(--accent)"/>
+    <!-- Left ear pink inner -->
+    <polygon points="15,12 12,4 22,9" fill="#eb6f92" opacity="0.75"/>
+    <!-- Right ear pink inner -->
+    <polygon points="45,12 48,4 38,9" fill="#eb6f92" opacity="0.75"/>
+    <!-- Left eye -->
+    <ellipse cx="23" cy="24" rx="5" ry="5" fill="#191724"/>
+    <!-- Right eye -->
+    <ellipse cx="37" cy="24" rx="5" ry="5" fill="#191724"/>
+    <!-- Left eye shine -->
+    <circle cx="25" cy="22" r="2" fill="white"/>
+    <!-- Right eye shine -->
+    <circle cx="39" cy="22" r="2" fill="white"/>
+    <!-- Nose -->
+    <ellipse cx="30" cy="30" rx="2.5" ry="2" fill="#eb6f92"/>
+    <!-- Mouth -->
+    <path d="M 26 33 Q 30 37 34 33" stroke="#eb6f92" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <!-- Left whiskers -->
+    <line x1="4" y1="28" x2="22" y2="31" stroke="var(--f-high)" stroke-width="1.2" opacity="0.6"/>
+    <line x1="4" y1="33" x2="22" y2="33" stroke="var(--f-high)" stroke-width="1.2" opacity="0.6"/>
+    <!-- Right whiskers -->
+    <line x1="56" y1="28" x2="38" y2="31" stroke="var(--f-high)" stroke-width="1.2" opacity="0.6"/>
+    <line x1="56" y1="33" x2="38" y2="33" stroke="var(--f-high)" stroke-width="1.2" opacity="0.6"/>
+  </svg>
+</div>
+
+<style is:global>
+  #cat-cursor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transform: translate(-50%, -100%);
+    transition: opacity 0.4s ease;
+    will-change: left, top;
+  }
+
+  #cat-cursor svg {
+    display: block;
+    animation: cat-bob 1.6s ease-in-out infinite;
+  }
+
+  #cat-tail-wrap {
+    transform-box: fill-box;
+    transform-origin: 0% 100%;
+    animation: cat-tail-wag 0.75s ease-in-out infinite;
+  }
+
+  @keyframes cat-bob {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-4px); }
+  }
+
+  @keyframes cat-tail-wag {
+    0%, 100% { transform: rotate(-14deg); }
+    50%      { transform: rotate(14deg); }
+  }
+</style>
+
+<script>
+  const cat = document.getElementById('cat-cursor') as HTMLElement | null;
+  if (!cat) throw new Error('cat-cursor not found');
+
+  // Don't show on touch-only devices (no real cursor)
+  if (window.matchMedia('(hover: none)').matches) {
+    cat.remove();
+  } else {
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let catX = mouseX;
+    let catY = mouseY;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cat.style.opacity = '1';
+    });
+
+    document.addEventListener('mouseleave', () => {
+      cat.style.opacity = '0';
+    });
+
+    function animate() {
+      catX += (mouseX - catX) * 0.14;
+      catY += (mouseY - catY) * 0.14;
+      cat.style.left = catX + 'px';
+      cat.style.top  = catY + 'px';
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  }
+</script>
