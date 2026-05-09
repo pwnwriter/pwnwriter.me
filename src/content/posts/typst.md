@@ -1,46 +1,29 @@
 ---
 title: "Typst for University Notes"
 pubDate: 2025-07-17T08:26:54-04:00
-modDate: 2025-07-17T08:26:54-04:00
+modDate: 2026-05-09
 tags: ["guide", "typst", "productivity"]
 ---
 
-> _“Your assignments look so beautiful — do you spend hours making them?”_  
-> My professor once asked me this with genuine curiosity.
+For my first two semesters, I used [Markdown] and [Obsidian] to take notes,
+[Git] to version them, and [GitHub] to back them up. Exported as PDFs when
+needed. It worked, but always felt like a patchwork solution.
 
-The truth? **Not really.** I just take my rough class notes, clean them up a bit, and turn them into polished PDFs — all in far less time than most of my classmates.
-
----
-
-## Why I moved from Markdown to Typst
-
-In my first two semesters, I relied on [Markdown] and [Obsidian] to take notes, [Git] to version them, and [GitHub] to back them up. I exported them as PDFs when needed. It worked — but it always felt like a patchwork solution.
-
-Then I discovered [Typst] — a modern typesetting system built for simplicity and power. The moment I tried it, I knew this was the upgrade I needed. Typst gives me **beautiful PDFs, powerful macros, and math support** — all without the friction I had with Markdown.
-
-> _Here’s a screenshot of a CSIT assignment I did using Typst:_
+Then I found [Typst] — a modern typesetting system with proper math support,
+macros, and beautiful PDF output. The moment I tried it, I switched everything
+over.
 
 ![Typst Assignment][typst-assignment]
 
----
+## The setup
 
-### My Workflow: Typst + Git + Neovim
+A dedicated Git repo for all my university notes. [Neovim] as the editor with
+[tinymist] for Typst LSP. A `flake` with `nix-direnv` for dependencies.
 
-Here’s how I’ve set up my note-taking flow now:
+I use NixOS and macOS, so flakes just work everywhere. And I get the
+`git push/pull` workflow I like.
 
-- A dedicated `Git` repo for notes on `Github`.
-- [Neovim] as my editor with [tinymist] for Typst LSP.
-- A `flake` / `nix-direnv` for all dependencies.
-
----
-
-Now, you'd be asking, why this complex setup??
-
-- I use `NixOS` and macOS, so flakes work everywhere.
-- I love `git push/pull` workflow.
-- I can use `Neovim` as the editor.
-
-### My `flake.nix` setup
+### `flake.nix`
 
 ```nix
 {
@@ -74,57 +57,41 @@ Now, you'd be asking, why this complex setup??
 }
 ```
 
----
+### `.nvim.lua`
 
-### Neovim Configuration
-
-I use `lazy.nvim` plugin manager which allows having a seprate `.lazy.lua` file for setting up plugins specific to the project `directory`.
-
-Here’s my `.lazy.lua` spec for the `lazy.nvim` plugin manager which sets the `lsp` for `python` and `typst` with a couple of keybind for the specific project only.
+Neovim 0.12 has a built-in package manager, so I dropped `lazy.nvim`. I use a
+`.nvim.lua` at the project root for per-directory config.
 
 ```lua
-return {
-  {
-    "neovim/nvim-lspconfig",
-    name = "lspconfig",
-    event = { "BufReadPost", "BufNewFile" },
-  },
+vim.pack.add({
+  { src = "https://github.com/neovim/nvim-lspconfig", name = "lspconfig" },
+})
 
-  vim.lsp.enable({ 'basedpyright', 'tinymist' }),
+vim.lsp.enable({ "basedpyright", "tinymist" })
 
-  vim.api.nvim_create_autocmd("filetype", {
-    pattern = "python",
-    callback = function()
-      vim.keymap.set("n", "<leader>lf", function()
-        vim.cmd("silent! !ruff format %") -- Format current file
-        vim.cmd("edit!")                  -- Reload file after formatting
-      end, { desc = "Format Python file with ruff" })
-    end,
-  }),
-}
+vim.api.nvim_create_autocmd("filetype", {
+  pattern = "python",
+  callback = function()
+    vim.keymap.set("n", "<leader>lf", function()
+      vim.cmd("silent! !ruff format %")
+      vim.cmd("edit!")
+    end, { desc = "Format Python file with ruff" })
+  end,
+})
 ```
 
-With this, I get inline errors, autocompletion, signature help, and quick formatting — exactly what I want.
-Here’s how it feels in action:
+Inline errors, autocompletion, signature help, and quick formatting. No
+external plugin manager needed.
 
 ![typst-nvim]
 
----
+A couple of years ago, my older brothers introduced me to LaTeX — I thought
+that was the gold standard. After showing them Typst, even they've switched.
 
-### Final Thoughts
+I'm still watching the [HTML support] PR, which would make it even easier to
+integrate Typst in more places. But even now, it's already changed how I work.
 
-At this point, Typst feels like the real OG. A couple of years ago, my older
-brothers introduced me to LaTeX — and I thought that was the gold standard. But
-after showing them Typst, even they’ve made the switch.
-
-I’m still keeping an eye on the [HTML support] pull request, which would make
-it even easier to integrate Typst on many places like even website itself.. But
-even now, it’s already changed how I work.
-
-If you’re a student, especially one who writes a lot of math-heavy content, I
-can’t recommend Typst enough.
-
-<!-- Links -->
+<!--links-->
 
 [Markdown]: https://daringfireball.net/projects/markdown/
 [Obsidian]: https://obsidian.md
