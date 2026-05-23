@@ -63,9 +63,9 @@
   color-scheme: light dark;
 }
 
-:not(pre)::selection {
-  background-color: var(--f-high);
-  color: var(--b-med);
+::selection {
+  background-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  color: var(--f-high);
 }
 
 * {
