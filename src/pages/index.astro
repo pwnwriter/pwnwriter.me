@@ -11,29 +11,90 @@ import "~/styles/index.css";
 
 <Layout title="~" description="pwn::musings.">
   <Wrapper>
-    <div class="profile-pic sm:float-left sm:mr-14 sm:mb-4">
-      <img src="https://avatars.githubusercontent.com/u/90331517?s=400&u=69e445f801cc183e3657c7890b3178987577c5fa&v=4" alt="pwnwriter" />
-    </div>
-    <Heading Element="h1">
-      Hi! I am <span class="shimmer">Nabeen</span>
-    </Heading>
+    <section class="hero">
+      <div class="avatar-wrap">
+        <img src="https://avatars.githubusercontent.com/u/90331517?s=400&u=69e445f801cc183e3657c7890b3178987577c5fa&v=4" alt="pwnwriter" />
+      </div>
+      <div>
+        <h1 class="handwritten">
+          Hi! I am <span class="shimmer">Nabeen</span>
+        </h1>
+        <Paragraph>
+          I'm a cybersecurity student based in Miami, Florida.
+        </Paragraph>
+        <Paragraph>
+          This space is more like a digital workbench, where I share thoughts,
+          tinker with ideas, and write about the things I <a href="https://github.com/pwnwriter" target="_blank" rel="noopener noreferrer">enjoy</a>.
+        </Paragraph>
+      </div>
+    </section>
 
-    <Paragraph>
-      I’m a cybersecurity student based in Miami, Florida.
-    </Paragraph>
-    <Paragraph
-      >This space is more like a digital workbench, where I share thoughts,
-      tinker with ideas, and write about the things I <a href="https://github.com/pwnwriter" target="_blank" rel="noopener noreferrer">enjoy</a>.
-    </Paragraph>
+    <div class="divider"></div>
 
-    <div class="h-xs"></div>
-    <!-- <Link href="/about">{"{Biography}"}&nbsp;&nbsp;&Rarr;</Link> -->
-
-    <div class="h-lg"></div>
-    <Subheading Element="h2">Notes</Subheading>
-    <PostList max={3} />
-
-    <div class="h-xs"></div>
-    <Link href="/notes">{"{ All notes }"}&nbsp;&nbsp;&Rarr;</Link>
+    <section class="section">
+      <!-- <Subheading Element="h2">Notes</Subheading> -->
+      <PostList max={3} />
+      <Link href="/notes">{"{ All notes }"}&nbsp;&nbsp;&Rarr;</Link>
+    </section>
   </Wrapper>
 </Layout>
+
+<style>
+  .hero {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+  }
+
+  .avatar-wrap {
+    flex-shrink: 0;
+  }
+
+  .avatar-wrap img {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid color-mix(in srgb, var(--f-low) 25%, transparent);
+    transition: border-color 0.3s;
+  }
+
+  .avatar-wrap:hover img {
+    border-color: var(--f-low);
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in srgb, var(--f-low) 25%, transparent),
+      transparent
+    );
+    margin-bottom: 3rem;
+  }
+
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  .handwritten {
+    font-family: "Caveat", cursive;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--f-high);
+    margin-bottom: 1.5rem;
+    transform: rotate(-0.5deg);
+    letter-spacing: 0.02em;
+  }
+
+</style>
