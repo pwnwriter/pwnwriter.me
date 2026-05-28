@@ -22,11 +22,11 @@
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s ease;
   }
 
   .lightbox[aria-hidden="false"] {
@@ -40,6 +40,25 @@
     object-fit: contain;
     border-radius: 6px;
     user-select: none;
+    transform: scale(0.92);
+    opacity: 0;
+    transition:
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.3s ease;
+  }
+
+  .lightbox[aria-hidden="false"] .lb-img {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  /* fade image when switching between photos */
+  .lb-img.switching {
+    opacity: 0;
+    transform: scale(0.97);
+    transition:
+      transform 0.15s ease,
+      opacity 0.15s ease;
   }
 
   .lb-close {
@@ -54,6 +73,7 @@
     cursor: pointer;
     z-index: 10;
     padding: 0.25rem 0.5rem;
+    transition: color 0.15s ease;
   }
 
   .lb-close:hover {
@@ -72,6 +92,7 @@
     cursor: pointer;
     z-index: 10;
     padding: 0.5rem;
+    transition: color 0.15s ease;
   }
 
   .lb-nav:hover {
@@ -95,6 +116,32 @@
     color: rgba(255, 255, 255, 0.5);
     text-align: center;
     white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.15s;
+  }
+
+  .lightbox[aria-hidden="false"] .lb-caption {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox,
+    .lb-img,
+    .lb-caption,
+    .lb-close,
+    .lb-nav {
+      transition: none;
+    }
+
+    .lb-img {
+      transform: none;
+      opacity: 1;
+    }
+
+    .lb-img.switching {
+      transform: none;
+      transition: none;
+    }
   }
 </style>
 
@@ -112,7 +159,7 @@
 
     let current = 0;
 
-    function show(index: number) {
+    function show(index: number, animate = true) {
       current = ((index % items.length) + items.length) % items.length;
       const item = items[current];
       const img = item.querySelector("img")!;
@@ -120,9 +167,23 @@
       const cap = item.querySelector(".photo-meta")!;
       const date = cap?.querySelector("span:last-child")?.textContent || "";
 
-      lbImg.src = img.src;
-      lbImg.alt = alt;
-      lbCaption.textContent = alt + (date ? ` · ${date}` : "");
+      const isOpen = lightbox.getAttribute("aria-hidden") === "false";
+
+      if (isOpen && animate) {
+        // switching between photos — brief fade
+        lbImg.classList.add("switching");
+        setTimeout(() => {
+          lbImg.src = img.src;
+          lbImg.alt = alt;
+          lbCaption.textContent = alt + (date ? ` \u00b7 ${date}` : "");
+          lbImg.classList.remove("switching");
+        }, 150);
+      } else {
+        lbImg.src = img.src;
+        lbImg.alt = alt;
+        lbCaption.textContent = alt + (date ? ` \u00b7 ${date}` : "");
+      }
+
       lightbox.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
     }
@@ -133,7 +194,7 @@
     }
 
     items.forEach((item, i) => {
-      item.addEventListener("click", () => show(i));
+      item.addEventListener("click", () => show(i, false));
     });
 
     lbClose.addEventListener("click", close);

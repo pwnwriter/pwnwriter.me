@@ -11,6 +11,18 @@ import { photos } from "~/pages/photos/photos";
 
 // newest first
 photos.sort((a, b) => (a.date < b.date ? 1 : -1));
+
+// group by year (descending)
+const grouped = new Map<string, typeof photos>();
+for (const p of photos) {
+  const arr = grouped.get(p.year) ?? [];
+  arr.push(p);
+  grouped.set(p.year, arr);
+}
+const years = [...grouped.keys()].sort((a, b) => b.localeCompare(a));
+
+// global index for lightbox navigation
+let globalIndex = 0;
 ---
 
 <Layout title="photos" description="A small archive of my photos.">
@@ -28,7 +40,7 @@ photos.sort((a, b) => (a.date < b.date ? 1 : -1));
             href={LICENSE_URL}
             target="_blank"
             rel="noreferrer"
-            class="underline decoration-white/20 underline-offset-4 hover:decoration-white/50"
+            class="underline decoration-[var(--f-low)]/20 underline-offset-4 hover:decoration-[var(--f-low)]/50"
           >
             {LICENSE_LABEL}
           </a>
@@ -37,28 +49,37 @@ photos.sort((a, b) => (a.date < b.date ? 1 : -1));
       </div>
     </header>
 
-    <div class="photo-grid mt-6">
-      {
-        photos.map((p, i) => (
-          <figure class="photo-item" data-index={i}>
-            <img
-              src={p.src}
-              alt={p.alt}
-              loading="lazy"
-              class="photo-img"
-            />
-            <figcaption class="photo-meta">
-              <span class="truncate">{p.alt}</span>
-              <span class="shrink-0 opacity-50">{p.date}</span>
-            </figcaption>
-          </figure>
-        ))
-      }
-    </div>
+    {years.map((year) => {
+      const yearPhotos = grouped.get(year)!;
+      return (
+        <section class="mt-10">
+          <h2 class="mb-4 text-sm font-medium tracking-wide text-f-low/50">{year}</h2>
+          <div class="photo-masonry">
+            {yearPhotos.map((p) => {
+              const idx = globalIndex++;
+              return (
+                <figure class="photo-item" data-index={idx}>
+                  <img
+                    src={p.src}
+                    alt={p.alt}
+                    loading="lazy"
+                    class="photo-img"
+                  />
+                  <figcaption class="photo-meta">
+                    <span class="truncate">{p.alt}</span>
+                    <span class="shrink-0 opacity-50">{p.date}</span>
+                  </figcaption>
+                </figure>
+              );
+            })}
+          </div>
+        </section>
+      );
+    })}
 
     {
       photos.length === 0 && (
-        <p class="mt-6 text-sm text-white/50">not yet. soon.</p>
+        <p class="mt-6 text-sm" style="color: var(--f-low); opacity: 0.5;">not yet. soon.</p>
       )
     }
   </Wrapper>
@@ -67,42 +88,53 @@ photos.sort((a, b) => (a.date < b.date ? 1 : -1));
 </Layout>
 
 <style>
-  .photo-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+  /* Masonry via CSS columns */
+  .photo-masonry {
+    columns: 1;
+    column-gap: 0.75rem;
   }
 
   @media (min-width: 640px) {
-    .photo-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .photo-masonry {
+      columns: 2;
     }
   }
 
   @media (min-width: 900px) {
-    .photo-grid {
-      grid-template-columns: repeat(3, 1fr);
+    .photo-masonry {
+      columns: 3;
     }
   }
 
   .photo-item {
+    break-inside: avoid;
+    margin-bottom: 0.75rem;
     cursor: pointer;
     overflow: hidden;
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid color-mix(in srgb, var(--f-low) 10%, transparent);
+    background: color-mix(in srgb, var(--f-low) 3%, transparent);
+    /* fade-in setup */
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease;
+  }
+
+  .photo-item.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .photo-img {
     width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
     display: block;
-    transition: transform 0.2s ease;
+    transition: transform 0.3s ease;
   }
 
   .photo-item:hover .photo-img {
-    transform: scale(1.02);
+    transform: scale(1.03);
   }
 
   .photo-meta {
@@ -112,6 +144,48 @@ photos.sort((a, b) => (a.date < b.date ? 1 : -1));
     gap: 0.75rem;
     padding: 0.5rem 0.75rem;
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--f-low);
+    opacity: 0.55;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .photo-item {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .photo-img {
+      transition: none;
+    }
   }
 </style>
+
+<script>
+  function initScrollReveal() {
+    const items = document.querySelectorAll<HTMLElement>(".photo-item");
+    if (!items.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            // stagger based on position within its masonry container
+            const siblings = el.parentElement?.querySelectorAll(".photo-item");
+            const idx = siblings ? [...siblings].indexOf(el) : 0;
+            el.style.transitionDelay = `${idx * 80}ms`;
+            el.classList.add("visible");
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.1 },
+    );
+
+    items.forEach((item) => observer.observe(item));
+  }
+
+  document.addEventListener("DOMContentLoaded", initScrollReveal);
+  if (document.readyState !== "loading") initScrollReveal();
+</script>

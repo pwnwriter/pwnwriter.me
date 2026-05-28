@@ -5,6 +5,7 @@ export type Photo = {
   src: string;
   alt: string;
   date: string;
+  year: string;
 };
 
 const PHOTOS_DIR = path.join(process.cwd(), "public/images/photos");
@@ -36,6 +37,7 @@ function discoverPhotos(): Photo[] {
         src: `/images/photos/${yearDir.name}/${file.name}`,
         alt,
         date: stat.mtime.toISOString().slice(0, 10),
+        year: yearDir.name,
       });
     }
   }
