@@ -4,6 +4,38 @@
 	<slot />
 </div>
 
+<script>
+	const icon = (d: string) =>
+		`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+	const copyIcon = icon('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>');
+	const checkIcon = icon('<polyline points="20 6 9 17 4 12"/>');
+
+	function addCopyButtons() {
+		document.querySelectorAll<HTMLElement>('pre > code').forEach((code) => {
+			const pre = code.parentElement!;
+			if (pre.querySelector('.copy-btn')) return;
+
+			const btn = Object.assign(document.createElement('button'), {
+				className: 'copy-btn',
+				ariaLabel: 'Copy code',
+				innerHTML: copyIcon,
+			});
+
+			btn.addEventListener('click', () => {
+				navigator.clipboard.writeText(code.textContent ?? '');
+				btn.innerHTML = checkIcon;
+				btn.classList.add('copied');
+				setTimeout(() => { btn.innerHTML = copyIcon; btn.classList.remove('copied'); }, 1500);
+			});
+
+			pre.appendChild(btn);
+		});
+	}
+
+	addCopyButtons();
+	document.addEventListener('astro:after-swap', addCopyButtons);
+</script>
+
 <style>
 	.prose :global(p) {
 		@apply font-normal leading-[1.85] text-f-low;
@@ -71,5 +103,22 @@
 
 	.prose :global(pre.language-svelte::before) {
 		content: 'svelte';
+	}
+
+	.prose :global(.copy-btn) {
+		@apply absolute top-3 right-3 flex items-center justify-center rounded-lg p-2 text-f-low opacity-0 transition-all duration-200;
+		background: var(--b-high);
+	}
+
+	.prose :global(pre:hover .copy-btn) {
+		@apply opacity-100;
+	}
+
+	.prose :global(.copy-btn:hover) {
+		@apply text-accent;
+	}
+
+	.prose :global(.copy-btn.copied) {
+		@apply text-accent opacity-100;
 	}
 </style>
