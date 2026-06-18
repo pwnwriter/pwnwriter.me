@@ -1,5 +1,5 @@
 ---
-title: "remote browsers and tab pooling in haylxon"
+title: "Remote browsers and tab pooling in haylxon"
 pubDate: 2026-06-09
 modDate: 2026-06-09
 tags: [rust, dev, haylxon]
