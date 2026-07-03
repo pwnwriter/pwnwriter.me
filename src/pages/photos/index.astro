@@ -49,12 +49,15 @@ let globalIndex = 0;
       </div>
     </header>
 
-    {years.map((year) => {
+    {years.map((year, yi) => {
       const yearPhotos = grouped.get(year)!;
       return (
-        <section class="mt-10">
-          <h2 class="mb-4 text-sm font-medium tracking-wide text-f-low/50">{year}</h2>
-          <div class="photo-masonry">
+        <details class="year-fold mt-10">
+          <summary class="year-summary">
+            <span class="year-label">{year}</span>
+            <span class="year-count">{yearPhotos.length} photo{yearPhotos.length !== 1 ? "s" : ""}</span>
+          </summary>
+          <div class="photo-masonry mt-4">
             {yearPhotos.map((p) => {
               const idx = globalIndex++;
               return (
@@ -73,7 +76,7 @@ let globalIndex = 0;
               );
             })}
           </div>
-        </section>
+        </details>
       );
     })}
 
@@ -148,6 +151,46 @@ let globalIndex = 0;
     opacity: 0.55;
   }
 
+  .year-fold {
+    border: 1px solid color-mix(in srgb, var(--f-low) 10%, transparent);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+  }
+
+  .year-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .year-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .year-summary::marker {
+    content: "";
+  }
+
+  .year-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: color-mix(in srgb, var(--f-low) 50%, transparent);
+  }
+
+  .year-fold[open] .year-label {
+    color: var(--accent);
+  }
+
+  .year-count {
+    font-size: 0.72rem;
+    color: color-mix(in srgb, var(--f-low) 40%, transparent);
+    font-family: var(--font-mono, monospace);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .photo-item {
       opacity: 1;
@@ -163,15 +206,11 @@ let globalIndex = 0;
 
 <script>
   function initScrollReveal() {
-    const items = document.querySelectorAll<HTMLElement>(".photo-item");
-    if (!items.length) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const el = entry.target as HTMLElement;
-            // stagger based on position within its masonry container
             const siblings = el.parentElement?.querySelectorAll(".photo-item");
             const idx = siblings ? [...siblings].indexOf(el) : 0;
             el.style.transitionDelay = `${idx * 80}ms`;
@@ -183,7 +222,19 @@ let globalIndex = 0;
       { threshold: 0.1 },
     );
 
-    items.forEach((item) => observer.observe(item));
+    function observeItems(root: Element | Document) {
+      root.querySelectorAll<HTMLElement>(".photo-item:not(.visible)").forEach(
+        (item) => observer.observe(item),
+      );
+    }
+
+    observeItems(document);
+
+    document.querySelectorAll<HTMLDetailsElement>(".year-fold").forEach((d) => {
+      d.addEventListener("toggle", () => {
+        if (d.open) observeItems(d);
+      });
+    });
   }
 
   document.addEventListener("DOMContentLoaded", initScrollReveal);
