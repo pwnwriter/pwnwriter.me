@@ -38,7 +38,7 @@ Even better, `Browser::connect()` is smart about what you pass it. Give it a Web
 }
 ```
 
-So the abstraction I needed was thin. Really thin. Not a trait over every CDP operation, just a trait over how you *get* the browser in the first place:
+So the abstraction I needed was thin. Really thin. Not a trait over every CDP operation, just a trait over how you _get_ the browser in the first place:
 
 ```rust
 #[async_trait]
@@ -277,11 +277,11 @@ Not ideal, but it works reliably. Chrome's fault, not ours.
 
 I set up a [hyperfine](https://github.com/sharkdp/hyperfine) benchmark on GitHub Actions comparing haylxon against [gowitness](https://github.com/sensepost/gowitness):
 
-| Benchmark | hxn | gowitness | |
-|---|---|---|---|
-| Single URL | 360ms | 3.99s | **11x faster** |
-| 5 URLs, 4 tabs | 1.81s | 26.29s | **14x faster** |
-| 5 URLs, 8 tabs | 1.70s | 14.67s | **8x faster** |
+| Benchmark      | hxn   | gowitness |                |
+| -------------- | ----- | --------- | -------------- |
+| Single URL     | 360ms | 3.99s     | **11x faster** |
+| 5 URLs, 4 tabs | 1.81s | 26.29s    | **14x faster** |
+| 5 URLs, 8 tabs | 1.70s | 14.67s    | **8x faster**  |
 
 The single URL case is the one that got me. 360ms. That includes launching Chrome, connecting, navigating, rendering the page, capturing the screenshot, and writing it to disk. On a CI runner. That's not a lot of time.
 

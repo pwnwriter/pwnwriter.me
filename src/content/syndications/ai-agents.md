@@ -13,4 +13,3 @@ I remember working in Nepal. Even though my role was focused on security and Dev
 
 Back then, I felt that understanding systems, knowing the tools, and being able to think through problems mattered.
 Today, I sometimes feel confused. Maybe AI has changed the way people work. Maybe I'm just nostalgic for a different era. Or maybe the signals we once used to recognize skill are becoming harder to see.
-
