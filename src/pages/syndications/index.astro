@@ -3,6 +3,7 @@ import "~/styles/syndications.css";
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
+import { formatDate } from "~/lib/utils";
 
 const syndications: CollectionEntry<"syndications">[] =
   await getCollection("syndications");
@@ -34,14 +35,6 @@ function generateHash(slug: string): string {
     hash = hash & hash;
   }
   return Math.abs(hash).toString(16).padStart(7, "0").slice(0, 7);
-}
-
-function formatDate(date: Date): string {
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 }
 ---
 

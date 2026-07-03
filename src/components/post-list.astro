@@ -9,12 +9,7 @@ interface Props {
 
 let { tag, max } = Astro.props;
 
-// get all unique tags
 const allPosts = await getCollection("posts");
-const allTags = new Set<string>();
-allPosts.map((post) => {
-  post.data.tags.map((tag) => allTags.add(tag));
-});
 
 const sortPosts = (posts: CollectionEntry<"posts">[]) =>
   posts.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());

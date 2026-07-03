@@ -6,7 +6,7 @@ import Link from '~/components/link.astro';
 import Heading from '~/components/text/heading.astro';
 import { Image } from 'astro:assets';
 import type { Post } from '~/content/config';
-// info: https://docs.astro.build/en/guides/imports/#node-builtins
+import { formatDate } from '~/lib/utils';
 
 type Props = {
 	frontmatter: Post;
@@ -20,16 +20,8 @@ const { slug } = Astro.params;
 const words = Astro.props.body?.trim().split(/\s+/).length ?? 0;
 const readingTime = Math.max(1, Math.round(words / 200));
 
-function formatDate(date: Date) {
-	return date.toLocaleString(undefined, {
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric',
-	});
-}
-
-let formattedPubDate = formatDate(pubDate);
-let formattedModDate = formatDate(modDate);
+const formattedPubDate = formatDate(pubDate);
+const formattedModDate = formatDate(modDate);
 ---
 
 <Layout {title} {description}>
