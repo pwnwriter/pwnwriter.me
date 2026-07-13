@@ -57,19 +57,61 @@ import "~/styles/index.css";
 
   .avatar-wrap {
     flex-shrink: 0;
+    position: relative;
+    padding: 0.35rem;
+  }
+
+  /* dashed accent ring that spins up on hover */
+  .avatar-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px dashed color-mix(in srgb, var(--accent) 55%, transparent);
+    animation: avatar-spin 18s linear infinite;
+    animation-play-state: paused;
+    transition: opacity 0.3s;
+    opacity: 0.6;
+  }
+
+  .avatar-wrap:hover::before {
+    animation-play-state: running;
+    opacity: 1;
   }
 
   .avatar-wrap img {
+    position: relative;
     width: 6rem;
     height: 6rem;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid color-mix(in srgb, var(--f-low) 25%, transparent);
-    transition: border-color 0.3s;
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 40%, transparent);
+    transition:
+      border-color 0.3s,
+      box-shadow 0.4s ease,
+      transform 0.4s ease;
   }
 
   .avatar-wrap:hover img {
-    border-color: var(--f-low);
+    border-color: var(--accent);
+    box-shadow: 0 6px 22px -6px color-mix(in srgb, var(--accent) 55%, transparent);
+    transform: scale(1.04) rotate(-2deg);
+  }
+
+  @keyframes avatar-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .avatar-wrap::before {
+      animation: none;
+    }
+    .avatar-wrap:hover img {
+      transform: none;
+    }
   }
 
   .divider {

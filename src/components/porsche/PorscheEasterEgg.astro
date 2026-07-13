@@ -1,0 +1,80 @@
+---
+// Drop this once on any page that uses <PorscheWord>. It owns the styles for
+// the car that drives across the screen and boots the click/hover behaviour.
+---
+
+<script>
+  import { initPorscheEgg } from "~/scripts/porsche/car";
+  initPorscheEgg();
+</script>
+
+<!-- global: the car is injected into <body>, outside any component scope -->
+<style is:global>
+  .porsche-run {
+    position: fixed;
+    bottom: 12%;
+    left: -280px;
+    z-index: 60;
+    width: 220px;
+    pointer-events: none;
+    will-change: transform;
+    animation: porsche-drive 3.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .porsche-run .wheel {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: porsche-wheel 0.35s linear infinite;
+  }
+
+  .porsche-run .puff {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: porsche-puff 0.6s ease-out infinite;
+  }
+
+  @keyframes porsche-drive {
+    0% {
+      transform: translateX(0) translateY(0);
+    }
+    10% {
+      transform: translateX(6vw) translateY(-4px);
+    }
+    50% {
+      transform: translateX(52vw) translateY(0);
+    }
+    90% {
+      transform: translateX(96vw) translateY(-3px);
+    }
+    100% {
+      transform: translateX(118vw) translateY(0);
+    }
+  }
+
+  @keyframes porsche-wheel {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes porsche-puff {
+    0% {
+      opacity: 0.6;
+      transform: scale(0.6) translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.4) translateX(-14px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .porsche-run {
+      animation-duration: 1.4s;
+    }
+    .porsche-run .wheel,
+    .porsche-run .puff {
+      animation: none;
+    }
+  }
+</style>

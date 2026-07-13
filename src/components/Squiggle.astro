@@ -1,0 +1,29 @@
+---
+// A hand-drawn, theme-aware wavy underline (uses the accent colour).
+// Usage: <Squiggle>About me</Squiggle>
+---
+
+<span class="squiggle"><slot /></span>
+
+<style>
+  .squiggle {
+    position: relative;
+    display: inline-block;
+  }
+
+  .squiggle::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.4rem;
+    height: 6px;
+    background-color: var(--accent);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath d='M0 3 Q3 0 6 3 T12 3' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E")
+      repeat-x;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath d='M0 3 Q3 0 6 3 T12 3' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E")
+      repeat-x;
+    -webkit-mask-size: 12px 6px;
+    mask-size: 12px 6px;
+  }
+</style>

@@ -6,6 +6,11 @@ import Paragraph from "~/components/text/paragraph.astro";
 import Subheading from "~/components/text/subheading.astro";
 import Link from "~/components/link.astro";
 
+import BioPhoto from "~/components/BioPhoto.astro";
+import Squiggle from "~/components/Squiggle.astro";
+import PorscheWord from "~/components/porsche/PorscheWord.astro";
+import PorscheEasterEgg from "~/components/porsche/PorscheEasterEgg.astro";
+
 import Cancer from "~/components/icons/cancer.astro";
 import Leo from "~/components/icons/leo.astro";
 import Scorpio from "~/components/icons/scorpio.astro";
@@ -20,51 +25,47 @@ const bio = "/me-proud-nix-user.jpg";
   description="pwnwriter is a cybersecurity enthusiast with a focus on devops, I love nix, nixos and reproducibility"
 >
   <Wrapper>
-    <div class="group relative w-fit">
-      <img
-        src={bio}
-        alt="pwnwriter"
-        class="bio-photo mb-md w-60 rounded-xl transition-all duration-500 ease-out group-hover:rotate-1 group-hover:scale-105 group-hover:shadow-xl sm:relative sm:top-1 sm:float-left sm:mb-4 sm:mr-12"
-      />
+    <BioPhoto src={bio} />
+
+    <Heading Element="h1"><Squiggle>About me</Squiggle></Heading>
+
+    <div class="about-intro">
+      <Paragraph>
+        I am
+        <span
+          class="font-semibold italic underline decoration-blue-400 underline-offset-4"
+        >
+          Nabeen Tiwaree.
+        </span>
+        Online I go by
+        <span
+          class="font-semibold italic underline decoration-purple-400 underline-offset-4"
+        >
+          pwnwriter
+        </span>.
+      </Paragraph>
+
+      <Paragraph>
+        I’m a student who loves minimalism, open-source, and occasionally
+        playing cricket. I enjoy digging into how things work under the hood and
+        breaking software. I've also got a soft spot for <PorscheWord
+          title="pssst… click me">Porsches</PorscheWord>, the <PorscheWord
+          >911</PorscheWord> lives rent-free in my head. I'm into personal
+        discipline, calisthenics, and draw a lot of inspiration from
+        <span class="whitespace-nowrap">
+          <Link href="https://www.instagram.com/davidlaid/" underline>
+            @davidlaid
+          </Link>
+        </span>.
+      </Paragraph>
+
+      <Paragraph>
+        Feel free to reach out via
+        <Link href="https://x.com/pwnwriter" underline>x</Link>
+        or
+        <Link href="mailto:hi@pwnwriter.me" underline>email</Link>.
+      </Paragraph>
     </div>
-
-    <style></style>
-
-    <Heading Element="h1">About me</Heading>
-
-    <Paragraph>
-      I am
-      <span
-        class="font-semibold italic underline decoration-blue-400 underline-offset-4"
-      >
-        Nabeen Tiwaree.
-      </span>
-      Online I go by
-      <span
-        class="font-semibold italic underline decoration-purple-400 underline-offset-4"
-      >
-        pwnwriter
-      </span>.
-    </Paragraph>
-
-    <Paragraph>
-      I’m a student who loves minimalism, open-source, and occasionally playing
-      cricket. I enjoy digging into how things work under the hood and breaking
-      software. I'm also into personal discipline, calisthenics, and draw a lot
-      of inspiration from
-      <span class="whitespace-nowrap">
-        <Link href="https://www.instagram.com/davidlaid/" underline>
-          @davidlaid
-        </Link>
-      </span>.
-    </Paragraph>
-
-    <Paragraph>
-      Feel free to reach out via
-      <Link href="https://x.com/pwnwriter" underline>x</Link>
-      or
-      <Link href="mailto:hi@pwnwriter.me" underline>email</Link>.
-    </Paragraph>
 
     <div class="h-sm"></div>
 
@@ -111,8 +112,16 @@ const bio = "/me-proud-nix-user.jpg";
         </Paragraph>
       </div>
     </div>
-    <!-- <div class="h-xl"></div> -->
-
-    <!-- <Link href="/">&larr;&nbsp;&nbsp;Back home</Link> -->
   </Wrapper>
+
+  <!-- boots the click/hover -> drive-a-Porsche behaviour -->
+  <PorscheEasterEgg />
 </Layout>
+
+<style>
+  /* more breathing room in the intro copy */
+  .about-intro :global(p) {
+    line-height: 1.9;
+    margin-bottom: 1.65rem;
+  }
+</style>

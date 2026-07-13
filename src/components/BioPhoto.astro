@@ -1,0 +1,124 @@
+---
+// The bio photo: a cute, slightly-tilted hand-drawn frame with a handwritten
+// caption and a doodle that peeks in on hover.
+export interface Props {
+  src: string;
+  alt?: string;
+  caption?: string;
+  doodle?: string;
+}
+
+const {
+  src,
+  alt = "pwnwriter",
+  caption = "me, a proud nix user ✦",
+  doodle = "this is me! ↖",
+} = Astro.props;
+---
+
+<figure class="bio-figure group">
+  <div class="bio-frame">
+    <img src={src} alt={alt} class="bio-photo" />
+  </div>
+  <figcaption class="bio-caption">{caption}</figcaption>
+  <span class="bio-doodle">{doodle}</span>
+</figure>
+
+<style>
+  .bio-figure {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto 2rem;
+    transform: rotate(-2deg);
+    transition: transform 0.5s ease;
+  }
+
+  @media (min-width: 640px) {
+    .bio-figure {
+      float: left;
+      margin: 0.25rem 3rem 1.25rem 0;
+    }
+  }
+
+  .bio-figure:hover {
+    transform: rotate(0deg);
+  }
+
+  .bio-frame {
+    position: relative;
+    padding: 0.5rem;
+    border-radius: 0.85rem;
+    background: var(--b-med);
+    border: 1.5px solid color-mix(in srgb, var(--f-low) 45%, transparent);
+    box-shadow: 3px 4px 0 color-mix(in srgb, var(--accent) 30%, transparent);
+    transition:
+      box-shadow 0.5s ease,
+      transform 0.5s ease;
+  }
+
+  /* sketchy offset second frame behind the photo */
+  .bio-frame::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 0.7rem;
+    border: 1.5px dashed color-mix(in srgb, var(--f-low) 35%, transparent);
+    pointer-events: none;
+  }
+
+  .bio-figure:hover .bio-frame {
+    box-shadow: 5px 6px 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .bio-photo {
+    display: block;
+    width: 14rem;
+    border-radius: 0.55rem;
+    object-fit: cover;
+  }
+
+  /* handwritten sticky caption under the photo */
+  .bio-caption {
+    display: block;
+    text-align: center;
+    margin-top: 0.6rem;
+    font-family: "Caveat", cursive;
+    font-size: 1.35rem;
+    line-height: 1;
+    color: var(--accent);
+    transform: rotate(-1.5deg);
+  }
+
+  /* little handwritten doodle pointing at the photo */
+  .bio-doodle {
+    position: absolute;
+    top: -1.4rem;
+    right: -3.2rem;
+    font-family: "Caveat", cursive;
+    font-size: 1.3rem;
+    color: var(--f-low);
+    transform: rotate(6deg);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .bio-figure:hover .bio-doodle {
+    opacity: 0.9;
+  }
+
+  @media (max-width: 480px) {
+    .bio-doodle {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bio-figure,
+    .bio-frame,
+    .bio-doodle {
+      transition: none;
+    }
+  }
+</style>

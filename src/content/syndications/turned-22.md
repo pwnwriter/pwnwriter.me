@@ -7,8 +7,8 @@ tags: [life]
 
 yerp, turned 22 today.
 
-i was asleep at home (***too much coding the day before, i'm training a
-small llm on my own hardware for fun btw***) when my friends showed up
+i was asleep at home (**_too much coding the day before, i'm training a
+small llm on my own hardware for fun btw_**) when my friends showed up
 with a cake and gifts. i was surprised but also kinda knew something
 was coming, we always plan surprises for each other in our circle.
 they watched football while i lay in bed half-dead.

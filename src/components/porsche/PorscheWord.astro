@@ -1,0 +1,105 @@
+---
+// A cute, artistic trigger word for the Porsche easter egg: accent gradient
+// text, a hand-drawn squiggle underline, and a tiny 🏎️ that zooms in on hover.
+// The behaviour is wired up by PorscheEasterEgg.astro (which must also be on
+// the page). Usage: <PorscheWord>Porsches</PorscheWord>
+export interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<span
+  class="porsche-egg"
+  role="button"
+  tabindex="0"
+  title={title}
+  aria-label="Play a Porsche vroom"
+>
+  <slot />
+</span>
+
+<style>
+  .porsche-egg {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    /* soft accent gradient text */
+    background: linear-gradient(
+      92deg,
+      var(--accent),
+      color-mix(in srgb, var(--accent) 45%, var(--f-high))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    transition:
+      transform 0.25s ease,
+      filter 0.25s ease;
+    outline: none;
+  }
+
+  /* hand-drawn squiggle underline (matches the page's doodles) */
+  .porsche-egg::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.28rem;
+    height: 5px;
+    background-color: var(--accent);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath d='M0 3 Q3 0 6 3 T12 3' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E")
+      repeat-x;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath d='M0 3 Q3 0 6 3 T12 3' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E")
+      repeat-x;
+    -webkit-mask-size: 12px 6px;
+    mask-size: 12px 6px;
+    opacity: 0.7;
+    transition: opacity 0.25s ease;
+  }
+
+  /* tiny racecar that zooms in on hover (absolute -> no text reflow) */
+  .porsche-egg::after {
+    content: "🏎️";
+    position: absolute;
+    right: -1.15em;
+    top: -0.55em;
+    font-size: 0.72em;
+    -webkit-text-fill-color: initial;
+    color: initial;
+    opacity: 0;
+    transform: translateX(-6px) rotate(4deg);
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease;
+    pointer-events: none;
+  }
+
+  .porsche-egg:hover,
+  .porsche-egg:focus-visible {
+    transform: translateY(-1px) rotate(-2deg);
+    filter: saturate(1.25);
+  }
+
+  .porsche-egg:hover::before,
+  .porsche-egg:focus-visible::before {
+    opacity: 1;
+  }
+
+  .porsche-egg:hover::after,
+  .porsche-egg:focus-visible::after {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .porsche-egg,
+    .porsche-egg::after {
+      transition: none;
+    }
+  }
+</style>
