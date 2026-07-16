@@ -27,6 +27,8 @@
             harper # Spelling check
             rumdl # Markdown formating and check
             nodejs
+
+            ffmpeg
           ];
 
           buildInputs = with pkgs; [ pkg-config ];

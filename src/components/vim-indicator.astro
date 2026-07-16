@@ -28,6 +28,10 @@ const isHomePage = Astro.url.pathname === '/';
         <span class="vim-help-key">p</span>
         <span>photos</span>
       </div>
+      <div class="vim-help-row">
+        <span class="vim-help-key">P</span>
+        <span>projects</span>
+      </div>
     </div>
 
     {/* row 1: g / k / ? */}
@@ -77,8 +81,13 @@ const isHomePage = Astro.url.pathname === '/';
 <script>
   const indicator = document.getElementById('vim-indicator');
   const helpPanel = document.getElementById('vim-help');
-  if (!indicator) throw new Error('missing #vim-indicator');
+  // the indicator isn't rendered on the home page — nothing to wire up there
+  if (indicator) initVimIndicator(indicator, helpPanel);
 
+  function initVimIndicator(
+    indicator: HTMLElement,
+    helpPanel: HTMLElement | null,
+  ) {
   // keys that light up on press
   const highlightKeys = new Set(['h', 'j', 'k', 't', 'g']);
 
@@ -141,4 +150,5 @@ const isHomePage = Astro.url.pathname === '/';
       helpPanel?.classList.remove('visible');
     }
   });
+  }
 </script>

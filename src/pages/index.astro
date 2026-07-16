@@ -6,7 +6,11 @@ import Subheading from "~/components/text/subheading.astro";
 import Paragraph from "~/components/text/paragraph.astro";
 import Link from "~/components/link.astro";
 import PostList from "~/components/post-list.astro";
+import { projects } from "~/pages/projects/projects";
 import "~/styles/index.css";
+
+// lead with the first few projects (tes.chat is first in the list)
+const featured = projects.slice(0, 3);
 ---
 
 <Layout title="~" description="pwn::musings.">
@@ -36,6 +40,49 @@ import "~/styles/index.css";
       <PostList max={3} />
       <Link href="/notes">{"{ All notes }"}&nbsp;&nbsp;&Rarr;</Link>
     </section>
+
+    {
+      featured.length > 0 && (
+        <>
+          <div class="divider"></div>
+
+          <section class="section">
+            <span class="work-label">things i've built</span>
+            <div class="work-grid mt-4 mb-4">
+              {featured.map((p) => {
+                const cover = p.cover ?? p.media[0];
+                const isVideo = cover.kind === "video";
+                const poster =
+                  cover.kind === "image" ? cover.src : cover.poster;
+                return (
+                  <a href="/projects" class="work-card" aria-label={p.name}>
+                    <span class="work-cover">
+                      {isVideo ? (
+                        <video
+                          src={cover.src}
+                          poster={poster ?? undefined}
+                          muted
+                          loop
+                          playsinline
+                          preload="none"
+                        />
+                      ) : (
+                        poster && <img src={poster} alt={p.name} loading="lazy" />
+                      )}
+                    </span>
+                    <span class="work-text">
+                      <span class="work-name">{p.name}</span>
+                      <span class="work-blurb">{p.blurb}</span>
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+            <Link href="/projects">{"{ All projects }"}&nbsp;&nbsp;&Rarr;</Link>
+          </section>
+        </>
+      )
+    }
   </Wrapper>
 </Layout>
 
@@ -129,6 +176,156 @@ import "~/styles/index.css";
     margin-bottom: 3rem;
   }
 
+  .work-label {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--f-low) 55%, transparent);
+  }
+
+  /* ---- Desktop: visual cards with a video cover ---- */
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .work-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    text-decoration: none;
+    transition: transform 0.25s ease;
+  }
+
+  .work-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .work-cover {
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
+    /* gradient placeholder shows behind a missing / not-yet-loaded video */
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 20%, transparent),
+      color-mix(in srgb, var(--f-low) 8%, transparent)
+    );
+  }
+
+  .work-cover img,
+  .work-cover video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  .work-card:hover .work-cover {
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .work-card:hover .work-cover img,
+  .work-card:hover .work-cover video {
+    transform: scale(1.05);
+  }
+
+  .work-name {
+    font-size: 0.8rem;
+    color: var(--f-low);
+    transition: color 0.25s ease;
+  }
+
+  .work-card:hover .work-name {
+    color: var(--accent);
+  }
+
+  /* description only surfaces on mobile */
+  .work-blurb {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-card,
+    .work-cover img,
+    .work-cover video {
+      transition: none;
+    }
+    .work-card:hover {
+      transform: none;
+    }
+  }
+
+  /* ---- Mobile: a light, editorial numbered list (no cards). Mirrors the
+     numbered eyebrows on the /projects page so the two feel connected. ---- */
+  @media (max-width: 600px) {
+    .work-grid {
+      display: flex;
+      flex-direction: column;
+      grid-template-columns: none;
+      gap: 0;
+      counter-reset: work;
+    }
+
+    .work-cover {
+      display: none;
+    }
+
+    .work-card {
+      display: block;
+      transform: none;
+      padding: 1.15rem 0;
+      border-top: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
+    }
+
+    .work-card:first-child {
+      border-top: none;
+      padding-top: 0.35rem;
+    }
+
+    .work-card:hover {
+      transform: none;
+    }
+
+    /* faint 01 / 02 / 03 eyebrow */
+    .work-card::before {
+      counter-increment: work;
+      content: counter(work, decimal-leading-zero);
+      display: block;
+      margin-bottom: 0.3rem;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      color: color-mix(in srgb, var(--f-low) 45%, transparent);
+    }
+
+    .work-name {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--f-high);
+      transition: color 0.2s ease;
+    }
+
+    .work-card:hover .work-name,
+    .work-card:active .work-name {
+      color: var(--accent);
+    }
+
+    .work-blurb {
+      display: block;
+      margin-top: 0.3rem;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      color: var(--f-low);
+    }
+  }
+
   .handwritten {
     font-family: "Caveat", cursive;
     font-size: 2.5rem;
@@ -140,3 +337,26 @@ import "~/styles/index.css";
   }
 
 </style>
+
+<script>
+  // Desktop only: play a project's video cover on hover, reset on leave.
+  // On mobile the covers are display:none, so nothing loads or plays there.
+  function initWorkHover() {
+    document
+      .querySelectorAll<HTMLVideoElement>(".work-card video")
+      .forEach((vid) => {
+        const card = vid.closest(".work-card");
+        if (!card) return;
+        card.addEventListener("mouseenter", () => {
+          vid.play().catch(() => {});
+        });
+        card.addEventListener("mouseleave", () => {
+          vid.pause();
+          vid.currentTime = 0;
+        });
+      });
+  }
+
+  document.addEventListener("DOMContentLoaded", initWorkHover);
+  if (document.readyState !== "loading") initWorkHover();
+</script>

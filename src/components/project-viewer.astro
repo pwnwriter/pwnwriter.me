@@ -1,0 +1,291 @@
+---
+// A media viewer for the projects page. Unlike the photos lightbox (image only),
+// this plays both images and <video>. It reads each project's media list from a
+// JSON blob and opens when a .project-card is clicked.
+import type { Project } from "~/pages/projects/projects";
+
+export interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+
+// only the bits the client needs, per project, in card order
+const galleries = projects.map((p) => ({
+  name: p.name,
+  media: p.media,
+}));
+---
+
+<div id="pv" class="pv" aria-hidden="true">
+  <button id="pv-close" class="pv-close" type="button" aria-label="Close">
+    &times;
+  </button>
+  <button id="pv-prev" class="pv-nav pv-prev" type="button" aria-label="Previous">
+    &lsaquo;
+  </button>
+  <button id="pv-next" class="pv-nav pv-next" type="button" aria-label="Next">
+    &rsaquo;
+  </button>
+
+  <div id="pv-stage" class="pv-stage"></div>
+  <div id="pv-caption" class="pv-caption"></div>
+</div>
+
+<script type="application/json" id="pv-data" set:html={JSON.stringify(galleries)}
+></script>
+
+<style>
+  .pv {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .pv[aria-hidden="false"] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .pv-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 92vw;
+    max-height: 86vh;
+    transform: scale(0.94);
+    opacity: 0;
+    transition:
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.3s ease;
+  }
+
+  .pv[aria-hidden="false"] .pv-stage {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .pv-stage.switching {
+    opacity: 0;
+    transform: scale(0.97);
+    transition:
+      transform 0.15s ease,
+      opacity 0.15s ease;
+  }
+
+  /* whatever media sits in the stage shares these bounds */
+  .pv-stage :global(img),
+  .pv-stage :global(video) {
+    max-width: 92vw;
+    max-height: 86vh;
+    border-radius: 8px;
+    display: block;
+    object-fit: contain;
+    background: #000;
+  }
+
+  .pv-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    font-size: 2rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.6);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.15s ease;
+  }
+
+  .pv-close:hover {
+    color: white;
+  }
+
+  .pv-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.5rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.5);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.5rem;
+    transition: color 0.15s ease;
+  }
+
+  .pv-nav:hover {
+    color: white;
+  }
+
+  .pv-prev {
+    left: 1rem;
+  }
+
+  .pv-next {
+    right: 1rem;
+  }
+
+  .pv-caption {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-align: center;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.15s;
+  }
+
+  .pv[aria-hidden="false"] .pv-caption {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pv,
+    .pv-stage,
+    .pv-caption {
+      transition: none;
+    }
+    .pv-stage {
+      transform: none;
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  type MediaItem =
+    | { kind: "image"; src: string; alt?: string }
+    | { kind: "video"; src: string; poster?: string; alt?: string };
+  type Gallery = { name: string; media: MediaItem[] };
+
+  function initProjectViewer() {
+    const pv = document.getElementById("pv");
+    const stage = document.getElementById("pv-stage");
+    const caption = document.getElementById("pv-caption");
+    const btnClose = document.getElementById("pv-close");
+    const btnPrev = document.getElementById("pv-prev");
+    const btnNext = document.getElementById("pv-next");
+    const dataEl = document.getElementById("pv-data");
+    if (!pv || !stage || !caption || !dataEl) return;
+
+    let galleries: Gallery[] = [];
+    try {
+      galleries = JSON.parse(dataEl.textContent || "[]");
+    } catch {
+      return;
+    }
+
+    let gallery = 0;
+    let index = 0;
+
+    function stopVideos() {
+      stage!
+        .querySelectorAll("video")
+        .forEach((v) => (v as HTMLVideoElement).pause());
+    }
+
+    function buildSlide(item: MediaItem): HTMLElement {
+      if (item.kind === "video") {
+        const v = document.createElement("video");
+        v.src = item.src;
+        if (item.poster) v.poster = item.poster;
+        v.controls = true;
+        v.autoplay = true;
+        v.playsInline = true;
+        v.preload = "metadata";
+        return v;
+      }
+      const img = document.createElement("img");
+      img.src = item.src;
+      img.alt = item.alt || "";
+      return img;
+    }
+
+    function render(animate: boolean) {
+      const items = galleries[gallery]?.media || [];
+      if (!items.length) return;
+      index = ((index % items.length) + items.length) % items.length;
+      const item = items[index];
+      const total = items.length;
+      const name = galleries[gallery]?.name || "";
+      const label =
+        (item.alt || name) + (total > 1 ? ` · ${index + 1}/${total}` : "");
+
+      const swap = () => {
+        stopVideos();
+        stage!.replaceChildren(buildSlide(item));
+        caption!.textContent = label;
+        stage!.classList.remove("switching");
+      };
+
+      if (animate && pv!.getAttribute("aria-hidden") === "false") {
+        stage!.classList.add("switching");
+        setTimeout(swap, 150);
+      } else {
+        swap();
+      }
+    }
+
+    function open(g: number) {
+      gallery = g;
+      index = 0;
+      render(false);
+      pv!.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      stopVideos();
+      pv!.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      // release media so nothing keeps buffering behind the scenes
+      setTimeout(() => stage!.replaceChildren(), 300);
+    }
+
+    function step(delta: number) {
+      index += delta;
+      render(true);
+    }
+
+    document.querySelectorAll<HTMLElement>(".project-open").forEach((trigger) => {
+      const g = Number(trigger.dataset.gallery);
+      if (Number.isNaN(g)) return;
+      trigger.addEventListener("click", () => open(g));
+    });
+
+    btnClose?.addEventListener("click", close);
+    btnPrev?.addEventListener("click", () => step(-1));
+    btnNext?.addEventListener("click", () => step(1));
+
+    pv.addEventListener("click", (e) => {
+      if (e.target === pv) close();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (pv.getAttribute("aria-hidden") !== "false") return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initProjectViewer);
+  if (document.readyState !== "loading") initProjectViewer();
+</script>

@@ -1,0 +1,372 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Wrapper from "~/components/wrapper.astro";
+import Heading from "~/components/text/heading.astro";
+import ProjectViewer from "~/components/project-viewer.astro";
+import { projects } from "~/pages/projects/projects";
+
+const pad = (n: number) => String(n).padStart(2, "0");
+---
+
+<Layout title="projects" description="Things I've built — tools, configs, and experiments.">
+  <Wrapper>
+    <header>
+      <Heading Element="h1">Projects</Heading>
+      <p class="mt-2 max-w-prose text-sm">
+        Things I've built and tinker with. Hover a clip to watch it, click to
+        open it full-screen.
+      </p>
+    </header>
+
+    {
+      projects.length === 0 ? (
+        <p class="mt-6 text-sm" style="color: var(--f-low); opacity: 0.5;">
+          not yet. soon.
+        </p>
+      ) : (
+        <div class="projects mt-16">
+          {projects.map((p, i) => {
+            const primary = p.cover ?? p.media[0];
+            const isVideo = primary.kind === "video";
+            const poster =
+              primary.kind === "image" ? primary.src : primary.poster;
+            const extra = p.media.length - 1;
+            return (
+              <article class="project-row">
+                <div
+                  class="pr-media project-open"
+                  data-gallery={i}
+                  role="button"
+                  tabindex="0"
+                  aria-label={`Open ${p.name} media`}
+                >
+                  {isVideo ? (
+                    <video
+                      class="pr-video"
+                      poster={poster ?? undefined}
+                      muted
+                      loop
+                      playsinline
+                      preload="metadata"
+                      src={primary.src}
+                    />
+                  ) : poster ? (
+                    <img class="pr-img" src={poster} alt={p.name} loading="lazy" />
+                  ) : null}
+
+                  <span class="pr-glow" aria-hidden="true" />
+
+                  {isVideo && (
+                    <span class="pr-badge" aria-hidden="true">
+                      ▶ play
+                    </span>
+                  )}
+                  {extra > 0 && (
+                    <span class="pr-count" aria-hidden="true">
+                      +{extra}
+                    </span>
+                  )}
+                </div>
+
+                <div class="pr-body">
+                  <span class="pr-eyebrow">
+                    {pad(i + 1)}
+                    {p.year && <> &middot; {p.year}</>}
+                  </span>
+                  <h2 class="pr-name">{p.name}</h2>
+                  <p class="pr-blurb">{p.blurb}</p>
+
+                  {p.tech.length > 0 && (
+                    <ul class="pr-tech">
+                      {p.tech.map((t) => (
+                        <li>{t}</li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {(p.repo || p.demo) && (
+                    <div class="pr-links">
+                      {p.repo && (
+                        <a href={p.repo} target="_blank" rel="noopener noreferrer">
+                          repo ↗
+                        </a>
+                      )}
+                      {p.demo && (
+                        <a href={p.demo} target="_blank" rel="noopener noreferrer">
+                          live ↗
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </Wrapper>
+
+  <ProjectViewer projects={projects} />
+</Layout>
+
+<style>
+  .projects {
+    display: flex;
+    flex-direction: column;
+    gap: 5.5rem;
+  }
+
+  .project-row {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 2.75rem;
+    align-items: center;
+  }
+
+  /* alternate the media side for an editorial rhythm */
+  .project-row:nth-child(even) .pr-media {
+    order: 2;
+  }
+
+  /* ---- media ---- */
+  .pr-media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 16px;
+    cursor: pointer;
+    border: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 16%, transparent),
+      color-mix(in srgb, var(--f-low) 8%, transparent)
+    );
+    box-shadow: 0 14px 40px -26px color-mix(in srgb, var(--f-high) 40%, transparent);
+    transition:
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.4s ease,
+      border-color 0.4s ease;
+    outline: none;
+  }
+
+  .pr-media:hover,
+  .pr-media:focus-visible {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+    box-shadow: 0 22px 48px -24px color-mix(in srgb, var(--f-high) 45%, transparent);
+  }
+
+  .pr-video,
+  .pr-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pr-media:hover .pr-video,
+  .pr-media:hover .pr-img {
+    transform: scale(1.03);
+  }
+
+  /* subtle inner vignette so overlays stay legible */
+  .pr-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.28),
+      transparent 45%
+    );
+    opacity: 0.7;
+  }
+
+  .pr-badge {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.68rem;
+    font-family: var(--font-mono, monospace);
+    letter-spacing: 0.03em;
+    color: white;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+    transition:
+      background 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  .pr-media:hover .pr-badge {
+    background: color-mix(in srgb, var(--accent) 72%, black);
+  }
+
+  .pr-count {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.9rem;
+    font-size: 0.68rem;
+    font-family: var(--font-mono, monospace);
+    color: rgba(255, 255, 255, 0.92);
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ---- text ---- */
+  .pr-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+
+  .pr-eyebrow {
+    font-size: 0.72rem;
+    font-family: var(--font-mono, monospace);
+    letter-spacing: 0.12em;
+    color: color-mix(in srgb, var(--f-low) 55%, transparent);
+  }
+
+  .pr-name {
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--f-high);
+  }
+
+  .pr-blurb {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--f-low);
+    max-width: 34ch;
+  }
+
+  .pr-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.1rem;
+  }
+
+  .pr-tech li {
+    font-size: 0.68rem;
+    font-family: var(--font-mono, monospace);
+    color: color-mix(in srgb, var(--accent) 90%, var(--f-high));
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    border-radius: 5px;
+    padding: 0.08rem 0.5rem;
+  }
+
+  .pr-links {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 0.45rem;
+  }
+
+  .pr-links a {
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .pr-links a:hover {
+    border-color: var(--accent);
+  }
+
+  /* ---- responsive ---- */
+  @media (max-width: 760px) {
+    .projects {
+      gap: 3.5rem;
+    }
+
+    .project-row {
+      grid-template-columns: 1fr;
+      gap: 1.1rem;
+    }
+
+    /* media always on top on mobile, regardless of row parity */
+    .project-row:nth-child(even) .pr-media,
+    .project-row .pr-media {
+      order: 0;
+    }
+
+    .pr-name {
+      font-size: 1.4rem;
+    }
+
+    .pr-blurb {
+      max-width: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pr-media,
+    .pr-video,
+    .pr-img {
+      transition: none;
+    }
+    .pr-media:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // Autoplay each clip (muted, looping) only while it's on screen, and pause it
+  // when it scrolls away so we're never decoding off-screen video.
+  function initInlineVideos() {
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduce) return; // respect reduced-motion: leave the poster still
+
+    const videos = document.querySelectorAll<HTMLVideoElement>("video.pr-video");
+    if (!videos.length) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const v = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        });
+      },
+      { threshold: 0.35 },
+    );
+
+    videos.forEach((v) => io.observe(v));
+  }
+
+  // Enter / Space opens the full-screen viewer (click is handled by the viewer)
+  function initMediaKeys() {
+    document
+      .querySelectorAll<HTMLElement>(".pr-media.project-open")
+      .forEach((el) => {
+        el.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            el.click();
+          }
+        });
+      });
+  }
+
+  function init() {
+    initInlineVideos();
+    initMediaKeys();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+  if (document.readyState !== "loading") init();
+</script>

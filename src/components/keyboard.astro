@@ -7,6 +7,7 @@
 <a href="/syndications" id="syndications-link" hidden></a>
 <a href="/notes" id="notes-link" hidden></a>
 <a href="/photos" id="photos-link" hidden></a>
+<a href="/projects" id="projects-link" hidden></a>
 
 <script>
   function cycleTheme() {
@@ -53,13 +54,14 @@
 
     const scrollAmount = Math.round(window.innerHeight * 0.15);
 
-    const routes: Record<"h" | "~" | "a" | "s" | "n" | "p", string> = {
+    const routes: Record<"h" | "~" | "a" | "s" | "n" | "p" | "P", string> = {
       h: "home-link",
       "~": "home-link",
       a: "about-link",
       s: "syndications-link",
       n: "notes-link",
       p: "photos-link",
+      P: "projects-link", // Shift+P — p is taken by photos
     };
 
     if (e.key in routes) {
