@@ -9,8 +9,8 @@ import PostList from "~/components/post-list.astro";
 import { projects } from "~/pages/projects/projects";
 import "~/styles/index.css";
 
-// lead with the first few projects (tes.chat is first in the list)
-const featured = projects.slice(0, 3);
+// lead with the first couple of projects (order set in projects.ts)
+const featured = projects.slice(0, 2);
 ---
 
 <Layout title="~" description="pwn::musings.">
@@ -187,8 +187,8 @@ const featured = projects.slice(0, 3);
   /* ---- Desktop: visual cards with a video cover ---- */
   .work-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
   .work-card {
@@ -261,43 +261,42 @@ const featured = projects.slice(0, 3);
     }
   }
 
-  /* ---- Mobile: a light, editorial numbered list (no cards). Mirrors the
-     numbered eyebrows on the /projects page so the two feel connected. ---- */
+  /* ---- Mobile: show each project's clip full-width, stacked one per row.
+     Videos autoplay when scrolled into view (no hover on touch). ---- */
   @media (max-width: 600px) {
     .work-grid {
       display: flex;
       flex-direction: column;
       grid-template-columns: none;
-      gap: 0;
+      gap: 2.25rem;
       counter-reset: work;
-    }
-
-    .work-cover {
-      display: none;
     }
 
     .work-card {
       display: block;
       transform: none;
-      padding: 1.15rem 0;
-      border-top: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
-    }
-
-    .work-card:first-child {
-      border-top: none;
-      padding-top: 0.35rem;
     }
 
     .work-card:hover {
       transform: none;
     }
 
-    /* faint 01 / 02 / 03 eyebrow */
-    .work-card::before {
+    /* keep the media visible on mobile (full width) */
+    .work-cover {
+      border-radius: 12px;
+    }
+
+    /* faint 01 / 02 / 03 eyebrow above each name */
+    .work-text {
+      display: block;
+      margin-top: 0.65rem;
+    }
+
+    .work-text::before {
       counter-increment: work;
       content: counter(work, decimal-leading-zero);
       display: block;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.2rem;
       font-family: var(--font-mono, monospace);
       font-size: 0.68rem;
       letter-spacing: 0.14em;
@@ -309,12 +308,6 @@ const featured = projects.slice(0, 3);
       font-size: 1.1rem;
       font-weight: 600;
       color: var(--f-high);
-      transition: color 0.2s ease;
-    }
-
-    .work-card:hover .work-name,
-    .work-card:active .work-name {
-      color: var(--accent);
     }
 
     .work-blurb {
@@ -339,9 +332,13 @@ const featured = projects.slice(0, 3);
 </style>
 
 <script>
-  // Desktop only: play a project's video cover on hover, reset on leave.
-  // On mobile the covers are display:none, so nothing loads or plays there.
+  const isMobile = () => window.matchMedia("(max-width: 600px)").matches;
+  const reduceMotion = () =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Desktop: play a project's video cover on hover, reset on leave.
   function initWorkHover() {
+    if (isMobile()) return;
     document
       .querySelectorAll<HTMLVideoElement>(".work-card video")
       .forEach((vid) => {
@@ -357,6 +354,32 @@ const featured = projects.slice(0, 3);
       });
   }
 
-  document.addEventListener("DOMContentLoaded", initWorkHover);
-  if (document.readyState !== "loading") initWorkHover();
+  // Mobile: no hover, so autoplay each clip while it's on screen and pause it
+  // when it scrolls away (so we're never decoding off-screen video).
+  function initWorkAutoplay() {
+    if (!isMobile() || reduceMotion()) return;
+    const vids = document.querySelectorAll<HTMLVideoElement>(".work-card video");
+    if (!vids.length) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const v = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        });
+      },
+      { threshold: 0.4 },
+    );
+
+    vids.forEach((v) => io.observe(v));
+  }
+
+  function initWork() {
+    initWorkHover();
+    initWorkAutoplay();
+  }
+
+  document.addEventListener("DOMContentLoaded", initWork);
+  if (document.readyState !== "loading") initWork();
 </script>
