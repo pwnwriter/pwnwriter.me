@@ -10,10 +10,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-VIDEOS=(
-  "$ROOT/public/projects/haylxon/demo.mp4"
-  "$ROOT/public/projects/tes-chat/demo.mp4"
-)
+# Auto-discover every project demo so new entries need no edits here.
+VIDEOS=()
+while IFS= read -r -d '' v; do VIDEOS+=("$v"); done \
+  < <(find "$ROOT/public/projects" -type f -name 'demo.mp4' -print0 | sort -z)
 
 CRF="${CRF:-24}"        # override: CRF=28 ./scripts/compress-project-videos.sh
 MAXH="${MAXH:-1080}"    # cap the long edge at this many pixels

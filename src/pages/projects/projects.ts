@@ -23,6 +23,27 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "setup",
+    name: "the setup",
+    blurb:
+      "the corner i actually work from",
+    tech: ["desk", "monitor-arm", "mechanical-kb"], // it's a rice, not a repo — tweak these
+    year: "2026",
+    cover: {
+      kind: "video",
+      src: "/projects/setup/demo.mp4",
+      poster: "/projects/setup/cover.png",
+    },
+    media: [
+      {
+        kind: "video",
+        src: "/projects/setup/demo.mp4",
+        poster: "/projects/setup/cover.png",
+        alt: "a slow pan across my desk setup",
+      },
+    ],
+  },
+  {
     slug: "tes-chat",
     name: "tes.chat",
     blurb:

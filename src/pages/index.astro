@@ -9,8 +9,8 @@ import PostList from "~/components/post-list.astro";
 import { projects } from "~/pages/projects/projects";
 import "~/styles/index.css";
 
-// lead with the first couple of projects (order set in projects.ts)
-const featured = projects.slice(0, 3);
+// lead with the first few projects (order set in projects.ts)
+const featured = projects.slice(0, 4);
 ---
 
 <Layout title="~" description="pwn::musings.">
@@ -47,7 +47,13 @@ const featured = projects.slice(0, 3);
           <div class="divider"></div>
 
           <section class="section">
-            <span class="work-label">things i've built</span>
+            <details class="work-fold">
+            <summary>
+              <span class="wf-prompt" aria-hidden="true">&rsaquo;</span>
+              <span class="wf-cmd">things i've built</span>
+              <span class="wf-cursor" aria-hidden="true"></span>
+              <span class="wf-rule" aria-hidden="true"></span>
+            </summary>
             <div class="work-grid mt-4 mb-4">
               {featured.map((p) => {
                 const cover = p.cover ?? p.media[0];
@@ -79,6 +85,7 @@ const featured = projects.slice(0, 3);
               })}
             </div>
             <Link href="/projects">{"{ All projects }"}&nbsp;&nbsp;&Rarr;</Link>
+            </details>
           </section>
         </>
       )
@@ -182,6 +189,147 @@ const featured = projects.slice(0, 3);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: color-mix(in srgb, var(--f-low) 55%, transparent);
+  }
+
+  /* ---- Folded projects: a living terminal prompt (Rosé Pine) ---- */
+  .work-fold > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0;
+    cursor: pointer;
+    user-select: none;
+    list-style: none; /* hide default disclosure marker */
+    font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.8rem;
+    color: var(--f-low);
+    transition: color 0.25s ease;
+  }
+
+  .work-fold > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .work-fold > summary:hover,
+  .work-fold > summary:focus-visible {
+    color: var(--f-high);
+    outline: none;
+  }
+
+  /* the prompt glyph doubles as the disclosure caret */
+  .wf-prompt {
+    font-weight: 700;
+    color: color-mix(in srgb, var(--accent) 75%, var(--f-low));
+    transition:
+      transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+      color 0.25s ease;
+  }
+  .work-fold[open] .wf-prompt {
+    transform: rotate(90deg);
+    color: var(--accent);
+  }
+
+  .wf-cmd {
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  /* blinking accent block cursor — the line reads as "alive" */
+  .wf-cursor {
+    display: inline-block;
+    width: 0.5em;
+    height: 1.05em;
+    margin-left: -0.15rem;
+    background: var(--accent);
+    border-radius: 1px;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 55%, transparent);
+    animation: wf-blink 1.15s steps(1, end) infinite;
+  }
+  @keyframes wf-blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    50.01%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* hairline that fills the row and draws itself open */
+  .wf-rule {
+    flex: 1;
+    height: 1px;
+    transform-origin: left center;
+    background: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--f-low) 22%, transparent),
+      transparent
+    );
+    transition: background 0.25s ease;
+  }
+  .work-fold > summary:hover .wf-rule,
+  .work-fold > summary:focus-visible .wf-rule {
+    background: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--accent) 50%, transparent),
+      transparent
+    );
+  }
+  .work-fold[open] .wf-rule {
+    animation: wf-draw 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes wf-draw {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* cards render like terminal output: cascade, blur -> focus */
+  .work-fold[open] .work-grid > * {
+    animation: wf-card 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .work-fold[open] .work-grid > *:nth-child(1) {
+    animation-delay: 0.08s;
+  }
+  .work-fold[open] .work-grid > *:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .work-fold[open] .work-grid > *:nth-child(3) {
+    animation-delay: 0.22s;
+  }
+  .work-fold[open] .work-grid > *:nth-child(4) {
+    animation-delay: 0.29s;
+  }
+  @keyframes wf-card {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.985);
+      filter: blur(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: blur(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wf-prompt,
+    .wf-rule,
+    .work-fold > summary {
+      transition: none;
+    }
+    .wf-cursor {
+      animation: none;
+    }
+    .work-fold[open] .wf-rule,
+    .work-fold[open] .work-grid > * {
+      animation: none;
+    }
   }
 
   /* ---- Desktop: visual cards with a video cover ---- */
