@@ -1,8 +1,6 @@
 ---
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
-import Heading from "~/components/text/heading.astro";
-import Subheading from "~/components/text/subheading.astro";
 import Paragraph from "~/components/text/paragraph.astro";
 import Link from "~/components/link.astro";
 import PostList from "~/components/post-list.astro";
@@ -17,18 +15,27 @@ const featured = projects.slice(0, 4);
   <Wrapper>
     <section class="hero">
       <div class="avatar-wrap">
-        <img src="https://avatars.githubusercontent.com/u/90331517?s=400&u=69e445f801cc183e3657c7890b3178987577c5fa&v=4" alt="pwnwriter" />
+        <img
+          src="https://avatars.githubusercontent.com/u/90331517?s=400&u=69e445f801cc183e3657c7890b3178987577c5fa&v=4"
+          alt="pwnwriter"
+        />
       </div>
       <div>
         <h1 class="handwritten">
           Hi! I am <span class="shimmer">Nabeen</span>
         </h1>
         <Paragraph>
-          I'm a cybersecurity student based in Miami, Florida.
+          I keep a small corner of the internet for the things I cannot leave
+          alone.
         </Paragraph>
         <Paragraph>
-          This space is more like a digital workbench, where I share thoughts,
-          tinker with ideas, and write about the things I <a href="https://github.com/pwnwriter" target="_blank" rel="noopener noreferrer">enjoy</a>.
+          Here you will find notes from the terminal, security rabbit holes,
+          Nix experiments, photos from outside the screen, and projects that
+          started with curiosity and somehow became real enough to <a
+            href="https://github.com/pwnwriter"
+            target="_blank"
+            rel="noopener noreferrer">enjoy</a
+          >.
         </Paragraph>
       </div>
     </section>
@@ -44,47 +51,53 @@ const featured = projects.slice(0, 4);
     {
       featured.length > 0 && (
         <>
-          <div class="divider"></div>
+          <div class="divider" />
 
           <section class="section">
             <details class="work-fold">
-            <summary>
-              <span class="wf-prompt" aria-hidden="true">&rsaquo;</span>
-              <span class="wf-cmd">things i've built</span>
-              <span class="wf-cursor" aria-hidden="true"></span>
-              <span class="wf-rule" aria-hidden="true"></span>
-            </summary>
-            <div class="work-grid mt-4 mb-4">
-              {featured.map((p) => {
-                const cover = p.cover ?? p.media[0];
-                const isVideo = cover.kind === "video";
-                const poster =
-                  cover.kind === "image" ? cover.src : cover.poster;
-                return (
-                  <a href="/projects" class="work-card" aria-label={p.name}>
-                    <span class="work-cover">
-                      {isVideo ? (
-                        <video
-                          src={cover.src}
-                          poster={poster ?? undefined}
-                          muted
-                          loop
-                          playsinline
-                          preload="none"
-                        />
-                      ) : (
-                        poster && <img src={poster} alt={p.name} loading="lazy" />
-                      )}
-                    </span>
-                    <span class="work-text">
-                      <span class="work-name">{p.name}</span>
-                      <span class="work-blurb">{p.blurb}</span>
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-            <Link href="/projects">{"{ All projects }"}&nbsp;&nbsp;&Rarr;</Link>
+              <summary>
+                <span class="wf-prompt" aria-hidden="true">
+                  &rsaquo;
+                </span>
+                <span class="wf-cmd">things i've built</span>
+                <span class="wf-cursor" aria-hidden="true" />
+                <span class="wf-rule" aria-hidden="true" />
+              </summary>
+              <div class="work-grid mt-4 mb-4">
+                {featured.map((p) => {
+                  const cover = p.cover ?? p.media[0];
+                  const isVideo = cover.kind === "video";
+                  const poster =
+                    cover.kind === "image" ? cover.src : cover.poster;
+                  return (
+                    <a href="/projects" class="work-card" aria-label={p.name}>
+                      <span class="work-cover">
+                        {isVideo ? (
+                          <video
+                            src={cover.src}
+                            poster={poster ?? undefined}
+                            muted
+                            loop
+                            playsinline
+                            preload="none"
+                          />
+                        ) : (
+                          poster && (
+                            <img src={poster} alt={p.name} loading="lazy" />
+                          )
+                        )}
+                      </span>
+                      <span class="work-text">
+                        <span class="work-name">{p.name}</span>
+                        <span class="work-blurb">{p.blurb}</span>
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+              <Link href="/projects">
+                {"{ All projects }"}&nbsp;&nbsp;&Rarr;
+              </Link>
             </details>
           </section>
         </>
@@ -149,7 +162,8 @@ const featured = projects.slice(0, 4);
 
   .avatar-wrap:hover img {
     border-color: var(--accent);
-    box-shadow: 0 6px 22px -6px color-mix(in srgb, var(--accent) 55%, transparent);
+    box-shadow: 0 6px 22px -6px
+      color-mix(in srgb, var(--accent) 55%, transparent);
     transform: scale(1.04) rotate(-2deg);
   }
 
@@ -476,7 +490,6 @@ const featured = projects.slice(0, 4);
     transform: rotate(-0.5deg);
     letter-spacing: 0.02em;
   }
-
 </style>
 
 <script>
@@ -506,7 +519,8 @@ const featured = projects.slice(0, 4);
   // when it scrolls away (so we're never decoding off-screen video).
   function initWorkAutoplay() {
     if (!isMobile() || reduceMotion()) return;
-    const vids = document.querySelectorAll<HTMLVideoElement>(".work-card video");
+    const vids =
+      document.querySelectorAll<HTMLVideoElement>(".work-card video");
     if (!vids.length) return;
 
     const io = new IntersectionObserver(
