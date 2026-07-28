@@ -25,8 +25,7 @@ export const projects: Project[] = [
   {
     slug: "setup",
     name: "the setup",
-    blurb:
-      "the corner i actually work from",
+    blurb: "the corner i actually work from",
     tech: ["desk", "monitor-arm", "mechanical-kb"], // it's a rice, not a repo — tweak these
     year: "2026",
     cover: {
@@ -90,7 +89,8 @@ export const projects: Project[] = [
   {
     slug: "haylxon",
     name: "haylxon",
-    blurb: "Blazing-fast tool to grab screenshots of your domain list right from the terminal.",
+    blurb:
+      "Blazing-fast tool to grab screenshots of your domain list right from the terminal.",
     tech: ["rust", "tokio", "headless-chrome"],
     year: "2024",
     repo: "https://github.com/pwnwriter/haylxon",

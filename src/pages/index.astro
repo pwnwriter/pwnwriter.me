@@ -8,7 +8,8 @@ import { projects } from "~/pages/projects/projects";
 import "~/styles/index.css";
 
 // lead with the first few projects (order set in projects.ts)
-const featured = projects.slice(0, 4);
+const featured = projects.slice(0, 3);
+const pad = (n: number) => String(n).padStart(2, "0");
 ---
 
 <Layout title="~" description="pwn::musings.">
@@ -25,13 +26,12 @@ const featured = projects.slice(0, 4);
           Hi! I am <span class="shimmer">Nabeen</span>
         </h1>
         <Paragraph>
-          I keep a small corner of the internet for the things I cannot leave
-          alone.
+          I like making computers feel less borrowed and more personal.
         </Paragraph>
         <Paragraph>
-          Here you will find notes from the terminal, security rabbit holes,
-          Nix experiments, photos from outside the screen, and projects that
-          started with curiosity and somehow became real enough to <a
+          Most of this site is me following a thread, breaking something,
+          fixing it, and leaving a note for whoever finds the same mess later.
+          The rest is stuff I made and still like enough to <a
             href="https://github.com/pwnwriter"
             target="_blank"
             rel="noopener noreferrer">enjoy</a
@@ -54,51 +54,78 @@ const featured = projects.slice(0, 4);
           <div class="divider" />
 
           <section class="section">
-            <details class="work-fold">
-              <summary>
+            <div class="work-fold">
+              <div class="work-heading">
                 <span class="wf-prompt" aria-hidden="true">
                   &rsaquo;
                 </span>
                 <span class="wf-cmd">things i've built</span>
                 <span class="wf-cursor" aria-hidden="true" />
                 <span class="wf-rule" aria-hidden="true" />
-              </summary>
-              <div class="work-grid mt-4 mb-4">
-                {featured.map((p) => {
+              </div>
+              <div class="home-projects mt-6 mb-4">
+                {featured.map((p, i) => {
                   const cover = p.cover ?? p.media[0];
                   const isVideo = cover.kind === "video";
                   const poster =
                     cover.kind === "image" ? cover.src : cover.poster;
                   return (
-                    <a href="/projects" class="work-card" aria-label={p.name}>
-                      <span class="work-cover">
+                    <article class="home-project-row">
+                      <a href="/projects" class="hp-media" aria-label={p.name}>
                         {isVideo ? (
                           <video
+                            class="hp-video"
                             src={cover.src}
                             poster={poster ?? undefined}
                             muted
                             loop
                             playsinline
-                            preload="none"
+                            preload="metadata"
                           />
                         ) : (
                           poster && (
-                            <img src={poster} alt={p.name} loading="lazy" />
+                            <img
+                              class="hp-img"
+                              src={poster}
+                              alt={p.name}
+                              loading="lazy"
+                            />
                           )
                         )}
-                      </span>
-                      <span class="work-text">
-                        <span class="work-name">{p.name}</span>
-                        <span class="work-blurb">{p.blurb}</span>
-                      </span>
-                    </a>
+                        <span class="hp-glow" aria-hidden="true" />
+                        {isVideo && (
+                          <span class="hp-badge" aria-hidden="true">
+                            ▶ play
+                          </span>
+                        )}
+                      </a>
+
+                      <div class="hp-body">
+                        <span class="hp-eyebrow">
+                          {pad(i + 1)}
+                          {p.year && <> &middot; {p.year}</>}
+                        </span>
+                        <h3 class="hp-name">
+                          <a href="/projects">{p.name}</a>
+                        </h3>
+                        <p class="hp-blurb">{p.blurb}</p>
+
+                        {p.tech.length > 0 && (
+                          <ul class="hp-tech">
+                            {p.tech.map((t) => (
+                              <li>{t}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </article>
                   );
                 })}
               </div>
               <Link href="/projects">
                 {"{ All projects }"}&nbsp;&nbsp;&Rarr;
               </Link>
-            </details>
+            </div>
           </section>
         </>
       )
@@ -205,41 +232,24 @@ const featured = projects.slice(0, 4);
     color: color-mix(in srgb, var(--f-low) 55%, transparent);
   }
 
-  /* ---- Folded projects: a living terminal prompt (Rosé Pine) ---- */
-  .work-fold > summary {
+  /* ---- Projects: a living terminal prompt (Rosé Pine) ---- */
+  .work-heading {
     display: flex;
     align-items: center;
     gap: 0.55rem;
     padding: 0.45rem 0;
-    cursor: pointer;
-    user-select: none;
-    list-style: none; /* hide default disclosure marker */
     font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
     font-size: 0.8rem;
     color: var(--f-low);
     transition: color 0.25s ease;
   }
 
-  .work-fold > summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .work-fold > summary:hover,
-  .work-fold > summary:focus-visible {
+  .work-heading:hover {
     color: var(--f-high);
-    outline: none;
   }
 
-  /* the prompt glyph doubles as the disclosure caret */
   .wf-prompt {
     font-weight: 700;
-    color: color-mix(in srgb, var(--accent) 75%, var(--f-low));
-    transition:
-      transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
-      color 0.25s ease;
-  }
-  .work-fold[open] .wf-prompt {
-    transform: rotate(90deg);
     color: var(--accent);
   }
 
@@ -282,15 +292,14 @@ const featured = projects.slice(0, 4);
     );
     transition: background 0.25s ease;
   }
-  .work-fold > summary:hover .wf-rule,
-  .work-fold > summary:focus-visible .wf-rule {
+  .work-heading:hover .wf-rule {
     background: linear-gradient(
       to right,
       color-mix(in srgb, var(--accent) 50%, transparent),
       transparent
     );
   }
-  .work-fold[open] .wf-rule {
+  .work-fold .wf-rule {
     animation: wf-draw 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
   @keyframes wf-draw {
@@ -302,21 +311,18 @@ const featured = projects.slice(0, 4);
     }
   }
 
-  /* cards render like terminal output: cascade, blur -> focus */
-  .work-fold[open] .work-grid > * {
+  /* rows render like terminal output: cascade, blur -> focus */
+  .home-projects > * {
     animation: wf-card 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
-  .work-fold[open] .work-grid > *:nth-child(1) {
+  .home-projects > *:nth-child(1) {
     animation-delay: 0.08s;
   }
-  .work-fold[open] .work-grid > *:nth-child(2) {
+  .home-projects > *:nth-child(2) {
     animation-delay: 0.15s;
   }
-  .work-fold[open] .work-grid > *:nth-child(3) {
+  .home-projects > *:nth-child(3) {
     animation-delay: 0.22s;
-  }
-  .work-fold[open] .work-grid > *:nth-child(4) {
-    animation-delay: 0.29s;
   }
   @keyframes wf-card {
     from {
@@ -332,152 +338,214 @@ const featured = projects.slice(0, 4);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .wf-prompt,
     .wf-rule,
-    .work-fold > summary {
+    .work-heading {
       transition: none;
     }
     .wf-cursor {
       animation: none;
     }
-    .work-fold[open] .wf-rule,
-    .work-fold[open] .work-grid > * {
+    .work-fold .wf-rule,
+    .home-projects > * {
       animation: none;
     }
   }
 
-  /* ---- Desktop: visual cards with a video cover ---- */
-  .work-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .work-card {
+  /* ---- Homepage projects: compact version of /projects rows ---- */
+  .home-projects {
     display: flex;
     flex-direction: column;
-    gap: 0.45rem;
-    text-decoration: none;
-    transition: transform 0.25s ease;
+    gap: 3.5rem;
   }
 
-  .work-card:hover {
-    transform: translateY(-3px);
+  .home-project-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 1.75rem;
+    align-items: center;
   }
 
-  .work-cover {
+  .home-project-row:nth-child(even) .hp-media {
+    order: 2;
+  }
+
+  .hp-media {
+    position: relative;
     display: block;
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
-    /* gradient placeholder shows behind a missing / not-yet-loaded video */
     background: linear-gradient(
       135deg,
-      color-mix(in srgb, var(--accent) 20%, transparent),
+      color-mix(in srgb, var(--accent) 16%, transparent),
       color-mix(in srgb, var(--f-low) 8%, transparent)
     );
+    box-shadow: 0 12px 34px -25px
+      color-mix(in srgb, var(--f-high) 38%, transparent);
+    text-decoration: none;
+    transition:
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.35s ease,
+      border-color 0.35s ease;
   }
 
-  .work-cover img,
-  .work-cover video {
+  .hp-media:hover,
+  .hp-media:focus-visible {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 32%, transparent);
+    box-shadow: 0 18px 42px -24px
+      color-mix(in srgb, var(--f-high) 45%, transparent);
+    outline: none;
+  }
+
+  .hp-img,
+  .hp-video {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.4s ease;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .work-card:hover .work-cover {
-    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  .hp-media:hover .hp-img,
+  .hp-media:hover .hp-video {
+    transform: scale(1.03);
   }
 
-  .work-card:hover .work-cover img,
-  .work-card:hover .work-cover video {
-    transform: scale(1.05);
+  .hp-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.24), transparent 45%);
+    opacity: 0.68;
   }
 
-  .work-name {
-    font-size: 0.8rem;
-    color: var(--f-low);
-    transition: color 0.25s ease;
+  .hp-badge {
+    position: absolute;
+    bottom: 0.7rem;
+    left: 0.75rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.42);
+    color: white;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.65rem;
+    letter-spacing: 0.03em;
+    backdrop-filter: blur(4px);
+    transition: background 0.25s ease;
   }
 
-  .work-card:hover .work-name {
+  .hp-media:hover .hp-badge {
+    background: color-mix(in srgb, var(--accent) 72%, black);
+  }
+
+  .hp-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+  }
+
+  .hp-eyebrow {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: color-mix(in srgb, var(--f-low) 55%, transparent);
+  }
+
+  .hp-name {
+    color: var(--f-high);
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .hp-name a {
+    color: inherit;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    transition:
+      color 0.2s ease,
+      background-size 0.2s ease;
+  }
+
+  .hp-name a:hover {
     color: var(--accent);
+    background-size: 100% 1px;
   }
 
-  /* description only surfaces on mobile */
-  .work-blurb {
-    display: none;
+  .hp-blurb {
+    max-width: 34ch;
+    color: var(--f-low);
+    font-size: 0.86rem;
+    line-height: 1.58;
+  }
+
+  .hp-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.05rem;
+  }
+
+  .hp-tech li {
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    border-radius: 5px;
+    color: color-mix(in srgb, var(--accent) 90%, var(--f-high));
+    font-family: var(--font-mono, monospace);
+    font-size: 0.65rem;
+    padding: 0.06rem 0.45rem;
+  }
+
+  @media (max-width: 760px) {
+    .home-projects {
+      gap: 3rem;
+    }
+
+    .home-project-row:nth-child(n + 3) {
+      display: none;
+    }
+
+    .home-project-row {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .home-project-row:nth-child(even) .hp-media,
+    .home-project-row .hp-media {
+      order: 0;
+    }
+
+    .hp-name {
+      font-size: 1.25rem;
+    }
+
+    .hp-blurb {
+      max-width: none;
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .hp-tech {
+      display: none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .work-card,
-    .work-cover img,
-    .work-cover video {
+    .hp-media,
+    .hp-img,
+    .hp-video,
+    .hp-name a {
       transition: none;
     }
-    .work-card:hover {
+    .hp-media:hover {
       transform: none;
-    }
-  }
-
-  /* ---- Mobile: show each project's clip full-width, stacked one per row.
-     Videos autoplay when scrolled into view (no hover on touch). ---- */
-  @media (max-width: 600px) {
-    .work-grid {
-      display: flex;
-      flex-direction: column;
-      grid-template-columns: none;
-      gap: 2.25rem;
-      counter-reset: work;
-    }
-
-    .work-card {
-      display: block;
-      transform: none;
-    }
-
-    .work-card:hover {
-      transform: none;
-    }
-
-    /* keep the media visible on mobile (full width) */
-    .work-cover {
-      border-radius: 12px;
-    }
-
-    /* faint 01 / 02 / 03 eyebrow above each name */
-    .work-text {
-      display: block;
-      margin-top: 0.65rem;
-    }
-
-    .work-text::before {
-      counter-increment: work;
-      content: counter(work, decimal-leading-zero);
-      display: block;
-      margin-bottom: 0.2rem;
-      font-family: var(--font-mono, monospace);
-      font-size: 0.68rem;
-      letter-spacing: 0.14em;
-      color: color-mix(in srgb, var(--f-low) 45%, transparent);
-    }
-
-    .work-name {
-      display: block;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--f-high);
-    }
-
-    .work-blurb {
-      display: block;
-      margin-top: 0.3rem;
-      font-size: 0.82rem;
-      line-height: 1.55;
-      color: var(--f-low);
     }
   }
 
@@ -493,34 +561,14 @@ const featured = projects.slice(0, 4);
 </style>
 
 <script>
-  const isMobile = () => window.matchMedia("(max-width: 600px)").matches;
   const reduceMotion = () =>
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Desktop: play a project's video cover on hover, reset on leave.
-  function initWorkHover() {
-    if (isMobile()) return;
-    document
-      .querySelectorAll<HTMLVideoElement>(".work-card video")
-      .forEach((vid) => {
-        const card = vid.closest(".work-card");
-        if (!card) return;
-        card.addEventListener("mouseenter", () => {
-          vid.play().catch(() => {});
-        });
-        card.addEventListener("mouseleave", () => {
-          vid.pause();
-          vid.currentTime = 0;
-        });
-      });
-  }
-
-  // Mobile: no hover, so autoplay each clip while it's on screen and pause it
-  // when it scrolls away (so we're never decoding off-screen video).
+  // Autoplay clips only while visible, matching the projects page behavior.
   function initWorkAutoplay() {
-    if (!isMobile() || reduceMotion()) return;
+    if (reduceMotion()) return;
     const vids =
-      document.querySelectorAll<HTMLVideoElement>(".work-card video");
+      document.querySelectorAll<HTMLVideoElement>("video.hp-video");
     if (!vids.length) return;
 
     const io = new IntersectionObserver(
@@ -538,7 +586,6 @@ const featured = projects.slice(0, 4);
   }
 
   function initWork() {
-    initWorkHover();
     initWorkAutoplay();
   }
 
