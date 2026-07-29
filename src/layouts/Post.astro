@@ -1,5 +1,6 @@
 ---
 import Layout from '~/layouts/Layout.astro';
+import '~/styles/writing.css';
 import Wrapper from '~/components/wrapper.astro';
 import Prose from '~/components/prose.astro';
 import Link from '~/components/link.astro';
@@ -26,59 +27,63 @@ const formattedModDate = formatDate(modDate);
 
 <Layout {title} {description}>
 	<Wrapper>
-		<Heading Element="h1">{title}</Heading>
-		<div class="flex items-center text-sm font-bold">
-			<p
-				class="inline-flex pr-2 italic text-f-high after:-mt-px after:pl-2 after:text-f-low after:content-['|']"
-			>
-				Note
-			</p>
+		<article class="writing-note">
+			<Heading Element="h1">{title}</Heading>
+			<div class="flex items-center text-sm font-bold">
+				<p
+					class="inline-flex pr-2 italic text-f-high after:-mt-px after:pl-2 after:text-f-low after:content-['|']"
+				>
+					Note
+				</p>
 
-			<div class="flex flex-wrap items-center gap-1.5">
-				<p class="tabular-nums text-f-high">{formattedPubDate}</p>
+				<div class="flex flex-wrap items-center gap-1.5">
+					<p class="tabular-nums text-f-high">{formattedPubDate}</p>
 
-				{
-					formattedModDate !== formattedPubDate && (
-						<p class="tabular-nums">(modified {formattedModDate})</p>
-					)
-				}
+					{
+						formattedModDate !== formattedPubDate && (
+							<p class="tabular-nums">(modified {formattedModDate})</p>
+						)
+					}
 
-				<span class="font-mono text-f-low">&middot; ~{readingTime} min read</span>
+					<span class="font-mono text-f-low">&middot; ~{readingTime} min read</span>
+				</div>
 			</div>
-		</div>
 
-		<div class="h-xs"></div>
+			<div class="h-xs"></div>
 
-		<ul class="flex flex-wrap gap-2 text-sm">
+			<ul class="flex flex-wrap gap-2 text-sm">
+				{
+					tags.map((tag: string) => (
+						<li class="shrink-0">
+							<Link href={`/notes/tags/${tag}`} scheme="accent" underline>
+								#{tag}
+							</Link>
+						</li>
+					))
+				}
+			</ul>
 			{
-				tags.map((tag: string) => (
-					<li class="shrink-0">
-						<Link href={`/notes/tags/${tag}`} scheme="accent" underline>
-							#{tag}
-						</Link>
-					</li>
-				))
+				cover && cover.src && (
+					<>
+						<div class="h-lg" />
+						<div class="flex max-h-[600px] max-w-full items-center overflow-hidden rounded-xl">
+							<Image
+								class="h-auto max-w-full rounded-xl"
+								src={cover.src}
+								alt={cover.alt}
+							/>
+						</div>
+					</>
+				)
 			}
-		</ul>
-		{
-			cover && cover.src && (
-				<>
-					<div class="h-lg" />
-					<div class="flex max-h-[600px] max-w-full items-center overflow-hidden rounded-xl">
-						<Image
-							class="h-auto max-w-full rounded-xl"
-							src={cover.src}
-							alt={cover.alt}
-						/>
-					</div>
-				</>
-			)
-		}
-		<div class="h-lg"></div>
-		<Prose>
-			<slot />
-		</Prose>
-		<div class="h-xl"></div>
-		<Link href="/notes">&Larr;&nbsp;&nbsp;Back to notes</Link>
+			<div class="h-lg"></div>
+			<div class="writing-copy">
+				<Prose>
+					<slot />
+				</Prose>
+			</div>
+			<div class="h-xl"></div>
+			<Link href="/notes">&Larr;&nbsp;&nbsp;Back to notes</Link>
+		</article>
 	</Wrapper>
 </Layout>

@@ -20,7 +20,8 @@ let isExternal = href?.toString().startsWith('http') || null;
 
 <a
 	href={href}
-	rel={isExternal ? 'external' : undefined}
+	data-external={isExternal ? '' : undefined}
+	rel={isExternal ? 'noopener noreferrer external' : undefined}
 	target={isExternal ? '_blank' : undefined}
 	title={title}
 	class={`link-animated italic inline-flex ${

@@ -1,5 +1,7 @@
 ---
 import { getCollection } from "astro:content";
+import "~/styles/syndications.css";
+import "~/styles/writing.css";
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import Prose from "~/components/prose.astro";
@@ -26,7 +28,7 @@ const formattedDate = entry.data.pubDate.toLocaleDateString("en-US", {
   description={`Syndication: ${entry.data.title}`}
 >
   <Wrapper>
-    <article>
+    <article class="writing-note">
       <header class="mb-8">
         <h1 class="text-3xl font-bold text-f-high mt-4">{entry.data.title}</h1>
 
@@ -49,9 +51,11 @@ const formattedDate = entry.data.pubDate.toLocaleDateString("en-US", {
         </div>
       </header>
 
-      <Prose>
-        <Content />
-      </Prose>
+      <div class="writing-copy">
+        <Prose>
+          <Content />
+        </Prose>
+      </div>
     </article>
   </Wrapper>
 </Layout>

@@ -21,7 +21,7 @@ const {
     <img src={src} alt={alt} class="bio-photo" />
   </div>
   <figcaption class="bio-caption">{caption}</figcaption>
-  <span class="bio-doodle">{doodle}</span>
+  {doodle && <span class="bio-doodle">{doodle}</span>}
 </figure>
 
 <style>

@@ -2,14 +2,10 @@
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import Heading from "~/components/text/heading.astro";
-import Paragraph from "~/components/text/paragraph.astro";
 import Subheading from "~/components/text/subheading.astro";
 import Link from "~/components/link.astro";
 
 import BioPhoto from "~/components/BioPhoto.astro";
-import Squiggle from "~/components/Squiggle.astro";
-import PorscheWord from "~/components/porsche/PorscheWord.astro";
-import PorscheEasterEgg from "~/components/porsche/PorscheEasterEgg.astro";
 
 import Cancer from "~/components/icons/cancer.astro";
 import Leo from "~/components/icons/leo.astro";
@@ -22,106 +18,165 @@ const bio = "/me-proud-nix-user.jpg";
 
 <Layout
   title="About"
-  description="pwnwriter is a cybersecurity enthusiast with a focus on devops, I love nix, nixos and reproducibility"
+  description="About Nabeen Tiwaree, also known as pwnwriter."
 >
   <Wrapper>
-    <BioPhoto src={bio} />
+    <section class="about-hero">
+      <BioPhoto
+        src={bio}
+        caption="proud nix user"
+        doodle=""
+      />
 
-    <Heading Element="h1"><Squiggle>About me</Squiggle></Heading>
+      <div class="about-copy">
+        <p class="about-kicker">~/about</p>
+        <Heading Element="h1">pwn</Heading>
 
-    <div class="about-intro">
-      <Paragraph>
-        I am
-        <span
-          class="font-semibold italic underline decoration-blue-400 underline-offset-4"
-        >
-          Nabeen Tiwaree.
-        </span>
-        Online I go by
-        <span
-          class="font-semibold italic underline decoration-purple-400 underline-offset-4"
-        >
-          pwnwriter
-        </span>.
-      </Paragraph>
+        <p class="about-lede">
+          I’m <strong>pwnwriter</strong>, a computer science student who likes
+          systems, security, and open-source tools. Most of what I build starts
+          with curiosity, a broken setup, or a note I wish already existed.
+        </p>
 
-      <Paragraph>
-        I’m a student who loves minimalism, open-source, and occasionally
-        playing cricket. I enjoy digging into how things work under the hood and
-        breaking software. I've also got a soft spot for <PorscheWord
-          title="pssst… click me">Porsches</PorscheWord>, the <PorscheWord
-          >911</PorscheWord> lives rent-free in my head. I'm into personal
-        discipline, calisthenics, and draw a lot of inspiration from
-        <span class="whitespace-nowrap">
-          <Link href="https://www.instagram.com/davidlaid/" underline>
-            @davidlaid
-          </Link>
-        </span>.
-      </Paragraph>
+        <div class="about-actions" aria-label="Contact links">
+          <Link href="https://x.com/pwnwriter" underline>x</Link>
+          <Link href="mailto:hi@pwnwriter.me" underline>email</Link>
+        </div>
+      </div>
+    </section>
 
-      <Paragraph>
-        Feel free to reach out via
-        <Link href="https://x.com/pwnwriter" underline>x</Link>
-        or
-        <Link href="mailto:hi@pwnwriter.me" underline>email</Link>.
-      </Paragraph>
-    </div>
-
-    <div class="h-sm"></div>
-
-    <Heading Element="h2">Miscellany</Heading>
-
-    <div class="grid grid-flow-row grid-cols-1 gap-4 md:grid-cols-2">
-      <div>
-        <Subheading Element="h3">Pronouns</Subheading>
-        <Paragraph Element="div">
-          <div class="flex items-center space-x-2">
+    <section class="about-section">
+      <Subheading Element="h2">Small facts</Subheading>
+      <dl class="fact-list">
+        <div>
+          <dt>
             <Pronouns size={16} />
-            <span>He / him</span>
-          </div>
-        </Paragraph>
-      </div>
+            Pronouns
+          </dt>
+          <dd>He / him</dd>
+        </div>
 
-      <div>
-        <Subheading Element="h3">Location</Subheading>
-        <Paragraph Element="div">
-          <div class="flex items-center space-x-2">
+        <div>
+          <dt>
             <Location size={16} />
-            <span>Miami, FL</span>
-          </div>
-        </Paragraph>
-      </div>
+            Location
+          </dt>
+          <dd>Miami, FL</dd>
+        </div>
 
-      <div>
-        <Subheading Element="h3">Signs</Subheading>
-        <Paragraph Element="div">
-          <ul>
-            <li class="flex items-center space-x-2">
-              <Cancer size={16} />
-              <span>Sun in Cancer</span>
-            </li>
-            <li class="flex items-center space-x-2">
-              <Leo size={16} />
-              <span>Moon in Sagittarius</span>
-            </li>
-            <li class="flex items-center space-x-2">
-              <Scorpio size={16} />
-              <span>Scorpio Rising</span>
-            </li>
-          </ul>
-        </Paragraph>
-      </div>
-    </div>
+        <div>
+          <dt>
+            <Cancer size={16} />
+            Sun
+          </dt>
+          <dd>Cancer</dd>
+        </div>
+
+        <div>
+          <dt>
+            <Leo size={16} />
+            Moon
+          </dt>
+          <dd>Sagittarius</dd>
+        </div>
+
+        <div>
+          <dt>
+            <Scorpio size={16} />
+            Rising
+          </dt>
+          <dd>Scorpio</dd>
+        </div>
+
+        <div>
+          <dt>Also</dt>
+          <dd>cricket, calisthenics, minimalism</dd>
+        </div>
+      </dl>
+    </section>
   </Wrapper>
-
-  <!-- boots the click/hover -> drive-a-Porsche behaviour -->
-  <PorscheEasterEgg />
 </Layout>
 
 <style>
-  /* more breathing room in the intro copy */
-  .about-intro :global(p) {
+  .about-hero {
+    display: flow-root;
+    margin-bottom: 3.5rem;
+  }
+
+  .about-copy {
+    max-width: 42rem;
+  }
+
+  .about-kicker {
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+    font-family: Menlo, monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .about-lede {
+    color: var(--f-low);
+    font-size: 1.08rem;
     line-height: 1.9;
-    margin-bottom: 1.65rem;
+  }
+
+  .about-lede strong {
+    color: var(--f-high);
+  }
+
+  .about-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .about-section {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--f-low) 16%, transparent);
+  }
+
+  .fact-list {
+    margin: 1rem 0 0;
+  }
+
+  .fact-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 1.75rem;
+  }
+
+  .fact-list div {
+    min-width: 0;
+  }
+
+  .fact-list dt {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.2rem;
+    color: var(--f-high);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .fact-list dd {
+    margin: 0;
+    color: var(--f-low);
+    line-height: 1.65;
+  }
+
+  @media (max-width: 640px) {
+    .about-hero {
+      margin-bottom: 2.75rem;
+    }
+
+    .fact-list {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
