@@ -1,11 +1,13 @@
 import rss from "@astrojs/rss";
 import { getCollection } from "astro:content";
 import { unified } from "unified";
+import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
 import rehypeUrls from "rehype-urls";
 import rehypeStringify from "rehype-stringify";
+import remarkMarkHighlight from "~/lib/remark-mark-highlight.mjs";
 
 export async function GET(context) {
   const baseUrl = import.meta.env.DEV
@@ -15,6 +17,8 @@ export async function GET(context) {
   const parse = (data) =>
     unified()
       .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkMarkHighlight)
       .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeRaw)
       .use(rehypeUrls, (url) => {

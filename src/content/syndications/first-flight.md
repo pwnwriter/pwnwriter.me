@@ -5,4 +5,8 @@ modDate: 2024-08-26
 tags: [life]
 ---
 
-Goodbye home, hello hustle. Miami bound 🤍
+First flight. First long goodbye.
+
+Home behind me, Miami ahead.
+
+> trying to act normal at the airport while my whole life is packed in bags.

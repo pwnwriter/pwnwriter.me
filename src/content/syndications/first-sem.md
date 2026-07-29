@@ -5,9 +5,13 @@ modDate: 2024-11-28
 tags: [life, learning]
 ---
 
-First semester done!
+First semester done.
 
-Sometimes I miss home, the food, the people, but it’s okay.
+Sometimes I miss home, the food, the people, the normal rhythm of everything.
+But I’m okay.
 
-I really appreciate how my professor is helping me connect with everyone at the university.
-I also work in the computer lab here, and it feels awesome to be part of it.
+I’m grateful for the professor who helped me connect with people at the
+university. I also started working in the computer lab, which feels small from
+the outside but means a lot to me.
+
+<mark>new place, slowly becoming familiar.</mark>

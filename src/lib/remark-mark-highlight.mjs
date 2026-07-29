@@ -12,7 +12,7 @@ function transformChildren(parent) {
 
     if (child.type === "text") {
       const replacement = splitHighlightText(child.value);
-      if (replacement.length > 1) {
+      if (shouldReplaceTextNode(child, replacement)) {
         parent.children.splice(index, 1, ...replacement);
         index += replacement.length - 1;
       }
@@ -48,4 +48,12 @@ function splitHighlightText(value) {
   }
 
   return parts.length ? parts : [{ type: "text", value }];
+}
+
+function shouldReplaceTextNode(child, replacement) {
+  return (
+    replacement.length !== 1 ||
+    replacement[0].type !== child.type ||
+    replacement[0].value !== child.value
+  );
 }

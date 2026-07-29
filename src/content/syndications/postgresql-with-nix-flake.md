@@ -5,9 +5,16 @@ modDate: 2026-02-15
 tags: [nix, infra, dev]
 ---
 
-Was working on a project that needed postgres. Didn't want to install it globally or spin up docker for something this simple. So I wrote a flake that gives me a local postgres instance — data stays in `.pg/`, auto-starts when I enter the shell, stops when I leave.
+I was working on a project that needed Postgres.
 
-No system pollution, no port conflicts with other projects. Just `nix develop` and I'm ready to go.
+I didn’t want to install it globally or spin up Docker for something this small,
+so I wrote a flake that gives me a local Postgres instance. Data stays in
+`.pg/`, it starts when I enter the shell, and it stops when I leave.
+
+No system pollution. No random service hanging around. Just `nix develop` and
+the project is ready.
+
+<mark>this is why I keep coming back to Nix.</mark>
 
 ```nix
 {
@@ -57,4 +64,4 @@ No system pollution, no port conflicts with other projects. Just `nix develop` a
 }
 ```
 
-Add `.pg/` to your `.gitignore` and you're set.
+Add `.pg/` to your `.gitignore` and you’re set.

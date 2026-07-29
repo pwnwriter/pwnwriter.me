@@ -5,4 +5,9 @@ modDate: 2025-10-13
 tags: [life]
 ---
 
-Never thought I’d say this, I just got my license today and also bought my first car. Used to walk those roads in the rain, now I drive them 💢
+Never thought I’d write this, but I got my license today and bought my first
+car.
+
+I used to walk those roads in the rain. Now I drive them.
+
+<mark>small freedom, big feeling.</mark>
