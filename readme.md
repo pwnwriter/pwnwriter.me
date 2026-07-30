@@ -10,4 +10,8 @@ Dev with nix
 
   `$ bun install  && bun run dev`
 
+- format/lint
+
+  `$ bun run lint && bun run format`
+
   Copyright 👻, pwnwriter, MIT License
