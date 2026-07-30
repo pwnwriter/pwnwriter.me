@@ -45,6 +45,7 @@ function relativeTime(date: Date): string {
         return (
           <li
             class="post-item mb-1 grid max-w-fit"
+            data-tags={post.data.tags.join(",")}
             style={`animation-delay: ${i * 50}ms`}
           >
             <Link href={`/notes/${post.slug}`}>

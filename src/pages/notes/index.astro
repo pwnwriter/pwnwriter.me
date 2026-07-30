@@ -3,14 +3,87 @@ import Layout from '~/layouts/Layout.astro';
 import Wrapper from '~/components/wrapper.astro';
 import Heading from '~/components/text/heading.astro';
 import PostList from '~/components/post-list.astro';
-import Link from '~/components/link.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('posts');
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 ---
 
 <Layout title="notes" description="Notes from pwn::musings.">
 	<Wrapper>
 		<Heading Element="h1">Notes</Heading>
+
+		<div class="note-filters" role="tablist" aria-label="Filter notes by tag">
+			<button class="note-chip note-chip--active" data-filter="all">all</button>
+			{
+				tags.map((tag) => (
+					<button class="note-chip" data-filter={tag}>{tag}</button>
+				))
+			}
+		</div>
+
 		<PostList />
-		<div class="h-xl"></div>
-		<Link href="/notes/tags">Browse by tag&nbsp;&nbsp;&Rarr;</Link>
 	</Wrapper>
 </Layout>
+
+<script>
+	const chips = document.querySelectorAll<HTMLButtonElement>('.note-chip');
+	const posts = document.querySelectorAll<HTMLElement>('.post-item');
+
+	chips.forEach((chip) => {
+		chip.addEventListener('click', () => {
+			chips.forEach((c) => c.classList.remove('note-chip--active'));
+			chip.classList.add('note-chip--active');
+
+			const filter = chip.dataset.filter ?? 'all';
+
+			posts.forEach((post) => {
+				const tags = post.dataset.tags?.split(',') ?? [];
+				post.toggleAttribute(
+					'data-hidden',
+					filter !== 'all' && !tags.includes(filter)
+				);
+			});
+		});
+	});
+</script>
+
+<style>
+	.note-filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: 0.75rem 0 2rem;
+	}
+
+	.note-chip {
+		border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+		border-radius: 2px;
+		background: transparent;
+		color: var(--f-low);
+		cursor: pointer;
+		font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+		font-size: 0.7rem;
+		line-height: 1.6;
+		padding: 0.2rem 0.65rem;
+		transition:
+			border-color 0.2s,
+			color 0.2s;
+	}
+
+	.note-chip:hover,
+	.note-chip--active {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	:global(.post-item[data-hidden]) {
+		display: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.note-chip {
+			transition: none;
+		}
+	}
+</style>
