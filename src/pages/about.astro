@@ -6,6 +6,57 @@ import { photos } from "~/pages/photos/photos";
 
 photos.sort((a, b) => (a.date < b.date ? 1 : -1));
 const featuredPhotos = photos.slice(0, 8);
+
+const screenPicks = [
+  {
+    title: "Mr. Robot",
+    from: "systems breaking beautifully",
+    meta: "series / paranoia",
+    mark: "fs",
+    tone: "#4a445f",
+    rating: 5,
+  },
+  {
+    title: "Snowden",
+    from: "surveillance, keys, and consequences",
+    meta: "film / security",
+    mark: "sn",
+    tone: "#6f6a86",
+    rating: 4,
+  },
+  {
+    title: "Who Am I",
+    from: "ctf energy with questionable decisions",
+    meta: "film / hacking",
+    mark: "0x",
+    tone: "#b4634b",
+    rating: 4,
+  },
+  {
+    title: "The Social Network",
+    from: "shipping, ego, and messy origin stories",
+    meta: "film / builders",
+    mark: "</>",
+    tone: "#897aa5",
+    rating: 4,
+  },
+  {
+    title: "Spider-Man: Brand New Day",
+    from: "friendly neighborhood runtime",
+    meta: "marvel / spider-man",
+    mark: "sp",
+    tone: "#c45b65",
+    rating: 5,
+  },
+  {
+    title: "Avengers: Endgame",
+    from: "big swings, bigger portals",
+    meta: "marvel / comfort rewatch",
+    mark: "a",
+    tone: "#6b5d95",
+    rating: 5,
+  },
+];
 ---
 
 <Layout
@@ -16,10 +67,19 @@ const featuredPhotos = photos.slice(0, 8);
     <section class="about-page">
       <header class="about-hero">
         <div class="about-copy">
+          <div class="annotation-lane" aria-hidden="true">
+            <span class="lane-note lane-note-identity">
+              docs say Nabin Tiwari<br />
+              online: pwnwriter
+            </span>
+            <span class="lane-note lane-note-ai">concentrated in AI</span>
+          </div>
           <p>
-            i’m <strong>Nabeen</strong>, a <span class="annotated">
+            i’m <span class="annotated annotated-name">
+              <strong>Nabeen Tiwaree</strong>
+            </span>. originally from the Himalayas in Nepal and currently in the
+            US, i’m a <span class="annotated">
               computer science
-              <span class="side-note" aria-hidden="true">concentrated in AI</span>
             </span> student at <a
               href="https://www.wilmu.edu/"
               target="_blank"
@@ -44,6 +104,38 @@ const featuredPhotos = photos.slice(0, 8);
           no, but the other answer takes like 40 minutes
         </p>
       </div>
+
+      <section class="screen-section" aria-labelledby="screen-title">
+        <div class="screen-head">
+          <h2 id="screen-title">what's on-screen</h2>
+          <p>
+            broken systems, masked heroes, messy choices, and the occasional
+            reminder that every secret has a shelf life.
+          </p>
+        </div>
+
+        <div class="screen-grid">
+          {screenPicks.map((pick, index) => (
+            <article class="screen-pick" style={`--poster: ${pick.tone}`}>
+              <div class="screen-poster" aria-hidden="true">
+                <span>{pick.mark}</span>
+              </div>
+              <div class="screen-copy">
+                <p class="screen-rank">{index + 1} / {pick.meta}</p>
+                <h3>{pick.title}</h3>
+                <p class="screen-stars" aria-label={`${pick.rating} out of 5 stars`}>
+                  {Array.from({ length: 5 }).map((_, starIndex) => (
+                    <span class:list={[starIndex < pick.rating && "is-filled"]}>
+                      ★
+                    </span>
+                  ))}
+                </p>
+                <p>{pick.from}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       {
         featuredPhotos.length > 0 && (
@@ -87,6 +179,7 @@ const featuredPhotos = photos.slice(0, 8);
 
   .about-hero h1,
   .about-section h2,
+  .screen-head h2,
   .photo-head h2 {
     margin: 0;
     color: var(--f-high);
@@ -101,8 +194,10 @@ const featuredPhotos = photos.slice(0, 8);
   }
 
   .about-copy {
+    position: relative;
     max-width: 38rem;
     margin-top: 0.8rem;
+    padding-top: 4.15rem;
   }
 
   .about-copy p {
@@ -143,32 +238,74 @@ const featuredPhotos = photos.slice(0, 8);
     color: var(--f-high);
   }
 
-  .side-note {
+  .annotated::after {
+    content: "";
     position: absolute;
-    left: 50%;
-    bottom: calc(100% + 0.65rem);
-    width: 11rem;
-    color: color-mix(in srgb, var(--f-low) 68%, transparent);
-    font-family: "Caveat", cursive;
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 1;
-    transform: translateX(-50%) rotate(-7deg);
+    right: -0.2rem;
+    bottom: 0.08rem;
+    width: 102%;
+    height: 0.34rem;
+    border-bottom: 2px solid color-mix(in srgb, var(--accent) 62%, transparent);
+    border-radius: 48%;
+    transform: rotate(-1.5deg);
     pointer-events: none;
   }
 
-  .side-note::before {
+  .annotation-lane {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3.95rem;
+    pointer-events: none;
+  }
+
+  .lane-note {
+    position: absolute;
+    color: color-mix(in srgb, var(--f-low) 58%, transparent);
+    font-family: "Caveat", cursive;
+    font-size: 1.04rem;
+    font-weight: 700;
+    line-height: 1.05;
+    white-space: nowrap;
+  }
+
+  .lane-note::before {
     content: "";
     position: absolute;
-    left: 0.2rem;
-    right: 1.2rem;
-    bottom: -0.35rem;
-    height: 0.5rem;
-    border-right: 0;
+    border-color: currentColor;
+    opacity: 0.68;
+  }
+
+  .lane-note-identity {
+    left: 15rem;
+    top: 0.35rem;
+    transform: rotate(-4deg);
+  }
+
+  .lane-note-identity::before {
+    left: -1.35rem;
+    top: -0.3rem;
+    width: 0.85rem;
+    height: 2.6rem;
+    border-top: 2px solid currentColor;
     border-bottom: 2px solid currentColor;
-    border-left: 0;
-    border-radius: 50%;
-    opacity: 0.8;
+    border-left: 2px solid currentColor;
+  }
+
+  .lane-note-ai {
+    left: 0.35rem;
+    top: 2.35rem;
+    transform: rotate(-7deg);
+  }
+
+  .lane-note-ai::before {
+    right: -3rem;
+    bottom: -0.3rem;
+    width: 2.65rem;
+    height: 0.85rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    border-radius: 0 0 1.4rem 0;
+    transform: rotate(8deg);
   }
 
   .chat-thread {
@@ -222,6 +359,145 @@ const featuredPhotos = photos.slice(0, 8);
       opacity: 1;
       transform: translateY(0) scale(1);
     }
+  }
+
+  .screen-section {
+    margin-top: 2rem;
+    border-top: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
+    padding-top: 1.25rem;
+  }
+
+  .screen-head {
+    margin-bottom: 1rem;
+  }
+
+  .screen-head h2 {
+    font-size: clamp(1.35rem, 3.4vw, 1.9rem);
+    line-height: 1;
+  }
+
+  .screen-head p {
+    max-width: 38rem;
+    margin: 0.5rem 0 0;
+    color: color-mix(in srgb, var(--f-low) 78%, transparent);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .screen-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
+    border-left: 1px dashed color-mix(in srgb, var(--f-low) 14%, transparent);
+  }
+
+  .screen-pick {
+    display: grid;
+    grid-template-columns: 4.8rem minmax(0, 1fr);
+    gap: 0.8rem;
+    min-width: 0;
+    padding: 0.85rem;
+    border-right: 1px dashed color-mix(in srgb, var(--f-low) 14%, transparent);
+    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
+  }
+
+  .screen-poster {
+    position: relative;
+    display: grid;
+    aspect-ratio: 1 / 1;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
+    border-radius: 0.45rem;
+    background:
+      radial-gradient(
+        circle at 50% 42%,
+        color-mix(in srgb, var(--poster) 70%, white) 0 7%,
+        transparent 8% 100%
+      ),
+      radial-gradient(
+        circle,
+        transparent 0 42%,
+        color-mix(in srgb, var(--poster) 55%, black) 43% 46%,
+        transparent 47% 100%
+      ),
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--poster) 82%, black),
+        color-mix(in srgb, var(--poster) 38%, var(--b-low))
+      );
+    box-shadow: 0 12px 28px -24px color-mix(in srgb, var(--poster) 80%, black);
+  }
+
+  .screen-poster::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      color-mix(in srgb, white 70%, transparent) 1px,
+      transparent 1.5px
+    );
+    background-size: 7px 7px;
+    opacity: 0.46;
+  }
+
+  .screen-poster span {
+    position: relative;
+    color: color-mix(in srgb, white 86%, var(--f-high));
+    font-family: var(--font-mono, monospace);
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-shadow: 0 0 14px currentColor;
+  }
+
+  .screen-copy {
+    min-width: 0;
+  }
+
+  .screen-rank {
+    margin: 0 0 0.3rem;
+    color: color-mix(in srgb, var(--f-low) 55%, transparent);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.68rem;
+    line-height: 1.2;
+  }
+
+  .screen-copy h3 {
+    margin: 0;
+    overflow: hidden;
+    color: var(--f-high);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .screen-stars {
+    display: flex;
+    gap: 0.12rem;
+    margin: 0.36rem 0 0;
+    color: color-mix(in srgb, var(--f-low) 30%, transparent);
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+
+  .screen-stars span.is-filled {
+    color: color-mix(in srgb, var(--accent) 86%, var(--f-high));
+    text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  .screen-copy p:last-child {
+    display: -webkit-box;
+    margin: 0.45rem 0 0;
+    overflow: hidden;
+    color: color-mix(in srgb, var(--f-low) 78%, transparent);
+    font-size: 0.78rem;
+    line-height: 1.42;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .photo-evidence {
@@ -321,18 +597,42 @@ const featuredPhotos = photos.slice(0, 8);
       max-width: 92%;
     }
 
-    .annotated {
-      display: inline-block;
-      margin-top: 1.7rem;
+    .about-copy {
+      padding-top: 5rem;
     }
 
-    .side-note {
-      bottom: calc(100% + 0.35rem);
-      left: 0;
-      width: max-content;
-      max-width: 9rem;
-      font-size: 1.05rem;
-      transform: rotate(-6deg);
+    .annotation-lane {
+      height: 4.7rem;
+    }
+
+    .lane-note {
+      font-size: 0.88rem;
+    }
+
+    .lane-note-identity {
+      left: 1rem;
+      top: 0.1rem;
+    }
+
+    .lane-note-identity::before {
+      left: -0.7rem;
+      height: 2.2rem;
+      width: 0.45rem;
+    }
+
+    .lane-note-ai {
+      left: 1rem;
+      top: 2.65rem;
+    }
+
+    .lane-note-ai::before {
+      right: -1.65rem;
+      width: 1.4rem;
+      height: 0.55rem;
+    }
+
+    .screen-grid {
+      grid-template-columns: 1fr;
     }
 
     .photo-head {
