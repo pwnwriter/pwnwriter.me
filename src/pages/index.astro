@@ -112,8 +112,26 @@ const summaryFor = (post: (typeof posts)[number]) =>
         }
       </div>
 
-      <a class="notes-pointer" href="/notes" aria-label="All notes">
-        <span aria-hidden="true"></span>
+      <a class="notes-pointer" href="/notes">
+        <span class="notes-pointer__text">more notes</span>
+        <svg
+          class="notes-pointer__arrow"
+          viewBox="0 0 46 20"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M2 11c9-2.4 22-2.8 37-1.4"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"></path>
+          <path
+            d="M32 4.2 41 9.6 32.6 15.4"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
       </a>
     </section>
   </Wrapper>
@@ -325,66 +343,47 @@ const summaryFor = (post: (typeof posts)[number]) =>
   }
 
   .notes-pointer {
-    position: absolute;
-    right: -2.6rem;
-    bottom: 2.4rem;
-    display: inline-flex;
+    display: flex;
+    width: fit-content;
+    margin: 0.9rem 0.2rem 0 auto;
     align-items: center;
-    justify-content: center;
-    width: 3.4rem;
-    height: 3.4rem;
-    color: color-mix(in srgb, var(--f-low) 72%, transparent);
+    gap: 0.45rem;
+    color: color-mix(in srgb, var(--f-low) 80%, transparent);
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 1.55rem;
+    line-height: 1;
     text-decoration: none;
+    transform: rotate(-3deg);
     transition:
-      color 160ms ease,
-      transform 160ms ease;
+      color 180ms ease,
+      transform 180ms ease;
   }
 
-  .notes-pointer span {
-    position: relative;
-    display: block;
-    width: 1.95rem;
-    height: 1.35rem;
-    background:
-      linear-gradient(currentColor, currentColor) 0.12rem 0.5rem / 1.12rem
-        0.24rem no-repeat,
-      linear-gradient(currentColor, currentColor) 0.92rem 0.08rem / 0.24rem
-        1rem no-repeat,
-      linear-gradient(currentColor, currentColor) 1.2rem 0.24rem / 0.24rem
-        0.74rem no-repeat,
-      linear-gradient(currentColor, currentColor) 1.48rem 0.44rem / 0.24rem
-        0.5rem no-repeat;
-    image-rendering: pixelated;
+  .notes-pointer__text {
+    white-space: nowrap;
   }
 
-  .notes-pointer span::before,
-  .notes-pointer span::after {
-    content: "";
-    position: absolute;
-    background: currentColor;
-  }
-
-  .notes-pointer span::before {
-    right: 0.02rem;
-    top: 0.66rem;
-    width: 0.58rem;
-    height: 0.24rem;
-    transform: rotate(35deg);
-    transform-origin: left center;
-  }
-
-  .notes-pointer span::after {
-    right: 0.02rem;
-    top: 0.48rem;
-    width: 0.58rem;
-    height: 0.24rem;
-    transform: rotate(-35deg);
-    transform-origin: left center;
+  .notes-pointer__arrow {
+    width: 2.55rem;
+    height: 1.05rem;
+    overflow: visible;
+    transition: transform 180ms ease;
   }
 
   .notes-pointer:hover {
     color: var(--accent);
-    transform: translateX(0.15rem);
+    transform: rotate(-3deg) translateX(2px);
+  }
+
+  .notes-pointer:hover .notes-pointer__arrow {
+    transform: translateX(4px);
+  }
+
+  .notes-pointer:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 6px;
   }
 
   .rough-mark {
@@ -446,11 +445,13 @@ const summaryFor = (post: (typeof posts)[number]) =>
     }
 
     .notes-pointer {
-      position: static;
-      margin-top: 0.75rem;
-      width: 2.75rem;
-      height: 2rem;
-      justify-content: flex-start;
+      margin-top: 1rem;
+      transform: rotate(-2deg);
+      font-size: 1.6rem;
+    }
+
+    .notes-pointer:hover {
+      transform: rotate(-2deg) translateX(2px);
     }
   }
 
@@ -464,6 +465,10 @@ const summaryFor = (post: (typeof posts)[number]) =>
     .scratch-line.is-scratching span {
       transform: none;
       text-shadow: none;
+    }
+
+    .notes-pointer:hover .notes-pointer__arrow {
+      transform: none;
     }
   }
 </style>
