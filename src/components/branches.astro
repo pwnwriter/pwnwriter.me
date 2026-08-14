@@ -8,12 +8,12 @@
     height: 100%;
     pointer-events: none;
     z-index: -1;
-    opacity: 0.15;
+    opacity: 0.16;
   }
 </style>
 
 <script>
-  function drawBranches() {
+  function drawCircuitNotes() {
     const canvas = document.getElementById(
       "branches-canvas",
     ) as HTMLCanvasElement;
@@ -24,13 +24,7 @@
 
     const dpr = window.devicePixelRatio || 1;
     let animationId: number | null = null;
-
-    // Seeded random for consistent look per session
-    let seed = 42;
-    function rand() {
-      seed = (seed * 16807) % 2147483647;
-      return (seed - 1) / 2147483646;
-    }
+    let animationStart = 0;
 
     function isDark() {
       const html = document.documentElement;
@@ -39,143 +33,209 @@
       return window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
 
-    interface Segment {
-      x1: number; y1: number;
-      cx: number; cy: number;
-      x2: number; y2: number;
-      width: number;
-      alpha: number;
-      depth: number;
+    function color(alpha: number) {
+      return isDark()
+        ? `rgba(232, 227, 217, ${alpha})`
+        : `rgba(55, 49, 83, ${alpha})`;
     }
 
-    // Collect all branch segments into an array (depth-first order)
-    function collectBranch(
-      x: number, y: number, angle: number,
-      length: number, width: number, depth: number,
-      segments: Segment[],
-    ) {
-      if (depth <= 0 || length < 2 || width < 0.3) return;
-
-      const endX = x + Math.cos(angle) * length;
-      const endY = y + Math.sin(angle) * length;
-      const cx = (x + endX) / 2 + (rand() - 0.5) * length * 0.3;
-      const cy = (y + endY) / 2 + (rand() - 0.5) * length * 0.3;
-      const a = 0.3 + depth * 0.06;
-
-      segments.push({ x1: x, y1: y, cx, cy, x2: endX, y2: endY, width, alpha: a, depth });
-
-      const branches = depth > 4 ? 2 : Math.floor(rand() * 2) + 1;
-      for (let i = 0; i < branches; i++) {
-        const spread = (rand() - 0.5) * 0.9;
-        const newAngle = angle + spread;
-        const shrink = 0.65 + rand() * 0.15;
-        collectBranch(endX, endY, newAngle, length * shrink, width * 0.7, depth - 1, segments);
-      }
-
-      if (rand() > 0.6 && depth > 2) {
-        const twigAngle = angle + (rand() > 0.5 ? 1 : -1) * (0.5 + rand() * 0.7);
-        collectBranch(endX, endY, twigAngle, length * 0.4, width * 0.4, depth - 2, segments);
-      }
+    function accent(alpha: number) {
+      return isDark()
+        ? `rgba(196, 167, 231, ${alpha})`
+        : `rgba(161, 113, 92, ${alpha})`;
     }
 
-    function drawSegment(seg: Segment, progress: number, dark: boolean) {
-      // progress: 0..1, how much of this segment to draw
-      const t = Math.max(0, Math.min(1, progress));
-      if (t <= 0) return;
+    type Point = [number, number];
 
-      // Interpolate along the quadratic bezier up to t
-      // B(t) = (1-t)^2*P0 + 2(1-t)t*C + t^2*P1
+    function scale(points: Point[], w: number, h: number) {
+      return points.map(([x, y]) => [x * w, y * h] as Point);
+    }
+
+    function drawTrace(points: Point[], progress: number) {
+      if (points.length < 2 || progress <= 0) return;
+
+      const total = points.length - 1;
+      const visible = progress * total;
+
       ctx!.beginPath();
-      ctx!.moveTo(seg.x1, seg.y1);
+      ctx!.moveTo(points[0][0], points[0][1]);
 
-      if (t >= 1) {
-        ctx!.quadraticCurveTo(seg.cx, seg.cy, seg.x2, seg.y2);
-      } else {
-        // Split bezier at t using De Casteljau
-        const p0x = seg.x1, p0y = seg.y1;
-        const p1x = seg.cx, p1y = seg.cy;
-        const p2x = seg.x2, p2y = seg.y2;
+      for (let i = 1; i < points.length; i++) {
+        const segmentProgress = Math.min(Math.max(visible - (i - 1), 0), 1);
+        if (segmentProgress <= 0) break;
 
-        const q0x = p0x + (p1x - p0x) * t;
-        const q0y = p0y + (p1y - p0y) * t;
-        const q1x = p1x + (p2x - p1x) * t;
-        const q1y = p1y + (p2y - p1y) * t;
-
-        const rx = q0x + (q1x - q0x) * t;
-        const ry = q0y + (q1y - q0y) * t;
-
-        ctx!.quadraticCurveTo(q0x, q0y, rx, ry);
+        const [x1, y1] = points[i - 1];
+        const [x2, y2] = points[i];
+        const x = x1 + (x2 - x1) * segmentProgress;
+        const y = y1 + (y2 - y1) * segmentProgress;
+        ctx!.lineTo(x, y);
       }
 
-      ctx!.strokeStyle = dark
-        ? `rgba(255, 255, 255, ${seg.alpha})`
-        : `rgba(0, 0, 0, ${seg.alpha})`;
-      ctx!.lineWidth = seg.width;
+      ctx!.strokeStyle = color(0.5);
+      ctx!.lineWidth = 1.15;
       ctx!.lineCap = "round";
+      ctx!.lineJoin = "round";
       ctx!.stroke();
     }
 
-    let allSegments: Segment[] = [];
-    let growStart = 0;
-    const GROW_DURATION = 2200; // ms for full tree to grow
-    const STAGGER_PER_SEGMENT = 0.7; // fraction of duration each segment takes
-
-    function buildSegments() {
-      allSegments = [];
-      seed = 42;
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-
-      collectBranch(w * 0.05, h * 0.95, -Math.PI / 4, Math.min(w, h) * 0.25, 2.2, 8, allSegments);
-      collectBranch(w * 0.92, h * 0.08, Math.PI * 0.75, Math.min(w, h) * 0.2, 1.8, 7, allSegments);
+    function drawNode(x: number, y: number, active = false) {
+      ctx!.beginPath();
+      ctx!.arc(x, y, active ? 3.2 : 2.15, 0, Math.PI * 2);
+      ctx!.fillStyle = active ? accent(0.58) : color(0.4);
+      ctx!.fill();
     }
 
-    function animateGrow(timestamp: number) {
-      if (!growStart) growStart = timestamp;
-      const elapsed = timestamp - growStart;
-      const globalT = Math.min(elapsed / GROW_DURATION, 1);
+    function drawChip(x: number, y: number, size: number) {
+      ctx!.save();
+      ctx!.translate(x, y);
+      ctx!.rotate(-0.08);
+      ctx!.strokeStyle = color(0.42);
+      ctx!.lineWidth = 1;
+      ctx!.strokeRect(-size / 2, -size / 2, size, size);
 
+      for (let i = -2; i <= 2; i++) {
+        if (i === 0) continue;
+        ctx!.beginPath();
+        ctx!.moveTo(-size / 2 - 8, i * (size / 7));
+        ctx!.lineTo(-size / 2, i * (size / 7));
+        ctx!.moveTo(size / 2, i * (size / 7));
+        ctx!.lineTo(size / 2 + 8, i * (size / 7));
+        ctx!.stroke();
+      }
+      ctx!.restore();
+    }
+
+    function drawNote(text: string, x: number, y: number, rotate: number) {
+      ctx!.save();
+      ctx!.translate(x, y);
+      ctx!.rotate(rotate);
+      ctx!.font = "700 24px Caveat, cursive";
+      ctx!.fillStyle = accent(0.56);
+      ctx!.fillText(text, 0, 0);
+      ctx!.restore();
+    }
+
+    function drawTerminalText(text: string, x: number, y: number, rotate = 0) {
+      ctx!.save();
+      ctx!.translate(x, y);
+      ctx!.rotate(rotate);
+      ctx!.font = "700 13px Menlo, Consolas, monospace";
+      ctx!.fillStyle = color(0.3);
+      ctx!.fillText(text, 0, 0);
+      ctx!.restore();
+    }
+
+    function drawBracket(x: number, y: number, height: number) {
+      ctx!.save();
+      ctx!.strokeStyle = accent(0.5);
+      ctx!.lineWidth = 1.5;
+      ctx!.beginPath();
+      ctx!.moveTo(x + 16, y);
+      ctx!.lineTo(x, y);
+      ctx!.lineTo(x, y + height);
+      ctx!.lineTo(x + 16, y + height);
+      ctx!.stroke();
+      ctx!.restore();
+    }
+
+    function render(progress = 1) {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      const dark = isDark();
-
       ctx!.clearRect(0, 0, w, h);
 
-      const total = allSegments.length;
-      for (let i = 0; i < total; i++) {
-        // Each segment starts growing at a staggered time based on its index
-        const segStart = (i / total) * (1 - STAGGER_PER_SEGMENT);
-        const segProgress = (globalT - segStart) / STAGGER_PER_SEGMENT;
-        if (segProgress <= 0) continue;
+      const traces = [
+        scale(
+          [
+            [0.78, 0.1],
+            [0.85, 0.1],
+            [0.85, 0.2],
+            [0.91, 0.2],
+            [0.91, 0.34],
+            [0.97, 0.34],
+          ],
+          w,
+          h,
+        ),
+        scale(
+          [
+            [0.66, 0.36],
+            [0.75, 0.36],
+            [0.75, 0.46],
+            [0.84, 0.46],
+            [0.84, 0.56],
+            [0.93, 0.56],
+          ],
+          w,
+          h,
+        ),
+        scale(
+          [
+            [0.02, 0.78],
+            [0.12, 0.78],
+            [0.12, 0.68],
+            [0.24, 0.68],
+            [0.24, 0.58],
+            [0.38, 0.58],
+          ],
+          w,
+          h,
+        ),
+        scale(
+          [
+            [0.58, 0.84],
+            [0.7, 0.84],
+            [0.7, 0.76],
+            [0.82, 0.76],
+            [0.82, 0.68],
+            [0.94, 0.68],
+          ],
+          w,
+          h,
+        ),
+      ];
 
-        // Ease-out for organic feel
-        const eased = 1 - Math.pow(1 - Math.min(segProgress, 1), 2);
-        drawSegment(allSegments[i], eased, dark);
-      }
+      traces.forEach((trace, index) => {
+        const localProgress = Math.max(0, Math.min(1, progress * 1.2 - index * 0.12));
+        drawTrace(trace, localProgress);
+        if (localProgress >= 0.98) {
+          trace.forEach(([x, y], pointIndex) => {
+            if (pointIndex % 2 === 0) drawNode(x, y, pointIndex === trace.length - 1);
+          });
+        }
+      });
 
-      if (globalT < 1) {
-        animationId = requestAnimationFrame(animateGrow);
+      drawChip(w * 0.86, h * 0.31, 42);
+      drawChip(w * 0.2, h * 0.68, 34);
+
+      if (w > 720) {
+        drawBracket(w * 0.68, h * 0.18, 76);
+        drawNote("trace this later", w * 0.7, h * 0.22, -0.07);
+        drawNote("works until it doesn't", w * 0.08, h * 0.64, -0.1);
+        drawNote("todo: break cleaner", w * 0.66, h * 0.64, 0.08);
+        drawTerminalText("nix flake check --impure", w * 0.06, h * 0.2, -0.035);
+        drawTerminalText("nmap -sC -sV -p- 10.10.11.42", w * 0.68, h * 0.43, 0.04);
+        drawTerminalText("uid=0(root) gid=0(root)", w * 0.12, h * 0.88, 0.02);
+        drawTerminalText("RIP=0x4141414141414141", w * 0.62, h * 0.79, -0.025);
+        drawTerminalText("ffuf -u /FUZZ -w raft.txt", w * 0.78, h * 0.13, 0.03);
+        drawTerminalText("/nix/store/4n9x...-shell", w * 0.58, h * 0.92, -0.015);
+        drawTerminalText("nc -lvnp 4444", w * 0.84, h * 0.62, 0.04);
+        drawTerminalText("age.secrets.ssh-key.file", w * 0.18, h * 0.76, -0.02);
+        drawTerminalText("builtins.derivation { }", w * 0.36, h * 0.53, 0.025);
+      } else {
+        drawNote("trace later", w * 0.58, h * 0.16, -0.07);
+        drawTerminalText("nix flake check", w * 0.08, h * 0.84, -0.03);
+        drawTerminalText("nc -lvnp 4444", w * 0.56, h * 0.74, 0.04);
       }
     }
 
-    function startGrowAnimation() {
-      if (animationId) cancelAnimationFrame(animationId);
-      growStart = 0;
-      buildSegments();
-      animationId = requestAnimationFrame(animateGrow);
-    }
+    function animate(timestamp: number) {
+      if (!animationStart) animationStart = timestamp;
+      const progress = Math.min((timestamp - animationStart) / 1300, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      render(eased);
 
-    // Instant render (used on resize after initial animation)
-    let hasGrown = false;
-
-    function renderInstant() {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const dark = isDark();
-      ctx!.clearRect(0, 0, w, h);
-      buildSegments();
-      for (const seg of allSegments) {
-        drawSegment(seg, 1, dark);
+      if (progress < 1) {
+        animationId = requestAnimationFrame(animate);
       }
     }
 
@@ -184,32 +244,25 @@
       canvas.height = window.innerHeight * dpr;
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      if (hasGrown) {
-        renderInstant();
-      } else {
-        hasGrown = true;
-        startGrowAnimation();
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        render();
+        return;
       }
+
+      if (animationId) cancelAnimationFrame(animationId);
+      animationStart = 0;
+      animationId = requestAnimationFrame(animate);
     }
 
     resize();
     window.addEventListener("resize", resize, { passive: true });
 
-    // Re-render when theme changes
-    new MutationObserver(() => {
-      if (hasGrown) renderInstant();
-    }).observe(document.documentElement, {
+    new MutationObserver(() => render()).observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class"],
     });
-
-    // Respect reduced motion
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      hasGrown = true;
-      renderInstant();
-    }
   }
 
-  document.addEventListener("DOMContentLoaded", drawBranches);
-  if (document.readyState !== "loading") drawBranches();
+  document.addEventListener("DOMContentLoaded", drawCircuitNotes);
+  if (document.readyState !== "loading") drawCircuitNotes();
 </script>

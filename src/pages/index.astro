@@ -123,19 +123,19 @@ const summaryFor = (post: (typeof posts)[number]) =>
   .hero {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(8rem, 12rem);
-    gap: clamp(1rem, 4vw, 2.2rem);
+    grid-template-columns: minmax(0, 1fr) minmax(6.5rem, 8.5rem);
+    gap: clamp(0.9rem, 3vw, 1.6rem);
     align-items: center;
-    max-width: 54rem;
+    max-width: 50rem;
     margin: 0 auto 1.85rem;
   }
 
   .hero-photo-frame {
     position: relative;
-    width: min(100%, 11.5rem);
+    width: min(100%, 8.2rem);
     margin: 0;
     justify-self: end;
-    transform: rotate(2.5deg);
+    transform: rotate(2.5deg) translateY(0.2rem);
   }
 
   .hero-photo-frame::before {
@@ -426,14 +426,14 @@ const summaryFor = (post: (typeof posts)[number]) =>
   @media (max-width: 640px) {
     .hero {
       grid-template-columns: 1fr;
-      gap: 0.9rem;
       margin-top: 0;
     }
 
     .hero-photo-frame {
-      width: 6.5rem;
+      width: 5.5rem;
       justify-self: start;
       order: -1;
+      transform: rotate(2.5deg);
     }
 
     .writing-grid {
@@ -510,7 +510,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
   }
 
   body:has(.home-page) .branches-canvas {
-    opacity: 0.055;
+    opacity: 0.24;
   }
 </style>
 
