@@ -1,7 +1,6 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import Wrapper from '~/components/wrapper.astro';
-import Heading from '~/components/text/heading.astro';
 import PostList from '~/components/post-list.astro';
 import { getCollection } from 'astro:content';
 
@@ -11,7 +10,13 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 
 <Layout title="notes" description="Notes from pwn::musings.">
 	<Wrapper>
-		<Heading Element="h1">Notes</Heading>
+		<header class="notes-hero">
+			<h1>things &amp; notes</h1>
+			<p>
+				a home for ideas i keep rebuilding, breaking, and explaining until
+				the weird parts finally become searchable.
+			</p>
+		</header>
 
 		<div class="note-filters" role="tablist" aria-label="Filter notes by tag">
 			<button class="note-chip note-chip--active" data-filter="all">all</button>
@@ -215,14 +220,40 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 		search.focus();
 		applyFilters();
 	});
+
 </script>
 
 <style>
+	.notes-hero {
+		margin: 1.05rem 0 0.9rem;
+	}
+
+	.notes-hero h1 {
+		margin: 0;
+		color: var(--f-high);
+		font-family: Georgia, "Times New Roman", serif;
+		font-weight: 700;
+		letter-spacing: 0;
+	}
+
+	.notes-hero h1 {
+		font-size: clamp(1.9rem, 4.8vw, 2.7rem);
+		line-height: 1;
+	}
+
+	.notes-hero p {
+		max-width: 34rem;
+		margin: 0.4rem 0 0;
+		color: color-mix(in srgb, var(--f-low) 82%, transparent);
+		font-size: clamp(0.82rem, 1.35vw, 0.92rem);
+		line-height: 1.5;
+	}
+
 	.note-filters {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
-		margin: 0.75rem 0 2rem;
+		margin: 0.75rem 0 1.35rem;
 	}
 
 	.note-search-row {
@@ -230,7 +261,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
-		margin: -0.6rem 0 1.25rem;
+		margin: 0 0 0.65rem;
 		border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
 		padding-bottom: 0.85rem;
 	}
@@ -359,6 +390,10 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 	}
 
 	@media (max-width: 640px) {
+		.notes-hero {
+			margin-top: 1.75rem;
+		}
+
 		.note-search-row {
 			align-items: stretch;
 			flex-direction: column;

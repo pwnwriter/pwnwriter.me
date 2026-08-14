@@ -16,7 +16,6 @@ type Props = {
 
 const { title, pubDate, modDate, description, cover, tags } =
 	Astro.props.frontmatter;
-const { slug } = Astro.params;
 
 const words = Astro.props.body?.trim().split(/\s+/).length ?? 0;
 const readingTime = Math.max(1, Math.round(words / 200));

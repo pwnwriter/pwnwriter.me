@@ -33,18 +33,41 @@ function relativeTime(date: Date): string {
   const years = Math.floor(months / 12);
   return `updated ${years}y ago`;
 }
+
+function excerpt(post: CollectionEntry<"posts">): string {
+  const source = post.data.description || post.body || "";
+  const cleaned = source
+    .replace(/^---[\s\S]*?---/, "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[#>*_~{}[\]()]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return cleaned.length > 154 ? `${cleaned.slice(0, 154).trim()}...` : cleaned;
+}
 ---
 
-<div>
-  <ul role="list" class="mb-4">
+<div class="post-list-shell">
+  <ul role="list" class="post-list">
     {
       posts.slice(0, max).map((post, i) => {
         const wasUpdated =
           Math.abs(post.data.modDate.getTime() - post.data.pubDate.getTime()) > ONE_DAY;
+        const date = post.data.pubDate.toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+        const month = post.data.pubDate.toLocaleDateString(undefined, {
+          month: "short",
+          year: "numeric",
+        });
 
         return (
           <li
-            class="post-item mb-1 grid max-w-fit"
+            class="post-item"
             data-tags={post.data.tags.join(",")}
             data-search={[
               post.data.title,
@@ -56,22 +79,25 @@ function relativeTime(date: Date): string {
             style={`animation-delay: ${i * 50}ms`}
           >
             <Link href={`/notes/${post.slug}`}>
-              <div class="flex items-start gap-12">
-                <span class="text-nowrap font-mono text-f-low">
-                  {post.data.pubDate.toLocaleDateString(undefined, {
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </span>
-                <span>
-                  {`{ ${post.data.title} }`}
+              <article class="post-card">
+                <div class="post-date" aria-label={date}>
+                  <span>{month}</span>
+                </div>
+                <div class="post-copy">
+                  <h2>{post.data.title}</h2>
+                  <p>{excerpt(post)}</p>
+                  <div class="post-meta">
+                    <span>{date}</span>
+                    <span>/</span>
+                    <span>{post.data.tags.join(", ")}</span>
                   {wasUpdated && (
-                    <span class="ml-2 text-xs text-f-low">
+                    <span class="post-updated">
                       {relativeTime(post.data.modDate)}
                     </span>
                   )}
-                </span>
-              </div>
+                  </div>
+                </div>
+              </article>
             </Link>
           </li>
         );
@@ -92,15 +118,125 @@ function relativeTime(date: Date): string {
     }
   }
 
+  .post-list-shell {
+    margin-top: 0.75rem;
+  }
+
+  .post-list {
+    display: grid;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+    border-top: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
+  }
+
   .post-item {
     opacity: 0;
+    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 14%, transparent);
     animation: fadeInUp 0.4s ease forwards;
+  }
+
+  .post-item :global(a) {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .post-card {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    gap: clamp(0.75rem, 2.6vw, 1.35rem);
+    padding: 0.72rem 0;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  .post-item:hover .post-card {
+    transform: translateX(0.18rem);
+  }
+
+  .post-date {
+    color: color-mix(in srgb, var(--f-low) 72%, transparent);
+    font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.66rem;
+    line-height: 1.45;
+    white-space: nowrap;
+  }
+
+  .post-copy {
+    min-width: 0;
+  }
+
+  .post-copy h2 {
+    margin: 0;
+    color: var(--f-high);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(0.98rem, 2.15vw, 1.22rem);
+    font-weight: 700;
+    font-style: normal;
+    line-height: 1.12;
+    letter-spacing: 0;
+    transition: color 180ms ease;
+  }
+
+  .post-item:hover .post-copy h2 {
+    color: var(--accent);
+  }
+
+  .post-copy p {
+    max-width: 34rem;
+    margin: 0.25rem 0 0;
+    color: color-mix(in srgb, var(--f-low) 74%, transparent);
+    font-size: clamp(0.76rem, 1.15vw, 0.84rem);
+    font-style: normal;
+    line-height: 1.45;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.48rem;
+    color: color-mix(in srgb, var(--f-low) 58%, transparent);
+    font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.62rem;
+    line-height: 1.4;
+  }
+
+  .post-updated {
+    color: color-mix(in srgb, var(--accent) 70%, transparent);
+    font-family: inherit;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .post-item {
       opacity: 1;
       animation: none;
+    }
+
+    .post-card {
+      transition: none;
+    }
+
+    .post-item:hover .post-card {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .post-card {
+      grid-template-columns: 1fr;
+      gap: 0.28rem;
+      padding: 0.85rem 0;
+    }
+
+    .post-date {
+      font-size: 0.7rem;
+    }
+
+    .post-copy h2 {
+      font-size: clamp(0.98rem, 6vw, 1.18rem);
     }
   }
 </style>
