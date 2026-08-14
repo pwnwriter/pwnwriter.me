@@ -3,122 +3,166 @@ import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import Paragraph from "~/components/text/paragraph.astro";
 import Link from "~/components/link.astro";
-import PostList from "~/components/post-list.astro";
+import { getCollection } from "astro:content";
 import "~/styles/index.css";
+
+const tagline = "Coffee. Code. Pwn.";
+const posts = (await getCollection("posts"))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3);
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+const cleanMarkdown = (value: string) =>
+  value
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\[[^\]]+\]/g, "$1")
+    .replace(/<\/?[^>]+>/g, " ")
+    .replace(/^[#>*\-\s]+/gm, "")
+    .replace(/[_*~]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const excerpt = (value: string, maxLength = 130) => {
+  const cleaned = cleanMarkdown(value);
+
+  if (cleaned.length <= maxLength) {
+    return cleaned;
+  }
+
+  return `${cleaned.slice(0, maxLength).replace(/\s+\S*$/, "")}...`;
+};
+
+const summaryFor = (post: (typeof posts)[number]) =>
+  post.data.description ?? excerpt(post.body);
 ---
 
 <Layout title="~" description="pwn::musings.">
   <Wrapper>
-    <section class="hero">
-      <div class="avatar-wrap">
-        <img
-          src="https://avatars.githubusercontent.com/u/90331517?s=400&u=69e445f801cc183e3657c7890b3178987577c5fa&v=4"
-          alt="pwnwriter"
-        />
-      </div>
-      <div>
-        <h1 class="handwritten">
-          Hi! I am <span class="shimmer">Nabeen</span>
-        </h1>
+    <section class="hero home-page">
+      <div class="hero-copy">
+        <h1 class="hero-title">Hi, i'm Nabeen</h1>
+        <p class="scratch-line" aria-label={tagline} data-scratch-line>
+          {
+            [...tagline].map((char, index) => (
+              <span
+                class:list={[char === " " && "space"]}
+                style={`--i: ${index}; --shift: ${(index % 3) - 1}px`}
+                aria-hidden="true"
+              >
+                {char === " " ? "\u00a0" : char}
+              </span>
+            ))
+          }
+        </p>
         <Paragraph>
-          I like making computers feel less borrowed and more personal.
-        </Paragraph>
-        <Paragraph>
-          Most of this site is me following a thread, breaking something,
-          fixing it, and leaving a note for whoever finds the same mess later.
-          The rest is stuff I made and still like enough to <a
+          I break things, fix them, and leave notes so future me has fewer
+          excuses. The rest is stuff I made and still <span
+            class="rough-mark second">like enough</span
+          > to <a
             href="https://github.com/pwnwriter"
             target="_blank"
             rel="noopener noreferrer">enjoy</a
           >.
         </Paragraph>
       </div>
+      <figure class="hero-photo-frame">
+        <img
+          class="hero-photo"
+          src="/images/blackhat26/me-at-blackhat.jpeg"
+          alt="Nabeen at Black Hat"
+          width="280"
+          height="380"
+        />
+      </figure>
     </section>
 
     <div class="divider"></div>
 
     <section class="section">
-      <!-- <Subheading Element="h2">Notes</Subheading> -->
-      <PostList max={3} />
-      <Link href="/notes">{"{ All notes }"}&nbsp;&nbsp;&Rarr;</Link>
+      <header class="writing-head">
+        <h2>recently written</h2>
+        <p>
+          things i kept thinking about until writing them down became easier
+          than letting them go.
+        </p>
+      </header>
+
+      <div class="writing-grid">
+        {
+          posts.map((post) => (
+            <a class="writing-card" href={`/notes/${post.slug}`}>
+              <h3>{post.data.title}</h3>
+              <p>{summaryFor(post)}</p>
+              <div class="writing-meta">
+                <span>{formatDate(post.data.pubDate)}</span>
+                <span>/</span>
+                <span>{post.data.tags.slice(0, 2).join(", ")}</span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+
+      <a class="notes-pointer" href="/notes" aria-label="All notes">
+        <span aria-hidden="true"></span>
+      </a>
     </section>
   </Wrapper>
 </Layout>
 
 <style>
   .hero {
-    display: flex;
-    align-items: center;
-    gap: 2.5rem;
-    margin-bottom: 3.5rem;
-  }
-
-  @media (max-width: 640px) {
-    .hero {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1.5rem;
-    }
-  }
-
-  .avatar-wrap {
-    flex-shrink: 0;
     position: relative;
-    padding: 0.35rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(8rem, 12rem);
+    gap: clamp(1rem, 4vw, 2.2rem);
+    align-items: center;
+    max-width: 54rem;
+    margin: 0 auto 1.85rem;
   }
 
-  /* dashed accent ring that spins up on hover */
-  .avatar-wrap::before {
+  .hero-photo-frame {
+    position: relative;
+    width: min(100%, 11.5rem);
+    margin: 0;
+    justify-self: end;
+    transform: rotate(2.5deg);
+  }
+
+  .hero-photo-frame::before {
     content: "";
     position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 1.5px dashed color-mix(in srgb, var(--accent) 55%, transparent);
-    animation: avatar-spin 18s linear infinite;
-    animation-play-state: paused;
-    transition: opacity 0.3s;
-    opacity: 0.6;
+    inset: 0.45rem -0.45rem -0.45rem 0.45rem;
+    border: 1px solid color-mix(in srgb, var(--f-low) 16%, transparent);
+    border-radius: 0.85rem;
+    pointer-events: none;
   }
 
-  .avatar-wrap:hover::before {
-    animation-play-state: running;
-    opacity: 1;
-  }
-
-  .avatar-wrap img {
-    position: relative;
-    width: 6rem;
-    height: 6rem;
-    border-radius: 50%;
+  .hero-photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    height: auto;
+    border: 1px solid color-mix(in srgb, var(--f-low) 18%, transparent);
+    border-radius: 0.85rem;
+    background: color-mix(in srgb, var(--f-high) 5%, transparent);
     object-fit: cover;
-    border: 2px solid color-mix(in srgb, var(--f-low) 25%, transparent);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 40%, transparent);
-    transition:
-      border-color 0.3s,
-      box-shadow 0.4s ease,
-      transform 0.4s ease;
+    object-position: center top;
+    box-shadow: 0 18px 40px -30px color-mix(in srgb, var(--f-high) 75%, transparent);
   }
 
-  .avatar-wrap:hover img {
-    border-color: var(--accent);
-    box-shadow: 0 6px 22px -6px
-      color-mix(in srgb, var(--accent) 55%, transparent);
-    transform: scale(1.04) rotate(-2deg);
-  }
-
-  @keyframes avatar-spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .avatar-wrap::before {
-      animation: none;
-    }
-    .avatar-wrap:hover img {
-      transform: none;
-    }
+  .hero-copy {
+    position: relative;
+    max-width: 40rem;
   }
 
   .divider {
@@ -129,20 +173,403 @@ import "~/styles/index.css";
       color-mix(in srgb, var(--f-low) 25%, transparent),
       transparent
     );
-    margin-bottom: 3rem;
+    margin-bottom: 1.25rem;
   }
 
   .section {
-    margin-bottom: 3rem;
+    position: relative;
+    margin-bottom: 1.25rem;
   }
 
-  .handwritten {
-    font-family: "Caveat", cursive;
-    font-size: 2.5rem;
-    font-weight: 700;
+  .hero :global(p:not(.scratch-line)) {
+    max-width: 38rem;
+    margin-top: 1.25rem;
+    font-size: clamp(1rem, 1.5vw, 1.08rem);
+    line-height: 1.65;
+  }
+
+  .hero-title {
+    margin: 0;
     color: var(--f-high);
-    margin-bottom: 1.5rem;
-    transform: rotate(-0.5deg);
-    letter-spacing: 0.02em;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.8rem, 4.4vw, 2.85rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: 0;
+  }
+
+  .scratch-line {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.01em;
+    margin: 0.3rem 0 0;
+    color: color-mix(in srgb, var(--f-low) 68%, transparent);
+    font-family: Menlo, Consolas, monospace;
+    font-size: clamp(0.9rem, 2vw, 1.08rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0;
+    user-select: none;
+  }
+
+  .scratch-line span {
+    display: inline-block;
+    min-width: 0.35ch;
+    transition:
+      color 120ms ease,
+      transform 120ms ease,
+      text-shadow 120ms ease;
+    transition-delay: calc(var(--i) * 10ms);
+  }
+
+  .scratch-line .space {
+    min-width: 0.8ch;
+  }
+
+  .scratch-line:hover span,
+  .scratch-line:focus-visible span,
+  .scratch-line.is-scratching span {
+    color: hsl(calc(18 + var(--i) * 19), 62%, 68%);
+    text-shadow: 0 0 10px color-mix(in srgb, currentColor 30%, transparent);
+    transform: translateY(var(--shift));
+  }
+
+  .scratch-line:hover span:nth-child(3n),
+  .scratch-line:focus-visible span:nth-child(3n),
+  .scratch-line.is-scratching span:nth-child(3n) {
+    color: var(--accent);
+  }
+
+  .writing-head {
+    margin-bottom: 1rem;
+  }
+
+  .writing-head h2 {
+    margin: 0;
+    color: var(--f-high);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.55rem, 3vw, 2.15rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .writing-head p {
+    max-width: 34rem;
+    margin: 0.45rem 0 0;
+    color: color-mix(in srgb, var(--f-low) 78%, transparent);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .writing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
+    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
+  }
+
+  .writing-card {
+    min-width: 0;
+    padding: 1rem 1rem 0.95rem;
+    color: var(--f-low);
+    text-decoration: none;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .writing-card + .writing-card {
+    border-left: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
+  }
+
+  .writing-card:hover {
+    background: color-mix(in srgb, var(--accent) 6%, transparent);
+  }
+
+  .writing-card h3 {
+    display: -webkit-box;
+    min-height: 2.65em;
+    margin: 0 0 0.5rem;
+    overflow: hidden;
+    color: var(--f-high);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.25;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .writing-card p {
+    display: -webkit-box;
+    min-height: 3.55em;
+    margin: 0;
+    overflow: hidden;
+    color: color-mix(in srgb, var(--f-low) 78%, transparent);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .writing-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.8rem;
+    color: color-mix(in srgb, var(--f-low) 62%, transparent);
+    font-family: Menlo, Consolas, monospace;
+    font-size: 0.7rem;
+    line-height: 1.4;
+  }
+
+  .notes-pointer {
+    position: absolute;
+    right: -2.6rem;
+    bottom: 2.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.4rem;
+    height: 3.4rem;
+    color: color-mix(in srgb, var(--f-low) 72%, transparent);
+    text-decoration: none;
+    transition:
+      color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .notes-pointer span {
+    position: relative;
+    display: block;
+    width: 1.95rem;
+    height: 1.35rem;
+    background:
+      linear-gradient(currentColor, currentColor) 0.12rem 0.5rem / 1.12rem
+        0.24rem no-repeat,
+      linear-gradient(currentColor, currentColor) 0.92rem 0.08rem / 0.24rem
+        1rem no-repeat,
+      linear-gradient(currentColor, currentColor) 1.2rem 0.24rem / 0.24rem
+        0.74rem no-repeat,
+      linear-gradient(currentColor, currentColor) 1.48rem 0.44rem / 0.24rem
+        0.5rem no-repeat;
+    image-rendering: pixelated;
+  }
+
+  .notes-pointer span::before,
+  .notes-pointer span::after {
+    content: "";
+    position: absolute;
+    background: currentColor;
+  }
+
+  .notes-pointer span::before {
+    right: 0.02rem;
+    top: 0.66rem;
+    width: 0.58rem;
+    height: 0.24rem;
+    transform: rotate(35deg);
+    transform-origin: left center;
+  }
+
+  .notes-pointer span::after {
+    right: 0.02rem;
+    top: 0.48rem;
+    width: 0.58rem;
+    height: 0.24rem;
+    transform: rotate(-35deg);
+    transform-origin: left center;
+  }
+
+  .notes-pointer:hover {
+    color: var(--accent);
+    transform: translateX(0.15rem);
+  }
+
+  .rough-mark {
+    position: relative;
+    display: inline;
+    color: var(--f-high);
+    white-space: nowrap;
+  }
+
+  .rough-mark::after {
+    content: "";
+    position: absolute;
+    left: -0.12em;
+    right: -0.08em;
+    bottom: -0.16em;
+    height: 0.35em;
+    background:
+      linear-gradient(
+        176deg,
+        transparent 30%,
+        color-mix(in srgb, #a85f3d 75%, transparent) 34% 43%,
+        transparent 47%
+      ),
+      linear-gradient(
+        183deg,
+        transparent 52%,
+        color-mix(in srgb, #a85f3d 55%, transparent) 56% 64%,
+        transparent 68%
+      );
+    border-radius: 999px;
+    pointer-events: none;
+  }
+
+  .rough-mark.second::after {
+    bottom: -0.2em;
+    transform: rotate(-1deg);
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 0.9rem;
+      margin-top: 0;
+    }
+
+    .hero-photo-frame {
+      width: 6.5rem;
+      justify-self: start;
+      order: -1;
+    }
+
+    .writing-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .writing-card + .writing-card {
+      border-top: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
+      border-left: 0;
+    }
+
+    .notes-pointer {
+      position: static;
+      margin-top: 0.75rem;
+      width: 2.75rem;
+      height: 2rem;
+      justify-content: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scratch-line span {
+      transition: color 120ms ease;
+    }
+
+    .scratch-line:hover span,
+    .scratch-line:focus-visible span,
+    .scratch-line.is-scratching span {
+      transform: none;
+      text-shadow: none;
+    }
   }
 </style>
+
+<style is:global>
+  body:has(.home-page) header {
+    margin-top: 1.25rem;
+  }
+
+  body:has(.home-page) > .h-xl {
+    height: 1.75rem;
+  }
+
+  body:has(.home-page) footer {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  body:has(.home-page) footer p {
+    margin-top: 0.65rem;
+  }
+
+  body:has(.home-page) main {
+    display: flex;
+    align-items: center;
+  }
+
+  body:has(.home-page) main > * {
+    width: 100%;
+  }
+
+  @media (max-height: 760px) and (min-width: 760px) {
+    body:has(.home-page) header {
+      margin-top: 0.75rem;
+    }
+
+    body:has(.home-page) > .h-xl {
+      height: 1rem;
+    }
+
+    body:has(.home-page) .hero-title {
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+    }
+  }
+
+  body:has(.home-page) .branches-canvas {
+    opacity: 0.055;
+  }
+</style>
+
+<script>
+  const scratchLine = document.querySelector("[data-scratch-line]");
+
+  if (scratchLine && !window.matchMedia("(hover: none)").matches) {
+    let context: AudioContext | null = null;
+    let lastScratch = 0;
+
+    function getContext() {
+      context ??= new AudioContext();
+      return context;
+    }
+
+    function scratch() {
+      const now = performance.now();
+      if (now - lastScratch < 70) return;
+      lastScratch = now;
+
+      const audio = getContext();
+      audio.resume().catch(() => {});
+
+      const duration = 0.055 + Math.random() * 0.05;
+      const buffer = audio.createBuffer(
+        1,
+        Math.floor(audio.sampleRate * duration),
+        audio.sampleRate,
+      );
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) {
+        const fade = 1 - i / data.length;
+        data[i] = (Math.random() * 2 - 1) * fade;
+      }
+
+      const source = audio.createBufferSource();
+      const filter = audio.createBiquadFilter();
+      const gain = audio.createGain();
+
+      filter.type = "bandpass";
+      filter.frequency.value = 420 + Math.random() * 460;
+      filter.Q.value = 5 + Math.random() * 7;
+      gain.gain.value = 0.018;
+
+      source.buffer = buffer;
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(audio.destination);
+      source.start();
+      source.stop(audio.currentTime + duration);
+    }
+
+    scratchLine.addEventListener("pointerenter", () => {
+      scratchLine.classList.add("is-scratching");
+      scratch();
+    });
+    scratchLine.addEventListener("pointermove", scratch);
+    scratchLine.addEventListener("pointerleave", () => {
+      scratchLine.classList.remove("is-scratching");
+    });
+  }
+</script>

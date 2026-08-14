@@ -1,19 +1,11 @@
 ---
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
-import Heading from "~/components/text/heading.astro";
-import Subheading from "~/components/text/subheading.astro";
 import Link from "~/components/link.astro";
+import { photos } from "~/pages/photos/photos";
 
-import BioPhoto from "~/components/BioPhoto.astro";
-
-import Cancer from "~/components/icons/cancer.astro";
-import Leo from "~/components/icons/leo.astro";
-import Scorpio from "~/components/icons/scorpio.astro";
-import Location from "~/components/icons/location.astro";
-import Pronouns from "~/components/icons/pronouns.astro";
-
-const bio = "/me-proud-nix-user.jpg";
+photos.sort((a, b) => (a.date < b.date ? 1 : -1));
+const featuredPhotos = photos.slice(0, 8);
 ---
 
 <Layout
@@ -21,162 +13,360 @@ const bio = "/me-proud-nix-user.jpg";
   description="About Nabeen Tiwaree, also known as pwnwriter."
 >
   <Wrapper>
-    <section class="about-hero">
-      <BioPhoto
-        src={bio}
-        caption="proud nix user"
-        doodle=""
-      />
+    <section class="about-page">
+      <header class="about-hero">
+        <div class="about-copy">
+          <p>
+            i’m <strong>Nabeen</strong>, a <span class="annotated">
+              computer science
+              <span class="side-note" aria-hidden="true">concentrated in AI</span>
+            </span> student at <a
+              href="https://www.wilmu.edu/"
+              target="_blank"
+              rel="noopener noreferrer">Wilmington University</a
+            > who spends a lot of time around systems, security, open-source
+            tools, and machines that behave better after being broken on purpose.
+          </p>
 
-      <div class="about-copy">
-        <p class="about-kicker">~/about</p>
-        <Heading Element="h1">pwn</Heading>
+          <p>
+            most of what i build starts with curiosity, a weird error, a box i
+            wanted to pop, or a note i wish already existed. the longer version
+            is usually just me asking why one more time than was convenient.
+          </p>
+        </div>
+      </header>
 
-        <p class="about-lede">
-          I’m <strong>pwnwriter</strong>, a computer science student who likes
-          systems, security, and open-source tools. Most of what I build starts
-          with curiosity, a broken setup, or a note I wish already existed.
+      <div class="chat-thread" aria-label="A small conversation about what I do">
+        <p class="bubble bubble-left">so... what do you do?</p>
+        <p class="bubble bubble-right">i write coffee, drink code, and break machines</p>
+        <p class="bubble bubble-left">that's it?</p>
+        <p class="bubble bubble-right">
+          no, but the other answer takes like 40 minutes
         </p>
-
-        <div class="about-actions" aria-label="Contact links">
-          <Link href="https://x.com/pwnwriter" underline>x</Link>
-          <Link href="mailto:hi@pwnwriter.me" underline>email</Link>
-        </div>
       </div>
-    </section>
 
-    <section class="about-section">
-      <Subheading Element="h2">Small facts</Subheading>
-      <dl class="fact-list">
-        <div>
-          <dt>
-            <Pronouns size={16} />
-            Pronouns
-          </dt>
-          <dd>He / him</dd>
-        </div>
+      {
+        featuredPhotos.length > 0 && (
+          <section class="photo-evidence">
+            <div class="photo-head">
+              <div>
+                <h2>photographic evidence</h2>
+                <p>
+                  cities, friends, talks, trails, and the occasional proof that i
+                  do leave the terminal.
+                </p>
+              </div>
+              <Link href="/photos" underline>photo archive</Link>
+            </div>
 
-        <div>
-          <dt>
-            <Location size={16} />
-            Location
-          </dt>
-          <dd>Miami, FL</dd>
-        </div>
+            <div class="photo-rail" aria-label="Featured photos">
+              {featuredPhotos.map((photo, index) => (
+                <figure class="photo-item about-photo" data-index={index}>
+                  <img src={photo.src} alt={photo.alt} loading="lazy" />
+                  <figcaption class="photo-meta">
+                    <span>{photo.alt}</span>
+                    <span>{photo.date}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </section>
+        )
+      }
 
-        <div>
-          <dt>
-            <Cancer size={16} />
-            Sun
-          </dt>
-          <dd>Cancer</dd>
-        </div>
-
-        <div>
-          <dt>
-            <Leo size={16} />
-            Moon
-          </dt>
-          <dd>Sagittarius</dd>
-        </div>
-
-        <div>
-          <dt>
-            <Scorpio size={16} />
-            Rising
-          </dt>
-          <dd>Scorpio</dd>
-        </div>
-
-        <div>
-          <dt>Also</dt>
-          <dd>cricket, calisthenics, minimalism</dd>
-        </div>
-      </dl>
     </section>
   </Wrapper>
 </Layout>
 
 <style>
-  .about-hero {
-    display: flow-root;
-    margin-bottom: 3.5rem;
+  .about-page {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding-top: 0;
+  }
+
+  .about-hero h1,
+  .about-section h2,
+  .photo-head h2 {
+    margin: 0;
+    color: var(--f-high);
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .about-hero h1 {
+    font-size: clamp(2.35rem, 6vw, 3.65rem);
+    line-height: 1;
   }
 
   .about-copy {
-    max-width: 42rem;
+    max-width: 38rem;
+    margin-top: 0.8rem;
   }
 
-  .about-kicker {
-    margin-bottom: 0.5rem;
-    color: var(--accent);
-    font-family: Menlo, monospace;
-    font-size: 0.78rem;
-    font-weight: 700;
-  }
-
-  .about-lede {
-    color: var(--f-low);
-    font-size: 1.08rem;
-    line-height: 1.9;
-  }
-
-  .about-lede strong {
-    color: var(--f-high);
-  }
-
-  .about-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.9rem;
-    margin-top: 1.5rem;
-    font-size: 0.95rem;
-    font-weight: 700;
-  }
-
-  .about-section {
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid color-mix(in srgb, var(--f-low) 16%, transparent);
-  }
-
-  .fact-list {
-    margin: 1rem 0 0;
-  }
-
-  .fact-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem 1.75rem;
-  }
-
-  .fact-list div {
-    min-width: 0;
-  }
-
-  .fact-list dt {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    margin-bottom: 0.2rem;
-    color: var(--f-high);
-    font-size: 0.9rem;
-    font-weight: 700;
-  }
-
-  .fact-list dd {
+  .about-copy p {
     margin: 0;
     color: var(--f-low);
-    line-height: 1.65;
+    font-size: clamp(0.98rem, 1.55vw, 1.1rem);
+    line-height: 1.7;
+  }
+
+  .about-copy p + p {
+    margin-top: 0.75rem;
+  }
+
+  .about-copy strong {
+    color: var(--f-high);
+  }
+
+  .about-copy a {
+    color: var(--f-high);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 48%, transparent);
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.2em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  .about-copy a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  .annotated {
+    position: relative;
+    display: inline-block;
+    color: var(--f-high);
+  }
+
+  .side-note {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.65rem);
+    width: 11rem;
+    color: color-mix(in srgb, var(--f-low) 68%, transparent);
+    font-family: "Caveat", cursive;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+    transform: translateX(-50%) rotate(-7deg);
+    pointer-events: none;
+  }
+
+  .side-note::before {
+    content: "";
+    position: absolute;
+    left: 0.2rem;
+    right: 1.2rem;
+    bottom: -0.35rem;
+    height: 0.5rem;
+    border-right: 0;
+    border-bottom: 2px solid currentColor;
+    border-left: 0;
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+
+  .chat-thread {
+    display: grid;
+    gap: 0.7rem;
+    margin: 1.1rem 0 2rem;
+  }
+
+  .bubble {
+    width: fit-content;
+    max-width: min(78%, 24rem);
+    margin: 0;
+    border: 1px solid color-mix(in srgb, var(--f-low) 9%, transparent);
+    border-radius: 1.1rem;
+    background: color-mix(in srgb, var(--b-high) 72%, transparent);
+    color: var(--f-high);
+    font-size: clamp(0.88rem, 1.4vw, 0.98rem);
+    line-height: 1.45;
+    padding: 0.62rem 0.88rem;
+    opacity: 0;
+    transform: translateY(0.6rem) scale(0.98);
+    animation: bubble-in 520ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .bubble-left {
+    justify-self: start;
+    border-bottom-left-radius: 0.35rem;
+    color: color-mix(in srgb, var(--f-low) 88%, var(--f-high));
+  }
+
+  .bubble-right {
+    justify-self: end;
+    border-bottom-right-radius: 0.35rem;
+    background: color-mix(in srgb, var(--accent) 14%, var(--b-high));
+  }
+
+  .bubble:nth-child(2) {
+    animation-delay: 160ms;
+  }
+
+  .bubble:nth-child(3) {
+    animation-delay: 320ms;
+  }
+
+  .bubble:nth-child(4) {
+    animation-delay: 480ms;
+  }
+
+  @keyframes bubble-in {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .photo-evidence {
+    margin-top: 2.25rem;
+    border-top: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
+    padding-top: 1.25rem;
+  }
+
+  .photo-head h2 {
+    font-size: clamp(1.35rem, 3.4vw, 1.9rem);
+    line-height: 1;
+  }
+
+  .photo-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.3rem;
+  }
+
+  .photo-head p {
+    max-width: 38rem;
+    margin: 0.55rem 0 0;
+    color: color-mix(in srgb, var(--f-low) 78%, transparent);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .photo-rail {
+    display: grid;
+    grid-auto-columns: minmax(13rem, 36%);
+    grid-auto-flow: column;
+    gap: 0.85rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 0.9rem 0 1rem;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+
+  .about-photo {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--f-low) 10%, transparent);
+    border-radius: 1.3rem;
+    background: color-mix(in srgb, var(--b-high) 60%, transparent);
+    cursor: pointer;
+    scroll-snap-align: start;
+  }
+
+  .about-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 260ms ease;
+  }
+
+  .about-photo:hover img {
+    transform: scale(1.035);
+  }
+
+  .about-photo .photo-meta {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.58), transparent);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.72rem;
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+
+  .about-photo:hover .photo-meta {
+    opacity: 1;
+  }
+
+  .about-photo .photo-meta span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   @media (max-width: 640px) {
-    .about-hero {
-      margin-bottom: 2.75rem;
+    .chat-thread {
+      margin-bottom: 2.5rem;
     }
 
-    .fact-list {
-      grid-template-columns: 1fr;
+    .bubble {
+      max-width: 92%;
+    }
+
+    .annotated {
+      display: inline-block;
+      margin-top: 1.7rem;
+    }
+
+    .side-note {
+      bottom: calc(100% + 0.35rem);
+      left: 0;
+      width: max-content;
+      max-width: 9rem;
+      font-size: 1.05rem;
+      transform: rotate(-6deg);
+    }
+
+    .photo-head {
+      align-items: start;
+      flex-direction: column;
+    }
+
+    .photo-rail {
+      grid-auto-columns: minmax(13rem, 82%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bubble {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    .about-photo img,
+    .about-photo .photo-meta {
+      transition: none;
+    }
+  }
+</style>
+
+<style is:global>
+  body:has(.about-page) > .h-xl:first-of-type {
+    height: 2.5rem;
+  }
+
+  @media (max-width: 640px) {
+    body:has(.about-page) > .h-xl:first-of-type {
+      height: 1.5rem;
     }
   }
 </style>

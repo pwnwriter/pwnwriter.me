@@ -32,8 +32,91 @@
 		});
 	}
 
+	function escapeRegExp(value: string) {
+		return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	}
+
+	function getTerms(query: string) {
+		return query
+			.toLowerCase()
+			.split(/\s+/)
+			.map((term) => term.trim())
+			.filter((term) => term.length > 1);
+	}
+
+	function clearSearchHighlights(root: ParentNode = document) {
+		root.querySelectorAll('mark.search-hit').forEach((mark) => {
+			mark.replaceWith(document.createTextNode(mark.textContent ?? ''));
+		});
+	}
+
+	function highlightSearchTerms() {
+		const query = new URLSearchParams(window.location.search).get('q') ?? '';
+		const terms = getTerms(query);
+		const scope = document.querySelector<HTMLElement>('.writing-note');
+		if (!scope) return;
+
+		clearSearchHighlights(scope);
+		if (!terms.length) return;
+
+		const pattern = new RegExp(`(${terms.map(escapeRegExp).join('|')})`, 'gi');
+		const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
+			acceptNode(node) {
+				const parent = node.parentElement;
+				if (
+					!parent ||
+					parent.closest('mark, script, style, input, textarea, pre, code')
+				) {
+					return NodeFilter.FILTER_REJECT;
+				}
+				pattern.lastIndex = 0;
+				return pattern.test(node.textContent ?? '')
+					? NodeFilter.FILTER_ACCEPT
+					: NodeFilter.FILTER_REJECT;
+			},
+		});
+
+		const nodes: Text[] = [];
+		while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+
+		nodes.forEach((node) => {
+			const fragment = document.createDocumentFragment();
+			const text = node.textContent ?? '';
+			pattern.lastIndex = 0;
+			let lastIndex = 0;
+
+			for (const match of text.matchAll(pattern)) {
+				const index = match.index ?? 0;
+				if (index > lastIndex) {
+					fragment.append(document.createTextNode(text.slice(lastIndex, index)));
+				}
+
+				const mark = document.createElement('mark');
+				mark.className = 'search-hit';
+				mark.textContent = match[0];
+				fragment.append(mark);
+				lastIndex = index + match[0].length;
+			}
+
+			if (lastIndex < text.length) {
+				fragment.append(document.createTextNode(text.slice(lastIndex)));
+			}
+
+			node.replaceWith(fragment);
+		});
+
+		document.querySelector<HTMLElement>('mark.search-hit')?.scrollIntoView({
+			block: 'center',
+			behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+				? 'auto'
+				: 'smooth',
+		});
+	}
+
 	addCopyButtons();
+	highlightSearchTerms();
 	document.addEventListener('astro:after-swap', addCopyButtons);
+	document.addEventListener('astro:after-swap', highlightSearchTerms);
 </script>
 
 <style>
@@ -120,5 +203,14 @@
 
 	.prose :global(.copy-btn.copied) {
 		@apply text-accent opacity-100;
+	}
+
+	.prose :global(.search-hit),
+	:global(.writing-note > h1 .search-hit),
+	:global(.writing-note header .search-hit) {
+		border-radius: 0.2em;
+		background: color-mix(in srgb, var(--accent) 34%, transparent);
+		color: var(--f-high);
+		padding: 0 0.08em;
 	}
 </style>

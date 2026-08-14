@@ -4,7 +4,7 @@ const isHomePage = Astro.url.pathname === '/';
 ---
 
 {!isHomePage && (
-  <div id="vim-indicator" class="vim-indicator fixed right-4 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-1 z-50">
+  <div id="vim-indicator" class="vim-indicator hidden lg:flex flex-col gap-1">
 
     {/* help panel — sits above the key grid */}
     <div id="vim-help" class="vim-help">
@@ -26,10 +26,6 @@ const isHomePage = Astro.url.pathname === '/';
       </div>
       <div class="vim-help-row">
         <span class="vim-help-key">p</span>
-        <span>photos</span>
-      </div>
-      <div class="vim-help-row">
-        <span class="vim-help-key">P</span>
         <span>projects</span>
       </div>
     </div>

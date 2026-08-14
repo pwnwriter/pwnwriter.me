@@ -53,6 +53,23 @@ function generateHash(slug: string): string {
         ))}
       </div>
 
+      <div class="syn-search-row">
+        <span class="syn-count" data-syn-count>{syndications.length} entries</span>
+        <label class="syn-search" data-search-shell>
+          <span aria-hidden="true">⌕</span>
+          <input
+            type="search"
+            placeholder="Find it faster"
+            aria-label="Search syndications"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            data-syn-search
+          />
+          <button type="button" aria-label="Clear search" data-syn-clear>×</button>
+        </label>
+      </div>
+
       <div class="syn-log">
         <div class="syn-line" aria-hidden="true"></div>
 
@@ -64,7 +81,18 @@ function generateHash(slug: string): string {
               const tags = entry.data.tags || [];
               const hash = generateHash(entry.slug);
               return (
-                <div class="syn-entry" data-tags={tags.join(",")}>
+                <div
+                  class="syn-entry"
+                  data-tags={tags.join(",")}
+                  data-search={[
+                    entry.data.title,
+                    entry.slug,
+                    tags.join(" "),
+                    entry.body,
+                    formatDate(entry.data.pubDate),
+                    hash,
+                  ].join(" ")}
+                >
                   <div class="syn-dot" aria-hidden="true" />
                   <div class="syn-body">
                     <a href={`/syndications/${entry.slug}`} class="syn-link">
@@ -84,6 +112,7 @@ function generateHash(slug: string): string {
           </div>
         ))}
       </div>
+      <p class="syn-empty" data-syn-empty hidden>nothing matched that.</p>
     </div>
   </Wrapper>
 </Layout>
@@ -92,27 +121,177 @@ function generateHash(slug: string): string {
   const chips = document.querySelectorAll<HTMLButtonElement>(".syn-chip");
   const entries = document.querySelectorAll<HTMLElement>(".syn-entry");
   const yearGroups = document.querySelectorAll<HTMLElement>(".syn-year");
+  const search = document.querySelector<HTMLInputElement>("[data-syn-search]");
+  const clear = document.querySelector<HTMLButtonElement>("[data-syn-clear]");
+  const count = document.querySelector<HTMLElement>("[data-syn-count]");
+  const empty = document.querySelector<HTMLElement>("[data-syn-empty]");
+  const shell = document.querySelector<HTMLElement>("[data-search-shell]");
+  let activeFilter = "all";
+
+  function escapeRegExp(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function getTerms(query: string) {
+    return query
+      .toLowerCase()
+      .split(/\s+/)
+      .map((term) => term.trim())
+      .filter((term) => term.length > 1);
+  }
+
+  function clearHighlights(root: ParentNode = document) {
+    root.querySelectorAll("mark.search-hit").forEach((mark) => {
+      mark.replaceWith(document.createTextNode(mark.textContent ?? ""));
+    });
+  }
+
+  function highlightText(root: HTMLElement, query: string) {
+    const terms = getTerms(query);
+    if (!terms.length) return;
+
+    const pattern = new RegExp(`(${terms.map(escapeRegExp).join("|")})`, "gi");
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent || parent.closest("mark, script, style, input, textarea")) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        pattern.lastIndex = 0;
+        return pattern.test(node.textContent ?? "")
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      },
+    });
+
+    const nodes: Text[] = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+
+    nodes.forEach((node) => {
+      const fragment = document.createDocumentFragment();
+      const text = node.textContent ?? "";
+      pattern.lastIndex = 0;
+      let lastIndex = 0;
+
+      for (const match of text.matchAll(pattern)) {
+        const index = match.index ?? 0;
+        if (index > lastIndex) {
+          fragment.append(document.createTextNode(text.slice(lastIndex, index)));
+        }
+
+        const mark = document.createElement("mark");
+        mark.className = "search-hit";
+        mark.textContent = match[0];
+        fragment.append(mark);
+        lastIndex = index + match[0].length;
+      }
+
+      if (lastIndex < text.length) {
+        fragment.append(document.createTextNode(text.slice(lastIndex)));
+      }
+
+      node.replaceWith(fragment);
+    });
+  }
+
+  function openSearch() {
+    shell?.setAttribute("data-open", "");
+    search?.focus();
+  }
+
+  function closeSearch() {
+    if (search?.value) return;
+    shell?.removeAttribute("data-open");
+    search?.blur();
+  }
+
+  function toggleSearch() {
+    if (shell?.hasAttribute("data-open")) {
+      if (search?.value) {
+        search.value = "";
+        applyFilters();
+      }
+      closeSearch();
+    } else {
+      openSearch();
+    }
+  }
+
+  function applyFilters() {
+    const query = search?.value.trim().toLowerCase() ?? "";
+    let visible = 0;
+    clearHighlights();
+
+    entries.forEach((entry) => {
+      const tags = entry.dataset.tags?.split(",") ?? [];
+      const text = (entry.dataset.search || entry.textContent || "").toLowerCase();
+      const matchesTag = activeFilter === "all" || tags.includes(activeFilter);
+      const matchesSearch = !query || text.includes(query);
+      const link = entry.querySelector<HTMLAnchorElement>("a");
+      if (link) {
+        link.dataset.baseHref ??= link.getAttribute("href") ?? "";
+        link.href = query
+          ? `${link.dataset.baseHref}?q=${encodeURIComponent(query)}`
+          : link.dataset.baseHref;
+      }
+
+      if (matchesTag && matchesSearch) {
+        entry.removeAttribute("data-hidden");
+        if (query) highlightText(entry, query);
+        visible += 1;
+      } else {
+        entry.setAttribute("data-hidden", "");
+      }
+    });
+
+    yearGroups.forEach((group) => {
+      const hasVisible = group.querySelector(".syn-entry:not([data-hidden])");
+      group.toggleAttribute("data-hidden", !hasVisible);
+    });
+
+    if (count) count.textContent = `${visible} ${visible === 1 ? "entry" : "entries"}`;
+    empty?.toggleAttribute("hidden", visible !== 0);
+    clear?.toggleAttribute("data-visible", Boolean(query));
+  }
 
   chips.forEach((chip) => {
     chip.addEventListener("click", () => {
       chips.forEach((c) => c.classList.remove("syn-chip--active"));
       chip.classList.add("syn-chip--active");
-
-      const filter = chip.dataset.filter ?? "all";
-
-      entries.forEach((entry) => {
-        const tags = entry.dataset.tags?.split(",") ?? [];
-        if (filter === "all" || tags.includes(filter)) {
-          entry.removeAttribute("data-hidden");
-        } else {
-          entry.setAttribute("data-hidden", "");
-        }
-      });
-
-      yearGroups.forEach((group) => {
-        const hasVisible = group.querySelector(".syn-entry:not([data-hidden])");
-        group.toggleAttribute("data-hidden", !hasVisible);
-      });
+      activeFilter = chip.dataset.filter ?? "all";
+      applyFilters();
     });
+  });
+
+  search?.addEventListener("input", applyFilters);
+  search?.addEventListener("focus", openSearch);
+  search?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      if (search.value) {
+        search.value = "";
+        applyFilters();
+      } else {
+        closeSearch();
+      }
+    }
+  });
+  shell?.addEventListener("click", openSearch);
+  document.addEventListener("keydown", (event) => {
+    const target = event.target as HTMLElement | null;
+    const isTyping =
+      target?.tagName === "INPUT" ||
+      target?.tagName === "TEXTAREA" ||
+      target?.isContentEditable;
+
+    if (event.key === "/" && !isTyping) {
+      event.preventDefault();
+      toggleSearch();
+    }
+  });
+  clear?.addEventListener("click", () => {
+    if (!search) return;
+    search.value = "";
+    search.focus();
+    applyFilters();
   });
 </script>

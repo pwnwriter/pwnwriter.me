@@ -10,12 +10,14 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 <Layout title="projects" description="Things I've built — tools, configs, and experiments.">
   <Wrapper>
-    <header>
-      <Heading Element="h1">Projects</Heading>
-      <p class="mt-2 max-w-prose text-sm">
-        Things I've built and tinker with. Hover a clip to watch it, click to
-        open it full-screen.
-      </p>
+    <header class="projects-header">
+      <div>
+        <Heading Element="h1">Projects</Heading>
+        <p>
+          small tools, experiments, and systems i kept poking at until they became
+          useful enough to keep around.
+        </p>
+      </div>
     </header>
 
     {
@@ -24,7 +26,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
           not yet. soon.
         </p>
       ) : (
-        <div class="projects mt-16">
+        <div class="projects">
           {projects.map((p, i) => {
             const primary = p.cover ?? p.media[0];
             const isVideo = primary.kind === "video";
@@ -32,7 +34,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
               primary.kind === "image" ? primary.src : primary.poster;
             const extra = p.media.length - 1;
             return (
-              <article class="project-row">
+              <article class="project-card">
                 <div
                   class="pr-media project-open"
                   data-gallery={i}
@@ -54,11 +56,9 @@ const pad = (n: number) => String(n).padStart(2, "0");
                     <img class="pr-img" src={poster} alt={p.name} loading="lazy" />
                   ) : null}
 
-                  <span class="pr-glow" aria-hidden="true" />
-
                   {isVideo && (
                     <span class="pr-badge" aria-hidden="true">
-                      ▶ play
+                      preview
                     </span>
                   )}
                   {extra > 0 && (
@@ -69,11 +69,20 @@ const pad = (n: number) => String(n).padStart(2, "0");
                 </div>
 
                 <div class="pr-body">
-                  <span class="pr-eyebrow">
-                    {pad(i + 1)}
-                    {p.year && <> &middot; {p.year}</>}
-                  </span>
-                  <h2 class="pr-name">{p.name}</h2>
+                  <div class="pr-meta-top">
+                    <span class="pr-rank">{pad(i + 1)}</span>
+                    <span>/</span>
+                    <span>{p.year ?? "now"}</span>
+                  </div>
+                  <h2 class="pr-name">
+                    <button
+                      class="project-open pr-title-button"
+                      data-gallery={i}
+                      type="button"
+                    >
+                      {p.name}
+                    </button>
+                  </h2>
                   <p class="pr-blurb">{p.blurb}</p>
 
                   {p.tech.length > 0 && (
@@ -88,12 +97,12 @@ const pad = (n: number) => String(n).padStart(2, "0");
                     <div class="pr-links">
                       {p.repo && (
                         <a href={p.repo} target="_blank" rel="noopener noreferrer">
-                          repo ↗
+                          repo
                         </a>
                       )}
                       {p.demo && (
                         <a href={p.demo} target="_blank" rel="noopener noreferrer">
-                          live ↗
+                          live
                         </a>
                       )}
                     </div>
@@ -111,50 +120,71 @@ const pad = (n: number) => String(n).padStart(2, "0");
 </Layout>
 
 <style>
+  .projects-header {
+    max-width: 46rem;
+    margin-bottom: 2rem;
+  }
+
+  .projects-header p {
+    max-width: 40rem;
+    margin-top: 0.65rem;
+    color: color-mix(in srgb, var(--f-low) 82%, transparent);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
   .projects {
-    display: flex;
-    flex-direction: column;
-    gap: 5.5rem;
-  }
-
-  .project-row {
     display: grid;
-    grid-template-columns: 1.15fr 1fr;
-    gap: 2.75rem;
-    align-items: center;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
+    border-left: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
   }
 
-  /* alternate the media side for an editorial rhythm */
-  .project-row:nth-child(even) .pr-media {
-    order: 2;
+  .project-card {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 0.74fr) minmax(0, 1fr);
+    gap: 1.05rem;
+    min-width: 0;
+    padding: 1rem;
+    border-right: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
+    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
+    background:
+      radial-gradient(
+        circle at 10% 0%,
+        color-mix(in srgb, var(--accent) 7%, transparent),
+        transparent 34%
+      ),
+      transparent;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease;
   }
 
-  /* ---- media ---- */
+  .project-card:hover {
+    background-color: color-mix(in srgb, var(--accent) 5%, transparent);
+  }
+
   .pr-media {
     position: relative;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 1 / 1;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: 9px;
     cursor: pointer;
-    border: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--accent) 16%, transparent),
-      color-mix(in srgb, var(--f-low) 8%, transparent)
-    );
-    box-shadow: 0 14px 40px -26px color-mix(in srgb, var(--f-high) 40%, transparent);
+    border: 1px solid color-mix(in srgb, var(--f-low) 18%, transparent);
+    background: color-mix(in srgb, var(--f-high) 5%, transparent);
+    box-shadow: 0 14px 34px -28px color-mix(in srgb, var(--f-high) 45%, transparent);
     transition:
-      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-      box-shadow 0.4s ease,
-      border-color 0.4s ease;
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
     outline: none;
   }
 
   .pr-media:hover,
   .pr-media:focus-visible {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     border-color: color-mix(in srgb, var(--accent) 28%, transparent);
-    box-shadow: 0 22px 48px -24px color-mix(in srgb, var(--f-high) 45%, transparent);
+    box-shadow: 0 18px 38px -26px color-mix(in srgb, var(--f-high) 55%, transparent);
   }
 
   .pr-video,
@@ -163,118 +193,141 @@ const pad = (n: number) => String(n).padStart(2, "0");
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: saturate(0.82) contrast(0.96);
+    transition:
+      filter 180ms ease,
+      transform 220ms ease;
   }
 
   .pr-media:hover .pr-video,
   .pr-media:hover .pr-img {
     transform: scale(1.03);
-  }
-
-  /* subtle inner vignette so overlays stay legible */
-  .pr-glow {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.28),
-      transparent 45%
-    );
-    opacity: 0.7;
+    filter: saturate(1) contrast(1);
   }
 
   .pr-badge {
     position: absolute;
-    bottom: 0.85rem;
-    left: 0.9rem;
+    right: 0.45rem;
+    bottom: 0.45rem;
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.68rem;
+    padding: 0.14rem 0.4rem;
+    font-size: 0.58rem;
     font-family: var(--font-mono, monospace);
-    letter-spacing: 0.03em;
+    letter-spacing: 0;
     color: white;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.46);
+    border-radius: 4px;
     backdrop-filter: blur(4px);
-    transition:
-      background 0.3s ease,
-      opacity 0.3s ease;
-  }
-
-  .pr-media:hover .pr-badge {
-    background: color-mix(in srgb, var(--accent) 72%, black);
   }
 
   .pr-count {
     position: absolute;
-    top: 0.85rem;
-    right: 0.9rem;
-    font-size: 0.68rem;
+    top: 0.45rem;
+    right: 0.45rem;
+    font-size: 0.58rem;
     font-family: var(--font-mono, monospace);
     color: rgba(255, 255, 255, 0.92);
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 999px;
-    padding: 0.1rem 0.55rem;
+    background: rgba(0, 0, 0, 0.46);
+    border-radius: 4px;
+    padding: 0.08rem 0.35rem;
     backdrop-filter: blur(4px);
   }
 
-  /* ---- text ---- */
   .pr-body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.7rem;
+    min-width: 0;
+    gap: 0.45rem;
   }
 
-  .pr-eyebrow {
-    font-size: 0.72rem;
+  .pr-meta-top {
+    display: flex;
+    align-items: baseline;
+    gap: 0.34rem;
+    color: color-mix(in srgb, var(--f-low) 60%, transparent);
+    font-size: 0.74rem;
     font-family: var(--font-mono, monospace);
-    letter-spacing: 0.12em;
-    color: color-mix(in srgb, var(--f-low) 55%, transparent);
+    letter-spacing: 0;
+  }
+
+  .pr-rank {
+    color: color-mix(in srgb, var(--accent) 86%, var(--f-high));
   }
 
   .pr-name {
-    font-size: 1.7rem;
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.18rem, 2vw, 1.55rem);
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.05;
     color: var(--f-high);
   }
 
+  .pr-title-button {
+    display: block;
+    max-width: 100%;
+    padding: 0;
+    color: inherit;
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    letter-spacing: 0;
+    text-align: left;
+    text-overflow: ellipsis;
+  }
+
+  .pr-title-button:hover,
+  .pr-title-button:focus-visible {
+    color: var(--accent);
+    outline: none;
+  }
+
   .pr-blurb {
-    font-size: 0.92rem;
-    line-height: 1.6;
-    color: var(--f-low);
-    max-width: 34ch;
+    display: -webkit-box;
+    min-height: 3.75em;
+    margin: 0.1rem 0 0;
+    overflow: hidden;
+    color: color-mix(in srgb, var(--f-low) 84%, transparent);
+    font-size: 0.84rem;
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
   }
 
   .pr-tech {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.1rem;
+    gap: 0.32rem;
+    margin-top: auto;
   }
 
   .pr-tech li {
-    font-size: 0.68rem;
+    max-width: 12rem;
+    overflow: hidden;
+    color: color-mix(in srgb, var(--f-low) 68%, transparent);
+    border: 1px solid color-mix(in srgb, var(--f-low) 16%, transparent);
+    border-radius: 4px;
+    padding: 0.04rem 0.38rem;
     font-family: var(--font-mono, monospace);
-    color: color-mix(in srgb, var(--accent) 90%, var(--f-high));
-    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-    border-radius: 5px;
-    padding: 0.08rem 0.5rem;
+    font-size: 0.62rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .pr-links {
     display: flex;
-    gap: 1.25rem;
-    margin-top: 0.45rem;
+    gap: 0.85rem;
+    margin-top: 0.18rem;
   }
 
   .pr-links a {
-    font-size: 0.8rem;
-    color: var(--accent);
+    color: color-mix(in srgb, var(--accent) 90%, var(--f-high));
+    font-size: 0.72rem;
+    font-family: var(--font-mono, monospace);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: border-color 0.2s ease;
@@ -284,29 +337,47 @@ const pad = (n: number) => String(n).padStart(2, "0");
     border-color: var(--accent);
   }
 
-  /* ---- responsive ---- */
+  .pr-links a::after {
+    content: " ->";
+  }
+
   @media (max-width: 760px) {
+    .projects-header {
+      margin-bottom: 1.35rem;
+    }
+
     .projects {
-      gap: 3.5rem;
-    }
-
-    .project-row {
       grid-template-columns: 1fr;
-      gap: 1.1rem;
     }
 
-    /* media always on top on mobile, regardless of row parity */
-    .project-row:nth-child(even) .pr-media,
-    .project-row .pr-media {
-      order: 0;
+    .project-card {
+      grid-template-columns: minmax(5.5rem, 0.42fr) minmax(0, 1fr);
+      gap: 0.8rem;
+      padding: 0.85rem;
     }
 
     .pr-name {
-      font-size: 1.4rem;
+      font-size: 1.18rem;
     }
 
     .pr-blurb {
-      max-width: none;
+      min-height: 0;
+      font-size: 0.8rem;
+      -webkit-line-clamp: 2;
+    }
+
+    .pr-tech {
+      display: none;
+    }
+  }
+
+  @media (max-width: 460px) {
+    .project-card {
+      grid-template-columns: 1fr;
+    }
+
+    .pr-media {
+      aspect-ratio: 16 / 9;
     }
   }
 

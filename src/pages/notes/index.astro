@@ -22,29 +22,198 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 			}
 		</div>
 
+		<div class="note-search-row">
+			<span class="note-count" data-note-count>{posts.length} posts</span>
+			<label class="note-search" data-search-shell>
+				<span aria-hidden="true">⌕</span>
+				<input
+					type="search"
+					placeholder="Find it faster"
+					aria-label="Search notes"
+					autocomplete="off"
+					autocapitalize="off"
+					spellcheck="false"
+					data-note-search
+				/>
+				<button type="button" aria-label="Clear search" data-note-clear>×</button>
+			</label>
+		</div>
+
 		<PostList />
+		<p class="note-empty" data-note-empty hidden>nothing matched that.</p>
 	</Wrapper>
 </Layout>
 
 <script>
 	const chips = document.querySelectorAll<HTMLButtonElement>('.note-chip');
 	const posts = document.querySelectorAll<HTMLElement>('.post-item');
+	const search = document.querySelector<HTMLInputElement>('[data-note-search]');
+	const clear = document.querySelector<HTMLButtonElement>('[data-note-clear]');
+	const count = document.querySelector<HTMLElement>('[data-note-count]');
+	const empty = document.querySelector<HTMLElement>('[data-note-empty]');
+	const shell = document.querySelector<HTMLElement>('[data-search-shell]');
+	let activeFilter = 'all';
+
+	function escapeRegExp(value: string) {
+		return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	}
+
+	function getTerms(query: string) {
+		return query
+			.toLowerCase()
+			.split(/\s+/)
+			.map((term) => term.trim())
+			.filter((term) => term.length > 1);
+	}
+
+	function clearHighlights(root: ParentNode = document) {
+		root.querySelectorAll('mark.search-hit').forEach((mark) => {
+			mark.replaceWith(document.createTextNode(mark.textContent ?? ''));
+		});
+	}
+
+	function highlightText(root: HTMLElement, query: string) {
+		const terms = getTerms(query);
+		if (!terms.length) return;
+
+		const pattern = new RegExp(`(${terms.map(escapeRegExp).join('|')})`, 'gi');
+		const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+			acceptNode(node) {
+				const parent = node.parentElement;
+				if (!parent || parent.closest('mark, script, style, input, textarea')) {
+					return NodeFilter.FILTER_REJECT;
+				}
+				pattern.lastIndex = 0;
+				return pattern.test(node.textContent ?? '')
+					? NodeFilter.FILTER_ACCEPT
+					: NodeFilter.FILTER_REJECT;
+			},
+		});
+
+		const nodes: Text[] = [];
+		while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+
+		nodes.forEach((node) => {
+			const fragment = document.createDocumentFragment();
+			const text = node.textContent ?? '';
+			pattern.lastIndex = 0;
+			let lastIndex = 0;
+
+			for (const match of text.matchAll(pattern)) {
+				const index = match.index ?? 0;
+				if (index > lastIndex) {
+					fragment.append(document.createTextNode(text.slice(lastIndex, index)));
+				}
+
+				const mark = document.createElement('mark');
+				mark.className = 'search-hit';
+				mark.textContent = match[0];
+				fragment.append(mark);
+				lastIndex = index + match[0].length;
+			}
+
+			if (lastIndex < text.length) {
+				fragment.append(document.createTextNode(text.slice(lastIndex)));
+			}
+
+			node.replaceWith(fragment);
+		});
+	}
+
+	function openSearch() {
+		shell?.setAttribute('data-open', '');
+		search?.focus();
+	}
+
+	function closeSearch() {
+		if (search?.value) return;
+		shell?.removeAttribute('data-open');
+		search?.blur();
+	}
+
+	function toggleSearch() {
+		if (shell?.hasAttribute('data-open')) {
+			if (search?.value) {
+				search.value = '';
+				applyFilters();
+			}
+			closeSearch();
+		} else {
+			openSearch();
+		}
+	}
+
+	function applyFilters() {
+		const query = search?.value.trim().toLowerCase() ?? '';
+		let visible = 0;
+		clearHighlights();
+
+		posts.forEach((post) => {
+			const tags = post.dataset.tags?.split(',') ?? [];
+			const text = (post.dataset.search || post.textContent || '').toLowerCase();
+			const matchesTag = activeFilter === 'all' || tags.includes(activeFilter);
+			const matchesSearch = !query || text.includes(query);
+			const shouldHide = !matchesTag || !matchesSearch;
+
+			post.toggleAttribute('data-hidden', shouldHide);
+			const link = post.querySelector<HTMLAnchorElement>('a');
+			if (link) {
+				link.dataset.baseHref ??= link.getAttribute('href') ?? '';
+				link.href = query
+					? `${link.dataset.baseHref}?q=${encodeURIComponent(query)}`
+					: link.dataset.baseHref;
+			}
+
+			if (!shouldHide) {
+				visible += 1;
+				if (query) highlightText(post, query);
+			}
+		});
+
+		if (count) count.textContent = `${visible} ${visible === 1 ? 'post' : 'posts'}`;
+		empty?.toggleAttribute('hidden', visible !== 0);
+		clear?.toggleAttribute('data-visible', Boolean(query));
+	}
 
 	chips.forEach((chip) => {
 		chip.addEventListener('click', () => {
 			chips.forEach((c) => c.classList.remove('note-chip--active'));
 			chip.classList.add('note-chip--active');
-
-			const filter = chip.dataset.filter ?? 'all';
-
-			posts.forEach((post) => {
-				const tags = post.dataset.tags?.split(',') ?? [];
-				post.toggleAttribute(
-					'data-hidden',
-					filter !== 'all' && !tags.includes(filter)
-				);
-			});
+			activeFilter = chip.dataset.filter ?? 'all';
+			applyFilters();
 		});
+	});
+
+	search?.addEventListener('input', applyFilters);
+	search?.addEventListener('focus', openSearch);
+	search?.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape') {
+			if (search.value) {
+				search.value = '';
+				applyFilters();
+			} else {
+				closeSearch();
+			}
+		}
+	});
+	shell?.addEventListener('click', openSearch);
+	document.addEventListener('keydown', (event) => {
+		const target = event.target as HTMLElement | null;
+		const isTyping =
+			target?.tagName === 'INPUT' ||
+			target?.tagName === 'TEXTAREA' ||
+			target?.isContentEditable;
+
+		if (event.key === '/' && !isTyping) {
+			event.preventDefault();
+			toggleSearch();
+		}
+	});
+	clear?.addEventListener('click', () => {
+		if (!search) return;
+		search.value = '';
+		search.focus();
+		applyFilters();
 	});
 </script>
 
@@ -54,6 +223,101 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 		flex-wrap: wrap;
 		gap: 0.4rem;
 		margin: 0.75rem 0 2rem;
+	}
+
+	.note-search-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin: -0.6rem 0 1.25rem;
+		border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
+		padding-bottom: 0.85rem;
+	}
+
+	.note-count {
+		color: color-mix(in srgb, var(--f-low) 72%, transparent);
+		font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+		font-size: 0.8rem;
+		white-space: nowrap;
+	}
+
+	.note-search {
+		display: grid;
+		grid-template-columns: auto 0fr auto;
+		align-items: center;
+		gap: 0;
+		max-width: 100%;
+		border: 1px solid color-mix(in srgb, var(--f-low) 22%, transparent);
+		border-radius: 0.45rem;
+		outline: 1px dashed transparent;
+		outline-offset: 3px;
+		padding: 0.18rem 0.32rem;
+		color: color-mix(in srgb, var(--f-low) 78%, transparent);
+		font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+		font-size: 0.78rem;
+		line-height: 1.25;
+		transition:
+			border-color 0.18s,
+			outline-color 0.18s,
+			gap 0.18s,
+			grid-template-columns 0.18s;
+	}
+
+	.note-search[data-open],
+	.note-search:focus-within {
+		grid-template-columns: auto minmax(6rem, 11rem) auto;
+		gap: 0.32rem;
+	}
+
+	.note-search:focus-within {
+		border-color: color-mix(in srgb, var(--f-low) 55%, transparent);
+		outline-color: color-mix(in srgb, var(--f-low) 55%, transparent);
+	}
+
+	.note-search input {
+		min-width: 0;
+		border: 0;
+		background: transparent;
+		color: var(--f-high);
+		font: inherit;
+		letter-spacing: 0;
+		outline: 0;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.12s;
+	}
+
+	.note-search[data-open] input,
+	.note-search:focus-within input {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.note-search input::placeholder {
+		color: color-mix(in srgb, var(--f-low) 58%, transparent);
+		font-style: italic;
+	}
+
+	.note-search button {
+		border: 0;
+		background: transparent;
+		color: currentColor;
+		font: inherit;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.note-search button[data-visible] {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.note-empty {
+		margin-top: 1rem;
+		color: color-mix(in srgb, var(--f-low) 70%, transparent);
+		font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+		font-size: 0.82rem;
 	}
 
 	.note-chip {
@@ -81,9 +345,27 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 		display: none;
 	}
 
+	:global(.search-hit) {
+		border-radius: 0.2em;
+		background: color-mix(in srgb, var(--accent) 34%, transparent);
+		color: var(--f-high);
+		padding: 0 0.08em;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.note-chip {
 			transition: none;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.note-search-row {
+			align-items: stretch;
+			flex-direction: column;
+		}
+
+		.note-search {
+			grid-template-columns: auto minmax(0, 1fr) auto;
 		}
 	}
 </style>

@@ -36,7 +36,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin-bottom: 2.25rem;
+  margin-bottom: 1rem;
 }
 
 .syn-chip {
@@ -58,6 +58,107 @@
 .syn-chip--active {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* ── Search ── */
+
+.syn-search-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
+  padding-bottom: 0.85rem;
+}
+
+.syn-count {
+  color: color-mix(in srgb, var(--f-low) 72%, transparent);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.syn-search {
+  display: grid;
+  grid-template-columns: auto 0fr auto;
+  align-items: center;
+  gap: 0;
+  max-width: 100%;
+  border: 1px solid color-mix(in srgb, var(--f-low) 22%, transparent);
+  border-radius: 0.45rem;
+  outline: 1px dashed transparent;
+  outline-offset: 3px;
+  padding: 0.18rem 0.32rem;
+  color: color-mix(in srgb, var(--f-low) 78%, transparent);
+  font-size: 0.78rem;
+  line-height: 1.25;
+  transition:
+    border-color 0.18s,
+    outline-color 0.18s,
+    gap 0.18s,
+    grid-template-columns 0.18s;
+}
+
+.syn-search[data-open],
+.syn-search:focus-within {
+  grid-template-columns: auto minmax(6rem, 11rem) auto;
+  gap: 0.32rem;
+}
+
+.syn-search:focus-within {
+  border-color: color-mix(in srgb, var(--f-low) 55%, transparent);
+  outline-color: color-mix(in srgb, var(--f-low) 55%, transparent);
+}
+
+.syn-search input {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--f-high);
+  font: inherit;
+  letter-spacing: 0;
+  outline: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+
+.syn-search[data-open] input,
+.syn-search:focus-within input {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.syn-search input::placeholder {
+  color: color-mix(in srgb, var(--f-low) 58%, transparent);
+  font-style: italic;
+}
+
+.syn-search button {
+  border: 0;
+  background: transparent;
+  color: currentColor;
+  font: inherit;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.syn-search button[data-visible] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.syn-empty {
+  margin-top: 1rem;
+  color: color-mix(in srgb, var(--f-low) 70%, transparent);
+  font-size: 0.82rem;
+}
+
+.search-hit {
+  border-radius: 0.2em;
+  background: color-mix(in srgb, var(--accent) 34%, transparent);
+  color: var(--f-high);
+  padding: 0 0.08em;
 }
 
 /* ── Log container ── */
@@ -189,6 +290,15 @@
 @media (max-width: 480px) {
   .syn {
     padding: 1.5rem 0 3rem;
+  }
+
+  .syn-search-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .syn-search {
+    grid-template-columns: auto minmax(0, 1fr) auto;
   }
 
   .syn-entry {

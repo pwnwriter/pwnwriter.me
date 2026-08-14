@@ -1,6 +1,10 @@
 /* ── Vim indicator ── */
 
 .vim-indicator {
+  position: fixed;
+  right: 1rem;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 50;
   transition: opacity 0.3s ease;
 }
 
@@ -11,8 +15,8 @@
 /* ── Key ── */
 
 .vim-key {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.35rem;
+  height: 2.35rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -52,7 +56,7 @@
 
 .vim-help {
   position: absolute;
-  bottom: calc(100% + 0.5rem);
+  bottom: calc(100% + 0.65rem);
   right: 0;
   background: var(--b-med);
   border: 1px solid var(--b-high);
@@ -68,6 +72,19 @@
   transition:
     opacity 0.15s ease,
     transform 0.15s ease;
+}
+
+.vim-help::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  bottom: -0.38rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-right: 1px solid var(--b-high);
+  border-bottom: 1px solid var(--b-high);
+  background: var(--b-med);
+  transform: rotate(45deg);
 }
 
 .vim-help.visible {
@@ -95,5 +112,17 @@
   .vim-key,
   .vim-help {
     transition: none;
+  }
+}
+
+@media (max-height: 760px) {
+  .vim-key {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+
+  .vim-help {
+    max-height: min(16rem, calc(100vh - 9rem));
+    overflow-y: auto;
   }
 }
