@@ -26,15 +26,16 @@ const years = Object.keys(grouped)
 // Collect unique tags for filter chips
 const allTags = [...new Set(syndications.flatMap((s) => s.data.tags || []))].sort();
 
-// Generate short git-like hash from slug
-function generateHash(slug: string): string {
-  let hash = 0;
-  for (let i = 0; i < slug.length; i++) {
-    const char = slug.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash;
-  }
-  return Math.abs(hash).toString(16).padStart(7, "0").slice(0, 7);
+function excerpt(entry: CollectionEntry<"syndications">): string {
+  const cleaned = entry.body
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[#>*_~{}[\]()-]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return cleaned.length > 132 ? `${cleaned.slice(0, 132).trim()}...` : cleaned;
 }
 ---
 
@@ -43,7 +44,10 @@ function generateHash(slug: string): string {
     <div class="syn">
       <div class="syn-header">
         <h1 class="syn-title">syndications</h1>
-        <span class="syn-ref">(HEAD &rarr; main, origin/main)</span>
+        <p>
+          small traces from the timeline: life, code, school, travel, and things
+          i probably edited later.
+        </p>
       </div>
 
       <div class="syn-filters" role="tablist">
@@ -71,17 +75,15 @@ function generateHash(slug: string): string {
       </div>
 
       <div class="syn-log">
-        <div class="syn-line" aria-hidden="true"></div>
-
         {years.map((year) => (
           <div class="syn-year" data-year={year}>
             <div class="syn-year-label">{year}</div>
 
             {grouped[year].map((entry) => {
               const tags = entry.data.tags || [];
-              const hash = generateHash(entry.slug);
+              const summary = excerpt(entry);
               return (
-                <div
+                <article
                   class="syn-entry"
                   data-tags={tags.join(",")}
                   data-search={[
@@ -90,23 +92,32 @@ function generateHash(slug: string): string {
                     tags.join(" "),
                     entry.body,
                     formatDate(entry.data.pubDate),
-                    hash,
+                    summary,
                   ].join(" ")}
                 >
-                  <div class="syn-dot" aria-hidden="true" />
-                  <div class="syn-body">
+                  <div class="syn-card">
                     <a href={`/syndications/${entry.slug}`} class="syn-link">
-                      <code class="syn-hash">{hash}</code>
                       <span class="syn-msg">{entry.data.title}</span>
                     </a>
+                    <div class="syn-strip">
+                      <time datetime={entry.data.pubDate.toISOString()}>
+                        {entry.data.pubDate.toLocaleDateString(undefined, {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })}
+                      </time>
+                      <span>{tags[0] ?? "log"}</span>
+                    </div>
+                    <p>{summary}</p>
                     <div class="syn-meta">
                       {tags.map((t) => (
                         <span class="syn-tag">#{t}</span>
                       ))}
-                      <span class="syn-date">&middot; {formatDate(entry.data.pubDate)}</span>
+                      <span class="syn-read">read ↠</span>
                     </div>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>

@@ -1,6 +1,14 @@
 <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  <path fill="black" d="M30 94V54C30 33.4 44.6 19 64 19C83.8 19 98 33.3 98 54V94C98 101.2 90.1 105 84.8 100.3L78.7 94.9L71.4 101.2C67.1 105 60.7 105 56.4 101.2L49.4 94.9L43.2 100.3C37.9 105 30 101.2 30 94Z"/>
-  <circle cx="51" cy="54" r="8.8" fill="white"/>
-  <circle cx="78" cy="54" r="8.8" fill="white"/>
-  <path fill="white" d="M47 70L63 80.5L47 91V82.5L55 80.5L47 78.5V70ZM68 85H84V91H68V85Z"/>
+  <!-- shoulders / bust -->
+  <path fill="black" d="M20 128V116C20 101 34 92 52 92H76C94 92 108 101 108 116V128Z"/>
+  <!-- curly hair crown -->
+  <path fill="black" d="M33 64C26 52 27 40 33 33C31 25 40 19 47 22C50 15 62 14 66 20C71 14 82 17 82 25C91 24 98 33 94 43C99 51 99 58 95 65C96 54 90 47 86 47C88 39 83 33 78 34C80 27 71 23 67 28C64 21 54 22 53 30C46 27 39 32 41 40C34 41 31 52 33 64Z"/>
+  <!-- head -->
+  <path fill="black" d="M40 56C40 38 50 28 64 28C78 28 88 38 88 56C88 74 78 86 64 86C50 86 40 74 40 56Z"/>
+  <!-- sunglasses cutouts -->
+  <rect x="42" y="25" width="19" height="12" rx="4" fill="white"/>
+  <rect x="67" y="25" width="19" height="12" rx="4" fill="white"/>
+  <!-- eyes -->
+  <circle cx="54" cy="60" r="4.6" fill="white"/>
+  <circle cx="74" cy="60" r="4.6" fill="white"/>
 </svg>

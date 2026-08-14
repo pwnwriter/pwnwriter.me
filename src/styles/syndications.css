@@ -1,57 +1,52 @@
-/* ── Syndications git-log page ── */
+/* Compact syndication index. */
 
 .syn {
-  font-family:
-    "SF Mono", "Fira Code", "JetBrains Mono", ui-monospace, monospace;
   color: var(--f-high);
-  padding: 2.5rem 0 4rem;
+  padding: 1.4rem 0 3.25rem;
 }
 
-/* ── Header ── */
-
 .syn-header {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .syn-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--f-high);
   margin: 0;
-  display: inline;
-  letter-spacing: -0.01em;
+  color: var(--f-high);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.9rem, 4.8vw, 2.7rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
 }
 
-.syn-ref {
-  font-size: 0.75rem;
-  color: var(--accent);
-  opacity: 0.6;
-  margin-left: 0.5rem;
-  white-space: nowrap;
+.syn-header p {
+  max-width: 35rem;
+  margin: 0.45rem 0 0;
+  color: color-mix(in srgb, var(--f-low) 82%, transparent);
+  font-size: clamp(0.82rem, 1.35vw, 0.92rem);
+  line-height: 1.5;
 }
-
-/* ── Filter chips ── */
 
 .syn-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin-bottom: 1rem;
+  margin: 0.9rem 0 1rem;
 }
 
 .syn-chip {
-  background: transparent;
   border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  border-radius: 2px;
+  background: transparent;
   color: var(--f-low);
-  padding: 0.2rem 0.65rem;
-  font-size: 0.7rem;
-  font-family: inherit;
   cursor: pointer;
+  font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  padding: 0.2rem 0.65rem;
   transition:
     border-color 0.2s,
     color 0.2s;
-  border-radius: 2px;
-  line-height: 1.6;
 }
 
 .syn-chip:hover,
@@ -60,21 +55,20 @@
   color: var(--accent);
 }
 
-/* ── Search ── */
-
 .syn-search-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.75rem;
+  margin-bottom: 0.85rem;
   border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
-  padding-bottom: 0.85rem;
+  padding-bottom: 0.8rem;
 }
 
 .syn-count {
   color: color-mix(in srgb, var(--f-low) 72%, transparent);
-  font-size: 0.8rem;
+  font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.72rem;
   white-space: nowrap;
 }
 
@@ -90,6 +84,7 @@
   outline-offset: 3px;
   padding: 0.18rem 0.32rem;
   color: color-mix(in srgb, var(--f-low) 78%, transparent);
+  font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
   font-size: 0.78rem;
   line-height: 1.25;
   transition:
@@ -151,6 +146,7 @@
 .syn-empty {
   margin-top: 1rem;
   color: color-mix(in srgb, var(--f-low) 70%, transparent);
+  font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
   font-size: 0.82rem;
 }
 
@@ -161,135 +157,145 @@
   padding: 0 0.08em;
 }
 
-/* ── Log container ── */
-
 .syn-log {
-  position: relative;
+  display: grid;
+  gap: 1rem;
 }
-
-.syn-line {
-  position: absolute;
-  left: 5px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: color-mix(in srgb, var(--accent) 20%, transparent);
-}
-
-/* ── Year group ── */
 
 .syn-year {
-  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
 }
 
 .syn-year + .syn-year {
-  margin-top: 0.75rem;
+  margin-top: 0.45rem;
 }
 
 .syn-year-label {
-  font-size: 0.65rem;
-  color: var(--f-low);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 0.6rem 0 0.3rem 1.75rem;
-  opacity: 0.7;
+  grid-column: 1 / -1;
+  color: color-mix(in srgb, var(--f-low) 66%, transparent);
+  font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.68rem;
+  line-height: 1.4;
 }
 
-/* ── Entry ── */
+.syn-year-label + .syn-entry {
+  margin-top: 0;
+}
 
 .syn-entry {
-  position: relative;
-  padding: 0.55rem 0 0.55rem 1.75rem;
+  min-width: 0;
 }
 
-/* ── Dot ── */
-
-.syn-dot {
-  position: absolute;
-  left: 1px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--accent);
-  transition: transform 0.2s ease;
-  z-index: 1;
+.syn-card {
+  display: grid;
+  overflow: hidden;
+  min-height: 10rem;
+  border: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
+  border-radius: 0.45rem;
+  background: transparent;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
 }
 
-.syn-entry:hover .syn-dot {
-  transform: translateY(-50%) scale(1.35);
-}
-
-/* ── Body ── */
-
-.syn-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+.syn-entry:hover .syn-card {
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  background: color-mix(in srgb, var(--b-high) 56%, transparent);
+  transform: translateY(-0.08rem);
 }
 
 .syn-link {
-  text-decoration: none;
+  display: block;
   color: var(--f-high);
-  display: inline;
-  line-height: 1.45;
-}
-
-.syn-link:hover .syn-msg {
-  text-decoration: underline;
-  text-decoration-color: var(--f-low);
-  text-underline-offset: 3px;
-}
-
-.syn-hash {
-  color: var(--accent);
-  font-size: 0.78rem;
-  margin-right: 0.6rem;
-  opacity: 0.7;
+  padding: 0.78rem 0.86rem 0.68rem;
+  text-decoration: none;
+  text-align: center;
 }
 
 .syn-msg {
-  font-weight: 600;
-  font-size: 0.88rem;
-  transition: text-decoration 0.15s;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.05rem, 2.3vw, 1.28rem);
+  font-weight: 700;
+  line-height: 1.15;
 }
 
-/* ── Metadata ── */
+.syn-link:hover .syn-msg {
+  color: var(--accent);
+}
+
+.syn-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  border-block: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
+  background: transparent;
+  color: color-mix(in srgb, var(--f-low) 68%, transparent);
+  font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+  padding: 0.48rem 0.7rem;
+  text-transform: uppercase;
+}
+
+.syn-card p {
+  margin: 0;
+  color: color-mix(in srgb, var(--f-low) 82%, transparent);
+  font-size: clamp(0.76rem, 1.15vw, 0.84rem);
+  line-height: 1.45;
+  padding: 0.68rem 0.86rem 0;
+}
 
 .syn-meta {
-  font-size: 0.7rem;
-  color: var(--f-low);
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
-  align-items: center;
+  gap: 0.36rem;
+  align-self: end;
+  margin-top: 0;
+  padding: 0.62rem 0.86rem 0.72rem;
+  color: color-mix(in srgb, var(--f-low) 56%, transparent);
+  font-family: Menlo, ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.62rem;
+  line-height: 1.4;
 }
 
 .syn-tag {
   color: var(--accent);
-  opacity: 0.65;
+  opacity: 0.72;
 }
 
-.syn-date {
-  opacity: 0.55;
+.syn-read {
+  margin-left: auto;
+  color: color-mix(in srgb, var(--f-low) 66%, transparent);
+  font-style: italic;
 }
 
-/* ── Filter hide/show ── */
-
-.syn-entry[data-hidden] {
-  display: none;
-}
-
+.syn-entry[data-hidden],
 .syn-year[data-hidden] {
   display: none;
 }
 
-/* ── Responsive ── */
+@media (prefers-reduced-motion: reduce) {
+  .syn-chip,
+  .syn-search,
+  .syn-search input,
+  .syn-card {
+    transition: none;
+  }
 
-@media (max-width: 480px) {
+  .syn-entry:hover .syn-card {
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
   .syn {
-    padding: 1.5rem 0 3rem;
+    padding: 1.2rem 0 3rem;
   }
 
   .syn-search-row {
@@ -301,25 +307,7 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
   }
 
-  .syn-entry {
-    padding-left: 1.4rem;
-  }
-
-  .syn-year-label {
-    padding-left: 1.4rem;
-  }
-
-  .syn-dot {
-    width: 8px;
-    height: 8px;
-    left: 2px;
-  }
-
-  .syn-hash {
-    display: none;
-  }
-
-  .syn-ref {
-    display: none;
+  .syn-year {
+    grid-template-columns: 1fr;
   }
 }
