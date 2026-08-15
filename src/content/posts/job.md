@@ -54,8 +54,12 @@ manage linux server's, providing technical support and so on.
 
 ## Moving on
 
+<aside class="marginalia" data-note="miss the boys ♥">
+
 I've my **USA** flight soon within a very few weeks. I took resign from the job
 but i miss the boys i met there. They were absolute amazing people. I wish to
 work with them later and forever.
+
+</aside>
 
 <!-- links -->

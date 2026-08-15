@@ -16,27 +16,27 @@
   color: var(--writing-scratch-strong);
   font-weight: 700;
   text-decoration: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='180' height='16' viewBox='0 0 180 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 11.4C28 7.6 45 12.6 67 9.5C94 5.7 113 11 139 8.2C153 6.7 166 7 177 8.6' stroke='%23c4a7e7' stroke-width='4.2' stroke-linecap='round'/%3E%3Cpath d='M4 13.2C39 10.3 69 12 91 9.9C116 7.5 144 11.1 176 7.4' stroke='%23c4a7e7' stroke-width='1.8' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='12' viewBox='0 0 60 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 7 Q15 3 30 7 T60 7' stroke='%23c4a7e7' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
   background-position: 0 100%;
   background-repeat: repeat-x;
-  background-size: 10rem 0.62em;
-  padding-bottom: 0.08em;
+  background-size: 3.6rem 0.5em;
+  padding-bottom: 0.06em;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
 
 .light .writing-copy .prose.prose-custom strong,
 .light:root .writing-copy .prose.prose-custom strong {
-  background-image: url("data:image/svg+xml,%3Csvg width='180' height='16' viewBox='0 0 180 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 11.4C28 7.6 45 12.6 67 9.5C94 5.7 113 11 139 8.2C153 6.7 166 7 177 8.6' stroke='%23b78a7c' stroke-width='4.2' stroke-linecap='round'/%3E%3Cpath d='M4 13.2C39 10.3 69 12 91 9.9C116 7.5 144 11.1 176 7.4' stroke='%23b78a7c' stroke-width='1.8' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='12' viewBox='0 0 60 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 7 Q15 3 30 7 T60 7' stroke='%23b78a7c' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
 .writing-copy .prose.prose-custom em {
-  color: color-mix(in srgb, var(--f-high) 82%, var(--accent));
+  color: color-mix(in srgb, var(--f-high) 78%, var(--accent));
   font-family: "Caveat", cursive;
-  font-size: 1.28em;
+  font-size: 1.16em;
   font-style: normal;
   font-weight: 700;
-  line-height: 0;
+  letter-spacing: 0.01em;
 }
 
 .writing-copy .prose.prose-custom a {
@@ -50,14 +50,22 @@
   text-underline-offset: 0.25em;
 }
 
+/* internal links get a little paw print (follow the cat deeper in) */
 .writing-copy .prose.prose-custom a:not([data-external])::after {
-  content: " ->";
-  color: var(--accent);
-  font-family: var(--font-mono, Menlo, monospace);
-  font-size: 0.72em;
-  font-style: normal;
-  font-weight: 700;
-  white-space: nowrap;
+  content: "";
+  display: inline-block;
+  width: 0.78em;
+  height: 0.78em;
+  margin-left: 0.22em;
+  vertical-align: -0.05em;
+  background-color: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='%23000'%3E%3Cellipse cx='12' cy='16.6' rx='5.2' ry='4.2'/%3E%3Ccircle cx='5.4' cy='11.4' r='2.1'/%3E%3Ccircle cx='9.5' cy='7.7' r='2.2'/%3E%3Ccircle cx='14.5' cy='7.7' r='2.2'/%3E%3Ccircle cx='18.6' cy='11.4' r='2.1'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='%23000'%3E%3Cellipse cx='12' cy='16.6' rx='5.2' ry='4.2'/%3E%3Ccircle cx='5.4' cy='11.4' r='2.1'/%3E%3Ccircle cx='9.5' cy='7.7' r='2.2'/%3E%3Ccircle cx='14.5' cy='7.7' r='2.2'/%3E%3Ccircle cx='18.6' cy='11.4' r='2.1'/%3E%3C/svg%3E") no-repeat center / contain;
+  transition: transform 0.2s ease;
+}
+
+.writing-copy .prose.prose-custom a:not([data-external]):hover::after {
+  transform: translateY(-0.14em) rotate(-8deg);
 }
 
 .writing-copy .prose.prose-custom a[data-external] {
@@ -66,20 +74,26 @@
   text-decoration-style: dotted;
 }
 
+/* external links get a paper plane (this one flies you elsewhere) */
 .writing-copy .prose.prose-custom a[data-external]::after {
-  content: "↗";
-  color: var(--accent);
-  font-family: Menlo, monospace;
-  font-size: 0.72em;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: 0;
-  margin-left: 0.18em;
-  white-space: nowrap;
+  content: "";
+  display: inline-block;
+  width: 0.82em;
+  height: 0.82em;
+  margin-left: 0.24em;
+  vertical-align: -0.02em;
+  background-color: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='%23000'%3E%3Cpath d='M22 2 15 22 11 13 2 9Z'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='%23000'%3E%3Cpath d='M22 2 15 22 11 13 2 9Z'/%3E%3C/svg%3E") no-repeat center / contain;
+  transition: transform 0.2s ease;
 }
 
 .writing-copy .prose.prose-custom a[data-external]:hover {
   text-decoration-style: solid;
+}
+
+.writing-copy .prose.prose-custom a[data-external]:hover::after {
+  transform: translate(0.2em, -0.16em) rotate(6deg);
 }
 
 .writing-copy .prose.prose-custom a:hover {
@@ -101,13 +115,13 @@
 .writing-copy .prose.prose-custom mark {
   color: var(--f-high);
   background: linear-gradient(
-    104deg,
-    transparent 0.2em,
-    color-mix(in srgb, #f6c177 42%, transparent) 0.25em 88%,
-    transparent 88.5%
+    100deg,
+    transparent 0.1em,
+    color-mix(in srgb, #f6c177 36%, transparent) 0.55em 90%,
+    transparent 97%
   );
   border-radius: 999px;
-  padding: 0.02em 0.34em 0.08em;
+  padding: 0.02em 0.4em 0.08em;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
@@ -141,6 +155,62 @@
 .writing-copy .prose.prose-custom blockquote p {
   margin: 0;
   color: var(--f-high);
+}
+
+/* marginalia: a handwritten note about a paragraph. author it as
+   <aside class="marginalia" data-note="...">  (blank line)  paragraph  (blank
+   line)  </aside>. small screens tuck the note below, right-aligned; wide
+   screens float it into the right gutter with a bracket beside the paragraph. */
+.writing-copy .prose.prose-custom .marginalia {
+  position: relative;
+}
+
+.writing-copy .prose.prose-custom .marginalia::after {
+  content: attr(data-note);
+  display: block;
+  width: fit-content;
+  max-width: 20rem;
+  margin: 0.35rem 0.1rem 0 auto;
+  color: color-mix(in srgb, var(--f-low) 60%, var(--accent));
+  font-family: "Caveat", cursive;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: right;
+  transform: rotate(-1deg);
+  pointer-events: none;
+}
+
+.writing-copy .prose.prose-custom .marginalia::before {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .writing-copy .prose.prose-custom .marginalia::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0.15em;
+    bottom: 0.15em;
+    left: calc(100% + 1.15rem);
+    width: 0.7rem;
+    border: 2px solid color-mix(in srgb, var(--accent) 52%, transparent);
+    border-left: 0;
+    border-radius: 0 10px 10px 0;
+    pointer-events: none;
+  }
+
+  .writing-copy .prose.prose-custom .marginalia::after {
+    position: absolute;
+    top: -0.1em;
+    left: calc(100% + 2.35rem);
+    width: 10rem;
+    max-width: none;
+    margin: 0;
+    text-align: left;
+    font-size: 1.4rem;
+    transform: rotate(-1.5deg);
+  }
 }
 
 .writing-copy .prose.prose-custom :not(pre) > code {
@@ -249,6 +319,7 @@
 .writing-copy .prose.prose-custom sup a::after,
 .writing-copy .prose.prose-custom .footnotes a::after {
   content: "";
+  display: none;
 }
 
 @media (max-width: 480px) {
@@ -265,7 +336,7 @@
 
 @media (prefers-color-scheme: light) {
   .writing-copy .prose.prose-custom strong {
-    background-image: url("data:image/svg+xml,%3Csvg width='180' height='16' viewBox='0 0 180 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 11.4C28 7.6 45 12.6 67 9.5C94 5.7 113 11 139 8.2C153 6.7 166 7 177 8.6' stroke='%23b78a7c' stroke-width='4.2' stroke-linecap='round'/%3E%3Cpath d='M4 13.2C39 10.3 69 12 91 9.9C116 7.5 144 11.1 176 7.4' stroke='%23b78a7c' stroke-width='1.8' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='12' viewBox='0 0 60 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 7 Q15 3 30 7 T60 7' stroke='%23b78a7c' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
   }
 
   .writing-copy .prose.prose-custom hr {
@@ -274,7 +345,7 @@
 
   .dark .writing-copy .prose.prose-custom strong,
   .dark:root .writing-copy .prose.prose-custom strong {
-    background-image: url("data:image/svg+xml,%3Csvg width='180' height='16' viewBox='0 0 180 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 11.4C28 7.6 45 12.6 67 9.5C94 5.7 113 11 139 8.2C153 6.7 166 7 177 8.6' stroke='%23c4a7e7' stroke-width='4.2' stroke-linecap='round'/%3E%3Cpath d='M4 13.2C39 10.3 69 12 91 9.9C116 7.5 144 11.1 176 7.4' stroke='%23c4a7e7' stroke-width='1.8' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='12' viewBox='0 0 60 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 7 Q15 3 30 7 T60 7' stroke='%23c4a7e7' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
   }
 
   .dark .writing-copy .prose.prose-custom hr,

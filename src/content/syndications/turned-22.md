@@ -7,11 +7,14 @@ tags: [life]
 
 yerp, turned 22 today.
 
-i was asleep at home (**_too much coding the day before, i'm training a
-small llm on my own hardware for fun btw_**) when my friends showed up
-with a cake and gifts. i was surprised but also kinda knew something
-was coming, we always plan surprises for each other in our circle.
-they watched football while i lay in bed half-dead.
+<aside class="marginalia" data-note="too much coding the day before — training a small llm on my own hardware, for fun">
+
+i was asleep at home when my friends showed up with a cake and gifts. i
+was surprised but also kinda knew something was coming, we always plan
+surprises for each other in our circle. they watched football while i
+lay in bed half-dead.
+
+</aside>
 
 the cake was mango flavored and genuinely so smooth. after cake and gifts we
 went out for dinner, came home, slept.

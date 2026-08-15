@@ -252,10 +252,13 @@ fail.</mark>
 
 ## Bending packages without forking
 
-This is the moment Nix stopped being a package manager to me and became a
-build system I could reach into. Every package exposes `override` (change its
-*inputs*) and `overrideAttrs` (change its *build*). You patch someone else's
-package inline, no fork, no maintaining a copy:
+<aside class="marginalia" data-note="the moment nix stopped being a package manager to me">
+
+Every package exposes `override` (change its *inputs*) and `overrideAttrs`
+(change its *build*). You patch someone else's package inline, no fork, no
+maintaining a copy:
+
+</aside>
 
 ```nix
 # add a patch and a build flag to upstream `hello`, in place
