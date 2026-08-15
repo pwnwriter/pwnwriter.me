@@ -45,6 +45,13 @@ const links = [
 </Wrapper>
 
 <style>
+  /* sit above the bottom edge-blur (z-10) so the footer stays crisp at the end
+     of the page while the blur still softens body content mid-scroll. */
+  footer {
+    position: relative;
+    z-index: 11;
+  }
+
   .footer-chip {
     display: inline-block;
     padding: 0.2rem 0.65rem;

@@ -22,7 +22,7 @@ let subpathList = subpaths.reduce(
 );
 ---
 
-<header class="sticky top-0 z-20 mt-xl bg-background py-2">
+<header class="site-header sticky top-0 z-20 mt-8 py-2">
 	<nav class="relative">
 		<div
 			class="absolute -top-4 left-0 h-14 w-8 bg-gradient-to-r from-background"
@@ -59,6 +59,29 @@ let subpathList = subpaths.reduce(
 		</div>
 	</nav>
 </header>
+
+<style>
+	/* frosted glass: content ghosts through the sticky header as you scroll,
+	   pairing with the viewport edge blur. */
+	.site-header {
+		background: color-mix(in srgb, var(--background) 66%, transparent);
+		backdrop-filter: blur(12px) saturate(1.35);
+		-webkit-backdrop-filter: blur(12px) saturate(1.35);
+		border-bottom: 1px solid color-mix(in srgb, var(--f-low) 7%, transparent);
+	}
+
+	/* the crumb-overflow fades should melt from the glass, not a solid slab */
+	.site-header nav > div:first-of-type,
+	.site-header nav > div:nth-of-type(2) {
+		background-image: none;
+	}
+
+	@supports not (backdrop-filter: blur(1px)) {
+		.site-header {
+			background: var(--background);
+		}
+	}
+</style>
 
 <script>
 	const ICONS: Record<string, string> = {

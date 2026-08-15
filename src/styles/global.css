@@ -95,6 +95,9 @@ body {
 html {
   scroll-behavior: smooth;
   touch-action: manipulation;
+  /* kill the elastic overscroll bounce so the fixed edge-blur never exposes a
+     gap when you fling the page past the top/bottom. */
+  overscroll-behavior-y: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

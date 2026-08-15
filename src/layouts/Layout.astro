@@ -83,6 +83,17 @@ const pageTitle = `${title} · pwn`;
 		<div class="h-xl"></div>
 		<Footer />
 
+		<div class="edge-blur edge-blur--top" aria-hidden="true">
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+		<div class="edge-blur edge-blur--bottom" aria-hidden="true">
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+
 		<KeyboardNav />
 		<VimIndicator />
 		<Branches />
@@ -90,3 +101,85 @@ const pageTitle = `${title} · pwn`;
 		<CursorEffects />
 	</body>
 </html>
+
+<style>
+	/* progressive edge blur: content softly blurs + fades toward the top and
+	   bottom of the viewport. three stacked layers give a graduated falloff
+	   (light blur across the whole band, heavier blur concentrated at the edge). */
+	.edge-blur {
+		position: fixed;
+		left: 0;
+		right: 0;
+		z-index: 10;
+		height: 160px;
+		pointer-events: none;
+	}
+
+	.edge-blur > div {
+		position: absolute;
+		inset: 0;
+	}
+
+	.edge-blur--top {
+		top: 0;
+	}
+
+	.edge-blur--bottom {
+		bottom: 0;
+		height: 120px;
+	}
+
+	/* --- top edge: strongest at the very top, easing to sharp below --- */
+	.edge-blur--top > div:nth-child(1) {
+		backdrop-filter: blur(2.5px);
+		-webkit-backdrop-filter: blur(2.5px);
+		-webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+		mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+	}
+
+	.edge-blur--top > div:nth-child(2) {
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		-webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 58%);
+		mask-image: linear-gradient(to bottom, #000 0%, transparent 58%);
+	}
+
+	.edge-blur--top > div:nth-child(3) {
+		backdrop-filter: blur(18px);
+		-webkit-backdrop-filter: blur(18px);
+		-webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 32%);
+		mask-image: linear-gradient(to bottom, #000 0%, transparent 32%);
+	}
+
+	/* --- bottom edge: mirror of the top --- */
+	.edge-blur--bottom > div:nth-child(1) {
+		backdrop-filter: blur(2.5px);
+		-webkit-backdrop-filter: blur(2.5px);
+		-webkit-mask-image: linear-gradient(to top, #000 0%, transparent 100%);
+		mask-image: linear-gradient(to top, #000 0%, transparent 100%);
+	}
+
+	.edge-blur--bottom > div:nth-child(2) {
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		-webkit-mask-image: linear-gradient(to top, #000 0%, transparent 58%);
+		mask-image: linear-gradient(to top, #000 0%, transparent 58%);
+	}
+
+	.edge-blur--bottom > div:nth-child(3) {
+		backdrop-filter: blur(18px);
+		-webkit-backdrop-filter: blur(18px);
+		-webkit-mask-image: linear-gradient(to top, #000 0%, transparent 32%);
+		mask-image: linear-gradient(to top, #000 0%, transparent 32%);
+	}
+
+	@media (max-width: 640px) {
+		.edge-blur--top {
+			height: 110px;
+		}
+
+		.edge-blur--bottom {
+			height: 88px;
+		}
+	}
+</style>
