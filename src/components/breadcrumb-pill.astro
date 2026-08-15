@@ -1,0 +1,735 @@
+---
+// Floating heading breadcrumb: a frosted pill under the header that tracks the
+// current section as you scroll and opens a sibling-picker card on click.
+// No-ops on pages whose article has no headings (e.g. most syndications).
+---
+
+<div id="crumb-pill" class="crumb-pill" aria-hidden="true">
+	<span class="crumb-pill__home">§</span>
+	<ol id="crumb-pill-track" class="crumb-pill__track"></ol>
+	<button
+		id="crumb-pill-current"
+		class="crumb-pill__current"
+		type="button"
+		aria-expanded="false"
+		aria-label="Jump to section"
+	>
+		<span class="cicon">✦</span>
+		<span class="lbl"></span>
+		<span class="chev">▾</span>
+	</button>
+</div>
+
+<style>
+	.crumb-pill {
+		position: fixed;
+		top: 3.4rem;
+		left: 50%;
+		z-index: 15;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		max-width: min(92vw, 42rem);
+		padding: 0.38rem 0.75rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--background) 72%, transparent);
+		backdrop-filter: blur(12px) saturate(1.4);
+		-webkit-backdrop-filter: blur(12px) saturate(1.4);
+		border: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
+		box-shadow: 0 10px 30px -18px color-mix(in srgb, var(--f-high) 70%, transparent);
+		font-family: Menlo, Consolas, monospace;
+		font-size: 0.78rem;
+		color: var(--f-low);
+		opacity: 0;
+		visibility: hidden;
+		transform: translateX(-50%) translateY(-8px);
+		transition:
+			opacity 0.22s ease,
+			transform 0.22s ease,
+			visibility 0.22s;
+		pointer-events: none;
+	}
+
+	.crumb-pill.is-visible {
+		opacity: 1;
+		visibility: visible;
+		transform: translateX(-50%) translateY(0);
+		pointer-events: auto;
+	}
+
+	.crumb-pill__home {
+		flex-shrink: 0;
+		color: var(--accent);
+	}
+
+	.crumb-pill__track {
+		display: flex;
+		align-items: center;
+		gap: 0.1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.crumb-pill__track::-webkit-scrollbar {
+		display: none;
+	}
+
+	:global(.crumb-pill__track .sep) {
+		margin: 0 0.15rem;
+		color: color-mix(in srgb, var(--f-low) 45%, transparent);
+	}
+
+	:global(.crumb-pill__track .cicon) {
+		margin-right: 0.25rem;
+		color: var(--accent);
+	}
+
+	:global(.crumb-pill__track button) {
+		padding: 0.1rem 0.28rem;
+		border: 0;
+		border-radius: 5px;
+		background: none;
+		color: var(--f-high);
+		font: inherit;
+		white-space: nowrap;
+		cursor: pointer;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
+	}
+
+	:global(.crumb-pill__track button:hover) {
+		background: color-mix(in srgb, var(--accent) 14%, transparent);
+		color: var(--accent);
+	}
+
+	/* the article title as the root, struck through with the same hand-drawn
+	   squiggle that markdown ~~del~~ uses in the prose: "you've scrolled past this" */
+	:global(.crumb-pill__track .crumb-title) {
+		color: color-mix(in srgb, var(--f-low) 72%, transparent);
+		text-decoration: none;
+		background-image: url("data:image/svg+xml,%3Csvg width='140' height='18' viewBox='0 0 140 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 9.5C18 7.7 31 10.4 47 8.6C65 6.6 81 11.1 98 8.8C113 6.8 125 9.2 138 7.6' stroke='%23eb6f92' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M4 12.7C28 8.2 51 11.5 75 9.3C99 7 117 10.2 136 8.4' stroke='%23eb6f92' stroke-width='1.6' stroke-linecap='round' opacity='.75'/%3E%3C/svg%3E");
+		background-position: 0 56%;
+		background-repeat: repeat-x;
+		background-size: 5.5rem 0.72em;
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
+	}
+
+	:global(.crumb-pill__track .crumb-title:hover) {
+		color: var(--accent);
+		background-color: color-mix(in srgb, var(--accent) 12%, transparent);
+	}
+
+	/* mobile: collapse to current-section button + tap-to-open TOC */
+	.crumb-pill__current {
+		display: none;
+		flex: 1;
+		min-width: 0;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.15rem 0.3rem;
+		border: 0;
+		background: none;
+		color: var(--f-high);
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.crumb-pill__current .cicon {
+		flex-shrink: 0;
+		color: var(--accent);
+	}
+
+	.crumb-pill__current .lbl {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		text-align: left;
+	}
+
+	.crumb-pill__current .chev {
+		flex-shrink: 0;
+		color: color-mix(in srgb, var(--f-low) 60%, transparent);
+		transition: transform 0.2s ease;
+	}
+
+	.crumb-pill.is-open .crumb-pill__current .chev {
+		transform: rotate(180deg);
+	}
+
+	@media (max-width: 640px) {
+		.crumb-pill {
+			left: 0.6rem;
+			right: 0.6rem;
+			max-width: none;
+			transform: translateY(-8px);
+		}
+
+		.crumb-pill.is-visible {
+			transform: translateY(0);
+		}
+
+		.crumb-pill__track {
+			display: none;
+		}
+
+		.crumb-pill__current {
+			display: flex;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.crumb-pill,
+		.crumb-pill__current .chev {
+			transition: none;
+		}
+	}
+
+	/* mobile table-of-contents panel */
+	:global(.crumb-toc) {
+		position: fixed;
+		z-index: 60;
+		max-height: 60vh;
+		overflow-y: auto;
+		padding: 0.3rem;
+		border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
+		border-radius: 0.8rem;
+		background: color-mix(in srgb, var(--b-med) 90%, transparent);
+		backdrop-filter: blur(16px) saturate(1.4);
+		-webkit-backdrop-filter: blur(16px) saturate(1.4);
+		box-shadow: 0 18px 46px -20px color-mix(in srgb, var(--f-high) 80%, transparent);
+		font-family: Menlo, Consolas, monospace;
+		font-size: 0.85rem;
+	}
+
+	:global(.crumb-toc__item) {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.55rem 0.6rem;
+		border-radius: 0.5rem;
+		color: var(--f-low);
+		text-decoration: none;
+	}
+
+	:global(.crumb-toc__item .ic) {
+		flex-shrink: 0;
+		color: var(--accent);
+	}
+
+	:global(.crumb-toc__item .lb) {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	:global(.crumb-toc__item .dot) {
+		flex-shrink: 0;
+		color: var(--accent);
+		font-size: 0.6em;
+		opacity: 0;
+	}
+
+	:global(.crumb-toc__item.lvl-h3) {
+		padding-left: 1.5rem;
+	}
+
+	:global(.crumb-toc__item.lvl-h4) {
+		padding-left: 2.4rem;
+	}
+
+	:global(.crumb-toc__item.is-current) {
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
+		color: var(--f-high);
+	}
+
+	:global(.crumb-toc__item.is-current .dot) {
+		opacity: 1;
+	}
+
+	/* the sibling-picker card */
+	:global(.crumb-pick) {
+		position: fixed;
+		z-index: 60;
+		min-width: 12rem;
+		max-width: 22rem;
+		max-height: 16rem;
+		overflow-y: auto;
+		padding: 0.3rem;
+		border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
+		border-radius: 0.7rem;
+		background: color-mix(in srgb, var(--b-med) 86%, transparent);
+		backdrop-filter: blur(14px) saturate(1.4);
+		-webkit-backdrop-filter: blur(14px) saturate(1.4);
+		box-shadow: 0 16px 44px -20px color-mix(in srgb, var(--f-high) 80%, transparent);
+		font-family: Menlo, Consolas, monospace;
+		font-size: 0.82rem;
+	}
+
+	:global(.crumb-pick a) {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.4rem 0.6rem;
+		border-radius: 0.45rem;
+		color: var(--f-low);
+		text-decoration: none;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		outline: none;
+	}
+</style>
+
+<script>
+	const ICONS: Record<string, string> = {
+		H2: '✦',
+		H3: '✧',
+		H4: '∙',
+	};
+	const SEP = '›';
+	const LEADER_TIMEOUT = 300;
+
+	function initCrumbPill() {
+		const pill = document.getElementById('crumb-pill');
+		const container = document.getElementById('crumb-pill-track');
+		const prose = document.querySelector('.prose');
+		if (!pill || !container || !prose) return;
+
+		const headings = Array.from(
+			prose.querySelectorAll('h2, h3, h4'),
+		) as HTMLElement[];
+		if (!headings.length) return;
+
+		const titleEl = document.querySelector('main h1') as HTMLElement | null;
+		const titleText = titleEl?.textContent?.trim() || '';
+
+		function positionPill() {
+			const header = document.querySelector('.site-header');
+			if (header)
+				pill!.style.top = header.getBoundingClientRect().height + 10 + 'px';
+		}
+		positionPill();
+		window.addEventListener('resize', positionPill, { passive: true });
+
+		// --- mobile: collapsed current-section button + full TOC panel ---
+		const currentBtn = document.getElementById('crumb-pill-current');
+		let toc: HTMLElement | null = null;
+
+		function buildToc() {
+			const panel = document.createElement('div');
+			panel.className = 'crumb-toc';
+			headings.forEach((h) => {
+				const a = document.createElement('a');
+				a.href = h.id ? `#${h.id}` : '#';
+				a.className = 'crumb-toc__item lvl-' + h.tagName.toLowerCase();
+				a.dataset.hid = h.id || '';
+
+				const ic = document.createElement('span');
+				ic.className = 'ic';
+				ic.textContent = ICONS[h.tagName] || ICONS.H4;
+
+				const lb = document.createElement('span');
+				lb.className = 'lb';
+				lb.textContent = h.textContent?.trim() || '';
+
+				const dot = document.createElement('span');
+				dot.className = 'dot';
+				dot.textContent = '●';
+
+				a.append(ic, lb, dot);
+				a.addEventListener('click', (e) => {
+					e.preventDefault();
+					closeToc();
+					if (h.id)
+						document
+							.getElementById(h.id)
+							?.scrollIntoView({ behavior: 'smooth' });
+				});
+				panel.appendChild(a);
+			});
+			return panel;
+		}
+
+		function positionToc() {
+			if (!toc) return;
+			const r = pill!.getBoundingClientRect();
+			toc.style.top = r.bottom + 6 + 'px';
+			toc.style.left = r.left + 'px';
+			toc.style.width = r.width + 'px';
+		}
+
+		function highlightToc() {
+			if (!toc) return;
+			const active = getActiveHeadings();
+			const currentId = active.length ? active[active.length - 1].id : '';
+			toc.querySelectorAll('.crumb-toc__item').forEach((el) => {
+				el.classList.toggle(
+					'is-current',
+					!!currentId && (el as HTMLElement).dataset.hid === currentId,
+				);
+			});
+		}
+
+		function openToc() {
+			if (toc) return;
+			toc = buildToc();
+			document.body.appendChild(toc);
+			positionToc();
+			highlightToc();
+			currentBtn?.setAttribute('aria-expanded', 'true');
+			pill!.classList.add('is-open');
+		}
+
+		function closeToc() {
+			toc?.remove();
+			toc = null;
+			currentBtn?.setAttribute('aria-expanded', 'false');
+			pill!.classList.remove('is-open');
+		}
+
+		currentBtn?.addEventListener('click', (e) => {
+			e.stopPropagation();
+			if (toc) closeToc();
+			else openToc();
+		});
+		window.addEventListener('resize', positionToc, { passive: true });
+		document.addEventListener('click', (e) => {
+			if (!toc) return;
+			const t = e.target as Node;
+			if (toc.contains(t) || currentBtn?.contains(t)) return;
+			closeToc();
+		});
+
+		let activePicker: HTMLElement | null = null;
+		let activeCrumbIdx = -1;
+		let pickerFocusIdx = -1;
+		let pickerItems: HTMLAnchorElement[] = [];
+		let crumbs: { wrap: HTMLElement; heading: HTMLElement }[] = [];
+		let leaderPending = false;
+		let leaderTimer: ReturnType<typeof setTimeout> | null = null;
+
+		function closePicker() {
+			activePicker?.remove();
+			activePicker = null;
+			pickerItems = [];
+			pickerFocusIdx = -1;
+			activeCrumbIdx = -1;
+		}
+
+		function getSiblings(target: HTMLElement): HTMLElement[] {
+			const tag = target.tagName;
+			if (tag === 'H2') return headings.filter((h) => h.tagName === 'H2');
+
+			const parentTag = tag === 'H3' ? 'H2' : 'H3';
+			let parent: HTMLElement | null = null;
+			for (const h of headings) {
+				if (h === target) break;
+				if (h.tagName === parentTag) parent = h;
+			}
+
+			const siblings: HTMLElement[] = [];
+			let inScope = !parent;
+			for (const h of headings) {
+				if (h === parent) {
+					inScope = true;
+					continue;
+				}
+				if (inScope && h.tagName === parentTag) break;
+				if (inScope && h.tagName === tag) siblings.push(h);
+			}
+			return siblings;
+		}
+
+		function highlightItem(idx: number) {
+			pickerItems.forEach((item, i) => {
+				const indicator = item.querySelector('span:first-child') as HTMLElement;
+				const label = item.querySelector('span:last-child') as HTMLElement;
+				const active = i === idx;
+				item.style.background = active ? 'var(--b-high)' : 'transparent';
+				if (indicator)
+					indicator.style.color = active ? 'var(--accent)' : 'transparent';
+				if (label) label.style.color = active ? 'var(--accent)' : 'var(--f-low)';
+				if (active) item.scrollIntoView({ block: 'nearest' });
+			});
+		}
+
+		function openPickerAt(crumbIdx: number) {
+			closePicker();
+			if (crumbIdx < 0 || crumbIdx >= crumbs.length) return;
+
+			activeCrumbIdx = crumbIdx;
+			const { wrap, heading: target } = crumbs[crumbIdx];
+			const siblings = getSiblings(target);
+			if (siblings.length <= 1) return;
+
+			const picker = document.createElement('div');
+			picker.className = 'crumb-pick';
+			const btnRect = wrap.getBoundingClientRect();
+			picker.style.top = btnRect.bottom + 6 + 'px';
+			picker.style.left = btnRect.left + 'px';
+
+			pickerFocusIdx = -1;
+			pickerItems = [];
+
+			siblings.forEach((h, si) => {
+				const isActive = h === target;
+				if (isActive) pickerFocusIdx = si;
+
+				const text = h.textContent?.trim() || '';
+				const item = document.createElement('a');
+				item.href = h.id ? `#${h.id}` : '#';
+				item.title = text;
+
+				const indicator = document.createElement('span');
+				indicator.textContent = SEP;
+				indicator.style.cssText =
+					'flex-shrink: 0; font-weight: bold; color: transparent; width: 0.75rem;';
+
+				const iconSpan = document.createElement('span');
+				iconSpan.textContent = ICONS[h.tagName] || ICONS.H4;
+				iconSpan.style.cssText = 'flex-shrink: 0; color: var(--accent);';
+
+				const label = document.createElement('span');
+				label.textContent = text;
+				label.style.cssText =
+					'overflow: hidden; text-overflow: ellipsis; color: var(--f-low);';
+
+				item.append(indicator, iconSpan, label);
+
+				item.addEventListener('mouseenter', () => {
+					pickerFocusIdx = si;
+					highlightItem(pickerFocusIdx);
+				});
+				item.addEventListener('click', (e) => {
+					e.preventDefault();
+					closePicker();
+					if (h.id)
+						document
+							.getElementById(h.id)
+							?.scrollIntoView({ behavior: 'smooth' });
+				});
+
+				picker.appendChild(item);
+				pickerItems.push(item);
+			});
+
+			document.body.appendChild(picker);
+			highlightItem(pickerFocusIdx);
+			activePicker = picker;
+		}
+
+		function handlePickerKeys(e: KeyboardEvent) {
+			if (!activePicker) return;
+
+			const actions: Record<string, () => void> = {
+				j: () => {
+					pickerFocusIdx = (pickerFocusIdx + 1) % pickerItems.length;
+					highlightItem(pickerFocusIdx);
+				},
+				ArrowDown: () => actions.j(),
+				k: () => {
+					pickerFocusIdx =
+						(pickerFocusIdx - 1 + pickerItems.length) % pickerItems.length;
+					highlightItem(pickerFocusIdx);
+				},
+				ArrowUp: () => actions.k(),
+				h: () => {
+					if (activeCrumbIdx > 0) openPickerAt(activeCrumbIdx - 1);
+				},
+				ArrowLeft: () => actions.h(),
+				l: () => {
+					if (activeCrumbIdx < crumbs.length - 1)
+						openPickerAt(activeCrumbIdx + 1);
+				},
+				ArrowRight: () => actions.l(),
+				Enter: () => pickerItems[pickerFocusIdx]?.click(),
+				Escape: () => closePicker(),
+				q: () => closePicker(),
+			};
+
+			const action = actions[e.key];
+			if (action) {
+				e.preventDefault();
+				action();
+			}
+		}
+
+		document.addEventListener('keydown', handlePickerKeys);
+
+		document.addEventListener('keydown', (e) => {
+			const tag = (e.target as HTMLElement).tagName;
+			if (
+				tag === 'INPUT' ||
+				tag === 'TEXTAREA' ||
+				(e.target as HTMLElement).isContentEditable
+			)
+				return;
+
+			if (e.key === ' ' && !leaderPending) {
+				leaderPending = true;
+				if (leaderTimer) clearTimeout(leaderTimer);
+				leaderTimer = setTimeout(() => {
+					leaderPending = false;
+				}, LEADER_TIMEOUT);
+				return;
+			}
+
+			if (leaderPending && e.key === ';') {
+				e.preventDefault();
+				leaderPending = false;
+				if (leaderTimer) clearTimeout(leaderTimer);
+				if (activePicker) {
+					closePicker();
+				} else if (crumbs.length > 0) {
+					openPickerAt(crumbs.length - 1);
+				}
+				return;
+			}
+
+			leaderPending = false;
+		});
+
+		document.addEventListener('click', (e) => {
+			if (!activePicker) return;
+			const target = e.target as Node;
+			if (activePicker.contains(target)) return;
+			if (crumbs.some((c) => c.wrap.contains(target))) return;
+			closePicker();
+		});
+
+		function getActiveHeadings(): HTMLElement[] {
+			const offset = 120;
+			let active: HTMLElement[] = [];
+
+			for (const heading of headings) {
+				const top = heading.getBoundingClientRect().top + window.scrollY;
+				if (top - offset <= window.scrollY) {
+					const tag = heading.tagName;
+					if (tag === 'H2') {
+						active = [heading];
+					} else if (tag === 'H3') {
+						const h2 = active.find((h) => h.tagName === 'H2');
+						active = h2 ? [h2, heading] : [heading];
+					} else if (tag === 'H4') {
+						const h2 = active.find((h) => h.tagName === 'H2');
+						const h3 = active.find((h) => h.tagName === 'H3');
+						active = [h2, h3, heading].filter(Boolean) as HTMLElement[];
+					}
+				}
+			}
+			return active;
+		}
+
+		function render() {
+			const active = getActiveHeadings();
+			container!.innerHTML = '';
+			crumbs = [];
+
+			pill!.classList.toggle('is-visible', active.length > 0);
+			if (!active.length) {
+				if (activePicker) closePicker();
+				if (toc) closeToc();
+				return;
+			}
+
+			// mobile: reflect the deepest active section in the collapsed pill
+			const deepest = active[active.length - 1];
+			if (currentBtn) {
+				const lbl = currentBtn.querySelector('.lbl') as HTMLElement;
+				const ic = currentBtn.querySelector('.cicon') as HTMLElement;
+				if (lbl) lbl.textContent = deepest.textContent?.trim() || '';
+				if (ic) ic.textContent = ICONS[deepest.tagName] || ICONS.H4;
+			}
+			if (toc) highlightToc();
+
+			// struck-through title root: click to jump back to the top
+			if (titleText) {
+				const li = document.createElement('li');
+				li.style.cssText = 'display: flex; align-items: center;';
+				const btn = document.createElement('button');
+				btn.className = 'crumb-title';
+				btn.textContent =
+					titleText.length > 26 ? titleText.slice(0, 26) + '…' : titleText;
+				if (titleText.length > 26) btn.title = titleText;
+				btn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					closePicker();
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				});
+				li.appendChild(btn);
+				container!.appendChild(li);
+			}
+
+			active.forEach((h, i) => {
+				const isLast = i === active.length - 1;
+				const text = h.textContent?.trim() || '';
+
+				const li = document.createElement('li');
+				li.style.cssText = 'display: flex; align-items: center;';
+
+				if (i > 0 || titleText) {
+					const sep = document.createElement('span');
+					sep.textContent = SEP;
+					sep.className = 'sep';
+					li.appendChild(sep);
+				}
+
+				const icon = document.createElement('span');
+				icon.textContent = ICONS[h.tagName] || ICONS.H4;
+				icon.className = 'cicon';
+
+				const crumbWrap = document.createElement('span');
+				const btn = document.createElement('button');
+
+				const maxLen = isLast ? 30 : 16;
+				btn.textContent =
+					text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
+				if (text.length > maxLen) btn.title = text;
+
+				const crumbIdx = i;
+				btn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					if (activePicker && activeCrumbIdx === crumbIdx) {
+						closePicker();
+					} else {
+						openPickerAt(crumbIdx);
+					}
+				});
+
+				crumbWrap.appendChild(btn);
+				li.append(icon, crumbWrap);
+				container!.appendChild(li);
+				crumbs.push({ wrap: crumbWrap, heading: h });
+			});
+
+			container!.scrollLeft = container!.scrollWidth;
+		}
+
+		let ticking = false;
+		window.addEventListener('scroll', () => {
+			if (!ticking) {
+				requestAnimationFrame(() => {
+					render();
+					ticking = false;
+				});
+				ticking = true;
+			}
+		});
+
+		window.addEventListener('resize', () => render(), { passive: true });
+
+		render();
+	}
+
+	initCrumbPill();
+	document.addEventListener('astro:after-swap', initCrumbPill);
+</script>

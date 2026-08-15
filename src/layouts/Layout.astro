@@ -5,6 +5,7 @@ import Footer from '~/components/footer.astro';
 import KeyboardNav from '~/components/keyboard.astro';
 import VimIndicator from '~/components/vim-indicator.astro';
 import Branches from '~/components/branches.astro';
+import BreadcrumbPill from '~/components/breadcrumb-pill.astro';
 import CatCursor from '~/components/cat-cursor.astro';
 import CursorEffects from '~/components/cursor-effects.astro';
 
@@ -94,6 +95,7 @@ const pageTitle = `${title} · pwn`;
 			<div></div>
 		</div>
 
+		<BreadcrumbPill />
 		<KeyboardNav />
 		<VimIndicator />
 		<Branches />
