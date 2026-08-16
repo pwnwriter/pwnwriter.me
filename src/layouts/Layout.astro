@@ -8,6 +8,7 @@ import Branches from '~/components/branches.astro';
 import BreadcrumbPill from '~/components/breadcrumb-pill.astro';
 import CatCursor from '~/components/cat-cursor.astro';
 import CursorEffects from '~/components/cursor-effects.astro';
+import SelectionBloom from '~/components/selection-bloom.astro';
 
 export interface Props {
 	title: string;
@@ -101,6 +102,7 @@ const pageTitle = `${title} · pwn`;
 		<Branches />
 		<CatCursor />
 		<CursorEffects />
+		<SelectionBloom />
 	</body>
 </html>
 

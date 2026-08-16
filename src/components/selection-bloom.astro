@@ -1,0 +1,185 @@
+---
+// Text-selection bloom: highlight text and small hand-drawn flowers sprout
+// out of the page around the selection — stems grow from each edge, petals
+// open, then everything folds back and fades. Seeded random, never repeats.
+---
+
+<style is:global>
+  .bloom-sprout {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9996;
+    /* anchor the base at (left,top) and lean it outward from the edge */
+    transform: translate(-50%, -100%) rotate(var(--dir, 0deg));
+    transform-origin: bottom center;
+  }
+
+  .bloom-sprout .bloom-grow {
+    width: 100%;
+    height: 100%;
+    transform-origin: bottom center; /* unfurl from the page surface */
+    opacity: 0;
+    animation: sprout-grow 1.8s cubic-bezier(0.22, 1, 0.32, 1) forwards;
+    animation-delay: var(--delay, 0s);
+    will-change: transform, opacity, filter;
+  }
+
+  .bloom-sprout svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  @keyframes sprout-grow {
+    0% {
+      opacity: 0;
+      transform: scale(0.05);
+      filter: blur(1.5px) brightness(0.6);
+    }
+    10% {
+      opacity: 1;
+    }
+    44% {
+      transform: scale(1.09);
+      filter: blur(0) brightness(1);
+    }
+    60% {
+      transform: scale(1);
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.88);
+      filter: blur(0.6px);
+    }
+  }
+</style>
+
+<script>
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Rosé Pine bloom palette + greens for stems & leaves.
+    const PALETTE = ['#eb6f92', '#c4a7e7', '#ebbcba', '#f6c177'];
+    const LEAF = '#9bbb8a';
+    const STEM = '#7ea56a';
+    const INK = 'rgba(25, 23, 36, 0.22)'; // faint inked outline, hand-drawn feel
+
+    // A sprout drawn base-at-bottom (y=H), flower head near the top (y≈10),
+    // joined by a gently curved stem. viewBox is 24 wide, H tall.
+    function sproutSVG(
+      isLeaf: boolean,
+      color: string,
+      petals: number,
+      H: number,
+    ): string {
+      const fCy = 10; // flower centre
+      const bend = Math.random() * 5 - 2.5;
+      const stem =
+        `<path d="M12 ${H} C ${12 + bend} ${(H * 0.62).toFixed(1)}, ` +
+        `${(12 + bend * 1.4).toFixed(1)} ${fCy + 7}, 12 ${fCy + 3}" ` +
+        `fill="none" stroke="${STEM}" stroke-width="1.7" stroke-linecap="round"/>`;
+
+      let head: string;
+      if (isLeaf) {
+        head =
+          `<path d="M12 ${fCy + 6} C6 ${fCy} 6 ${fCy - 8} 12 ${fCy - 9} ` +
+          `C18 ${fCy - 8} 18 ${fCy} 12 ${fCy + 6} Z" ` +
+          `fill="${LEAF}" stroke="${INK}" stroke-width="0.6"/>`;
+      } else {
+        head = '';
+        for (let i = 0; i < petals; i++) {
+          const a = (360 / petals) * i + (Math.random() * 10 - 5);
+          head +=
+            `<ellipse cx="12" cy="${fCy - 6.3}" rx="2.9" ry="4.4" ` +
+            `fill="${color}" stroke="${INK}" stroke-width="0.6" ` +
+            `transform="rotate(${a.toFixed(1)} 12 ${fCy})"/>`;
+        }
+        head += `<circle cx="12" cy="${fCy}" r="2.7" fill="#f6c177" stroke="${INK}" stroke-width="0.6"/>`;
+      }
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 ${H}">${stem}${head}</svg>`;
+    }
+
+    function spawn(x: number, y: number, dir: number, delay: number) {
+      const H = 26 + Math.random() * 11; // stem length in viewBox units
+      const w = 26 + Math.random() * 12; // rendered width
+      const outer = document.createElement('div');
+      outer.className = 'bloom-sprout';
+      outer.style.left = x + 'px';
+      outer.style.top = y + 'px';
+      outer.style.width = w + 'px';
+      outer.style.height = (w * H) / 24 + 'px';
+      outer.style.setProperty('--dir', dir + 'deg');
+
+      const inner = document.createElement('div');
+      inner.className = 'bloom-grow';
+      inner.style.setProperty('--delay', delay + 's');
+      const isLeaf = Math.random() < 0.2;
+      const color = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+      inner.innerHTML = sproutSVG(isLeaf, color, Math.random() < 0.5 ? 5 : 6, H);
+
+      outer.appendChild(inner);
+      document.body.appendChild(outer);
+      setTimeout(() => outer.remove(), 2200 + delay * 1000);
+    }
+
+    function bloom() {
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
+      if (!sel.toString().trim()) return;
+
+      const range = sel.getRangeAt(0);
+      const b = range.getBoundingClientRect();
+      if (b.width < 8) return;
+
+      type Cand = { x: number; y: number; dir: number };
+      const cands: Cand[] = [];
+      const jit = (n: number) => Math.random() * n - n / 2;
+
+      // middle: flowers rise straight up out of each highlighted line
+      for (const r of range.getClientRects()) {
+        if (r.width < 20) continue;
+        for (let x = r.left + 12; x <= r.right - 12; x += 62) {
+          if (Math.random() > 0.62)
+            cands.push({
+              x: x + jit(16),
+              y: r.top + r.height * 0.55 + jit(4),
+              dir: jit(26),
+            });
+        }
+      }
+
+      // top + bottom edges: flowers grow up / down away from the text
+      for (let x = b.left + 6; x <= b.right - 6; x += 46) {
+        if (Math.random() > 0.55)
+          cands.push({ x: x + jit(18), y: b.top + jit(4), dir: jit(36) });
+        if (Math.random() > 0.55)
+          cands.push({ x: x + jit(18), y: b.bottom + jit(4), dir: 180 + jit(36) });
+      }
+      // side ends: a couple growing left / right
+      for (let y = b.top + 6; y <= b.bottom - 6; y += 38) {
+        if (Math.random() > 0.5)
+          cands.push({ x: b.left + jit(4), y: y + jit(8), dir: -90 + jit(30) });
+        if (Math.random() > 0.5)
+          cands.push({ x: b.right + jit(4), y: y + jit(8), dir: 90 + jit(30) });
+      }
+
+      // shuffle + cap so it stays a light touch on big selections
+      for (let i = cands.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cands[i], cands[j]] = [cands[j], cands[i]];
+      }
+      cands.length = Math.min(cands.length, 14);
+
+      // sweep the open left→right so petals unfurl "one at a time"
+      for (const c of cands) {
+        const t = b.width > 0 ? (c.x - b.left) / b.width : 0;
+        spawn(c.x, c.y, c.dir, Math.max(0, t) * 0.32 + Math.random() * 0.08);
+      }
+    }
+
+    document.addEventListener('mouseup', () => requestAnimationFrame(bloom));
+    document.addEventListener('touchend', () => requestAnimationFrame(bloom));
+  }
+</script>
