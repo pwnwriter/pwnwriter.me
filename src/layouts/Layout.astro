@@ -9,14 +9,16 @@ import BreadcrumbPill from '~/components/breadcrumb-pill.astro';
 import CatCursor from '~/components/cat-cursor.astro';
 import CursorEffects from '~/components/cursor-effects.astro';
 import SelectionBloom from '~/components/selection-bloom.astro';
+import ScrollRuler from '~/components/scroll-ruler.astro';
 
 export interface Props {
 	title: string;
 	description: string;
 	image?: string;
+	showRuler?: boolean;
 }
 
-const { title, description, image } = Astro.props;
+const { title, description, image, showRuler = false } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogSlug = Astro.url.pathname.replace(/^\/+|\/+$/g, '') || 'index';
@@ -97,6 +99,7 @@ const pageTitle = `${title} · pwn`;
 		</div>
 
 		<BreadcrumbPill />
+		{showRuler && <ScrollRuler />}
 		<KeyboardNav />
 		<VimIndicator />
 		<Branches />

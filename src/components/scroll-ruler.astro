@@ -1,0 +1,308 @@
+---
+// Vertical scroll-progress ruler pinned to the right edge: a scale of tick
+// marks, with an accent marker + live percentage that tracks the scroll
+// position. Ticks above the marker "fill" like a gauge.
+const TICKS = 48;
+const ticks = Array.from({ length: TICKS + 1 }, (_, i) => ({
+  major: i % 6 === 0,
+}));
+---
+
+<div id="scroll-ruler" class="scroll-ruler" aria-hidden="true">
+  <div class="scroll-ruler__ticks">
+    {ticks.map((t) => <span class={t.major ? 'tick tick--major' : 'tick'} />)}
+  </div>
+  <div class="scroll-ruler__marker">
+    <span class="scroll-ruler__pct">0%</span>
+    <span class="scroll-ruler__line"></span>
+  </div>
+</div>
+
+<!-- phone: the same tick-scale, rotated to a thin bar across the top -->
+<div id="scroll-bar" class="scroll-bar" aria-hidden="true">
+  <div class="scroll-bar__track"></div>
+  <div class="scroll-bar__fill"></div>
+  <div class="scroll-bar__head">
+    <span class="scroll-bar__notch"></span>
+    <span class="scroll-bar__pct">0%</span>
+  </div>
+</div>
+
+<style>
+  .scroll-ruler {
+    position: fixed;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 64vh;
+    width: 56px;
+    z-index: 40;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .scroll-ruler.is-ready {
+    opacity: 1;
+  }
+
+  .scroll-ruler__ticks {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .tick {
+    height: 1px;
+    width: 8px;
+    background: var(--f-low);
+    opacity: 0.22;
+    border-radius: 1px;
+    transition:
+      background-color 0.25s ease,
+      opacity 0.25s ease,
+      width 0.25s ease;
+  }
+
+  .tick--major {
+    width: 15px;
+    opacity: 0.4;
+  }
+
+  /* ticks the marker has scrolled past light up in the accent colour */
+  .tick.passed {
+    background: var(--accent);
+    opacity: 0.55;
+  }
+
+  .tick--major.passed {
+    opacity: 0.85;
+  }
+
+  .scroll-ruler__marker {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transform: translateY(-50%);
+    will-change: top;
+  }
+
+  .scroll-ruler__pct {
+    font-size: 0.72rem;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .scroll-ruler__line {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* ── phone: horizontal tick-bar across the top ───────────────────── */
+  .scroll-bar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    z-index: 40;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .scroll-bar.is-ready {
+    opacity: 1;
+  }
+
+  .scroll-bar__track,
+  .scroll-bar__fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 3px;
+    /* evenly spaced tick notches, echoing the vertical ruler's scale */
+    background-image: repeating-linear-gradient(
+      to right,
+      currentColor 0 1px,
+      transparent 1px 14px
+    );
+  }
+
+  .scroll-bar__track {
+    right: 0;
+    color: var(--f-low);
+    opacity: 0.28;
+  }
+
+  .scroll-bar__fill {
+    width: 0;
+    color: var(--accent);
+    opacity: 0.9;
+  }
+
+  .scroll-bar__head {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .scroll-bar__notch {
+    width: 2px;
+    height: 7px;
+    background: var(--accent);
+    border-radius: 1px;
+  }
+
+  .scroll-bar__pct {
+    margin-top: 2px;
+    font-size: 0.62rem;
+    line-height: 1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* swap between the two below/above 900px */
+  @media (max-width: 900px) {
+    .scroll-ruler {
+      display: none;
+    }
+    .scroll-bar {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  const ruler = document.getElementById('scroll-ruler');
+  const bar = document.getElementById('scroll-bar');
+  if (ruler && bar) {
+    const marker = ruler.querySelector<HTMLElement>('.scroll-ruler__marker')!;
+    const pct = ruler.querySelector<HTMLElement>('.scroll-ruler__pct')!;
+    const ticks = Array.from(ruler.querySelectorAll<HTMLElement>('.tick'));
+    const lastTick = ticks.length - 1;
+
+    const barFill = bar.querySelector<HTMLElement>('.scroll-bar__fill')!;
+    const barHead = bar.querySelector<HTMLElement>('.scroll-bar__head')!;
+    const barPct = bar.querySelector<HTMLElement>('.scroll-bar__pct')!;
+
+    let lastIndex = -1;
+    let raf = 0;
+
+    // ── tiny mechanical "qrr" click each time a tick is passed ──────────
+    let actx: AudioContext | null = null;
+    let noiseBuf: AudioBuffer | null = null;
+    let lastSound = 0;
+
+    function initAudio() {
+      if (actx) return;
+      const AC =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext })
+          .webkitAudioContext;
+      if (!AC) return;
+      actx = new AC();
+      // short burst of white noise we band-pass into a dry click
+      const len = Math.floor(actx.sampleRate * 0.03);
+      noiseBuf = actx.createBuffer(1, len, actx.sampleRate);
+      const data = noiseBuf.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    }
+
+    function playTick() {
+      if (!actx || !noiseBuf) return;
+      const now = performance.now();
+      if (now - lastSound < 28) return; // don't machine-gun on fast scroll
+      lastSound = now;
+      if (actx.state === 'suspended') actx.resume();
+
+      const t = actx.currentTime;
+      const src = actx.createBufferSource();
+      src.buffer = noiseBuf;
+
+      const bp = actx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 1700 + Math.random() * 700;
+      bp.Q.value = 7;
+
+      const g = actx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.09, t + 0.004); // small, but audible
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+
+      src.connect(bp).connect(g).connect(actx.destination);
+      src.start(t);
+      src.stop(t + 0.05);
+    }
+
+    // browsers need a user gesture before audio; arm on first interaction
+    const arm = () => {
+      initAudio();
+      if (actx && actx.state === 'suspended') actx.resume();
+    };
+    ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach((ev) =>
+      window.addEventListener(ev, arm, { once: true, passive: true }),
+    );
+
+    function paint() {
+      raf = 0;
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - window.innerHeight;
+
+      // nothing to scroll → hide both indicators
+      if (scrollable <= 40) {
+        ruler!.classList.remove('is-ready');
+        bar!.classList.remove('is-ready');
+        return;
+      }
+      ruler!.classList.add('is-ready');
+      bar!.classList.add('is-ready');
+
+      const p = Math.min(1, Math.max(0, window.scrollY / scrollable));
+      const label = Math.round(p * 100) + '%';
+
+      // vertical ruler (desktop)
+      marker.style.top = p * 100 + '%';
+      pct.textContent = label;
+
+      // horizontal bar (phone)
+      barFill.style.width = p * 100 + '%';
+      barHead.style.left = p * 100 + '%';
+      barPct.textContent = label;
+
+      // fill every tick at or above the marker
+      const idx = Math.round(p * lastTick);
+      if (idx !== lastIndex) {
+        for (let i = 0; i < ticks.length; i++) {
+          ticks[i].classList.toggle('passed', i <= idx);
+        }
+        if (lastIndex !== -1) playTick(); // skip the initial paint
+        lastIndex = idx;
+      }
+    }
+
+    function onScroll() {
+      if (!raf) raf = requestAnimationFrame(paint);
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    paint();
+  }
+</script>
