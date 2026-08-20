@@ -6,7 +6,7 @@ const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
 // strip markdown to a plain-text excerpt (for notes without a description)
-const excerpt = (body: string, max = 150) => {
+const excerpt = (body = "", max = 150) => {
   const clean = body
     .replace(/```[\s\S]*?```/g, " ")
     .replace(/`([^`]+)`/g, "$1")

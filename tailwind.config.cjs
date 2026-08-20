@@ -13,9 +13,9 @@ module.exports = {
         xl: "6rem",
       },
       fontFamily: {
-        sans: ["Arial", ...fontFamily.sans],
-        serif: ["Georgia", ...fontFamily.serif],
-        mono: ["Menlo", ...fontFamily.mono],
+        sans: ["Departure Mono", "Arial", ...fontFamily.sans],
+        serif: ["Departure Mono", "Georgia", ...fontFamily.serif],
+        mono: ["Departure Mono", "Menlo", ...fontFamily.mono],
       },
       screens: {
         xs: "400px",

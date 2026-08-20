@@ -18,7 +18,7 @@ const formatDate = (date: Date) =>
     year: "numeric",
   });
 
-const cleanMarkdown = (value: string) =>
+const cleanMarkdown = (value = "") =>
   value
     .replace(/```[\s\S]*?```/g, " ")
     .replace(/`([^`]+)`/g, "$1")
@@ -31,7 +31,7 @@ const cleanMarkdown = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-const excerpt = (value: string, maxLength = 130) => {
+const excerpt = (value = "", maxLength = 130) => {
   const cleaned = cleanMarkdown(value);
 
   if (cleaned.length <= maxLength) {
@@ -209,7 +209,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
   .hero-title {
     margin: 0;
     color: var(--f-high);
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
     font-size: clamp(1.8rem, 4.4vw, 2.85rem);
     font-weight: 700;
     line-height: 0.98;
@@ -222,7 +222,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
     gap: 0.01em;
     margin: 0.3rem 0 0;
     color: color-mix(in srgb, var(--f-low) 68%, transparent);
-    font-family: Menlo, Consolas, monospace;
+    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
     font-size: clamp(0.9rem, 2vw, 1.08rem);
     font-weight: 700;
     line-height: 1.2;
@@ -265,7 +265,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
   .writing-head h2 {
     margin: 0;
     color: var(--f-high);
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
     font-size: clamp(1.55rem, 3vw, 2.15rem);
     font-weight: 700;
     line-height: 1;
@@ -311,7 +311,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
     margin: 0 0 0.5rem;
     overflow: hidden;
     color: var(--f-high);
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
     font-size: 1.05rem;
     font-weight: 700;
     line-height: 1.25;
@@ -337,7 +337,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
     gap: 0.45rem;
     margin-top: 0.8rem;
     color: color-mix(in srgb, var(--f-low) 62%, transparent);
-    font-family: Menlo, Consolas, monospace;
+    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
     font-size: 0.7rem;
     line-height: 1.4;
   }
