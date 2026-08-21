@@ -1,0 +1,632 @@
+---
+// Flight log + a live dotted globe. The globe is drawn client-side on a canvas
+// so it can actually rotate: click a flight and the whole sphere spins to
+// centre that route, then a plane traces it. Airports/legs are serialised to
+// the client; all geometry (dots, great-circle arcs) is computed there.
+
+const AP: Record<string, [number, number]> = {
+  KTM: [27.7, 85.36],
+  DOH: [25.27, 51.61],
+  MIA: [25.79, -80.29],
+  BWI: [39.18, -76.67],
+  DCA: [38.85, -77.04],
+  STL: [38.75, -90.37],
+  LAS: [36.08, -115.15],
+  BNA: [36.12, -86.68],
+};
+
+const legs = [
+  { a: "KTM", b: "DOH", recent: false },
+  { a: "DOH", b: "MIA", recent: false },
+  { a: "MIA", b: "BWI", recent: false },
+  { a: "DCA", b: "STL", recent: true },
+  { a: "STL", b: "LAS", recent: true },
+  { a: "LAS", b: "BNA", recent: true },
+  { a: "BNA", b: "DCA", recent: true },
+];
+
+const flights = [
+  { y: 2026, from: "BNA", to: "DCA", route: "Nashville → Washington", date: "aug 8, 2026" },
+  { y: 2026, from: "LAS", to: "BNA", route: "Las Vegas → Nashville", date: "aug 8, 2026" },
+  { y: 2026, from: "STL", to: "LAS", route: "St. Louis → Las Vegas", date: "aug 3, 2026" },
+  { y: 2026, from: "DCA", to: "STL", route: "Washington → St. Louis", date: "aug 3, 2026" },
+  { y: 2024, from: "MIA", to: "BWI", route: "Miami → Baltimore", date: "dec 1, 2024" },
+  { y: 2024, from: "DOH", to: "MIA", route: "Doha → Miami", date: "aug 23, 2024" },
+  { y: 2024, from: "KTM", to: "DOH", route: "Kathmandu → Doha", date: "aug 21, 2024" },
+];
+const years = [...new Set(flights.map((f) => f.y))];
+
+const flData = JSON.stringify({ airports: AP, legs });
+---
+
+<section class="flights" aria-labelledby="flights-title">
+  <div class="fl-head">
+    <h2 id="flights-title">catching flights</h2>
+    <p>kathmandu to here, and every hop since — tap one to watch it fly.</p>
+  </div>
+
+  <div class="fl-grid">
+    <div class="fl-globe" aria-hidden="true">
+      <canvas class="fl-canvas"></canvas>
+    </div>
+
+    <div class="fl-log">
+      {years.map((y) => (
+        <div class="fl-yeargroup">
+          <div class="fl-yearhead">
+            <span>{y}</span>
+            <span class="fl-rule"></span>
+          </div>
+          {flights.filter((f) => f.y === y).map((f) => (
+            <button type="button" class="fl-row" data-leg={`${f.from}-${f.to}`}>
+              <div class="fl-codes">
+                {f.from}<span class="fl-arrow"> to </span>{f.to}
+              </div>
+              <div class="fl-route">{f.route}</div>
+              <div class="fl-date">{f.date}</div>
+            </button>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <script type="application/json" class="fl-data" set:html={flData}></script>
+</section>
+
+<style>
+  .flights {
+    margin-top: 2.25rem;
+    border-top: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
+    padding-top: 1.25rem;
+  }
+
+  .fl-head h2 {
+    margin: 0;
+    color: var(--f-high);
+    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+    font-weight: 700;
+    font-size: clamp(1.35rem, 3.4vw, 1.9rem);
+    line-height: 1;
+  }
+
+  .fl-head p {
+    max-width: 38rem;
+    margin: 0.5rem 0 0;
+    color: color-mix(in srgb, var(--f-low) 78%, transparent);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .fl-grid {
+    display: grid;
+    grid-template-columns: minmax(150px, 220px) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1rem, 4vw, 1.9rem);
+    margin-top: 1.4rem;
+  }
+
+  .fl-globe {
+    position: relative;
+    width: 100%;
+  }
+
+  .fl-globe::before {
+    content: "";
+    position: absolute;
+    inset: -10%;
+    z-index: 0;
+    background: radial-gradient(
+      circle at 50% 48%,
+      color-mix(in srgb, var(--accent) 20%, transparent) 0,
+      transparent 60%
+    );
+    filter: blur(4px);
+    pointer-events: none;
+  }
+
+  .fl-canvas {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  /* --- flight log --- */
+  .fl-log {
+    max-height: 22rem;
+    overflow-y: auto;
+    padding-right: 0.4rem;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--f-low) 30%, transparent) transparent;
+    overscroll-behavior: contain;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 0.9rem,
+      #000 calc(100% - 0.9rem),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 0.9rem,
+      #000 calc(100% - 0.9rem),
+      transparent 100%
+    );
+  }
+
+  .fl-log::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .fl-log::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--f-low) 26%, transparent);
+  }
+
+  .fl-yeargroup + .fl-yeargroup {
+    margin-top: 1.4rem;
+  }
+
+  .fl-yearhead {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.7rem;
+    color: color-mix(in srgb, var(--f-low) 55%, transparent);
+    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+  }
+
+  .fl-rule {
+    flex: 1;
+    height: 0;
+    border-top: 1px dashed color-mix(in srgb, var(--f-low) 22%, transparent);
+  }
+
+  .fl-row {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0.7rem 0.4rem 0.7rem 0.55rem;
+    border: 0;
+    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 14%, transparent);
+    border-left: 2px solid transparent;
+    border-radius: 0 4px 4px 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .fl-row:hover {
+    background: color-mix(in srgb, var(--f-high) 3.5%, transparent);
+    border-left-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .fl-row.is-active {
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    border-left-color: var(--accent);
+  }
+
+  .fl-row:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    outline-offset: 2px;
+  }
+
+  .fl-codes {
+    color: var(--f-high);
+    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .fl-arrow {
+    color: color-mix(in srgb, var(--accent) 80%, var(--f-low));
+    text-transform: lowercase;
+  }
+
+  .fl-route {
+    margin-top: 0.2rem;
+    color: color-mix(in srgb, var(--f-low) 82%, transparent);
+    font-size: 0.9rem;
+  }
+
+  .fl-date {
+    margin-top: 0.28rem;
+    color: color-mix(in srgb, var(--f-low) 48%, transparent);
+    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 720px) {
+    .fl-grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .fl-globe {
+      max-width: 15rem;
+      margin: 0 auto;
+    }
+
+    .fl-log {
+      max-height: 20rem;
+    }
+  }
+</style>
+
+<script>
+  type LL = [number, number];
+  type Sample = { lat: number; lon: number; t: number };
+  type Arc = {
+    id: string;
+    recent: boolean;
+    samples: Sample[];
+    cLat: number;
+    cLon: number;
+    zoom: number;
+  };
+
+  const D2R = Math.PI / 180;
+  const clamp = (x: number, a: number, b: number) => (x < a ? a : x > b ? b : x);
+  const ease = (p: number) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2);
+
+  const base = (lat: number, lon: number): [number, number, number] => [
+    Math.cos(lat * D2R) * Math.cos(lon * D2R),
+    Math.cos(lat * D2R) * Math.sin(lon * D2R),
+    Math.sin(lat * D2R),
+  ];
+  const toLL = (v: number[]): LL => [
+    Math.asin(clamp(v[2], -1, 1)) / D2R,
+    Math.atan2(v[1], v[0]) / D2R,
+  ];
+  function slerp(a: number[], b: number[], t: number): number[] {
+    const dot = clamp(a[0] * b[0] + a[1] * b[1] + a[2] * b[2], -1, 1);
+    const om = Math.acos(dot);
+    if (om < 1e-6) return a.slice();
+    const s = Math.sin(om);
+    const s1 = Math.sin((1 - t) * om) / s;
+    const s2 = Math.sin(t * om) / s;
+    return [s1 * a[0] + s2 * b[0], s1 * a[1] + s2 * b[1], s1 * a[2] + s2 * b[2]];
+  }
+
+  function hexA(hex: string, a: number) {
+    let h = hex.replace("#", "").trim();
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    const r = parseInt(h.slice(0, 2), 16);
+    const g = parseInt(h.slice(2, 4), 16);
+    const b = parseInt(h.slice(4, 6), 16);
+    return `rgba(${r || 0},${g || 0},${b || 0},${a})`;
+  }
+
+  function setup(root: HTMLElement) {
+    if (root.dataset.flReady) return;
+    root.dataset.flReady = "1";
+
+    const canvas = root.querySelector<HTMLCanvasElement>(".fl-canvas");
+    const dataEl = root.querySelector<HTMLScriptElement>(".fl-data");
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !dataEl || !ctx) return;
+
+    const data: { airports: Record<string, LL>; legs: { a: string; b: string; recent: boolean }[] } =
+      JSON.parse(dataEl.textContent || "{}");
+    const rows = Array.from(root.querySelectorAll<HTMLButtonElement>(".fl-row"));
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const cs = getComputedStyle(root);
+    const cvar = (n: string, f: string) => cs.getPropertyValue(n).trim() || f;
+    const C_HIGH = cvar("--f-high", "#e0def4");
+    const C_LOW = cvar("--f-low", "#b0acc8");
+    const C_ACC = cvar("--accent", "#c4a7e7");
+    const GOLD = "#f6c177";
+
+    // dotted sphere (lat/lon list)
+    const DOTS: LL[] = [];
+    for (let lat = -78; lat <= 78; lat += 6) {
+      const n = Math.max(1, Math.round(54 * Math.cos(lat * D2R)));
+      for (let k = 0; k < n; k++) DOTS.push([lat, -180 + (360 * k) / n]);
+    }
+
+    // all airport points (for city dots)
+    const CITIES: LL[] = Object.values(data.airports);
+
+    // great-circle arcs + each route's centring midpoint
+    const N = 84;
+    const ARCS: Arc[] = data.legs.map((l) => {
+      const a = base(...data.airports[l.a]);
+      const b = base(...data.airports[l.b]);
+      const samples: Sample[] = [];
+      for (let i = 0; i <= N; i++) {
+        const t = i / N;
+        const v = slerp(a, b, t);
+        const ll = toLL(v);
+        samples.push({ lat: ll[0], lon: ll[1], t });
+      }
+      const mid = toLL(slerp(a, b, 0.5));
+      // shorter routes zoom in closer; long-haul stays wider so both ends fit
+      const spanDeg = Math.acos(clamp(a[0] * b[0] + a[1] * b[1] + a[2] * b[2], -1, 1)) / D2R;
+      const zoom = clamp(1.62 - spanDeg / 175, 1.22, 1.55);
+      return { id: `${l.a}-${l.b}`, recent: l.recent, samples, cLat: mid[0], cLon: mid[1], zoom };
+    });
+    const arcById = new Map(ARCS.map((a) => [a.id, a]));
+
+    function rot(lat: number, lon: number, cLat: number, cLon: number) {
+      const phi = lat * D2R;
+      const lam = lon * D2R - cLon * D2R;
+      const cphi = Math.cos(phi);
+      const sphi = Math.sin(phi);
+      const clam = Math.cos(lam);
+      const cl0 = Math.cos(cLat * D2R);
+      const sl0 = Math.sin(cLat * D2R);
+      return {
+        x: cphi * Math.sin(lam),
+        y: cl0 * sphi - sl0 * cphi * clam,
+        z: sl0 * sphi + cl0 * cphi * clam,
+      };
+    }
+
+    let R = 0, CX = 0, CY = 0, W = 0;
+    function resize() {
+      const size = Math.max(120, canvas.getBoundingClientRect().width || 200);
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = size;
+      canvas.width = Math.round(size * dpr);
+      canvas.height = Math.round(size * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      R = size * 0.44;
+      CX = size / 2;
+      CY = size / 2;
+    }
+
+    const state = { cLat: 38, cLon: -96, zoom: 1 };
+    let activeId: string | null = null;
+    let flyT = -1;
+    let EFF = 0; // effective radius = R * zoom, refreshed each draw
+
+    function project(s: { lat: number; lon: number; t?: number }, lift: number) {
+      const p = rot(s.lat, s.lon, state.cLat, state.cLon);
+      const L = 1 + lift * 0.17 * Math.sin(Math.PI * (s.t ?? 0));
+      return { x: CX + EFF * L * p.x, y: CY - EFF * L * p.y, z: p.z };
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, W);
+      EFF = R * state.zoom;
+
+      ctx.beginPath();
+      ctx.arc(CX, CY, EFF, 0, Math.PI * 2);
+      ctx.strokeStyle = hexA(C_LOW, 0.14);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // dots
+      ctx.fillStyle = C_HIGH;
+      for (const [lat, lon] of DOTS) {
+        const p = rot(lat, lon, state.cLat, state.cLon);
+        if (p.z <= 0.03) continue;
+        ctx.globalAlpha = 0.07 + 0.4 * p.z;
+        ctx.beginPath();
+        ctx.arc(CX + EFF * p.x, CY - EFF * p.y, 1, 0, 6.283);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // city dots
+      for (const [lat, lon] of CITIES) {
+        const p = rot(lat, lon, state.cLat, state.cLon);
+        if (p.z <= 0.02) continue;
+        ctx.fillStyle = hexA(C_ACC, 0.35 + 0.3 * p.z);
+        ctx.beginPath();
+        ctx.arc(CX + EFF * p.x, CY - EFF * p.y, 1.5, 0, 6.283);
+        ctx.fill();
+      }
+
+      // arcs
+      for (const arc of ARCS) {
+        const isActive = arc.id === activeId;
+        const color = arc.recent ? GOLD : C_ACC;
+        const upto = isActive && flyT >= 0 ? flyT : 1;
+        ctx.strokeStyle = hexA(color, isActive ? 0.95 : 0.42);
+        ctx.lineWidth = isActive ? 1.9 : 1.1;
+        ctx.shadowColor = isActive ? color : "transparent";
+        ctx.shadowBlur = isActive ? 7 : 0;
+        ctx.beginPath();
+        let started = false;
+        for (const s of arc.samples) {
+          if (s.t > upto + 1e-6) break;
+          const q = project(s, 1);
+          if (q.z <= 0) {
+            started = false;
+            continue;
+          }
+          if (!started) {
+            ctx.moveTo(q.x, q.y);
+            started = true;
+          } else ctx.lineTo(q.x, q.y);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      // active endpoints + plane
+      if (activeId) {
+        const arc = arcById.get(activeId)!;
+        for (const s of [arc.samples[0], arc.samples[arc.samples.length - 1]]) {
+          const q = project(s, 0);
+          if (q.z <= 0) continue;
+          ctx.fillStyle = hexA(C_ACC, 0.28);
+          ctx.beginPath();
+          ctx.arc(q.x, q.y, 4, 0, 6.283);
+          ctx.fill();
+          ctx.fillStyle = C_HIGH;
+          ctx.beginPath();
+          ctx.arc(q.x, q.y, 1.8, 0, 6.283);
+          ctx.fill();
+        }
+        if (flyT >= 0) {
+          const idx = Math.min(arc.samples.length - 1, Math.round(flyT * (arc.samples.length - 1)));
+          const cur = project(arc.samples[idx], 1);
+          if (cur.z > 0) {
+            const nxt = project(arc.samples[Math.min(arc.samples.length - 1, idx + 1)], 1);
+            const ang = Math.atan2(nxt.y - cur.y, nxt.x - cur.x);
+            ctx.save();
+            ctx.translate(cur.x, cur.y);
+            ctx.rotate(ang);
+            ctx.fillStyle = C_HIGH;
+            ctx.shadowColor = C_HIGH;
+            ctx.shadowBlur = 7;
+            ctx.beginPath();
+            ctx.moveTo(5.5, 0);
+            ctx.lineTo(-3.8, 3.2);
+            ctx.lineTo(-1.3, 0);
+            ctx.lineTo(-3.8, -3.2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+      }
+    }
+
+    // --- animation ---
+    let anim = 0;
+    let idleRAF = 0;
+    let idleFrom = 0;
+    let lastTs = 0;
+    let animating = false;
+    let visible = true;
+
+    function stopIdle() {
+      cancelAnimationFrame(idleRAF);
+      idleRAF = 0;
+    }
+    function startIdle() {
+      if (reduce || !visible || animating) return;
+      stopIdle();
+      lastTs = 0;
+      idleRAF = requestAnimationFrame(idleStep);
+    }
+    function idleStep(ts: number) {
+      if (!lastTs) lastTs = ts;
+      const dt = (ts - lastTs) / 1000;
+      lastTs = ts;
+      if (ts >= idleFrom) {
+        state.cLon -= dt * 3.5;
+        if (state.cLon < -180) state.cLon += 360;
+        draw();
+      }
+      idleRAF = requestAnimationFrame(idleStep);
+    }
+
+    function fly(id: string, row: HTMLButtonElement) {
+      const arc = arcById.get(id);
+      if (!arc) return;
+      rows.forEach((r) => r.classList.toggle("is-active", r === row));
+      activeId = id;
+      stopIdle();
+      cancelAnimationFrame(anim);
+
+      if (reduce) {
+        state.cLat = arc.cLat;
+        state.cLon = arc.cLon;
+        state.zoom = 1;
+        flyT = -1;
+        draw();
+        return;
+      }
+
+      const fromV = base(state.cLat, state.cLon);
+      const toV = base(arc.cLat, arc.cLon);
+      const fromZoom = state.zoom;
+      const rotDur = 780; // spin to the route + zoom in
+      const flyDur = 1400; // plane traces the arc, held close
+      const outDur = 680; // zoom back out
+      const t0 = performance.now();
+      animating = true;
+      flyT = -1;
+
+      function step(now: number) {
+        const el = now - t0;
+        if (el < rotDur) {
+          const p = ease(el / rotDur);
+          const ll = toLL(slerp(fromV, toV, p));
+          state.cLat = ll[0];
+          state.cLon = ll[1];
+          state.zoom = fromZoom + (arc.zoom - fromZoom) * p;
+          flyT = -1;
+          draw();
+          anim = requestAnimationFrame(step);
+        } else if (el < rotDur + flyDur) {
+          state.cLat = arc.cLat;
+          state.cLon = arc.cLon;
+          state.zoom = arc.zoom;
+          flyT = ease((el - rotDur) / flyDur);
+          draw();
+          anim = requestAnimationFrame(step);
+        } else if (el < rotDur + flyDur + outDur) {
+          const p = ease((el - rotDur - flyDur) / outDur);
+          state.cLat = arc.cLat;
+          state.cLon = arc.cLon;
+          state.zoom = arc.zoom + (1 - arc.zoom) * p;
+          flyT = -1;
+          draw();
+          anim = requestAnimationFrame(step);
+        } else {
+          state.cLat = arc.cLat;
+          state.cLon = arc.cLon;
+          state.zoom = 1;
+          flyT = -1;
+          draw();
+          animating = false;
+          idleFrom = performance.now() + 2000;
+          startIdle();
+        }
+      }
+      anim = requestAnimationFrame(step);
+    }
+
+    rows.forEach((row) => {
+      const id = row.dataset.leg;
+      if (id) row.addEventListener("click", () => fly(id, row));
+    });
+
+    const ro = new ResizeObserver(() => {
+      resize();
+      draw();
+    });
+    ro.observe(canvas);
+
+    const io = new IntersectionObserver(
+      ([e]) => {
+        visible = e.isIntersecting;
+        if (visible) startIdle();
+        else stopIdle();
+      },
+      { threshold: 0.05 },
+    );
+    io.observe(root);
+
+    resize();
+    draw();
+    idleFrom = performance.now() + 1400;
+    startIdle();
+  }
+
+  function initFlights() {
+    document.querySelectorAll<HTMLElement>(".flights").forEach(setup);
+  }
+
+  initFlights();
+  document.addEventListener("astro:page-load", initFlights);
+</script>

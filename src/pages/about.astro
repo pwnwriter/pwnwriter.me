@@ -2,61 +2,11 @@
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import Link from "~/components/link.astro";
+import Flights from "~/components/flights.astro";
 import { photos } from "~/pages/photos/photos";
 
 photos.sort((a, b) => (a.date < b.date ? 1 : -1));
 const featuredPhotos = photos.slice(0, 8);
-
-const screenPicks = [
-  {
-    title: "Mr. Robot",
-    from: "systems breaking beautifully",
-    meta: "series / paranoia",
-    mark: "fs",
-    tone: "#4a445f",
-    rating: 5,
-  },
-  {
-    title: "Snowden",
-    from: "surveillance, keys, and consequences",
-    meta: "film / security",
-    mark: "sn",
-    tone: "#6f6a86",
-    rating: 4,
-  },
-  {
-    title: "Who Am I",
-    from: "ctf energy with questionable decisions",
-    meta: "film / hacking",
-    mark: "0x",
-    tone: "#b4634b",
-    rating: 4,
-  },
-  {
-    title: "The Social Network",
-    from: "shipping, ego, and messy origin stories",
-    meta: "film / builders",
-    mark: "</>",
-    tone: "#897aa5",
-    rating: 4,
-  },
-  {
-    title: "Spider-Man: Brand New Day",
-    from: "friendly neighborhood runtime",
-    meta: "marvel / spider-man",
-    mark: "sp",
-    tone: "#c45b65",
-    rating: 5,
-  },
-  {
-    title: "Avengers: Endgame",
-    from: "big swings, bigger portals",
-    meta: "marvel / comfort rewatch",
-    mark: "a",
-    tone: "#6b5d95",
-    rating: 5,
-  },
-];
 ---
 
 <Layout
@@ -105,37 +55,7 @@ const screenPicks = [
         </p>
       </div>
 
-      <section class="screen-section" aria-labelledby="screen-title">
-        <div class="screen-head">
-          <h2 id="screen-title">what's on-screen</h2>
-          <p>
-            broken systems, masked heroes, messy choices, and the occasional
-            reminder that every secret has a shelf life.
-          </p>
-        </div>
-
-        <div class="screen-grid">
-          {screenPicks.map((pick, index) => (
-            <article class="screen-pick" style={`--poster: ${pick.tone}`}>
-              <div class="screen-poster" aria-hidden="true">
-                <span>{pick.mark}</span>
-              </div>
-              <div class="screen-copy">
-                <p class="screen-rank">{index + 1} / {pick.meta}</p>
-                <h3>{pick.title}</h3>
-                <p class="screen-stars" aria-label={`${pick.rating} out of 5 stars`}>
-                  {Array.from({ length: 5 }).map((_, starIndex) => (
-                    <span class:list={[starIndex < pick.rating && "is-filled"]}>
-                      ★
-                    </span>
-                  ))}
-                </p>
-                <p>{pick.from}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+      <Flights />
 
       {
         featuredPhotos.length > 0 && (
@@ -179,7 +99,6 @@ const screenPicks = [
 
   .about-hero h1,
   .about-section h2,
-  .screen-head h2,
   .photo-head h2 {
     margin: 0;
     color: var(--f-high);
@@ -361,145 +280,6 @@ const screenPicks = [
     }
   }
 
-  .screen-section {
-    margin-top: 2rem;
-    border-top: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
-    padding-top: 1.25rem;
-  }
-
-  .screen-head {
-    margin-bottom: 1rem;
-  }
-
-  .screen-head h2 {
-    font-size: clamp(1.35rem, 3.4vw, 1.9rem);
-    line-height: 1;
-  }
-
-  .screen-head p {
-    max-width: 38rem;
-    margin: 0.5rem 0 0;
-    color: color-mix(in srgb, var(--f-low) 78%, transparent);
-    font-size: 0.95rem;
-    line-height: 1.55;
-  }
-
-  .screen-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    border-top: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
-    border-left: 1px dashed color-mix(in srgb, var(--f-low) 14%, transparent);
-  }
-
-  .screen-pick {
-    display: grid;
-    grid-template-columns: 4.8rem minmax(0, 1fr);
-    gap: 0.8rem;
-    min-width: 0;
-    padding: 0.85rem;
-    border-right: 1px dashed color-mix(in srgb, var(--f-low) 14%, transparent);
-    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
-  }
-
-  .screen-poster {
-    position: relative;
-    display: grid;
-    aspect-ratio: 1 / 1;
-    place-items: center;
-    overflow: hidden;
-    border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
-    border-radius: 0.45rem;
-    background:
-      radial-gradient(
-        circle at 50% 42%,
-        color-mix(in srgb, var(--poster) 70%, white) 0 7%,
-        transparent 8% 100%
-      ),
-      radial-gradient(
-        circle,
-        transparent 0 42%,
-        color-mix(in srgb, var(--poster) 55%, black) 43% 46%,
-        transparent 47% 100%
-      ),
-      linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--poster) 82%, black),
-        color-mix(in srgb, var(--poster) 38%, var(--b-low))
-      );
-    box-shadow: 0 12px 28px -24px color-mix(in srgb, var(--poster) 80%, black);
-  }
-
-  .screen-poster::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-      color-mix(in srgb, white 70%, transparent) 1px,
-      transparent 1.5px
-    );
-    background-size: 7px 7px;
-    opacity: 0.46;
-  }
-
-  .screen-poster span {
-    position: relative;
-    color: color-mix(in srgb, white 86%, var(--f-high));
-    font-family: var(--font-mono, monospace);
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: 0;
-    text-shadow: 0 0 14px currentColor;
-  }
-
-  .screen-copy {
-    min-width: 0;
-  }
-
-  .screen-rank {
-    margin: 0 0 0.3rem;
-    color: color-mix(in srgb, var(--f-low) 55%, transparent);
-    font-family: var(--font-mono, monospace);
-    font-size: 0.68rem;
-    line-height: 1.2;
-  }
-
-  .screen-copy h3 {
-    margin: 0;
-    overflow: hidden;
-    color: var(--f-high);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.15;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .screen-stars {
-    display: flex;
-    gap: 0.12rem;
-    margin: 0.36rem 0 0;
-    color: color-mix(in srgb, var(--f-low) 30%, transparent);
-    font-size: 0.72rem;
-    line-height: 1;
-  }
-
-  .screen-stars span.is-filled {
-    color: color-mix(in srgb, var(--accent) 86%, var(--f-high));
-    text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 20%, transparent);
-  }
-
-  .screen-copy p:last-child {
-    display: -webkit-box;
-    margin: 0.45rem 0 0;
-    overflow: hidden;
-    color: color-mix(in srgb, var(--f-low) 78%, transparent);
-    font-size: 0.78rem;
-    line-height: 1.42;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
   .photo-evidence {
     margin-top: 2.25rem;
     border-top: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
@@ -629,10 +409,6 @@ const screenPicks = [
       right: -1.65rem;
       width: 1.4rem;
       height: 0.55rem;
-    }
-
-    .screen-grid {
-      grid-template-columns: 1fr;
     }
 
     .photo-head {
