@@ -12,12 +12,16 @@ export type MediaItem =
 export type Project = {
   slug: string;
   name: string;
+  summary: string;
   blurb: string;
+  highlights?: string[];
   tech: string[];
   year?: string;
   archived?: boolean; // shows an "archived" tag on the card
+  status?: string;
   repo?: string;
   demo?: string;
+  readMore?: string;
   reddit?: string; // link to a showcase/discussion post
   cover?: MediaItem; // card thumbnail; falls back to media[0]
   media: MediaItem[]; // gallery shown in the viewer (images + videos)
@@ -27,12 +31,18 @@ export const projects: Project[] = [
   {
     slug: "tes-chat",
     name: "tes.chat",
+    summary:
+      "natural-language course-equivalency explorer for college transfer planning.",
     blurb:
-      "Ask a transfer-credit database anything in plain English. Reads transcripts and maps equivalencies across 180+ unis and 20k+ courses.",
-    tech: ["ai", "llm", "rag"], // guessed the stack — correct these
+      "indexed transfer-equivalency information so students could ask about courses and transcripts without digging through catalogs by hand.",
+    highlights: [
+      "covered 180+ universities and 20k+ courses in the local project data",
+      "used retrieval/llm flow to ground answers in collected equivalency records",
+      "supported transcript-style course extraction and transfer-evaluation queries",
+    ],
+    tech: ["AI/LLM", "RAG", "Data ingestion", "Search"],
     year: "2026",
-    // repo: "https://github.com/pwnwriter/tes-chat",
-    demo: "https://tes.chat",
+    status: "offline",
     cover: {
       kind: "video",
       src: "/projects/tes-chat/demo.mp4",
@@ -53,29 +63,21 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "eipi-boo",
-    name: "eipi.boo",
-    blurb: "🫶🏼 2d world of anonymous confession cards, over ssh.",
-    tech: ["rust", "ssh", "tui"],
-    year: "2026",
-    // repo: "https://github.com/pwnwriter/eipi-boo",
-    demo: "https://eipi.boo",
-    media: [
-      {
-        kind: "image",
-        src: "/projects/eipi-boo/cover.png",
-        alt: "eipi.boo confession TUI over SSH",
-      },
-    ],
-  },
-  {
     slug: "haylxon",
     name: "haylxon",
+    summary:
+      "high-performance screenshot and web reconnaissance cli written in rust.",
     blurb:
-      "Blazing-fast tool to grab screenshots of your domain list right from the terminal.",
-    tech: ["rust", "tokio", "headless-chrome"],
-    year: "2023–present",
+      "drives local or remote chromium over cdp with async concurrency, reusable tab pools, and bulk url input.",
+    highlights: [
+      "tokio-based parallel execution with configurable tabs and tab pooling",
+      "supports files/stdin, full-page screenshots, js injection, proxies, invalid certs, ndjson, and html reports",
+      "my github actions hyperfine benchmark: 5 urls / 4 tabs in 1.81s vs gowitness at 26.29s",
+    ],
+    tech: ["Rust", "Tokio", "CDP", "Chromium", "CLI"],
+    year: "2023-present",
     repo: "https://github.com/pwnwriter/haylxon",
+    readMore: "/notes/haylxon-remote-pooling",
     cover: {
       kind: "video",
       src: "/projects/haylxon/demo.mp4",
@@ -96,33 +98,43 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "setup",
-    name: "the setup",
-    blurb: "the corner i actually work from",
-    tech: ["desk", "monitor-arm", "mechanical-kb"], // it's a rice, not a repo — tweak these
+    slug: "eipi-boo",
+    name: "eipi.boo",
+    summary: "anonymous confession board that runs over ssh.",
+    blurb:
+      "not a website: users connect from a terminal and post/read confession cards through an ssh-native interface.",
+    highlights: [
+      "rust network application exposed through ssh instead of a browser ui",
+      "terminal-first interaction model: no account signup, no web form",
+      "shipped publicly as `ssh eipi.boo` with a small project page",
+    ],
+    tech: ["Rust", "SSH", "Terminal UI", "Networking"],
     year: "2026",
-    cover: {
-      kind: "video",
-      src: "/projects/setup/demo.mp4",
-      poster: "/projects/setup/cover.png",
-    },
+    demo: "https://eipi.boo",
+    readMore: "/syndications/eipi-boo-ssh",
     media: [
       {
-        kind: "video",
-        src: "/projects/setup/demo.mp4",
-        poster: "/projects/setup/cover.png",
-        alt: "a slow pan across my desk setup",
+        kind: "image",
+        src: "/projects/eipi-boo/cover.png",
+        alt: "eipi.boo confession TUI over SSH",
       },
     ],
   },
   {
     slug: "metis",
     name: "metis linux",
+    summary: "minimal x86_64 linux distribution and package ecosystem.",
     blurb:
-      "minimal x86_64 linux distro i built, dwm + hyprland rices, a homegrown package manager (hysp), catppuccin everywhere.",
-    tech: ["linux", "distro", "dwm", "hyprland"],
-    year: "2022–2025",
+      "an archived systems project around building a small linux distribution, package repos, releases, and desktop environments.",
+    highlights: [
+      "built around core package repositories, iso releases, and x86_64 linux packaging",
+      "included dwm and hyprland environments plus distro-specific tooling",
+      "paired with hysp for userspace package installation experiments",
+    ],
+    tech: ["Linux", "Shell", "C", "Lua", "Packaging"],
+    year: "2022-2025",
     archived: true,
+    status: "archived / no longer maintained",
     repo: "https://github.com/metis-os",
     reddit: "https://www.reddit.com/r/artixlinux/s/LEqgAx2gqS",
     cover: {
@@ -147,11 +159,19 @@ export const projects: Project[] = [
   {
     slug: "hysp",
     name: "hysp",
+    summary:
+      "rust package manager for installing portable tooling in userspace.",
     blurb:
-      "a standalone package manager i wrote in rust — pulls statically-compiled tool binaries into userspace, no root, sha-verified. built for metis.",
-    tech: ["rust", "cli", "package-manager"],
-    year: "2023–2024", // guessed the start year — archived may 2024
+      "fetches statically compiled tool binaries from package metadata without requiring root access.",
+    highlights: [
+      "single rust binary with install/remove/search/health package lifecycle commands",
+      "uses package metadata, configurable/self-hostable sources, and sha verification",
+      "designed for unix/linux environments where security tooling is missing or stale",
+    ],
+    tech: ["Rust", "CLI", "Linux", "Package manager"],
+    year: "2023-2024",
     archived: true,
+    status: "archived / no longer maintained",
     repo: "https://github.com/pwnwriter/hysp",
     reddit: "https://www.reddit.com/r/unixporn/s/crLwv641dI",
     cover: {
@@ -169,6 +189,32 @@ export const projects: Project[] = [
         kind: "image",
         src: "/projects/hysp/cover.png",
         alt: "hysp — harmonizing your system",
+      },
+    ],
+  },
+  {
+    slug: "setup",
+    name: "the setup",
+    summary: "the linux-heavy workspace i actually build from.",
+    blurb:
+      "nix-based daily environment, terminal workflow, mechanical keyboard, and hardware setup tuned for long coding sessions.",
+    highlights: [
+      "nix/nixos-centered development workflow",
+      "terminal and neovim first; reproducible tools over manual setup",
+    ],
+    tech: ["Nix", "NixOS", "Neovim", "Linux"],
+    year: "2026",
+    cover: {
+      kind: "video",
+      src: "/projects/setup/demo.mp4",
+      poster: "/projects/setup/cover.png",
+    },
+    media: [
+      {
+        kind: "video",
+        src: "/projects/setup/demo.mp4",
+        poster: "/projects/setup/cover.png",
+        alt: "a slow pan across my desk setup",
       },
     ],
   },

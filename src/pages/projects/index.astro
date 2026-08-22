@@ -6,16 +6,23 @@ import ProjectViewer from "~/components/project-viewer.astro";
 import { projects } from "~/pages/projects/projects";
 
 const pad = (n: number) => String(n).padStart(2, "0");
+const externalAttrs = {
+  target: "_blank",
+  rel: "noopener noreferrer",
+};
 ---
 
-<Layout title="projects" description="Things I've built — tools, configs, and experiments.">
+<Layout
+  title="projects"
+  description="Things I've built — tools, configs, and experiments."
+>
   <Wrapper>
     <header class="projects-header">
       <div>
         <Heading Element="h1">Projects</Heading>
         <p>
-          small tools, experiments, and systems i kept poking at until they became
-          useful enough to keep around.
+          small tools, experiments, and systems i kept poking at until they
+          became useful enough to keep around.
         </p>
       </div>
     </header>
@@ -53,7 +60,12 @@ const pad = (n: number) => String(n).padStart(2, "0");
                       src={primary.src}
                     />
                   ) : poster ? (
-                    <img class="pr-img" src={poster} alt={p.name} loading="lazy" />
+                    <img
+                      class="pr-img"
+                      src={poster}
+                      alt={p.name}
+                      loading="lazy"
+                    />
                   ) : null}
 
                   {isVideo && (
@@ -73,7 +85,9 @@ const pad = (n: number) => String(n).padStart(2, "0");
                     <span class="pr-rank">{pad(i + 1)}</span>
                     <span>/</span>
                     <span>{p.year ?? "now"}</span>
-                    {p.archived && <span class="pr-archived">archived</span>}
+                    {(p.status || p.archived) && (
+                      <span class="pr-archived">{p.status ?? "archived"}</span>
+                    )}
                   </div>
                   <h2 class="pr-name">
                     <button
@@ -84,62 +98,52 @@ const pad = (n: number) => String(n).padStart(2, "0");
                       {p.name}
                     </button>
                   </h2>
+                  <p class="pr-summary">{p.summary}</p>
                   <p class="pr-blurb">{p.blurb}</p>
 
-                  <div class="pr-foot">
-                  {p.tech.length > 0 && (
-                    <ul class="pr-tech">
-                      {p.tech.map((t) => (
-                        <li>{t}</li>
-                      ))}
-                    </ul>
+                  {p.highlights && p.highlights.length > 0 && (
+                    <details class="pr-details">
+                      <summary>
+                        <span>engineering notes</span>
+                        <span class="pr-toggle" aria-hidden="true" />
+                      </summary>
+                      <ul class="pr-highlights">
+                        {p.highlights.map((item) => (
+                          <li>{item}</li>
+                        ))}
+                      </ul>
+                    </details>
                   )}
 
-                  {(p.repo || p.demo || p.reddit) && (
-                    <div class="pr-links">
-                      {p.demo && (
-                        <a
-                          href={p.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Live website"
-                          title="Website"
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M2 12h20" />
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                          </svg>
-                        </a>
-                      )}
-                      {p.repo && (
-                        <a
-                          href={p.repo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="GitHub repository"
-                          title="GitHub"
-                        >
-                          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-                          </svg>
-                        </a>
-                      )}
-                      {p.reddit && (
-                        <a
-                          href={p.reddit}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Reddit post"
-                          title="Reddit"
-                        >
-                          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
-                          </svg>
-                        </a>
-                      )}
-                    </div>
-                  )}
+                  <div class="pr-foot">
+                    {p.tech.length > 0 && (
+                      <ul class="pr-tech">
+                        {p.tech.map((t) => (
+                          <li>{t}</li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {(p.repo || p.demo || p.readMore || p.reddit) && (
+                      <div class="pr-links">
+                        {p.demo && (
+                          <a href={p.demo} {...externalAttrs}>
+                            site
+                          </a>
+                        )}
+                        {p.repo && (
+                          <a href={p.repo} {...externalAttrs}>
+                            source
+                          </a>
+                        )}
+                        {p.readMore && <a href={p.readMore}>read more</a>}
+                        {p.reddit && (
+                          <a href={p.reddit} {...externalAttrs}>
+                            thread
+                          </a>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </article>
@@ -192,7 +196,8 @@ const pad = (n: number) => String(n).padStart(2, "0");
     transform: translateY(-3px);
     border-color: color-mix(in srgb, var(--accent) 34%, transparent);
     background-color: color-mix(in srgb, var(--f-high) 6%, transparent);
-    box-shadow: 0 24px 46px -32px color-mix(in srgb, var(--f-high) 62%, transparent);
+    box-shadow: 0 24px 46px -32px
+      color-mix(in srgb, var(--f-high) 62%, transparent);
   }
 
   .pr-media {
@@ -206,7 +211,8 @@ const pad = (n: number) => String(n).padStart(2, "0");
   }
 
   .pr-media:focus-visible {
-    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 60%, transparent);
+    box-shadow: inset 0 0 0 2px
+      color-mix(in srgb, var(--accent) 60%, transparent);
   }
 
   .pr-video,
@@ -290,6 +296,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
     font-size: 0.6rem;
     letter-spacing: 0.04em;
     text-transform: lowercase;
+    white-space: nowrap;
   }
 
   .pr-name {
@@ -322,11 +329,104 @@ const pad = (n: number) => String(n).padStart(2, "0");
     outline: none;
   }
 
-  .pr-blurb {
+  .pr-summary {
     margin: 0.05rem 0 0;
+    color: color-mix(in srgb, var(--f-high) 88%, transparent);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+
+  .pr-blurb {
+    margin: 0;
     color: color-mix(in srgb, var(--f-low) 84%, transparent);
     font-size: 0.86rem;
     line-height: 1.55;
+  }
+
+  .pr-details {
+    width: 100%;
+    margin-top: 0.15rem;
+    border-top: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
+    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 12%, transparent);
+  }
+
+  .pr-details summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 2rem;
+    color: color-mix(in srgb, var(--f-low) 72%, transparent);
+    cursor: pointer;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.68rem;
+    letter-spacing: 0;
+    list-style: none;
+    outline: none;
+    user-select: none;
+  }
+
+  .pr-details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pr-details summary:hover,
+  .pr-details summary:focus-visible {
+    color: var(--accent);
+  }
+
+  .pr-toggle {
+    position: relative;
+    width: 0.7rem;
+    height: 0.7rem;
+    flex: 0 0 auto;
+  }
+
+  .pr-toggle::before,
+  .pr-toggle::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: translateY(-50%);
+  }
+
+  .pr-toggle::after {
+    transform: translateY(-50%) rotate(90deg);
+    transition: transform 0.16s ease;
+  }
+
+  .pr-details[open] .pr-toggle::after {
+    transform: translateY(-50%) rotate(0deg);
+  }
+
+  .pr-highlights {
+    display: grid;
+    gap: 0.35rem;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 0.75rem;
+    list-style: none;
+  }
+
+  .pr-highlights li {
+    position: relative;
+    padding-left: 0.95rem;
+    color: color-mix(in srgb, var(--f-low) 78%, transparent);
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+
+  .pr-highlights li::before {
+    content: ">";
+    position: absolute;
+    left: 0;
+    color: color-mix(in srgb, var(--accent) 80%, var(--f-high));
+    font-family: var(--font-mono, monospace);
+    font-size: 0.72rem;
+    line-height: 1.45;
   }
 
   .pr-foot {
@@ -359,27 +459,34 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
   .pr-links {
     display: flex;
-    gap: 0.85rem;
+    flex-wrap: wrap;
+    gap: 0.45rem;
   }
 
   .pr-links a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 1.45rem;
+    padding: 0.08rem 0.46rem;
     color: color-mix(in srgb, var(--f-low) 78%, transparent);
+    border: 1px solid color-mix(in srgb, var(--f-low) 18%, transparent);
+    border-radius: 5px;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.65rem;
+    line-height: 1;
+    text-decoration: none;
     transition:
+      border-color 0.2s ease,
       color 0.2s ease,
+      background-color 0.2s ease,
       transform 0.2s ease;
-  }
-
-  .pr-links a svg {
-    width: 1.2rem;
-    height: 1.2rem;
-    display: block;
   }
 
   .pr-links a:hover {
     color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 38%, transparent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
     transform: translateY(-2px);
   }
 
@@ -427,7 +534,8 @@ const pad = (n: number) => String(n).padStart(2, "0");
     ).matches;
     if (reduce) return; // respect reduced-motion: leave the poster still
 
-    const videos = document.querySelectorAll<HTMLVideoElement>("video.pr-video");
+    const videos =
+      document.querySelectorAll<HTMLVideoElement>("video.pr-video");
     if (!videos.length) return;
 
     const io = new IntersectionObserver(
