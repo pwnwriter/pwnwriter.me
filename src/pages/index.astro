@@ -2,6 +2,7 @@
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import PixelHand from "~/components/pixel-hand.astro";
+import SketchSignoff from "~/components/sketch-signoff.astro";
 import { getCollection } from "astro:content";
 import "~/styles/index.css";
 
@@ -107,6 +108,8 @@ const summaryFor = (post: (typeof posts)[number]) =>
           </a>
         </div>
       </section>
+
+      <SketchSignoff />
     </section>
   </Wrapper>
 </Layout>
@@ -231,7 +234,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
   }
 
   /* on wider screens the photo floats out to the right edge of the column,
-     top-aligned with the headline and spanning down past the tagline — the
+     top-aligned with the headline and spanning down past the tagline - the
      text (headline + tagline + bio) flows underneath it on the left. */
   @media (min-width: 720px) {
     .intro-block {
@@ -328,7 +331,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
     }
   }
 
-  /* handwritten scrawl in the right margin — decorative, wide screens only */
+  /* handwritten scrawl in the right margin - decorative, wide screens only */
   .margin-note {
     display: none;
   }
@@ -493,7 +496,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
       width: 6rem;
     }
 
-    /* tighter vertical rhythm on phones — the airy desktop spacing is too much
+    /* tighter vertical rhythm on phones - the airy desktop spacing is too much
        on a narrow screen */
     .bio {
       margin-top: 1.4rem;
@@ -515,7 +518,7 @@ const summaryFor = (post: (typeof posts)[number]) =>
       padding-top: 0.9rem;
     }
 
-    /* keep the mobile home short — only the 3 most recent notes */
+    /* keep the mobile home short - only the 3 most recent notes */
     .note-card:nth-child(n + 4) {
       display: none;
     }

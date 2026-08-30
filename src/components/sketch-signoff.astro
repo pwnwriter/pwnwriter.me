@@ -1,0 +1,208 @@
+---
+// A handwritten sign-off at the foot of the home page. It writes itself out in
+// real time, character by character, with a blinking pen caret that travels
+// along; when it reaches the link, the underline strokes in. The bracketed link
+// is picked at random each visit, nudging you into a different corner of the
+// site. Without JS (or with reduced-motion) it just renders as a plain line.
+const invites = [
+  { lead: "since you made it all the way down here, you might as well", label: "check my rice", href: "/stuff#uses" },
+  { lead: "still scrolling? then you should probably", label: "flip through my wallpapers", href: "/stuff#wallpapers" },
+  { lead: "if you've got another minute, go", label: "read something i wrote", href: "/notes" },
+  { lead: "curious what's on loop while i code? go", label: "have a listen", href: "/stuff#music" },
+  { lead: "you could always go see the", label: "things i've actually built", href: "/projects" },
+  { lead: "or just go dig through my", label: "drawer of stuff", href: "/stuff" },
+  { lead: "you could also peek at", label: "what i'm watching", href: "/stuff#movies" },
+];
+const first = invites[0];
+---
+
+<aside class="signoff" data-invites={JSON.stringify(invites)} aria-label="a small invitation">
+  <p class="signoff-line">
+    <span class="lead">{first.lead}&nbsp;</span><a class="tag" href={first.href}
+      >[&nbsp;<span class="tag-label">{first.label}</span>&nbsp;]</a
+    >
+  </p>
+</aside>
+
+<style>
+  .signoff {
+    max-width: 40rem;
+    margin: 3.75rem auto 0;
+    text-align: center;
+  }
+
+  .signoff-line {
+    margin: 0;
+    font-family: "Caveat", cursive;
+    font-size: clamp(1.4rem, 2.7vw, 1.75rem);
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--f-low) 84%, transparent);
+  }
+
+  .tag {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .tag-label {
+    position: relative;
+    color: color-mix(in srgb, var(--accent) 88%, var(--f-high));
+  }
+
+  /* hand-drawn underline; visible by default (no-JS), strokes in during typing */
+  .tag-label::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -0.1em;
+    left: 0;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+    opacity: 0.72;
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  .signoff-line.anim .tag-label::after {
+    transform: scaleX(0);
+  }
+
+  .signoff-line.anim.written .tag-label::after {
+    transition: transform 0.45s ease;
+    transform: scaleX(1);
+  }
+
+  .tag:hover .tag-label {
+    color: var(--accent);
+  }
+
+  .tag:hover .tag-label::after {
+    opacity: 1;
+  }
+
+  /* the travelling pen caret */
+  .pen {
+    display: inline-block;
+    width: 2px;
+    height: 1.05em;
+    margin: 0 1px -0.16em;
+    background: var(--accent);
+    border-radius: 1px;
+    animation: pen-blink 0.9s steps(1, end) infinite;
+  }
+
+  @keyframes pen-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pen {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initSignoff() {
+    const root = document.querySelector<HTMLElement>(".signoff");
+    const line = root?.querySelector<HTMLElement>(".signoff-line");
+    if (!root || !line) return;
+
+    let invites: { lead: string; label: string; href: string }[] = [];
+    try {
+      invites = JSON.parse(root.dataset.invites || "[]");
+    } catch {
+      return; // keep the server-rendered default
+    }
+    if (!invites.length) return;
+
+    const pick = invites[Math.floor(Math.random() * invites.length)];
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // (re)build the line as individual character spans so we can reveal them one
+    // at a time. line-breaks still only happen at spaces, so words stay intact.
+    line.textContent = "";
+    const chars: HTMLElement[] = [];
+
+    const addChars = (str: string, parent: HTMLElement) => {
+      for (const c of str) {
+        const s = document.createElement("span");
+        s.textContent = c;
+        if (!reduce) s.style.visibility = "hidden";
+        parent.appendChild(s);
+        chars.push(s);
+      }
+    };
+
+    const lead = document.createElement("span");
+    lead.className = "lead";
+    line.appendChild(lead);
+    addChars(pick.lead + " ", lead);
+
+    const tag = document.createElement("a");
+    tag.className = "tag";
+    tag.href = pick.href;
+    line.appendChild(tag);
+    addChars("[ ", tag);
+    const label = document.createElement("span");
+    label.className = "tag-label";
+    tag.appendChild(label);
+    addChars(pick.label, label);
+    addChars(" ]", tag);
+
+    if (reduce) return; // everything already visible, underline shown
+
+    line.classList.add("anim");
+
+    const caret = document.createElement("span");
+    caret.className = "pen";
+    caret.setAttribute("aria-hidden", "true");
+
+    const delayFor = (c: string) => {
+      if (c === " " || c === " ") return 22;
+      if (c === "," || c === ";") return 210;
+      if (c === "." || c === "?" || c === "!") return 300;
+      return 28 + Math.random() * 30; // a little human jitter
+    };
+
+    function type(i: number) {
+      if (i >= chars.length) {
+        caret.remove();
+        line.classList.add("written");
+        return;
+      }
+      const el = chars[i];
+      el.style.visibility = "visible";
+      el.after(caret); // pen travels to the freshly written character
+      window.setTimeout(() => type(i + 1), delayFor(el.textContent || ""));
+    }
+
+    // start writing when the sign-off scrolls into view
+    let started = false;
+    const begin = () => {
+      if (started) return;
+      started = true;
+      line.insertBefore(caret, line.firstChild);
+      window.setTimeout(() => type(0), 260);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            begin();
+            io.disconnect();
+          }
+        });
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(line);
+  }
+
+  initSignoff();
+  document.addEventListener("astro:after-swap", initSignoff);
+</script>

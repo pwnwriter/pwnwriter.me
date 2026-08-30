@@ -1,0 +1,976 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Wrapper from "~/components/wrapper.astro";
+import Heading from "~/components/text/heading.astro";
+import { wallpapers } from "~/data/wallpapers";
+import { devices, software } from "~/data/uses";
+import { bookmarks } from "~/data/bookmarks";
+import { snippets } from "~/data/snippets";
+import { bookshelf } from "~/data/bookshelf";
+import { music } from "~/data/music";
+import { movies } from "~/data/movies";
+
+const externalAttrs = { target: "_blank", rel: "noopener noreferrer" };
+
+const count = (groups: { items: unknown[] }[]) =>
+  groups.reduce((n, g) => n + g.items.length, 0);
+
+const domain = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+};
+
+const tabs = [
+  { id: "wallpapers", label: "wallpapers", count: wallpapers.length, blurb: "the walls i actually run. click one to grab the full-res file." },
+  { id: "uses", label: "uses", count: devices.length + count(software), blurb: "the machines and tools i actually run, all declared in nix." },
+  { id: "bookmarks", label: "bookmarks", count: count(bookmarks), blurb: "a blogroll in the old sense. go read them, then find theirs." },
+  { id: "snippets", label: "snippets", count: count(snippets), blurb: "commands i re-google until my fingers learn them. click to copy." },
+  { id: "bookshelf", label: "bookshelf", count: count(bookshelf), blurb: "books, papers, and writeups that earned a permanent spot." },
+  { id: "music", label: "music", count: count(music), blurb: "what's in my ears while the code compiles." },
+  { id: "movies", label: "movies", count: count(movies), blurb: "films and shows i keep coming back to." },
+];
+---
+
+<Layout
+  title="stuff"
+  description="A grab-bag: wallpapers, rice, bookmarks, snippets, and a bookshelf."
+>
+  <Wrapper>
+    <header class="stuff-header">
+      <Heading Element="h1">Stuff</Heading>
+      <p>
+        the miscellaneous drawer: things i collect, reuse, and keep meaning to
+        share. nothing load-bearing, all of it fair game to take.
+      </p>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="Stuff sections">
+      {
+        tabs.map((t) => (
+          <button
+            class="tab"
+            role="tab"
+            id={`tab-${t.id}`}
+            data-tab={t.id}
+            aria-controls={`panel-${t.id}`}
+            aria-selected="false"
+            tabindex="-1"
+            type="button"
+          >
+            {t.label}
+            <span class="tab-count">{t.count}</span>
+          </button>
+        ))
+      }
+    </nav>
+
+    {
+      tabs.map((t) => (
+        <p class="panel-blurb" data-blurb={t.id} hidden>
+          {t.blurb}
+        </p>
+      ))
+    }
+
+    <div class="panels">
+      {/* ---------------- wallpapers ---------------- */}
+      <section
+        class="panel"
+        role="tabpanel"
+        id="panel-wallpapers"
+        aria-labelledby="tab-wallpapers"
+        data-panel="wallpapers"
+        hidden
+      >
+        <div class="wp-grid">
+          {wallpapers.map((w) => {
+            const preview = w.thumb ?? w.file;
+            const gradient = w.colors
+              ? `linear-gradient(135deg, ${w.colors[0]}, ${w.colors[1]})`
+              : "linear-gradient(135deg, var(--b-high), var(--accent))";
+            const Tag = w.file ? "a" : "div";
+            const dl = w.file ? { href: w.file, download: "" } : {};
+            return (
+              <Tag class="wp-card" {...dl} aria-label={w.name}>
+                <div class="wp-thumb" style={`background-image:${gradient}`}>
+                  {preview && (
+                    <img class="wp-img" src={preview} alt={w.name} loading="lazy" />
+                  )}
+                  {!w.file && <span class="wp-soon">soon</span>}
+                  {w.file && <span class="wp-dl">↓ download</span>}
+                </div>
+                <div class="wp-meta">
+                  <span class="wp-name">{w.name}</span>
+                  <span class="wp-info">
+                    {w.tag}
+                    {w.size ? ` · ${w.size}` : ""}
+                  </span>
+                </div>
+              </Tag>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ---------------- uses ---------------- */}
+      <section
+        class="panel"
+        role="tabpanel"
+        id="panel-uses"
+        aria-labelledby="tab-uses"
+        data-panel="uses"
+        hidden
+      >
+        <p class="col-label">machines</p>
+        <div class="dev-grid">
+          {devices.map((d) => (
+            <article class="dev-card">
+              <div class="dev-top">
+                <span class="dev-name">{d.name}</span>
+                <span class="dev-kind">{d.kind}</span>
+              </div>
+              <p class="dev-role">{d.role}</p>
+              <div class="dev-meta">
+                {d.specs && <span>{d.specs}</span>}
+                <span>{d.os}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="uses-groups">
+          {software.map((group) => (
+            <section class="uses-group">
+              <p class="col-label">{group.label}</p>
+              <ul class="uses-list">
+                {group.items.map((it) => (
+                  <li class="uses-item">
+                    <span class="uses-name">{it.name}</span>
+                    {it.note && <span class="uses-note">{it.note}</span>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+
+        <p class="uses-foot">
+          it's all declared, and public:
+          <a href="https://github.com/pwnwriter/nix" {...externalAttrs}>
+            github.com/pwnwriter/nix
+          </a>
+        </p>
+      </section>
+
+      {/* ---------------- bookmarks ---------------- */}
+      <section
+        class="panel"
+        role="tabpanel"
+        id="panel-bookmarks"
+        aria-labelledby="tab-bookmarks"
+        data-panel="bookmarks"
+        hidden
+      >
+        <div class="bm-groups">
+          {bookmarks.map((group) => (
+            <section class="bm-group">
+              <p class="col-label">{group.label}</p>
+              <ul class="bm-list">
+                {group.items.map((b) => (
+                  <li>
+                    <a href={b.url} {...externalAttrs}>
+                      <span class="bm-title">{b.title}</span>
+                      <span class="bm-domain">{domain(b.url)}</span>
+                      {b.note && <span class="bm-note">{b.note}</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------------- snippets ---------------- */}
+      <section
+        class="panel"
+        role="tabpanel"
+        id="panel-snippets"
+        aria-labelledby="tab-snippets"
+        data-panel="snippets"
+        hidden
+      >
+        <div class="sn-groups">
+          {snippets.map((group) => (
+            <section class="sn-group">
+              <p class="col-label">{group.label}</p>
+              <ul class="sn-list">
+                {group.items.map((s) => (
+                  <li class="sn-item">
+                    <div class="sn-text">
+                      <span class="sn-title">{s.title}</span>
+                      {s.note && <span class="sn-note">{s.note}</span>}
+                    </div>
+                    <button class="sn-code" type="button" data-copy={s.code}>
+                      <code>{s.code}</code>
+                      <span class="sn-copy">copy</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------------- bookshelf ---------------- */}
+      <section
+        class="panel"
+        role="tabpanel"
+        id="panel-bookshelf"
+        aria-labelledby="tab-bookshelf"
+        data-panel="bookshelf"
+        hidden
+      >
+        <div class="bs-groups">
+          {bookshelf.map((group) => (
+            <section class="bs-group">
+              <p class="col-label">{group.label}</p>
+              <ul class="bs-list">
+                {group.items.map((b) => {
+                  const Tag = b.url ? "a" : "div";
+                  const attrs = b.url ? { href: b.url, ...externalAttrs } : {};
+                  return (
+                    <li>
+                      <Tag class="bs-item" {...attrs}>
+                        <div class="bs-line">
+                          <span class="bs-title">{b.title}</span>
+                          {b.status && <span class="bs-status">{b.status}</span>}
+                        </div>
+                        {b.author && <span class="bs-author">{b.author}</span>}
+                        {b.note && <span class="bs-note">{b.note}</span>}
+                      </Tag>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------------- music ---------------- */}
+      <section
+        class="panel"
+        role="tabpanel"
+        id="panel-music"
+        aria-labelledby="tab-music"
+        data-panel="music"
+        hidden
+      >
+        <div class="bs-groups">
+          {music.map((group) => (
+            <section class="bs-group">
+              <p class="col-label">{group.label}</p>
+              <ul class="bs-list">
+                {group.items.map((m) => {
+                  const Tag = m.url ? "a" : "div";
+                  const attrs = m.url ? { href: m.url, ...externalAttrs } : {};
+                  return (
+                    <li>
+                      <Tag class="bs-item" {...attrs}>
+                        <div class="bs-line">
+                          <span class="bs-title">{m.title}</span>
+                          {m.status && <span class="bs-status">{m.status}</span>}
+                        </div>
+                        {m.artist && <span class="bs-author">{m.artist}</span>}
+                        {m.note && <span class="bs-note">{m.note}</span>}
+                      </Tag>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------------- movies ---------------- */}
+      <section
+        class="panel"
+        role="tabpanel"
+        id="panel-movies"
+        aria-labelledby="tab-movies"
+        data-panel="movies"
+        hidden
+      >
+        <div class="bs-groups">
+          {movies.map((group) => (
+            <section class="bs-group">
+              <p class="col-label">{group.label}</p>
+              <ul class="bs-list">
+                {group.items.map((m) => {
+                  const Tag = m.url ? "a" : "div";
+                  const attrs = m.url ? { href: m.url, ...externalAttrs } : {};
+                  return (
+                    <li>
+                      <Tag class="bs-item" {...attrs}>
+                        <div class="bs-line">
+                          <span class="bs-title">{m.title}</span>
+                          {m.status && <span class="bs-status">{m.status}</span>}
+                        </div>
+                        {m.year && <span class="bs-author">{m.year}</span>}
+                        {m.note && <span class="bs-note">{m.note}</span>}
+                      </Tag>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+    </div>
+  </Wrapper>
+</Layout>
+
+<style>
+  .stuff-header {
+    max-width: 44rem;
+    margin-bottom: 1rem;
+  }
+
+  .stuff-header p {
+    max-width: 38rem;
+    margin-top: 0.4rem;
+    color: color-mix(in srgb, var(--f-low) 82%, transparent);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  /* ---- tab bar ---- */
+  .tabs {
+    display: flex;
+    gap: 0.35rem;
+    overflow-x: auto;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--f-low) 13%, transparent);
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    padding: 0.35rem 0.7rem;
+    border: 0;
+    border-radius: 7px;
+    background: none;
+    color: color-mix(in srgb, var(--f-low) 70%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-transform: lowercase;
+    cursor: pointer;
+    transition:
+      color 160ms ease,
+      background-color 160ms ease;
+  }
+
+  .tab:hover {
+    color: var(--f-high);
+    background: color-mix(in srgb, var(--f-high) 5%, transparent);
+  }
+
+  .tab[aria-selected="true"] {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+
+  .tab-count {
+    color: color-mix(in srgb, var(--f-low) 50%, transparent);
+    font-size: 0.62rem;
+  }
+
+  .tab[aria-selected="true"] .tab-count {
+    color: color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+
+  .panel-blurb {
+    margin: 0 0 1.15rem;
+    color: color-mix(in srgb, var(--f-low) 74%, transparent);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .panel[hidden],
+  .panel-blurb[hidden] {
+    display: none;
+  }
+
+  /* shared column label for the list panels */
+  .col-label {
+    margin: 0 0 0.6rem;
+    color: color-mix(in srgb, var(--f-low) 60%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: lowercase;
+  }
+
+  /* ---------- wallpapers ---------- */
+  .wp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .wp-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--f-high) 3.5%, transparent);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  a.wp-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+    box-shadow: 0 22px 42px -30px color-mix(in srgb, var(--f-high) 62%, transparent);
+  }
+
+  .wp-thumb {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
+  }
+
+  .wp-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 320ms ease;
+  }
+
+  a.wp-card:hover .wp-img {
+    transform: scale(1.045);
+  }
+
+  .wp-soon {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    backdrop-filter: blur(4px);
+  }
+
+  .wp-dl {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--b-low) 55%, transparent);
+    color: var(--f-high);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    opacity: 0;
+    transition: opacity 180ms ease;
+    backdrop-filter: blur(2px);
+  }
+
+  a.wp-card:hover .wp-dl,
+  a.wp-card:focus-visible .wp-dl {
+    opacity: 1;
+  }
+
+  .wp-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem 0.7rem;
+  }
+
+  .wp-name {
+    color: var(--f-high);
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  .wp-info {
+    flex-shrink: 0;
+    color: color-mix(in srgb, var(--f-low) 55%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    white-space: nowrap;
+  }
+
+  /* ---------- uses ---------- */
+  .dev-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-bottom: 2.25rem;
+  }
+
+  .dev-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.9rem 1rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--f-high) 3.5%, transparent);
+  }
+
+  .dev-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+
+  .dev-name {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+  }
+
+  .dev-name::before {
+    content: "▚ ";
+    opacity: 0.55;
+  }
+
+  .dev-kind {
+    flex-shrink: 0;
+    color: color-mix(in srgb, var(--f-low) 55%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    text-transform: lowercase;
+  }
+
+  .dev-role {
+    margin: 0;
+    color: var(--f-high);
+    font-family: var(--font-serif);
+    font-size: 1.02rem;
+    line-height: 1.25;
+  }
+
+  .dev-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.8rem;
+    color: color-mix(in srgb, var(--f-low) 62%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+  }
+
+  .uses-groups {
+    display: grid;
+    gap: 1.8rem;
+  }
+
+  .uses-list {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .uses-item {
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: 0.15rem 1rem;
+  }
+
+  .uses-name {
+    color: var(--f-high);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+  }
+
+  .uses-note {
+    color: color-mix(in srgb, var(--f-low) 74%, transparent);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  .uses-foot {
+    margin: 2rem 0 0;
+    color: color-mix(in srgb, var(--f-low) 66%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+
+  .uses-foot a {
+    margin-left: 0.4rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .uses-foot a:hover {
+    text-decoration: underline;
+  }
+
+  /* ---------- bookmarks ---------- */
+  .bm-groups,
+  .sn-groups,
+  .bs-groups {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .bm-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
+  }
+
+  .bm-list a {
+    display: grid;
+    grid-template-columns: minmax(0, auto) 1fr;
+    align-items: baseline;
+    gap: 0.2rem 0.75rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--f-low) 10%, transparent);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .bm-title {
+    color: var(--f-high);
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    line-height: 1.2;
+    transition: color 150ms ease;
+  }
+
+  .bm-list a:hover .bm-title,
+  .bm-list a:focus-visible .bm-title {
+    color: var(--accent);
+  }
+
+  .bm-domain {
+    justify-self: end;
+    color: color-mix(in srgb, var(--f-low) 50%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    white-space: nowrap;
+  }
+
+  .bm-note {
+    grid-column: 1 / -1;
+    color: color-mix(in srgb, var(--f-low) 74%, transparent);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  /* ---------- snippets ---------- */
+  .sn-list {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sn-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+  }
+
+  .sn-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .sn-title {
+    color: var(--f-high);
+    font-size: 0.92rem;
+    line-height: 1.35;
+  }
+
+  .sn-note {
+    color: color-mix(in srgb, var(--f-low) 60%, transparent);
+    font-size: 0.74rem;
+    line-height: 1.35;
+  }
+
+  .sn-code {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--f-high) 4%, transparent);
+    cursor: pointer;
+    text-align: left;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease;
+  }
+
+  .sn-code code {
+    overflow: hidden;
+    color: var(--f-high);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .sn-copy {
+    flex-shrink: 0;
+    color: color-mix(in srgb, var(--f-low) 55%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    transition: color 160ms ease;
+  }
+
+  .sn-code:hover {
+    border-color: color-mix(in srgb, var(--accent) 36%, transparent);
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
+  }
+
+  .sn-code:hover .sn-copy,
+  .sn-code.is-copied .sn-copy {
+    color: var(--accent);
+  }
+
+  /* ---------- bookshelf ---------- */
+  .bs-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
+  }
+
+  .bs-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--f-low) 10%, transparent);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .bs-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .bs-title {
+    color: var(--f-high);
+    font-family: var(--font-serif);
+    font-size: 1.08rem;
+    line-height: 1.25;
+    transition: color 150ms ease;
+  }
+
+  a.bs-item:hover .bs-title,
+  a.bs-item:focus-visible .bs-title {
+    color: var(--accent);
+  }
+
+  .bs-status {
+    flex-shrink: 0;
+    padding: 0.04em 0.5em;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    border-radius: 999px;
+    color: color-mix(in srgb, var(--accent) 90%, var(--f-high));
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    white-space: nowrap;
+  }
+
+  .bs-author {
+    color: color-mix(in srgb, var(--f-low) 66%, transparent);
+    font-size: 0.8rem;
+  }
+
+  .bs-note {
+    margin-top: 0.1rem;
+    color: color-mix(in srgb, var(--f-low) 78%, transparent);
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 860px) {
+    .wp-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 620px) {
+    .sn-item,
+    .uses-item {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stuff-header {
+      margin-bottom: 1.25rem;
+    }
+    .wp-grid,
+    .dev-grid {
+      grid-template-columns: 1fr;
+    }
+    .bm-list a {
+      grid-template-columns: 1fr;
+    }
+    .bm-domain {
+      justify-self: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wp-card,
+    .wp-img {
+      transition: none;
+    }
+    a.wp-card:hover {
+      transform: none;
+    }
+    a.wp-card:hover .wp-img {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  function initStuffTabs() {
+    const tablist = document.querySelector<HTMLElement>('[role="tablist"]');
+    if (!tablist) return;
+
+    const tabs = Array.from(
+      tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'),
+    );
+    const panels = Array.from(
+      document.querySelectorAll<HTMLElement>(".panel"),
+    );
+    const blurbs = Array.from(
+      document.querySelectorAll<HTMLElement>(".panel-blurb"),
+    );
+    if (!tabs.length) return;
+
+    const ids = tabs.map((t) => t.dataset.tab || "");
+
+    function select(id: string, focus = false, push = true) {
+      if (!ids.includes(id)) id = ids[0];
+
+      tabs.forEach((t) => {
+        const on = t.dataset.tab === id;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      });
+      panels.forEach((p) => {
+        p.hidden = p.dataset.panel !== id;
+      });
+      blurbs.forEach((b) => {
+        b.hidden = b.dataset.blurb !== id;
+      });
+
+      if (push && `#${id}` !== window.location.hash) {
+        history.replaceState(null, "", `#${id}`);
+      }
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => select(tab.dataset.tab || "", false));
+    });
+
+    // arrow-key navigation across the tab bar
+    tablist.addEventListener("keydown", (e) => {
+      const i = tabs.findIndex(
+        (t) => t.getAttribute("aria-selected") === "true",
+      );
+      if (i < 0) return;
+      let next = -1;
+      if (e.key === "ArrowRight" || e.key === "l") next = (i + 1) % tabs.length;
+      else if (e.key === "ArrowLeft" || e.key === "h")
+        next = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === "Home") next = 0;
+      else if (e.key === "End") next = tabs.length - 1;
+      if (next >= 0) {
+        e.preventDefault();
+        select(tabs[next].dataset.tab || "", true);
+      }
+    });
+
+    window.addEventListener("hashchange", () => {
+      select(window.location.hash.slice(1), false, false);
+    });
+
+    const initial = window.location.hash.slice(1);
+    select(ids.includes(initial) ? initial : ids[0], false, false);
+  }
+
+  function initCopy() {
+    document.querySelectorAll<HTMLButtonElement>(".sn-code").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.copy || "");
+        } catch {
+          return;
+        }
+        const label = btn.querySelector(".sn-copy");
+        const prev = label?.textContent;
+        if (label) label.textContent = "copied";
+        btn.classList.add("is-copied");
+        window.setTimeout(() => {
+          if (label) label.textContent = prev || "copy";
+          btn.classList.remove("is-copied");
+        }, 1200);
+      });
+    });
+  }
+
+  function init() {
+    initStuffTabs();
+    initCopy();
+  }
+
+  init();
+  document.addEventListener("astro:after-swap", init);
+</script>
