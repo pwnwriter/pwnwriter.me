@@ -1,98 +1,42 @@
 ---
-// Floating heading breadcrumb: a frosted pill under the header that tracks the
-// current section as you scroll and opens a sibling-picker card on click.
-// No-ops on pages whose article has no headings (e.g. most syndications).
+// Section breadcrumb: extends the sticky header path-trail (~ › notes › Title)
+// with the article's live section as you scroll — one unified breadcrumb.
+//
+// Desktop: the section chain grows onto the end of the trail; clicking a
+//   section crumb opens a sibling picker (also `space ;` leader + j/k/h/l).
+// Mobile (<=720px): the trail would overflow, so it collapses to just the
+//   current section with a chevron that opens a tap-to-jump table of contents.
+// No-ops on pages whose article has no headings.
 ---
 
-<div id="crumb-pill" class="crumb-pill" aria-hidden="true">
-	<span class="crumb-pill__home">§</span>
-	<ol id="crumb-pill-track" class="crumb-pill__track"></ol>
-	<button
-		id="crumb-pill-current"
-		class="crumb-pill__current"
-		type="button"
-		aria-expanded="false"
-		aria-label="Jump to section"
-	>
-		<span class="cicon">✦</span>
-		<span class="lbl"></span>
-		<span class="chev">▾</span>
-	</button>
-</div>
-
-<style>
-	.crumb-pill {
-		position: fixed;
-		top: 3.4rem;
-		left: 50%;
-		z-index: 15;
-		display: flex;
+<style is:global>
+	/* live section crumbs appended onto the end of the header breadcrumb trail */
+	#breadcrumbs .crumb-section {
+		display: inline-flex;
 		align-items: center;
-		gap: 0.4rem;
-		max-width: min(92vw, 42rem);
-		padding: 0.38rem 0.75rem;
-		border-radius: 999px;
-		background: color-mix(in srgb, var(--background) 72%, transparent);
-		backdrop-filter: blur(12px) saturate(1.4);
-		-webkit-backdrop-filter: blur(12px) saturate(1.4);
-		border: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
-		box-shadow: 0 10px 30px -18px color-mix(in srgb, var(--f-high) 70%, transparent);
-		font-family: "Departure Mono", ui-monospace, Menlo, monospace;
-		font-size: 0.78rem;
-		color: var(--f-low);
-		opacity: 0;
-		visibility: hidden;
-		transform: translateX(-50%) translateY(-8px);
-		transition:
-			opacity 0.22s ease,
-			transform 0.22s ease,
-			visibility 0.22s;
-		pointer-events: none;
+		white-space: nowrap;
 	}
 
-	.crumb-pill.is-visible {
-		opacity: 1;
-		visibility: visible;
-		transform: translateX(-50%) translateY(0);
-		pointer-events: auto;
+	#breadcrumbs .crumb-section .sep {
+		margin: 0 0.5rem;
+		color: color-mix(in srgb, var(--f-low) 38%, transparent);
 	}
 
-	.crumb-pill__home {
-		flex-shrink: 0;
+	#breadcrumbs .crumb-section .cicon {
+		margin-right: 0.3rem;
 		color: var(--accent);
+		font-size: 0.9em;
 	}
 
-	.crumb-pill__track {
-		display: flex;
+	#breadcrumbs .crumb-section button {
+		display: inline-flex;
 		align-items: center;
-		gap: 0.1rem;
-		margin: 0;
-		padding: 0;
-		list-style: none;
-		overflow-x: auto;
-		scrollbar-width: none;
-	}
-
-	.crumb-pill__track::-webkit-scrollbar {
-		display: none;
-	}
-
-	:global(.crumb-pill__track .sep) {
-		margin: 0 0.15rem;
-		color: color-mix(in srgb, var(--f-low) 45%, transparent);
-	}
-
-	:global(.crumb-pill__track .cicon) {
-		margin-right: 0.25rem;
-		color: var(--accent);
-	}
-
-	:global(.crumb-pill__track button) {
-		padding: 0.1rem 0.28rem;
+		max-width: 100%;
+		padding: 0.05rem 0.32rem;
 		border: 0;
-		border-radius: 5px;
+		border-radius: 6px;
 		background: none;
-		color: var(--f-high);
+		color: color-mix(in srgb, var(--f-low) 82%, transparent);
 		font: inherit;
 		white-space: nowrap;
 		cursor: pointer;
@@ -101,114 +45,76 @@
 			color 0.15s ease;
 	}
 
-	:global(.crumb-pill__track button:hover) {
+	/* the deepest (current) section reads as "you are here" */
+	#breadcrumbs .crumb-section:last-child button {
+		color: var(--f-high);
+	}
+
+	#breadcrumbs .crumb-section button:hover {
 		background: color-mix(in srgb, var(--accent) 14%, transparent);
 		color: var(--accent);
 	}
 
-	/* the article title as the root, struck through with the same hand-drawn
-	   squiggle that markdown ~~del~~ uses in the prose: "you've scrolled past this" */
-	:global(.crumb-pill__track .crumb-title) {
-		color: color-mix(in srgb, var(--f-low) 72%, transparent);
-		text-decoration: none;
-		background-image: url("data:image/svg+xml,%3Csvg width='140' height='18' viewBox='0 0 140 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 9.5C18 7.7 31 10.4 47 8.6C65 6.6 81 11.1 98 8.8C113 6.8 125 9.2 138 7.6' stroke='%23eb6f92' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M4 12.7C28 8.2 51 11.5 75 9.3C99 7 117 10.2 136 8.4' stroke='%23eb6f92' stroke-width='1.6' stroke-linecap='round' opacity='.75'/%3E%3C/svg%3E");
-		background-position: 0 56%;
-		background-repeat: repeat-x;
-		background-size: 5.5rem 0.72em;
-		box-decoration-break: clone;
-		-webkit-box-decoration-break: clone;
-	}
-
-	:global(.crumb-pill__track .crumb-title:hover) {
-		color: var(--accent);
-		background-color: color-mix(in srgb, var(--accent) 12%, transparent);
-	}
-
-	/* mobile: collapse to current-section button + tap-to-open TOC */
-	.crumb-pill__current {
-		display: none;
-		flex: 1;
-		min-width: 0;
-		align-items: center;
-		gap: 0.35rem;
-		padding: 0.15rem 0.3rem;
-		border: 0;
-		background: none;
-		color: var(--f-high);
-		font: inherit;
-		cursor: pointer;
-	}
-
-	.crumb-pill__current .cicon {
-		flex-shrink: 0;
-		color: var(--accent);
-	}
-
-	.crumb-pill__current .lbl {
-		flex: 1;
-		min-width: 0;
+	/* the collapsed mobile crumb: label + chevron */
+	#breadcrumbs .crumb-current .lbl {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		text-align: left;
 	}
 
-	.crumb-pill__current .chev {
+	#breadcrumbs .crumb-current .chev {
 		flex-shrink: 0;
-		color: color-mix(in srgb, var(--f-low) 60%, transparent);
+		margin-left: 0.4rem;
+		color: color-mix(in srgb, var(--f-low) 55%, transparent);
+		font-size: 0.8em;
 		transition: transform 0.2s ease;
 	}
 
-	.crumb-pill.is-open .crumb-pill__current .chev {
+	#breadcrumbs.toc-open .crumb-current .chev {
 		transform: rotate(180deg);
 	}
 
-	@media (max-width: 640px) {
-		.crumb-pill {
-			left: 0.6rem;
-			right: 0.6rem;
-			max-width: none;
-			transform: translateY(-8px);
-		}
-
-		.crumb-pill.is-visible {
-			transform: translateY(0);
-		}
-
-		.crumb-pill__track {
+	/* mobile: hide the path crumbs while deep in a section so only the current
+	   section shows — nothing overflows the narrow header. */
+	@media (max-width: 720px) {
+		#breadcrumbs.has-active-section > li:not(.crumb-section),
+		#breadcrumbs.has-active-section > span {
 			display: none;
 		}
 
-		.crumb-pill__current {
-			display: flex;
+		#breadcrumbs.has-active-section .crumb-section .sep {
+			display: none;
+		}
+
+		#breadcrumbs.has-active-section .crumb-current button {
+			max-width: min(78vw, 24rem);
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.crumb-pill,
-		.crumb-pill__current .chev {
+		#breadcrumbs .crumb-current .chev {
 			transition: none;
 		}
 	}
 
 	/* mobile table-of-contents panel */
-	:global(.crumb-toc) {
+	.crumb-toc {
 		position: fixed;
 		z-index: 60;
-		max-height: 60vh;
+		max-height: 62vh;
 		overflow-y: auto;
 		padding: 0.3rem;
 		border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
 		border-radius: 0.8rem;
-		background: color-mix(in srgb, var(--b-med) 90%, transparent);
+		background: color-mix(in srgb, var(--b-med) 92%, transparent);
 		backdrop-filter: blur(16px) saturate(1.4);
 		-webkit-backdrop-filter: blur(16px) saturate(1.4);
 		box-shadow: 0 18px 46px -20px color-mix(in srgb, var(--f-high) 80%, transparent);
-		font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+		font-family: var(--font-mono);
 		font-size: 0.85rem;
 	}
 
-	:global(.crumb-toc__item) {
+	.crumb-toc__item {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -218,12 +124,12 @@
 		text-decoration: none;
 	}
 
-	:global(.crumb-toc__item .ic) {
+	.crumb-toc__item .ic {
 		flex-shrink: 0;
 		color: var(--accent);
 	}
 
-	:global(.crumb-toc__item .lb) {
+	.crumb-toc__item .lb {
 		flex: 1;
 		min-width: 0;
 		overflow: hidden;
@@ -231,32 +137,21 @@
 		white-space: nowrap;
 	}
 
-	:global(.crumb-toc__item .dot) {
-		flex-shrink: 0;
-		color: var(--accent);
-		font-size: 0.6em;
-		opacity: 0;
-	}
-
-	:global(.crumb-toc__item.lvl-h3) {
+	.crumb-toc__item.lvl-h3 {
 		padding-left: 1.5rem;
 	}
 
-	:global(.crumb-toc__item.lvl-h4) {
+	.crumb-toc__item.lvl-h4 {
 		padding-left: 2.4rem;
 	}
 
-	:global(.crumb-toc__item.is-current) {
+	.crumb-toc__item.is-current {
 		background: color-mix(in srgb, var(--accent) 12%, transparent);
 		color: var(--f-high);
 	}
 
-	:global(.crumb-toc__item.is-current .dot) {
-		opacity: 1;
-	}
-
-	/* the sibling-picker card */
-	:global(.crumb-pick) {
+	/* the desktop sibling-picker card */
+	.crumb-pick {
 		position: fixed;
 		z-index: 60;
 		min-width: 12rem;
@@ -270,11 +165,11 @@
 		backdrop-filter: blur(14px) saturate(1.4);
 		-webkit-backdrop-filter: blur(14px) saturate(1.4);
 		box-shadow: 0 16px 44px -20px color-mix(in srgb, var(--f-high) 80%, transparent);
-		font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+		font-family: var(--font-mono);
 		font-size: 0.82rem;
 	}
 
-	:global(.crumb-pick a) {
+	.crumb-pick a {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -298,122 +193,27 @@
 	const SEP = '›';
 	const LEADER_TIMEOUT = 300;
 
-	function initCrumbPill() {
-		const pill = document.getElementById('crumb-pill');
-		const container = document.getElementById('crumb-pill-track');
+	function initCrumbs() {
+		const ul = document.getElementById('breadcrumbs');
 		const prose = document.querySelector('.prose');
-		if (!pill || !container || !prose) return;
+		if (!ul || !prose) return;
 
 		const headings = Array.from(
 			prose.querySelectorAll('h2, h3, h4'),
 		) as HTMLElement[];
 		if (!headings.length) return;
 
-		const titleEl = document.querySelector('main h1') as HTMLElement | null;
-		const titleText = titleEl?.textContent?.trim() || '';
+		const scroller = ul.closest('.overflow-x-auto') as HTMLElement | null;
+		const mq = window.matchMedia('(max-width: 720px)');
+		let isMobile = mq.matches;
 
-		function positionPill() {
-			const header = document.querySelector('.site-header');
-			if (header)
-				pill!.style.top = header.getBoundingClientRect().height + 10 + 'px';
-		}
-		positionPill();
-		window.addEventListener('resize', positionPill, { passive: true });
+		let crumbs: { wrap: HTMLElement; heading: HTMLElement }[] = [];
 
-		// --- mobile: collapsed current-section button + full TOC panel ---
-		const currentBtn = document.getElementById('crumb-pill-current');
-		let toc: HTMLElement | null = null;
-
-		function buildToc() {
-			const panel = document.createElement('div');
-			panel.className = 'crumb-toc';
-			headings.forEach((h) => {
-				const a = document.createElement('a');
-				a.href = h.id ? `#${h.id}` : '#';
-				a.className = 'crumb-toc__item lvl-' + h.tagName.toLowerCase();
-				a.dataset.hid = h.id || '';
-
-				const ic = document.createElement('span');
-				ic.className = 'ic';
-				ic.textContent = ICONS[h.tagName] || ICONS.H4;
-
-				const lb = document.createElement('span');
-				lb.className = 'lb';
-				lb.textContent = h.textContent?.trim() || '';
-
-				const dot = document.createElement('span');
-				dot.className = 'dot';
-				dot.textContent = '●';
-
-				a.append(ic, lb, dot);
-				a.addEventListener('click', (e) => {
-					e.preventDefault();
-					closeToc();
-					if (h.id)
-						document
-							.getElementById(h.id)
-							?.scrollIntoView({ behavior: 'smooth' });
-				});
-				panel.appendChild(a);
-			});
-			return panel;
-		}
-
-		function positionToc() {
-			if (!toc) return;
-			const r = pill!.getBoundingClientRect();
-			toc.style.top = r.bottom + 6 + 'px';
-			toc.style.left = r.left + 'px';
-			toc.style.width = r.width + 'px';
-		}
-
-		function highlightToc() {
-			if (!toc) return;
-			const active = getActiveHeadings();
-			const currentId = active.length ? active[active.length - 1].id : '';
-			toc.querySelectorAll('.crumb-toc__item').forEach((el) => {
-				el.classList.toggle(
-					'is-current',
-					!!currentId && (el as HTMLElement).dataset.hid === currentId,
-				);
-			});
-		}
-
-		function openToc() {
-			if (toc) return;
-			toc = buildToc();
-			document.body.appendChild(toc);
-			positionToc();
-			highlightToc();
-			currentBtn?.setAttribute('aria-expanded', 'true');
-			pill!.classList.add('is-open');
-		}
-
-		function closeToc() {
-			toc?.remove();
-			toc = null;
-			currentBtn?.setAttribute('aria-expanded', 'false');
-			pill!.classList.remove('is-open');
-		}
-
-		currentBtn?.addEventListener('click', (e) => {
-			e.stopPropagation();
-			if (toc) closeToc();
-			else openToc();
-		});
-		window.addEventListener('resize', positionToc, { passive: true });
-		document.addEventListener('click', (e) => {
-			if (!toc) return;
-			const t = e.target as Node;
-			if (toc.contains(t) || currentBtn?.contains(t)) return;
-			closeToc();
-		});
-
+		// ---------- desktop sibling picker ----------
 		let activePicker: HTMLElement | null = null;
 		let activeCrumbIdx = -1;
 		let pickerFocusIdx = -1;
 		let pickerItems: HTMLAnchorElement[] = [];
-		let crumbs: { wrap: HTMLElement; heading: HTMLElement }[] = [];
 		let leaderPending = false;
 		let leaderTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -474,15 +274,14 @@
 			const picker = document.createElement('div');
 			picker.className = 'crumb-pick';
 			const btnRect = wrap.getBoundingClientRect();
-			picker.style.top = btnRect.bottom + 6 + 'px';
+			picker.style.top = btnRect.bottom + 8 + 'px';
 			picker.style.left = btnRect.left + 'px';
 
 			pickerFocusIdx = -1;
 			pickerItems = [];
 
 			siblings.forEach((h, si) => {
-				const isActive = h === target;
-				if (isActive) pickerFocusIdx = si;
+				if (h === target) pickerFocusIdx = si;
 
 				const text = h.textContent?.trim() || '';
 				const item = document.createElement('a');
@@ -587,11 +386,9 @@
 				e.preventDefault();
 				leaderPending = false;
 				if (leaderTimer) clearTimeout(leaderTimer);
-				if (activePicker) {
-					closePicker();
-				} else if (crumbs.length > 0) {
+				if (activePicker) closePicker();
+				else if (!isMobile && crumbs.length > 0)
 					openPickerAt(crumbs.length - 1);
-				}
 				return;
 			}
 
@@ -606,6 +403,84 @@
 			closePicker();
 		});
 
+		// ---------- mobile table of contents ----------
+		let toc: HTMLElement | null = null;
+
+		function buildToc() {
+			const panel = document.createElement('div');
+			panel.className = 'crumb-toc';
+			headings.forEach((h) => {
+				const a = document.createElement('a');
+				a.href = h.id ? `#${h.id}` : '#';
+				a.className = 'crumb-toc__item lvl-' + h.tagName.toLowerCase();
+				a.dataset.hid = h.id || '';
+
+				const ic = document.createElement('span');
+				ic.className = 'ic';
+				ic.textContent = ICONS[h.tagName] || ICONS.H4;
+
+				const lb = document.createElement('span');
+				lb.className = 'lb';
+				lb.textContent = h.textContent?.trim() || '';
+
+				a.append(ic, lb);
+				a.addEventListener('click', (e) => {
+					e.preventDefault();
+					closeToc();
+					if (h.id)
+						document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' });
+				});
+				panel.appendChild(a);
+			});
+			return panel;
+		}
+
+		function positionToc() {
+			if (!toc) return;
+			const header = document.querySelector('.site-header');
+			const top = header ? header.getBoundingClientRect().bottom : 56;
+			toc.style.top = top + 6 + 'px';
+			toc.style.left = '0.6rem';
+			toc.style.right = '0.6rem';
+		}
+
+		function highlightToc() {
+			if (!toc) return;
+			const active = getActiveHeadings();
+			const currentId = active.length ? active[active.length - 1].id : '';
+			toc.querySelectorAll('.crumb-toc__item').forEach((el) => {
+				el.classList.toggle(
+					'is-current',
+					!!currentId && (el as HTMLElement).dataset.hid === currentId,
+				);
+			});
+		}
+
+		function openToc() {
+			if (toc) return;
+			toc = buildToc();
+			document.body.appendChild(toc);
+			positionToc();
+			highlightToc();
+			ul!.classList.add('toc-open');
+		}
+
+		function closeToc() {
+			toc?.remove();
+			toc = null;
+			ul!.classList.remove('toc-open');
+		}
+
+		document.addEventListener('click', (e) => {
+			if (!toc) return;
+			const t = e.target as Node;
+			if (toc.contains(t)) return;
+			const currentBtn = ul!.querySelector('.crumb-current button');
+			if (currentBtn && currentBtn.contains(t)) return;
+			closeToc();
+		});
+
+		// ---------- active section detection ----------
 		function getActiveHeadings(): HTMLElement[] {
 			const offset = 120;
 			let active: HTMLElement[] = [];
@@ -629,107 +504,131 @@
 			return active;
 		}
 
+		function renderMobile(active: HTMLElement[]) {
+			ul!.classList.add('has-active-section');
+			const h = active[active.length - 1];
+			const text = h.textContent?.trim() || '';
+
+			const li = document.createElement('li');
+			li.className = 'crumb-section crumb-current';
+
+			const sep = document.createElement('span');
+			sep.className = 'sep';
+			sep.textContent = SEP;
+
+			const icon = document.createElement('span');
+			icon.className = 'cicon';
+			icon.textContent = ICONS[h.tagName] || ICONS.H4;
+
+			const btn = document.createElement('button');
+			const lbl = document.createElement('span');
+			lbl.className = 'lbl';
+			lbl.textContent = text;
+			const chev = document.createElement('span');
+			chev.className = 'chev';
+			chev.textContent = '▾';
+			btn.append(lbl, chev);
+			btn.setAttribute('aria-label', 'Jump to section');
+			btn.addEventListener('click', (e) => {
+				e.stopPropagation();
+				if (toc) closeToc();
+				else openToc();
+			});
+
+			li.append(sep, icon, btn);
+			ul!.appendChild(li);
+			crumbs.push({ wrap: btn, heading: h });
+
+			if (toc) {
+				positionToc();
+				highlightToc();
+			}
+		}
+
+		function renderDesktop(active: HTMLElement[]) {
+			ul!.classList.remove('has-active-section');
+			active.forEach((h) => {
+				const text = h.textContent?.trim() || '';
+
+				const li = document.createElement('li');
+				li.className = 'crumb-section';
+
+				const sep = document.createElement('span');
+				sep.className = 'sep';
+				sep.textContent = SEP;
+
+				const icon = document.createElement('span');
+				icon.className = 'cicon';
+				icon.textContent = ICONS[h.tagName] || ICONS.H4;
+
+				const btn = document.createElement('button');
+				btn.textContent = text.length > 34 ? text.slice(0, 34) + '…' : text;
+				if (text.length > 34) btn.title = text;
+
+				const idx = crumbs.length;
+				btn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					if (activePicker && activeCrumbIdx === idx) closePicker();
+					else openPickerAt(idx);
+				});
+
+				li.append(sep, icon, btn);
+				ul!.appendChild(li);
+				crumbs.push({ wrap: btn, heading: h });
+			});
+
+			if (scroller) scroller.scrollLeft = scroller.scrollWidth;
+		}
+
 		function render() {
-			const active = getActiveHeadings();
-			container!.innerHTML = '';
+			ul!.querySelectorAll('.crumb-section').forEach((n) => n.remove());
 			crumbs = [];
 
-			pill!.classList.toggle('is-visible', active.length > 0);
+			const active = getActiveHeadings();
 			if (!active.length) {
+				ul!.classList.remove('has-active-section');
 				if (activePicker) closePicker();
 				if (toc) closeToc();
 				return;
 			}
 
-			// mobile: reflect the deepest active section in the collapsed pill
-			const deepest = active[active.length - 1];
-			if (currentBtn) {
-				const lbl = currentBtn.querySelector('.lbl') as HTMLElement;
-				const ic = currentBtn.querySelector('.cicon') as HTMLElement;
-				if (lbl) lbl.textContent = deepest.textContent?.trim() || '';
-				if (ic) ic.textContent = ICONS[deepest.tagName] || ICONS.H4;
+			if (isMobile) {
+				if (activePicker) closePicker();
+				renderMobile(active);
+			} else {
+				if (toc) closeToc();
+				renderDesktop(active);
 			}
-			if (toc) highlightToc();
-
-			// struck-through title root: click to jump back to the top
-			if (titleText) {
-				const li = document.createElement('li');
-				li.style.cssText = 'display: flex; align-items: center;';
-				const btn = document.createElement('button');
-				btn.className = 'crumb-title';
-				btn.textContent =
-					titleText.length > 26 ? titleText.slice(0, 26) + '…' : titleText;
-				if (titleText.length > 26) btn.title = titleText;
-				btn.addEventListener('click', (e) => {
-					e.stopPropagation();
-					closePicker();
-					window.scrollTo({ top: 0, behavior: 'smooth' });
-				});
-				li.appendChild(btn);
-				container!.appendChild(li);
-			}
-
-			active.forEach((h, i) => {
-				const isLast = i === active.length - 1;
-				const text = h.textContent?.trim() || '';
-
-				const li = document.createElement('li');
-				li.style.cssText = 'display: flex; align-items: center;';
-
-				if (i > 0 || titleText) {
-					const sep = document.createElement('span');
-					sep.textContent = SEP;
-					sep.className = 'sep';
-					li.appendChild(sep);
-				}
-
-				const icon = document.createElement('span');
-				icon.textContent = ICONS[h.tagName] || ICONS.H4;
-				icon.className = 'cicon';
-
-				const crumbWrap = document.createElement('span');
-				const btn = document.createElement('button');
-
-				const maxLen = isLast ? 30 : 16;
-				btn.textContent =
-					text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
-				if (text.length > maxLen) btn.title = text;
-
-				const crumbIdx = i;
-				btn.addEventListener('click', (e) => {
-					e.stopPropagation();
-					if (activePicker && activeCrumbIdx === crumbIdx) {
-						closePicker();
-					} else {
-						openPickerAt(crumbIdx);
-					}
-				});
-
-				crumbWrap.appendChild(btn);
-				li.append(icon, crumbWrap);
-				container!.appendChild(li);
-				crumbs.push({ wrap: crumbWrap, heading: h });
-			});
-
-			container!.scrollLeft = container!.scrollWidth;
 		}
 
 		let ticking = false;
-		window.addEventListener('scroll', () => {
-			if (!ticking) {
-				requestAnimationFrame(() => {
-					render();
-					ticking = false;
-				});
-				ticking = true;
-			}
-		});
+		window.addEventListener(
+			'scroll',
+			() => {
+				if (!ticking) {
+					requestAnimationFrame(() => {
+						render();
+						ticking = false;
+					});
+					ticking = true;
+				}
+			},
+			{ passive: true },
+		);
 
-		window.addEventListener('resize', () => render(), { passive: true });
+		window.addEventListener(
+			'resize',
+			() => {
+				isMobile = mq.matches;
+				positionToc();
+				render();
+			},
+			{ passive: true },
+		);
 
 		render();
 	}
 
-	initCrumbPill();
-	document.addEventListener('astro:after-swap', initCrumbPill);
+	initCrumbs();
+	document.addEventListener('astro:after-swap', initCrumbs);
 </script>

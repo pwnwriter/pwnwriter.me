@@ -20,18 +20,19 @@ const links = [
 
 <Wrapper>
   <footer class="py-md text-center font-mono">
-    <nav class="flex flex-wrap justify-center gap-2">
+    <nav class="flex flex-wrap justify-center gap-x-4 gap-y-1">
       {
         links.map(({ text, href }) => {
           const isExternal = href.startsWith("http");
+          const label = text === "~" ? "~" : `/${text}`;
           return (
             <a
               href={href}
               rel={isExternal ? "external" : undefined}
               target={isExternal ? "_blank" : undefined}
-              class="footer-chip"
+              class="footer-slash"
             >
-              {text}
+              {label}
             </a>
           );
         })
@@ -52,21 +53,19 @@ const links = [
     z-index: 11;
   }
 
-  .footer-chip {
-    display: inline-block;
-    padding: 0.2rem 0.65rem;
-    font-size: 0.72rem;
-    color: var(--f-low);
-    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
-    border-radius: 2px;
+  /* cmrg-style lowercase slash links: no chrome, just quiet text that warms
+     to the accent on hover. */
+  .footer-slash {
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: lowercase;
+    color: color-mix(in srgb, var(--f-low) 68%, transparent);
     text-decoration: none;
-    transition:
-      border-color 0.2s,
-      color 0.2s;
+    transition: color 0.2s ease;
   }
 
-  .footer-chip:hover {
-    border-color: var(--accent);
+  .footer-slash:hover,
+  .footer-slash:focus-visible {
     color: var(--accent);
   }
 </style>

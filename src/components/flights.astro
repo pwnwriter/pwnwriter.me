@@ -84,7 +84,7 @@ const flData = JSON.stringify({ airports: AP, legs });
   .fl-head h2 {
     margin: 0;
     color: var(--f-high);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+    font-family: var(--font-serif);
     font-weight: 700;
     font-size: clamp(1.35rem, 3.4vw, 1.9rem);
     line-height: 1;
@@ -177,7 +177,7 @@ const flData = JSON.stringify({ airports: AP, legs });
     gap: 0.7rem;
     margin-bottom: 0.7rem;
     color: color-mix(in srgb, var(--f-low) 55%, transparent);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+    font-family: var(--font-mono);
     font-size: 0.82rem;
     letter-spacing: 0.08em;
   }
@@ -224,7 +224,7 @@ const flData = JSON.stringify({ airports: AP, legs });
 
   .fl-codes {
     color: var(--f-high);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+    font-family: var(--font-mono);
     font-size: 1.15rem;
     font-weight: 700;
     letter-spacing: 0.02em;
@@ -244,7 +244,7 @@ const flData = JSON.stringify({ airports: AP, legs });
   .fl-date {
     margin-top: 0.28rem;
     color: color-mix(in srgb, var(--f-low) 48%, transparent);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     letter-spacing: 0.04em;
   }

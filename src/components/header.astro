@@ -34,7 +34,10 @@ let subpathList = subpaths.reduce(
 		</div>
 		<div class="overflow-x-auto py-2">
 			<Wrapper>
-				<ul class="inline-grid grid-flow-col items-center space-x-2">
+				<ul
+					id="breadcrumbs"
+					class="inline-grid grid-flow-col items-center space-x-2"
+				>
 					{
 						!isHome &&
 							subpathList.map((subpath) => (

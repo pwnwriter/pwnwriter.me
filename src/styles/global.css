@@ -1,5 +1,8 @@
 @import url("./prism-rose-pine.css");
 @import "katex/dist/katex.min.css";
+@import "@fontsource-variable/fraunces";
+@import "@fontsource/caveat/400.css";
+@import "@fontsource/caveat/700.css";
 
 /* Departure Mono — https://departuremono.com (self-hosted) */
 @font-face {
@@ -71,7 +74,24 @@
 }
 
 :root {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --font-serif: "Fraunces Variable", Fraunces, Georgia, "Times New Roman", serif;
+  --font-mono:
+    "Departure Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+
   color-scheme: light dark;
+}
+
+/* Fraunces is a display serif with real character — let it optically size to
+   the heading and dial in a touch of the "soft" axis so it reads warm, not
+   stiff. Applied wherever the serif face is used. */
+:is(h1, h2, h3, .font-serif) {
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 40, "WONK" 0;
+  letter-spacing: -0.015em;
 }
 
 ::selection {

@@ -1,15 +1,14 @@
 ---
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
-import Paragraph from "~/components/text/paragraph.astro";
-import Link from "~/components/link.astro";
+import PixelHand from "~/components/pixel-hand.astro";
 import { getCollection } from "astro:content";
 import "~/styles/index.css";
 
 const tagline = "Coffee. Code. Pwn.";
 const posts = (await getCollection("posts"))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
-  .slice(0, 3);
+  .slice(0, 6);
 
 const formatDate = (date: Date) =>
   date.toLocaleDateString(undefined, {
@@ -47,433 +46,501 @@ const summaryFor = (post: (typeof posts)[number]) =>
 
 <Layout title="~" description="pwn::musings.">
   <Wrapper>
-    <section class="hero home-page">
-      <div class="hero-copy">
-        <h1 class="hero-title">Hi, i'm Nabeen</h1>
-        <p class="scratch-line" aria-label={tagline} data-scratch-line>
-          {
-            [...tagline].map((char, index) => (
-              <span
-                class:list={[char === " " && "space"]}
-                style={`--i: ${index}; --shift: ${(index % 3) - 1}px`}
-                aria-hidden="true"
-              >
-                {char === " " ? "\u00a0" : char}
-              </span>
-            ))
-          }
-        </p>
-        <Paragraph>
-          I break things, fix them, and leave notes so future me has fewer
-          excuses. The rest is stuff I made and still <span
-            class="rough-mark second">like enough</span
-          > to <a
-            href="https://github.com/pwnwriter"
-            target="_blank"
-            rel="noopener noreferrer">enjoy</a
-          >.
-        </Paragraph>
-      </div>
-      <figure class="hero-photo-frame">
-        <img
-          class="hero-photo"
-          src="/images/blackhat26/me-at-blackhat.jpeg"
-          alt="Nabeen at Black Hat"
-          width="280"
-          height="380"
-        />
-      </figure>
-    </section>
-
-    <div class="divider"></div>
-
-    <section class="section">
-      <header class="writing-head">
-        <h2>recently written</h2>
-        <p>
-          things i kept thinking about until writing them down became easier
-          than letting them go.
-        </p>
+    <section class="home-page home-log" aria-labelledby="home-title">
+      <header class="intro-block">
+        <div>
+          <h1 id="home-title">hi, i'm nabeen</h1>
+          <p class="tagline glitch" data-text={tagline}>{tagline}</p>
+        </div>
+        <figure class="photo-stamp">
+          <img
+            src="/images/blackhat26/me-at-blackhat.jpeg"
+            alt="Nabeen at Black Hat"
+            width="120"
+            height="150"
+          />
+        </figure>
       </header>
 
-      <div class="writing-grid">
-        {
-          posts.map((post) => (
-            <a class="writing-card" href={`/notes/${post.slug}`}>
-              <h3>{post.data.title}</h3>
-              <p>{summaryFor(post)}</p>
-              <div class="writing-meta">
-                <span>{formatDate(post.data.pubDate)}</span>
-                <span>/</span>
-                <span>{post.data.tags.slice(0, 2).join(", ")}</span>
-              </div>
-            </a>
-          ))
-        }
+      <div class="bio">
+        <p>
+          i spend an unreasonable amount of time <span class="mark" style="--mark-delay: 0.5s">chasing questions</span>
+          that probably didn't need answers.
+        </p>
+
+        <p>
+          they usually drag me through terminals, systems, security, and
+          <span class="mark" style="--mark-delay: 0.9s">Nix</span> taking things
+          apart until the weird parts start to make sense.
+        </p>
+
+        <p>
+          every now and then, one of those rabbit holes turns into
+          <span class="mark" style="--mark-delay: 1.3s">something worth shipping</span>.
+        </p>
+
+        <aside class="margin-note" aria-hidden="true">yes, it's neovim</aside>
       </div>
 
-      <a class="notes-pointer" href="/notes">
-        <span class="notes-pointer__text">more notes</span>
-        <svg
-          class="notes-pointer__arrow"
-          viewBox="0 0 46 20"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M2 11c9-2.4 22-2.8 37-1.4"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"></path>
-          <path
-            d="M32 4.2 41 9.6 32.6 15.4"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-        </svg>
-      </a>
+      <section class="latest" aria-labelledby="latest-title">
+        <p class="section-label" id="latest-title">recent notes</p>
+        <div class="notes-grid">
+          {posts.map((post) => (
+            <a class="note-card" href={`/notes/${post.slug}`}>
+              <h2>{post.data.title}</h2>
+              <p class="note-sum">{summaryFor(post)}</p>
+              <div class="note-meta">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {formatDate(post.data.pubDate)}
+                </time>
+                {post.data.tags?.length > 0 && (
+                  <span class="note-tags">{post.data.tags.join(", ")}</span>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+        <div class="more-row">
+          <a class="more-notes" href="/notes">
+            <PixelHand />
+            <span>more notes</span>
+          </a>
+        </div>
+      </section>
     </section>
   </Wrapper>
 </Layout>
 
 <style>
-  .hero {
+  .home-log {
     position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(6.5rem, 8.5rem);
-    gap: clamp(0.9rem, 3vw, 1.6rem);
+    max-width: 54rem;
+    margin: 0 auto;
+  }
+
+  /* mobile-first: headline + a small photo sit side by side */
+  .intro-block {
+    display: flex;
     align-items: center;
-    max-width: 50rem;
-    margin: 0 auto 1.85rem;
+    gap: 1.3rem;
   }
 
-  .hero-photo-frame {
-    position: relative;
-    width: min(100%, 8.2rem);
-    margin: 0;
-    justify-self: end;
-    transform: rotate(2.5deg) translateY(0.2rem);
+  .intro-block > div {
+    flex: 0 1 auto;
+    min-width: 0;
   }
 
-  .hero-photo-frame::before {
-    content: "";
-    position: absolute;
-    inset: 0.45rem -0.45rem -0.45rem 0.45rem;
-    border: 1px solid color-mix(in srgb, var(--f-low) 16%, transparent);
-    border-radius: 0.85rem;
-    pointer-events: none;
-  }
-
-  .hero-photo {
-    display: block;
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    height: auto;
-    border: 1px solid color-mix(in srgb, var(--f-low) 18%, transparent);
-    border-radius: 0.85rem;
-    background: color-mix(in srgb, var(--f-high) 5%, transparent);
-    object-fit: cover;
-    object-position: center top;
-    box-shadow: 0 18px 40px -30px color-mix(in srgb, var(--f-high) 75%, transparent);
-  }
-
-  .hero-copy {
-    position: relative;
-    max-width: 40rem;
-  }
-
-  .divider {
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      color-mix(in srgb, var(--f-low) 25%, transparent),
-      transparent
-    );
-    margin-bottom: 1.25rem;
-  }
-
-  .section {
-    position: relative;
-    margin-bottom: 1.25rem;
-  }
-
-  .hero :global(p:not(.scratch-line)) {
-    max-width: 38rem;
-    margin-top: 1.25rem;
-    font-size: clamp(1rem, 1.5vw, 1.08rem);
-    line-height: 1.65;
-  }
-
-  .hero-title {
-    margin: 0;
-    color: var(--f-high);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
-    font-size: clamp(1.8rem, 4.4vw, 2.85rem);
-    font-weight: 700;
-    line-height: 0.98;
+  .eyebrow,
+  .tagline,
+  .section-label,
+  .latest-list time {
+    font-family: var(--font-mono);
     letter-spacing: 0;
+    text-transform: lowercase;
   }
 
-  .scratch-line {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 0.01em;
-    margin: 0.3rem 0 0;
-    color: color-mix(in srgb, var(--f-low) 68%, transparent);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
-    font-size: clamp(0.9rem, 2vw, 1.08rem);
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: 0;
-    user-select: none;
-  }
-
-  .scratch-line span {
-    display: inline-block;
-    min-width: 0.35ch;
-    transition:
-      color 120ms ease,
-      transform 120ms ease,
-      text-shadow 120ms ease;
-    transition-delay: calc(var(--i) * 10ms);
-  }
-
-  .scratch-line .space {
-    min-width: 0.8ch;
-  }
-
-  .scratch-line:hover span,
-  .scratch-line:focus-visible span,
-  .scratch-line.is-scratching span {
-    color: hsl(calc(18 + var(--i) * 19), 62%, 68%);
-    text-shadow: 0 0 10px color-mix(in srgb, currentColor 30%, transparent);
-    transform: translateY(var(--shift));
-  }
-
-  .scratch-line:hover span:nth-child(3n),
-  .scratch-line:focus-visible span:nth-child(3n),
-  .scratch-line.is-scratching span:nth-child(3n) {
-    color: var(--accent);
-  }
-
-  .writing-head {
-    margin-bottom: 1rem;
-  }
-
-  .writing-head h2 {
-    margin: 0;
-    color: var(--f-high);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
-    font-size: clamp(1.55rem, 3vw, 2.15rem);
-    font-weight: 700;
+  .eyebrow {
+    margin: 0 0 0.65rem;
+    color: color-mix(in srgb, var(--f-low) 62%, transparent);
+    font-size: 0.68rem;
     line-height: 1;
-    letter-spacing: 0;
   }
 
-  .writing-head p {
-    max-width: 34rem;
-    margin: 0.45rem 0 0;
-    color: color-mix(in srgb, var(--f-low) 78%, transparent);
-    font-size: 0.92rem;
+  .intro-block h1 {
+    margin: 0;
+    color: var(--f-high);
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 4.5vw, 2.3rem);
+    font-weight: 700;
+    line-height: 1.05;
+  }
+
+  .tagline {
+    width: fit-content;
+    max-width: 32rem;
+    margin: 0.5rem 0 0;
+    color: color-mix(in srgb, var(--accent) 84%, var(--f-high));
+    font-size: 0.98rem;
     line-height: 1.5;
   }
 
-  .writing-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-top: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
-    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
-  }
-
-  .writing-card {
-    min-width: 0;
-    padding: 1rem 1rem 0.95rem;
-    color: var(--f-low);
-    text-decoration: none;
-    transition:
-      background-color 160ms ease,
-      color 160ms ease;
-  }
-
-  .writing-card + .writing-card {
-    border-left: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
-  }
-
-  .writing-card:hover {
-    background: color-mix(in srgb, var(--accent) 6%, transparent);
-  }
-
-  .writing-card h3 {
-    display: -webkit-box;
-    min-height: 2.65em;
-    margin: 0 0 0.5rem;
-    overflow: hidden;
-    color: var(--f-high);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
-    font-size: 1.05rem;
-    font-weight: 700;
-    line-height: 1.25;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  .writing-card p {
-    display: -webkit-box;
-    min-height: 3.55em;
-    margin: 0;
-    overflow: hidden;
-    color: color-mix(in srgb, var(--f-low) 78%, transparent);
-    font-size: 0.85rem;
-    line-height: 1.45;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-  }
-
-  .writing-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-top: 0.8rem;
-    color: color-mix(in srgb, var(--f-low) 62%, transparent);
-    font-family: "Departure Mono", ui-monospace, Menlo, monospace;
-    font-size: 0.7rem;
-    line-height: 1.4;
-  }
-
-  .notes-pointer {
-    display: flex;
-    width: fit-content;
-    margin: 0.9rem 0.2rem 0 auto;
-    align-items: center;
-    gap: 0.45rem;
-    color: color-mix(in srgb, var(--f-low) 80%, transparent);
-    font-family: "Caveat", cursive;
-    font-weight: 700;
-    font-size: 1.55rem;
-    line-height: 1;
-    text-decoration: none;
-    transform: rotate(-3deg);
-    transition:
-      color 180ms ease,
-      transform 180ms ease;
-  }
-
-  .notes-pointer__text {
-    white-space: nowrap;
-  }
-
-  .notes-pointer__arrow {
-    width: 2.55rem;
-    height: 1.05rem;
-    overflow: visible;
-    transition: transform 180ms ease;
-  }
-
-  .notes-pointer:hover {
-    color: var(--accent);
-    transform: rotate(-3deg) translateX(2px);
-  }
-
-  .notes-pointer:hover .notes-pointer__arrow {
-    transform: translateX(4px);
-  }
-
-  .notes-pointer:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 4px;
-    border-radius: 6px;
-  }
-
-  .rough-mark {
+  /* cmrg.me-style echo/glitch: two accent-tinted copies of the text sit just
+     behind the real characters and drift on a slow loop, reading as doubled
+     letters. the real text stays fully legible on top. */
+  .glitch {
     position: relative;
-    display: inline;
-    color: var(--f-high);
-    white-space: nowrap;
+    isolation: isolate;
   }
 
-  .rough-mark::after {
-    content: "";
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
     position: absolute;
-    left: -0.12em;
-    right: -0.08em;
-    bottom: -0.16em;
-    height: 0.35em;
-    background:
-      linear-gradient(
-        176deg,
-        transparent 30%,
-        color-mix(in srgb, #a85f3d 75%, transparent) 34% 43%,
-        transparent 47%
-      ),
-      linear-gradient(
-        183deg,
-        transparent 52%,
-        color-mix(in srgb, #a85f3d 55%, transparent) 56% 64%,
-        transparent 68%
-      );
-    border-radius: 999px;
+    inset: 0;
+    z-index: -1;
     pointer-events: none;
   }
 
-  .rough-mark.second::after {
-    bottom: -0.2em;
-    transform: rotate(-1deg);
+  .glitch::before {
+    color: color-mix(in srgb, var(--accent) 32%, transparent);
+    animation: glitch-shift-a 2.6s steps(2, jump-none) infinite;
   }
 
-  @media (max-width: 640px) {
-    .hero {
-      grid-template-columns: 1fr;
-      margin-top: 0;
-    }
+  .glitch::after {
+    color: color-mix(in srgb, var(--f-low) 24%, transparent);
+    animation: glitch-shift-b 3.1s steps(2, jump-none) infinite;
+  }
 
-    .hero-photo-frame {
-      width: 5.5rem;
-      justify-self: start;
-      order: -1;
-      transform: rotate(2.5deg);
+  @keyframes glitch-shift-a {
+    0%,
+    100% {
+      transform: translate(0, 0.4px);
     }
-
-    .writing-grid {
-      grid-template-columns: 1fr;
+    50% {
+      transform: translate(0.5px, -0.5px);
     }
+  }
 
-    .writing-card + .writing-card {
-      border-top: 1px dashed color-mix(in srgb, var(--f-low) 20%, transparent);
-      border-left: 0;
+  @keyframes glitch-shift-b {
+    0%,
+    100% {
+      transform: translate(0, -0.4px);
     }
-
-    .notes-pointer {
-      margin-top: 1rem;
-      transform: rotate(-2deg);
-      font-size: 1.6rem;
-    }
-
-    .notes-pointer:hover {
-      transform: rotate(-2deg) translateX(2px);
+    50% {
+      transform: translate(-0.5px, 0.5px);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .scratch-line span {
-      transition: color 120ms ease;
+    .glitch::before {
+      transform: translate(0, 0.5px);
+      animation: none;
+    }
+    .glitch::after {
+      transform: translate(0, -0.5px);
+      animation: none;
+    }
+  }
+
+  .photo-stamp {
+    position: relative;
+    flex: none;
+    width: 6.5rem;
+    margin: 0;
+    transform: rotate(2deg);
+  }
+
+  /* on wider screens the photo floats out to the right edge of the column,
+     top-aligned with the headline and spanning down past the tagline — the
+     text (headline + tagline + bio) flows underneath it on the left. */
+  @media (min-width: 720px) {
+    .intro-block {
+      display: block;
     }
 
-    .scratch-line:hover span,
-    .scratch-line:focus-visible span,
-    .scratch-line.is-scratching span {
-      transform: none;
-      text-shadow: none;
+    .photo-stamp {
+      position: absolute;
+      top: 0.5rem;
+      right: 0;
+      width: 13rem;
     }
 
-    .notes-pointer:hover .notes-pointer__arrow {
+    .home-log .bio {
+      max-width: 37rem;
+    }
+  }
+
+  .photo-stamp img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    height: auto;
+    border: 1px solid color-mix(in srgb, var(--f-low) 20%, transparent);
+    border-radius: 0.35rem;
+    object-fit: cover;
+    object-position: center top;
+    opacity: 0.92;
+  }
+
+  .photo-stamp::after {
+    content: "";
+    position: absolute;
+    inset: 0.28rem -0.28rem -0.28rem 0.28rem;
+    z-index: -1;
+    border: 1px dashed color-mix(in srgb, var(--accent) 34%, transparent);
+    border-radius: 0.35rem;
+  }
+
+  /* cmrg.me-style conversational bio: a few relaxed paragraphs, key phrases
+     marked with a hand-drawn accent underline. */
+  .bio {
+    position: relative;
+    max-width: 39rem;
+    margin-top: 2.4rem;
+  }
+
+  .bio p {
+    margin: 0 0 1.4rem;
+    color: color-mix(in srgb, var(--f-low) 90%, var(--f-high));
+    font-size: clamp(1.05rem, 1.7vw, 1.18rem);
+    line-height: 1.95;
+  }
+
+  .bio p:last-of-type {
+    margin-bottom: 0;
+  }
+
+  /* rough marker underline that sits just under the text */
+  .mark {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .mark::after {
+    content: "";
+    position: absolute;
+    right: -0.05em;
+    bottom: -0.04em;
+    left: -0.05em;
+    z-index: -1;
+    height: 0.16em;
+    background: var(--accent);
+    border-radius: 1px;
+    opacity: 0.72;
+    /* start collapsed on the left, then get "drawn" in on load like a marker.
+       each mark carries its own --mark-delay so they sweep in one after another */
+    transform: rotate(-0.7deg) scaleX(0);
+    transform-origin: left center;
+    animation: mark-draw 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--mark-delay, 0.5s);
+  }
+
+  @keyframes mark-draw {
+    to {
+      transform: rotate(-0.7deg) scaleX(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mark::after {
+      animation: none;
+      transform: rotate(-0.7deg) scaleX(1);
+    }
+  }
+
+  /* handwritten scrawl in the right margin — decorative, wide screens only */
+  .margin-note {
+    display: none;
+  }
+
+  @media (min-width: 1140px) {
+    .margin-note {
+      display: block;
+      position: absolute;
+      top: 1.4rem;
+      right: -12.5rem;
+      width: 10rem;
+      padding-left: 0.7rem;
+      border-left: 1px solid color-mix(in srgb, var(--f-low) 24%, transparent);
+      color: color-mix(in srgb, var(--f-low) 66%, transparent);
+      font-family: "Caveat", cursive;
+      font-size: 1.5rem;
+      line-height: 1.1;
+      transform: rotate(-5deg);
+    }
+  }
+
+  .latest {
+    margin-top: 3rem;
+  }
+
+  .section-label {
+    margin: 0 0 0.35rem;
+    color: color-mix(in srgb, var(--f-low) 58%, transparent);
+    font-size: 0.68rem;
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.7rem 1.6rem;
+    margin-top: 1.1rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in srgb, var(--f-low) 13%, transparent);
+  }
+
+  .note-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.42rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .note-card h2 {
+    margin: 0;
+    overflow: hidden;
+    color: var(--f-high);
+    font-family: var(--font-serif);
+    font-size: 1.16rem;
+    font-weight: 600;
+    line-height: 1.22;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: color 150ms ease;
+  }
+
+  .note-card:hover h2,
+  .note-card:focus-visible h2 {
+    color: var(--accent);
+  }
+
+  .note-card:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    outline-offset: 4px;
+    border-radius: 3px;
+  }
+
+  .note-sum {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: color-mix(in srgb, var(--f-low) 72%, transparent);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .note-meta {
+    display: flex;
+    gap: 0.6ch;
+    align-items: baseline;
+    margin-top: 0.15rem;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    line-height: 1.4;
+    text-transform: lowercase;
+    white-space: nowrap;
+  }
+
+  .note-meta time {
+    flex: none;
+    color: color-mix(in srgb, var(--f-low) 62%, transparent);
+  }
+
+  .note-tags {
+    min-width: 0;
+    overflow: hidden;
+    color: color-mix(in srgb, var(--f-low) 30%, transparent);
+    text-overflow: ellipsis;
+  }
+
+  .more-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.7rem;
+  }
+
+  .more-notes {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: color-mix(in srgb, var(--f-low) 80%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    text-transform: lowercase;
+    text-decoration: none;
+  }
+
+  .more-notes span {
+    position: relative;
+    top: 0.05rem;
+  }
+
+  .more-notes :global(.pixel-hand) {
+    transition: transform 160ms ease;
+  }
+
+  .more-notes:hover {
+    color: var(--f-high);
+  }
+
+  .more-notes:hover :global(.pixel-hand) {
+    transform: translateX(4px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .more-notes:hover :global(.pixel-hand) {
       transform: none;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .notes-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .intro-block {
+      align-items: center;
+      gap: 1.1rem;
+    }
+
+    .photo-stamp {
+      width: 6rem;
+    }
+
+    /* tighter vertical rhythm on phones — the airy desktop spacing is too much
+       on a narrow screen */
+    .bio {
+      margin-top: 1.4rem;
+    }
+
+    .bio p {
+      margin-bottom: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .latest {
+      margin-top: 1.8rem;
+    }
+
+    .notes-grid {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-top: 0.7rem;
+      padding-top: 0.9rem;
+    }
+
+    /* keep the mobile home short — only the 3 most recent notes */
+    .note-card:nth-child(n + 4) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 380px) {
+    /* very narrow phones: let the headline sit above the photo instead of
+       squeezing them side by side */
+    .intro-block {
+      flex-wrap: wrap;
+    }
+
+    .photo-stamp {
+      width: 5.4rem;
     }
   }
 </style>
 
 <style is:global>
+  /* the notes card grid needs more room than the default reading column, so
+     give the home page a wider wrapper (headline + bio stay capped narrower). */
+  body:has(.home-page) main .mx-auto.max-w-3xl {
+    max-width: 56rem;
+  }
+
   body:has(.home-page) header {
     margin-top: 1.25rem;
   }
@@ -500,6 +567,15 @@ const summaryFor = (post: (typeof posts)[number]) =>
     width: 100%;
   }
 
+  /* on phones there's more content than viewport, so top-align it and let the
+     page scroll normally instead of vertically centering (which can clip the
+     top of tall content). */
+  @media (max-width: 720px) {
+    body:has(.home-page) main {
+      display: block;
+    }
+  }
+
   @media (max-height: 760px) and (min-width: 760px) {
     body:has(.home-page) header {
       margin-top: 0.75rem;
@@ -508,73 +584,9 @@ const summaryFor = (post: (typeof posts)[number]) =>
     body:has(.home-page) > .h-xl {
       height: 1rem;
     }
-
-    body:has(.home-page) .hero-title {
-      font-size: clamp(1.9rem, 4vw, 2.8rem);
-    }
   }
 
   body:has(.home-page) .branches-canvas {
-    opacity: 0.24;
+    opacity: 0.16;
   }
 </style>
-
-<script>
-  const scratchLine = document.querySelector("[data-scratch-line]");
-
-  if (scratchLine && !window.matchMedia("(hover: none)").matches) {
-    let context: AudioContext | null = null;
-    let lastScratch = 0;
-
-    function getContext() {
-      context ??= new AudioContext();
-      return context;
-    }
-
-    function scratch() {
-      const now = performance.now();
-      if (now - lastScratch < 70) return;
-      lastScratch = now;
-
-      const audio = getContext();
-      audio.resume().catch(() => {});
-
-      const duration = 0.055 + Math.random() * 0.05;
-      const buffer = audio.createBuffer(
-        1,
-        Math.floor(audio.sampleRate * duration),
-        audio.sampleRate,
-      );
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        const fade = 1 - i / data.length;
-        data[i] = (Math.random() * 2 - 1) * fade;
-      }
-
-      const source = audio.createBufferSource();
-      const filter = audio.createBiquadFilter();
-      const gain = audio.createGain();
-
-      filter.type = "bandpass";
-      filter.frequency.value = 420 + Math.random() * 460;
-      filter.Q.value = 5 + Math.random() * 7;
-      gain.gain.value = 0.018;
-
-      source.buffer = buffer;
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(audio.destination);
-      source.start();
-      source.stop(audio.currentTime + duration);
-    }
-
-    scratchLine.addEventListener("pointerenter", () => {
-      scratchLine.classList.add("is-scratching");
-      scratch();
-    });
-    scratchLine.addEventListener("pointermove", scratch);
-    scratchLine.addEventListener("pointerleave", () => {
-      scratchLine.classList.remove("is-scratching");
-    });
-  }
-</script>
