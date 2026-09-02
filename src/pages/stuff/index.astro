@@ -9,8 +9,17 @@ import { snippets } from "~/data/snippets";
 import { bookshelf } from "~/data/bookshelf";
 import { music } from "~/data/music";
 import { movies } from "~/data/movies";
+import { ossSummary, highlights, nixpkgs, fetchOssStats } from "~/data/oss";
 
 const externalAttrs = { target: "_blank", rel: "noopener noreferrer" };
+
+// build-time: refresh the oss numbers from github, and stamp the build day
+const oss = await fetchOssStats();
+const buildDate = new Date().toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
 
 const count = (groups: { items: unknown[] }[]) =>
   groups.reduce((n, g) => n + g.items.length, 0);
@@ -26,6 +35,7 @@ const domain = (url: string) => {
 const tabs = [
   { id: "wallpapers", label: "wallpapers", count: wallpapers.length, blurb: "the walls i actually run. click one to grab the full-res file." },
   { id: "uses", label: "uses", count: devices.length + count(software), blurb: "the machines and tools i actually run, all declared in nix." },
+  { id: "oss", label: "oss", count: oss.merged, blurb: "patches i've sent upstream. small fixes, ci, nix, and docs." },
   { id: "bookmarks", label: "bookmarks", count: count(bookmarks), blurb: "a blogroll in the old sense. go read them, then find theirs." },
   { id: "snippets", label: "snippets", count: count(snippets), blurb: "commands i re-google until my fingers learn them. click to copy." },
   { id: "bookshelf", label: "bookshelf", count: count(bookshelf), blurb: "books, papers, and writeups that earned a permanent spot." },
@@ -162,6 +172,60 @@ const tabs = [
           <a href="https://github.com/pwnwriter/nix" {...externalAttrs}>
             github.com/pwnwriter/nix
           </a>
+        </p>
+      </section>
+
+      {/* ---------------- oss ---------------- */}
+      <section
+        class="panel"
+        role="tabpanel"
+        id="panel-oss"
+        aria-labelledby="tab-oss"
+        data-panel="oss"
+        hidden
+      >
+        <div class="oss-stats">
+          <span class="oss-stat"><b>{oss.contributions.toLocaleString()}</b> contributions</span>
+          <span class="oss-stat"><b>{oss.merged}</b> merged prs</span>
+          <span class="oss-stat"><b>{oss.projects}</b> projects</span>
+          <span class="oss-stat"><b>{ossSummary.span}</b></span>
+        </div>
+
+        <p class="col-label">highlights</p>
+        <ul class="oss-list">
+          {highlights.map((c) => (
+            <li>
+              <a class="oss-item" href={c.url} {...externalAttrs}>
+                <div class="oss-line">
+                  <span class="oss-repo">{c.repo}</span>
+                  {c.lang && <span class="oss-lang">{c.lang}</span>}
+                  {c.count && <span class="oss-count">{c.count} prs</span>}
+                </div>
+                <span class="oss-desc">{c.desc}</span>
+                <span class="oss-what">{c.what}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <p class="col-label oss-nix-label">packaged for nixpkgs</p>
+        <div class="oss-nix">
+          {nixpkgs.map((p) => (
+            <a class="oss-pill" href={p.url} {...externalAttrs}>
+              {p.name}
+            </a>
+          ))}
+        </div>
+
+        <p class="uses-foot">
+          the full pile, closed ones and all:
+          <a href={ossSummary.allUrl} {...externalAttrs}>
+            all {oss.total} pull requests
+          </a>
+        </p>
+        <p class="oss-updated">
+          last synced {buildDate}
+          {oss.live ? "" : " (cached)"}
         </p>
       </section>
 
@@ -637,6 +701,134 @@ const tabs = [
 
   .uses-foot a:hover {
     text-decoration: underline;
+  }
+
+  /* ---------- oss ---------- */
+  .oss-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    margin-bottom: 1.6rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--f-low) 13%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: color-mix(in srgb, var(--f-low) 66%, transparent);
+  }
+
+  .oss-stat b {
+    color: var(--accent);
+    font-weight: 400;
+    font-size: 1.05rem;
+  }
+
+  .oss-list {
+    display: grid;
+    gap: 0;
+    margin: 0 0 2rem;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
+  }
+
+  .oss-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--f-low) 10%, transparent);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .oss-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .oss-repo {
+    color: var(--f-high);
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    transition: color 150ms ease;
+  }
+
+  .oss-item:hover .oss-repo,
+  .oss-item:focus-visible .oss-repo {
+    color: var(--accent);
+  }
+
+  .oss-lang {
+    flex-shrink: 0;
+    padding: 0.02em 0.45em;
+    border: 1px solid color-mix(in srgb, var(--f-low) 22%, transparent);
+    border-radius: 999px;
+    color: color-mix(in srgb, var(--f-low) 66%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    text-transform: lowercase;
+    white-space: nowrap;
+  }
+
+  .oss-count {
+    flex-shrink: 0;
+    color: color-mix(in srgb, var(--accent) 76%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+  }
+
+  .oss-desc {
+    color: color-mix(in srgb, var(--f-low) 60%, transparent);
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .oss-what {
+    color: color-mix(in srgb, var(--f-high) 88%, transparent);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  .oss-updated {
+    margin: 0.6rem 0 0;
+    color: color-mix(in srgb, var(--f-low) 45%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+  }
+
+  .oss-nix-label {
+    margin-top: 0;
+  }
+
+  .oss-nix {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .oss-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.12rem 0.55rem;
+    border: 1px solid color-mix(in srgb, var(--f-low) 18%, transparent);
+    border-radius: 6px;
+    color: color-mix(in srgb, var(--f-low) 80%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .oss-pill:hover {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 38%, transparent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    transform: translateY(-2px);
   }
 
   /* ---------- bookmarks ---------- */
