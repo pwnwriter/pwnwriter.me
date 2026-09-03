@@ -6,7 +6,9 @@ import SketchSignoff from "~/components/sketch-signoff.astro";
 import { getCollection } from "astro:content";
 import "~/styles/index.css";
 
-const tagline = "Coffee. Code. Pwn.";
+// status hidden behind the avatar badge, revealed (and wobbling) on hover.
+const status = "haw?";
+const statusEmoji = "🐛";
 const posts = (await getCollection("posts"))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
   .slice(0, 6);
@@ -49,39 +51,49 @@ const summaryFor = (post: (typeof posts)[number]) =>
   <Wrapper>
     <section class="home-page home-log" aria-labelledby="home-title">
       <header class="intro-block">
-        <div>
-          <h1 id="home-title">hi, i'm nabeen</h1>
-          <p class="tagline glitch" data-text={tagline}>{tagline}</p>
+        <div class="id-row">
+          <figure class="avatar">
+            <img
+              src="/images/blackhat26/me-avatar.jpeg"
+              alt="Nabeen"
+              width="400"
+              height="400"
+            />
+            <span
+              class="status-badge"
+              tabindex="0"
+              role="img"
+              aria-label={`status: ${status}`}
+            >
+              <span class="status-emoji" aria-hidden="true">{statusEmoji}</span>
+              <span class="status-pop" aria-hidden="true">{status}</span>
+            </span>
+          </figure>
+
+          <div class="id-text">
+            <h1 id="home-title">hi, i'm nabeen</h1>
+            <p class="handle">
+              @pwnwriter <span class="dot-sep" aria-hidden="true">·</span>
+              <span class="handle-tag" tabindex="0">coffee. code. pwn.</span>
+            </p>
+          </div>
         </div>
-        <figure class="photo-stamp">
-          <img
-            src="/images/blackhat26/me-at-blackhat.jpeg"
-            alt="Nabeen at Black Hat"
-            width="120"
-            height="150"
-          />
-        </figure>
+
+        <div class="bio">
+          <p>
+            apparently i build things, break things, and keep asking why long
+            after the how makes sense. a CS student and hacker in the older
+            sense: i live around <span class="mark" style="--mark-delay: 0.4s">Linux</span>
+            and security, package for
+            <span class="mark" style="--mark-delay: 0.7s">nixpkgs</span>, and
+            daily-drive NixOS.
+          </p>
+          <p class="bio-aside">
+            look closely enough, though, and most of it is just me adding,
+            changing, or preferably removing a few lines of text from some files.
+          </p>
+        </div>
       </header>
-
-      <div class="bio">
-        <p>
-          i spend an unreasonable amount of time <span class="mark" style="--mark-delay: 0.5s">chasing questions</span>
-          that probably didn't need answers.
-        </p>
-
-        <p>
-          they usually drag me through terminals, systems, security, and
-          <span class="mark" style="--mark-delay: 0.9s">Nix</span> taking things
-          apart until the weird parts start to make sense.
-        </p>
-
-        <p>
-          every now and then, one of those rabbit holes turns into
-          <span class="mark" style="--mark-delay: 1.3s">something worth shipping</span>.
-        </p>
-
-        <aside class="margin-note" aria-hidden="true">yes, it's neovim</aside>
-      </div>
 
       <section class="latest" aria-labelledby="latest-title">
         <p class="section-label" id="latest-title">recent notes</p>
@@ -121,20 +133,22 @@ const summaryFor = (post: (typeof posts)[number]) =>
     margin: 0 auto;
   }
 
-  /* mobile-first: headline + a small photo sit side by side */
+  /* github-profile-style hero, stacked: an id-row (avatar + name/handle) on
+     top, a relaxed bio below it, then a compact links row. */
   .intro-block {
-    display: flex;
-    align-items: center;
-    gap: 1.3rem;
+    display: block;
   }
 
-  .intro-block > div {
-    flex: 0 1 auto;
+  .id-row {
+    display: flex;
+    align-items: center;
+    gap: 1.15rem;
+  }
+
+  .id-text {
     min-width: 0;
   }
 
-  .eyebrow,
-  .tagline,
   .section-label,
   .latest-list time {
     font-family: var(--font-mono);
@@ -142,155 +156,201 @@ const summaryFor = (post: (typeof posts)[number]) =>
     text-transform: lowercase;
   }
 
-  .eyebrow {
-    margin: 0 0 0.65rem;
-    color: color-mix(in srgb, var(--f-low) 62%, transparent);
-    font-size: 0.68rem;
-    line-height: 1;
-  }
-
   .intro-block h1 {
     margin: 0;
     color: var(--f-high);
     font-family: var(--font-serif);
-    font-size: clamp(1.6rem, 4.5vw, 2.3rem);
+    font-size: clamp(1.55rem, 4.5vw, 2.2rem);
     font-weight: 700;
-    line-height: 1.05;
+    line-height: 1.1;
   }
 
-  .tagline {
-    width: fit-content;
-    max-width: 32rem;
-    margin: 0.5rem 0 0;
-    color: color-mix(in srgb, var(--accent) 84%, var(--f-high));
-    font-size: 0.98rem;
-    line-height: 1.5;
+  .handle {
+    display: flex;
+    align-items: center;
+    gap: 0.5ch;
+    margin: 0.35rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: lowercase;
+    color: color-mix(in srgb, var(--f-low) 58%, transparent);
   }
 
-  /* cmrg.me-style echo/glitch: two accent-tinted copies of the text sit just
-     behind the real characters and drift on a slow loop, reading as doubled
-     letters. the real text stays fully legible on top. */
-  .glitch {
-    position: relative;
-    isolation: isolate;
+  /* the "coffee. code. pwn." tag: accent-tinted, and it wobbles when hovered
+     or focused - a small playful reward for poking at it. */
+  .handle-tag {
+    display: inline-block;
+    color: color-mix(in srgb, var(--accent) 82%, var(--f-high));
+    cursor: default;
+    outline: none;
+    transform-origin: center 60%;
   }
 
-  .glitch::before,
-  .glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
+  .handle-tag:hover,
+  .handle-tag:focus-visible {
+    animation: wobble 0.6s ease;
   }
 
-  .glitch::before {
-    color: color-mix(in srgb, var(--accent) 32%, transparent);
-    animation: glitch-shift-a 2.6s steps(2, jump-none) infinite;
-  }
-
-  .glitch::after {
-    color: color-mix(in srgb, var(--f-low) 24%, transparent);
-    animation: glitch-shift-b 3.1s steps(2, jump-none) infinite;
-  }
-
-  @keyframes glitch-shift-a {
+  @keyframes wobble {
     0%,
     100% {
-      transform: translate(0, 0.4px);
+      transform: rotate(0);
     }
-    50% {
-      transform: translate(0.5px, -0.5px);
+    20% {
+      transform: rotate(-4deg) scale(1.04);
     }
-  }
-
-  @keyframes glitch-shift-b {
-    0%,
-    100% {
-      transform: translate(0, -0.4px);
+    40% {
+      transform: rotate(3deg) scale(1.04);
     }
-    50% {
-      transform: translate(-0.5px, 0.5px);
+    60% {
+      transform: rotate(-2deg) scale(1.02);
+    }
+    80% {
+      transform: rotate(1deg);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .glitch::before {
-      transform: translate(0, 0.5px);
+    .handle-tag:hover,
+    .handle-tag:focus-visible,
+    .status-badge:hover .status-emoji,
+    .status-badge:focus-visible .status-emoji {
       animation: none;
     }
-    .glitch::after {
-      transform: translate(0, -0.5px);
-      animation: none;
-    }
   }
 
-  .photo-stamp {
-    position: relative;
-    flex: none;
-    width: 6.5rem;
-    margin: 0;
-    transform: rotate(2deg);
-  }
-
-  /* on wider screens the photo floats out to the right edge of the column,
-     top-aligned with the headline and spanning down past the tagline - the
-     text (headline + tagline + bio) flows underneath it on the left. */
-  @media (min-width: 720px) {
-    .intro-block {
-      display: block;
-    }
-
-    .photo-stamp {
-      position: absolute;
-      top: 0.5rem;
-      right: 0;
-      width: 13rem;
-    }
-
-    .home-log .bio {
-      max-width: 37rem;
-    }
-  }
-
-  .photo-stamp img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    height: auto;
-    border: 1px solid color-mix(in srgb, var(--f-low) 20%, transparent);
-    border-radius: 0.35rem;
-    object-fit: cover;
-    object-position: center top;
-    opacity: 0.92;
-  }
-
-  .photo-stamp::after {
-    content: "";
-    position: absolute;
-    inset: 0.28rem -0.28rem -0.28rem 0.28rem;
-    z-index: -1;
-    border: 1px dashed color-mix(in srgb, var(--accent) 34%, transparent);
-    border-radius: 0.35rem;
-  }
-
-  /* cmrg.me-style conversational bio: a few relaxed paragraphs, key phrases
-     marked with a hand-drawn accent underline. */
+  /* relaxed multi-line bio, hand-drawn marks on a couple of key phrases */
   .bio {
-    position: relative;
-    max-width: 39rem;
-    margin-top: 2.4rem;
+    max-width: 38rem;
+    margin-top: 1.7rem;
   }
 
   .bio p {
-    margin: 0 0 1.4rem;
-    color: color-mix(in srgb, var(--f-low) 90%, var(--f-high));
-    font-size: clamp(1.05rem, 1.7vw, 1.18rem);
-    line-height: 1.95;
+    margin: 0 0 1.15rem;
+    color: color-mix(in srgb, var(--f-low) 92%, var(--f-high));
+    font-size: 1.02rem;
+    line-height: 1.75;
   }
 
-  .bio p:last-of-type {
+  .bio p:last-child {
     margin-bottom: 0;
+  }
+
+  .bio-aside {
+    color: color-mix(in srgb, var(--f-low) 62%, transparent) !important;
+    font-size: 0.94rem !important;
+    font-style: italic;
+  }
+
+  /* --- circular avatar + github-style status badge --- */
+  .avatar {
+    position: relative;
+    flex: none;
+    width: 5.4rem;
+    height: 5.4rem;
+    margin: 0;
+  }
+
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center 35%;
+    border: 1px solid color-mix(in srgb, var(--f-low) 22%, transparent);
+    background: var(--b-high);
+    /* muted by default, warms to full color on hover - a small profile touch */
+    filter: grayscale(0.5);
+    transition: filter 300ms ease;
+  }
+
+  .avatar:hover img {
+    filter: grayscale(0);
+  }
+
+  .status-badge {
+    position: absolute;
+    right: -0.3rem;
+    bottom: -0.1rem;
+    display: grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 50%;
+    background: var(--b-high);
+    border: 1px solid color-mix(in srgb, var(--f-low) 20%, transparent);
+    box-shadow: 0 1px 4px color-mix(in srgb, #000 12%, transparent);
+    cursor: default;
+    outline: none;
+  }
+
+  .status-emoji {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  /* the status text, hidden until the badge is hovered/focused - github style */
+  .status-pop {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.5rem);
+    transform: translate(-50%, 4px);
+    width: max-content;
+    max-width: 16rem;
+    padding: 0.3rem 0.55rem;
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, var(--f-low) 18%, transparent);
+    background: color-mix(in srgb, var(--b-high) 97%, transparent);
+    color: color-mix(in srgb, var(--accent) 82%, var(--f-high));
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.3;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease;
+    z-index: 3;
+  }
+
+  .status-pop::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: color-mix(in srgb, var(--b-high) 97%, transparent);
+  }
+
+  .status-badge:hover .status-pop,
+  .status-badge:focus-visible .status-pop {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  .status-emoji {
+    transform-origin: center 70%;
+  }
+
+  .status-badge:hover .status-emoji,
+  .status-badge:focus-visible .status-emoji {
+    animation: wobble 0.6s ease;
+  }
+
+  @media (min-width: 640px) {
+    .avatar {
+      width: 6.4rem;
+      height: 6.4rem;
+    }
+    .status-badge {
+      width: 2.1rem;
+      height: 2.1rem;
+    }
+    .status-emoji {
+      font-size: 1.15rem;
+    }
   }
 
   /* rough marker underline that sits just under the text */
@@ -331,26 +391,8 @@ const summaryFor = (post: (typeof posts)[number]) =>
     }
   }
 
-  /* handwritten scrawl in the right margin - decorative, wide screens only */
-  .margin-note {
-    display: none;
-  }
-
-  @media (min-width: 1140px) {
-    .margin-note {
-      display: block;
-      position: absolute;
-      top: 1.4rem;
-      right: -12.5rem;
-      width: 10rem;
-      padding-left: 0.7rem;
-      border-left: 1px solid color-mix(in srgb, var(--f-low) 24%, transparent);
-      color: color-mix(in srgb, var(--f-low) 66%, transparent);
-      font-family: "Caveat", cursive;
-      font-size: 1.5rem;
-      line-height: 1.1;
-      transform: rotate(-5deg);
-    }
+  .dot-sep {
+    color: color-mix(in srgb, var(--f-low) 26%, transparent);
   }
 
   .latest {
@@ -487,24 +529,18 @@ const summaryFor = (post: (typeof posts)[number]) =>
   }
 
   @media (max-width: 640px) {
-    .intro-block {
-      align-items: center;
-      gap: 1.1rem;
+    .id-row {
+      gap: 1rem;
     }
 
-    .photo-stamp {
-      width: 6rem;
-    }
-
-    /* tighter vertical rhythm on phones - the airy desktop spacing is too much
-       on a narrow screen */
     .bio {
-      margin-top: 1.4rem;
+      margin-top: 1.35rem;
     }
 
     .bio p {
-      margin-bottom: 0.9rem;
-      line-height: 1.6;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      margin-bottom: 0.95rem;
     }
 
     .latest {
@@ -521,18 +557,6 @@ const summaryFor = (post: (typeof posts)[number]) =>
     /* keep the mobile home short - only the 3 most recent notes */
     .note-card:nth-child(n + 4) {
       display: none;
-    }
-  }
-
-  @media (max-width: 380px) {
-    /* very narrow phones: let the headline sit above the photo instead of
-       squeezing them side by side */
-    .intro-block {
-      flex-wrap: wrap;
-    }
-
-    .photo-stamp {
-      width: 5.4rem;
     }
   }
 </style>

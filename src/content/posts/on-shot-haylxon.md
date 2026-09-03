@@ -35,7 +35,7 @@ task::spawn(async move {
 
 It looks fine. If something errors, stop.
 
-But Chrome sends non-fatal errors all the time — like console warnings from websites. When that happened:
+But Chrome sends non-fatal errors all the time like console warnings from websites. When that happened:
 
 1. `handler.next()` returned `Some(Err(...))`
 2. The loop hit `break`
