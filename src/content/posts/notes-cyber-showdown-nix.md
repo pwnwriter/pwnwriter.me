@@ -11,9 +11,9 @@ So this is two things at once. It is a practical guide to running a CTF lab on N
 
 If you have never touched Nix, do not worry. I will explain the mental model before the machinery, and every command has a reason attached.
 
-Before any of the technical detail: my team, **TU-2026-Team-08** (team motto, "win win win"), finished first, 17 of 24 flags for 12150 points. Every one of those flags came out of the Nix shell this post is about, so take the rest as proof the setup holds up under real competition pressure and not just on a quiet afternoon.
+Before any of the technical detail: my team, **TU-2026-Team-08** (team motto, "win win win"), finished first, closing out the event with 20,951 points. Every flag came out of the Nix shell this post is about, so take the rest as proof the setup holds up under real competition pressure and not just on a quiet afternoon.
 
-![Cyber Showdown scoreboard with TU-2026-Team-08 in first place, 12150 points and 17 of 24 flags](/images/cyber-showdown/scoreboard-first.jpeg)
+![Cyber Showdown scoreboard partway through the event, TU-2026-Team-08 already out in front](/images/cyber-showdown/scoreboard-first.jpeg)
 
 ## Why bother? The problem Nix actually solves
 
