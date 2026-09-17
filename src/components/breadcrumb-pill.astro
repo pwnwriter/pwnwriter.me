@@ -1,12 +1,8 @@
 ---
 // Section breadcrumb: extends the sticky header path-trail (~ › notes › Title)
 // with the article's live section as you scroll, as a single current-section
-// chip. Clicking the chip opens a full-screen numbered table-of-contents menu
-// (↑ back to top, 01. 02. 03. …, the current section marked, strikethrough on
-// hover), aligned to the article column — the same on desktop and mobile.
-//
-// Desktop: full path + the section chip.
-// Mobile (<=720px): the trail collapses to just the section chip.
+// chip. Clicking the chip drops a small numbered dropdown of the article's
+// sections; click one to jump to it. Same compact dropdown on laptop and mobile.
 // Also reachable with the `space ;` leader, then j/k to move, enter to jump.
 // No-ops on pages whose article has no headings.
 ---
@@ -96,130 +92,55 @@
 		}
 	}
 
-	/* ---- the full-screen numbered table-of-contents menu ---- */
+	/* ---- compact section dropdown, dropped from the breadcrumb chip ---- */
 	.crumb-toc {
 		position: fixed;
-		inset: 0;
-		z-index: 55;
+		z-index: 60;
+		min-width: 12rem;
+		max-width: min(22rem, 92vw);
+		max-height: min(62vh, 24rem);
 		overflow-y: auto;
-		background: color-mix(in srgb, var(--background) 90%, transparent);
-		backdrop-filter: blur(10px) saturate(1.2);
-		-webkit-backdrop-filter: blur(10px) saturate(1.2);
-		animation: crumb-toc-in 0.22s ease;
+		padding: 0.3rem;
+		border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
+		border-radius: 0.7rem;
+		background: color-mix(in srgb, var(--b-med) 92%, transparent);
+		backdrop-filter: blur(14px) saturate(1.4);
+		-webkit-backdrop-filter: blur(14px) saturate(1.4);
+		box-shadow: 0 16px 44px -20px color-mix(in srgb, var(--f-high) 80%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		animation: crumb-toc-in 0.15s ease;
 	}
 
 	@keyframes crumb-toc-in {
 		from {
 			opacity: 0;
+			transform: translateY(-4px);
 		}
 	}
 
-	/* mobile: full-width list dropping from the top */
-	.crumb-toc__inner {
-		width: 100%;
-		max-width: 48rem;
-		margin: 0 auto;
-		padding: clamp(4.5rem, 12vh, 7rem) 2rem 4rem;
-	}
-
-	/* desktop: the menu is a LEFT rail beside the article, which stays readable —
-	   only a faint veil, no heavy blur. Vertically centred, sliding in from left. */
-	@media (min-width: 721px) {
-		.crumb-toc {
-			display: flex;
-			align-items: center;
-			align-items: safe center;
-			background: color-mix(in srgb, var(--background) 30%, transparent);
-			backdrop-filter: none;
-			-webkit-backdrop-filter: none;
-		}
-
-		/* a tiny rail tucked against the left edge, not a takeover */
-		.crumb-toc__inner {
-			width: auto;
-			max-width: 15rem;
-			margin: 0;
-			padding: 1.5rem clamp(1.25rem, 3vw, 2.25rem);
-			animation: crumb-toc-slide 0.24s ease;
-		}
-
-		.crumb-toc__top {
-			margin-bottom: 1.1rem;
-			font-size: 0.7rem;
-		}
-
-		.crumb-toc__list {
-			gap: 0;
-		}
-
-		/* one tight little line per section (ellipsis if long) */
-		.crumb-toc__item {
-			padding: 0.05rem 0;
-			gap: 0.45rem;
-			line-height: 1.15;
-		}
-
-		.crumb-toc__item .num {
-			width: 1.35rem;
-			font-size: 0.58rem;
-		}
-
-		.crumb-toc__item .lb {
-			font-size: 0.72rem;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-
-		.crumb-toc__item.lvl-h3 .lb {
-			padding-left: 0.7rem;
-		}
-
-		.crumb-toc__item.lvl-h4 .lb {
-			padding-left: 1.4rem;
-		}
-
-		.crumb-toc__item.lvl-h3 .lb {
-			padding-left: 0.9rem;
-		}
-
-		.crumb-toc__item.lvl-h4 .lb {
-			padding-left: 1.8rem;
-		}
-	}
-
-	@keyframes crumb-toc-slide {
-		from {
-			opacity: 0;
-			transform: translateX(-14px);
-		}
-	}
-
+	/* ↑ back to top, sitting above the section list */
 	.crumb-toc__top {
-		display: inline-flex;
+		display: flex;
 		align-items: center;
-		gap: 0.6rem;
-		margin-bottom: 2.75rem;
+		gap: 0.5rem;
+		padding: 0.42rem 0.55rem;
+		margin-bottom: 0.2rem;
+		border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
 		color: color-mix(in srgb, var(--f-low) 78%, transparent);
-		font-family: var(--font-mono);
-		font-size: 0.95rem;
 		text-decoration: none;
-		transition: color 0.15s ease;
+		white-space: nowrap;
 	}
 
 	.crumb-toc__top .arw {
 		color: var(--accent);
-		transition: transform 0.2s ease;
 	}
 
 	.crumb-toc__top:hover,
 	.crumb-toc__top.is-focus {
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
 		color: var(--accent);
-	}
-
-	.crumb-toc__top:hover .arw,
-	.crumb-toc__top.is-focus .arw {
-		transform: translateY(-2px);
+		border-radius: 0.45rem;
 	}
 
 	.crumb-toc__list {
@@ -230,65 +151,53 @@
 	.crumb-toc__item {
 		display: flex;
 		align-items: baseline;
-		gap: 0.9rem;
-		padding: 0.32rem 0;
-		color: var(--f-high);
+		gap: 0.55rem;
+		padding: 0.4rem 0.55rem;
+		border-radius: 0.45rem;
+		color: var(--f-low);
 		text-decoration: none;
-		line-height: 1.32;
+		white-space: nowrap;
 	}
 
 	.crumb-toc__item .num {
 		flex-shrink: 0;
-		width: 2.1rem;
-		color: color-mix(in srgb, var(--f-low) 42%, transparent);
-		font-family: var(--font-mono);
-		font-size: 0.82rem;
+		width: 1.5rem;
+		color: color-mix(in srgb, var(--f-low) 45%, transparent);
+		font-size: 0.72em;
 		font-variant-numeric: tabular-nums;
 	}
 
 	.crumb-toc__item .lb {
 		min-width: 0;
-		font-size: clamp(1.12rem, 2.4vw, 1.5rem);
-		transition: color 0.15s ease;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.crumb-toc__item.lvl-h3 .lb {
-		padding-left: 1.4rem;
+		padding-left: 0.9rem;
 	}
 
 	.crumb-toc__item.lvl-h4 .lb {
-		padding-left: 2.8rem;
+		padding-left: 1.8rem;
 	}
 
-	/* hover / keyboard focus: cross the entry off, cmrg-style */
-	.crumb-toc__item:hover .lb,
-	.crumb-toc__item.is-focus .lb {
-		color: color-mix(in srgb, var(--f-low) 68%, transparent);
-		text-decoration: line-through;
-		text-decoration-color: color-mix(in srgb, var(--accent) 65%, transparent);
-		text-decoration-thickness: 2px;
-	}
-
-	/* the section you're currently reading */
-	.crumb-toc__item.is-current .num {
+	.crumb-toc__item:hover,
+	.crumb-toc__item.is-focus {
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
 		color: var(--accent);
 	}
 
-	.crumb-toc__item.is-current .lb {
+	.crumb-toc__item.is-current {
+		color: var(--f-high);
+	}
+
+	.crumb-toc__item.is-current .num {
 		color: var(--accent);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.crumb-toc {
 			animation: none;
-		}
-
-		.crumb-toc__inner {
-			animation: none;
-		}
-
-		.crumb-toc__top .arw {
-			transition: none;
 		}
 	}
 </style>
@@ -318,7 +227,7 @@
 		// the single appended section chip (rebuilt as you scroll)
 		let chip: { wrap: HTMLElement } | null = null;
 
-		// ---------- the numbered TOC menu ----------
+		// ---------- the section dropdown ----------
 		let toc: HTMLElement | null = null;
 		let tocItems: HTMLAnchorElement[] = [];
 		let focusIdx = -1;
@@ -331,13 +240,9 @@
 		}
 
 		function buildToc() {
-			const overlay = document.createElement('div');
-			overlay.className = 'crumb-toc';
-			overlay.setAttribute('role', 'menu');
-
-			const inner = document.createElement('div');
-			inner.className = 'crumb-toc__inner';
-			overlay.appendChild(inner);
+			const panel = document.createElement('div');
+			panel.className = 'crumb-toc';
+			panel.setAttribute('role', 'menu');
 
 			const cur = currentId();
 			tocItems = [];
@@ -355,12 +260,12 @@
 					behavior: prefersReduced() ? 'auto' : 'smooth',
 				});
 			});
-			inner.appendChild(top);
+			panel.appendChild(top);
 			tocItems.push(top);
 
 			const list = document.createElement('nav');
 			list.className = 'crumb-toc__list';
-			inner.appendChild(list);
+			panel.appendChild(list);
 
 			headings.forEach((h, i) => {
 				const text = h.textContent?.trim() || '';
@@ -397,12 +302,22 @@
 				tocItems.push(a);
 			});
 
-			// click on the empty backdrop (outside the list column) closes
-			overlay.addEventListener('click', (e) => {
-				if (e.target === overlay || e.target === inner) closeToc();
-			});
+			return panel;
+		}
 
-			return overlay;
+		// drop the panel just beneath the chip, clamped inside the viewport
+		function positionToc() {
+			if (!toc || !chip) return;
+			const r = chip.wrap.getBoundingClientRect();
+			toc.style.top = r.bottom + 8 + 'px';
+
+			const width = toc.getBoundingClientRect().width || 208;
+			const margin = 10;
+			let left = r.left;
+			if (left + width > window.innerWidth - margin) {
+				left = Math.max(margin, window.innerWidth - margin - width);
+			}
+			toc.style.left = left + 'px';
 		}
 
 		function setFocus(idx: number) {
@@ -412,10 +327,10 @@
 		}
 
 		function openToc() {
-			if (toc) return;
+			if (toc || !chip) return;
 			toc = buildToc();
 			document.body.appendChild(toc);
-			document.documentElement.style.overflow = 'hidden'; // lock background
+			positionToc();
 			ul!.classList.add('toc-open');
 
 			// start focus on the current section
@@ -428,7 +343,6 @@
 			toc = null;
 			tocItems = [];
 			focusIdx = -1;
-			document.documentElement.style.overflow = '';
 			ul!.classList.remove('toc-open');
 		}
 
@@ -436,6 +350,14 @@
 			if (toc) closeToc();
 			else openToc();
 		}
+
+		// close when clicking anywhere outside the dropdown or the chip
+		document.addEventListener('click', (e) => {
+			if (!toc) return;
+			const t = e.target as Node;
+			if (toc.contains(t) || chip?.wrap.contains(t)) return;
+			closeToc();
+		});
 
 		// ---------- keyboard: leader + in-menu nav ----------
 		function handleTocKeys(e: KeyboardEvent) {
@@ -547,7 +469,7 @@
 			ul!.appendChild(li);
 			chip = { wrap: btn };
 
-			// keep an open menu's current marker fresh as you scroll
+			// keep an open dropdown aligned + its current marker fresh as you scroll
 			if (toc) {
 				const cur = currentId();
 				toc.querySelectorAll('.crumb-toc__item').forEach((el) => {
@@ -556,6 +478,7 @@
 						!!cur && (el as HTMLElement).dataset.hid === cur,
 					);
 				});
+				positionToc();
 			}
 		}
 

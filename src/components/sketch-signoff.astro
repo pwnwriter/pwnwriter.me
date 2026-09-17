@@ -176,8 +176,6 @@ const first = invites[0];
       }
       const el = chars[i];
       el.style.visibility = "visible";
-      const ch = el.textContent || "";
-      if (ch.trim()) window.pwnSfx?.pencil(); // graphite scratch per stroke
       el.after(caret); // pen travels to the freshly written character
       window.setTimeout(() => type(i + 1), delayFor(el.textContent || ""));
     }

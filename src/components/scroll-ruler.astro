@@ -205,61 +205,6 @@ const ticks = Array.from({ length: TICKS + 1 }, (_, i) => ({
     let lastIndex = -1;
     let raf = 0;
 
-    // ── tiny mechanical "qrr" click each time a tick is passed ──────────
-    let actx: AudioContext | null = null;
-    let noiseBuf: AudioBuffer | null = null;
-    let lastSound = 0;
-
-    function initAudio() {
-      if (actx) return;
-      const AC =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext?: typeof AudioContext })
-          .webkitAudioContext;
-      if (!AC) return;
-      actx = new AC();
-      // short burst of white noise we band-pass into a dry click
-      const len = Math.floor(actx.sampleRate * 0.03);
-      noiseBuf = actx.createBuffer(1, len, actx.sampleRate);
-      const data = noiseBuf.getChannelData(0);
-      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
-    }
-
-    function playTick() {
-      if (!actx || !noiseBuf) return;
-      const now = performance.now();
-      if (now - lastSound < 28) return; // don't machine-gun on fast scroll
-      lastSound = now;
-      if (actx.state === 'suspended') actx.resume();
-
-      const t = actx.currentTime;
-      const src = actx.createBufferSource();
-      src.buffer = noiseBuf;
-
-      const bp = actx.createBiquadFilter();
-      bp.type = 'bandpass';
-      bp.frequency.value = 1700 + Math.random() * 700;
-      bp.Q.value = 7;
-
-      const g = actx.createGain();
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.09, t + 0.004); // small, but audible
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
-
-      src.connect(bp).connect(g).connect(actx.destination);
-      src.start(t);
-      src.stop(t + 0.05);
-    }
-
-    // browsers need a user gesture before audio; arm on first interaction
-    const arm = () => {
-      initAudio();
-      if (actx && actx.state === 'suspended') actx.resume();
-    };
-    ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach((ev) =>
-      window.addEventListener(ev, arm, { once: true, passive: true }),
-    );
-
     function paint() {
       raf = 0;
       const doc = document.documentElement;
@@ -292,7 +237,6 @@ const ticks = Array.from({ length: TICKS + 1 }, (_, i) => ({
         for (let i = 0; i < ticks.length; i++) {
           ticks[i].classList.toggle('passed', i <= idx);
         }
-        if (lastIndex !== -1) playTick(); // skip the initial paint
         lastIndex = idx;
       }
     }
