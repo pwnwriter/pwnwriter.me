@@ -1,5 +1,5 @@
 ---
-title: "Cyber Showdown CTF on One Nix Flake: The Little Things Nobody Warns You About"
+title: "One Flake to Hack Them All"
 pubDate: 2026-09-14
 modDate: 2026-09-14
 tags: ["ctf", "nix", "pwn", "reversing", "writeup"]
