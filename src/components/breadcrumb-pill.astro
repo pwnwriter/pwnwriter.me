@@ -1,19 +1,23 @@
 ---
 // Section breadcrumb: extends the sticky header path-trail (~ › notes › Title)
-// with the article's live section as you scroll — one unified breadcrumb.
+// with the article's live section as you scroll, as a single current-section
+// chip. Clicking the chip opens a full-screen numbered table-of-contents menu
+// (↑ back to top, 01. 02. 03. …, the current section marked, strikethrough on
+// hover), aligned to the article column — the same on desktop and mobile.
 //
-// Desktop: the section chain grows onto the end of the trail; clicking a
-//   section crumb opens a sibling picker (also `space ;` leader + j/k/h/l).
-// Mobile (<=720px): the trail would overflow, so it collapses to just the
-//   current section with a chevron that opens a tap-to-jump table of contents.
+// Desktop: full path + the section chip.
+// Mobile (<=720px): the trail collapses to just the section chip.
+// Also reachable with the `space ;` leader, then j/k to move, enter to jump.
 // No-ops on pages whose article has no headings.
 ---
 
 <style is:global>
-	/* live section crumbs appended onto the end of the header breadcrumb trail */
+	/* the single live section crumb appended onto the header breadcrumb trail */
 	#breadcrumbs .crumb-section {
 		display: inline-flex;
 		align-items: center;
+		min-width: 0;
+		flex-shrink: 0; /* hold place; the title crumb shrinks first, not this */
 		white-space: nowrap;
 	}
 
@@ -31,12 +35,13 @@
 	#breadcrumbs .crumb-section button {
 		display: inline-flex;
 		align-items: center;
-		max-width: 100%;
+		min-width: 0;
+		max-width: min(38vw, 20rem);
 		padding: 0.05rem 0.32rem;
 		border: 0;
 		border-radius: 6px;
 		background: none;
-		color: color-mix(in srgb, var(--f-low) 82%, transparent);
+		color: var(--f-high);
 		font: inherit;
 		white-space: nowrap;
 		cursor: pointer;
@@ -45,24 +50,19 @@
 			color 0.15s ease;
 	}
 
-	/* the deepest (current) section reads as "you are here" */
-	#breadcrumbs .crumb-section:last-child button {
-		color: var(--f-high);
-	}
-
-	#breadcrumbs .crumb-section button:hover {
+	#breadcrumbs .crumb-section button:hover,
+	#breadcrumbs.toc-open .crumb-section button {
 		background: color-mix(in srgb, var(--accent) 14%, transparent);
 		color: var(--accent);
 	}
 
-	/* the collapsed mobile crumb: label + chevron */
-	#breadcrumbs .crumb-current .lbl {
+	#breadcrumbs .crumb-section .lbl {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
-	#breadcrumbs .crumb-current .chev {
+	#breadcrumbs .crumb-section .chev {
 		flex-shrink: 0;
 		margin-left: 0.4rem;
 		color: color-mix(in srgb, var(--f-low) 55%, transparent);
@@ -70,12 +70,11 @@
 		transition: transform 0.2s ease;
 	}
 
-	#breadcrumbs.toc-open .crumb-current .chev {
+	#breadcrumbs.toc-open .crumb-section .chev {
 		transform: rotate(180deg);
 	}
 
-	/* mobile: hide the path crumbs while deep in a section so only the current
-	   section shows — nothing overflows the narrow header. */
+	/* mobile: hide the path crumbs so only the current section chip shows */
 	@media (max-width: 720px) {
 		#breadcrumbs.has-active-section > li:not(.crumb-section),
 		#breadcrumbs.has-active-section > span {
@@ -86,101 +85,211 @@
 			display: none;
 		}
 
-		#breadcrumbs.has-active-section .crumb-current button {
-			max-width: min(78vw, 24rem);
+		#breadcrumbs.has-active-section .crumb-section button {
+			max-width: min(82vw, 26rem);
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		#breadcrumbs .crumb-current .chev {
+		#breadcrumbs .crumb-section .chev {
 			transition: none;
 		}
 	}
 
-	/* mobile table-of-contents panel */
+	/* ---- the full-screen numbered table-of-contents menu ---- */
 	.crumb-toc {
 		position: fixed;
-		z-index: 60;
-		max-height: 62vh;
+		inset: 0;
+		z-index: 55;
 		overflow-y: auto;
-		padding: 0.3rem;
-		border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
-		border-radius: 0.8rem;
-		background: color-mix(in srgb, var(--b-med) 92%, transparent);
-		backdrop-filter: blur(16px) saturate(1.4);
-		-webkit-backdrop-filter: blur(16px) saturate(1.4);
-		box-shadow: 0 18px 46px -20px color-mix(in srgb, var(--f-high) 80%, transparent);
+		background: color-mix(in srgb, var(--background) 90%, transparent);
+		backdrop-filter: blur(10px) saturate(1.2);
+		-webkit-backdrop-filter: blur(10px) saturate(1.2);
+		animation: crumb-toc-in 0.22s ease;
+	}
+
+	@keyframes crumb-toc-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	/* mobile: full-width list dropping from the top */
+	.crumb-toc__inner {
+		width: 100%;
+		max-width: 48rem;
+		margin: 0 auto;
+		padding: clamp(4.5rem, 12vh, 7rem) 2rem 4rem;
+	}
+
+	/* desktop: the menu is a LEFT rail beside the article, which stays readable —
+	   only a faint veil, no heavy blur. Vertically centred, sliding in from left. */
+	@media (min-width: 721px) {
+		.crumb-toc {
+			display: flex;
+			align-items: center;
+			align-items: safe center;
+			background: color-mix(in srgb, var(--background) 30%, transparent);
+			backdrop-filter: none;
+			-webkit-backdrop-filter: none;
+		}
+
+		/* a tiny rail tucked against the left edge, not a takeover */
+		.crumb-toc__inner {
+			width: auto;
+			max-width: 15rem;
+			margin: 0;
+			padding: 1.5rem clamp(1.25rem, 3vw, 2.25rem);
+			animation: crumb-toc-slide 0.24s ease;
+		}
+
+		.crumb-toc__top {
+			margin-bottom: 1.1rem;
+			font-size: 0.7rem;
+		}
+
+		.crumb-toc__list {
+			gap: 0;
+		}
+
+		/* one tight little line per section (ellipsis if long) */
+		.crumb-toc__item {
+			padding: 0.05rem 0;
+			gap: 0.45rem;
+			line-height: 1.15;
+		}
+
+		.crumb-toc__item .num {
+			width: 1.35rem;
+			font-size: 0.58rem;
+		}
+
+		.crumb-toc__item .lb {
+			font-size: 0.72rem;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.crumb-toc__item.lvl-h3 .lb {
+			padding-left: 0.7rem;
+		}
+
+		.crumb-toc__item.lvl-h4 .lb {
+			padding-left: 1.4rem;
+		}
+
+		.crumb-toc__item.lvl-h3 .lb {
+			padding-left: 0.9rem;
+		}
+
+		.crumb-toc__item.lvl-h4 .lb {
+			padding-left: 1.8rem;
+		}
+	}
+
+	@keyframes crumb-toc-slide {
+		from {
+			opacity: 0;
+			transform: translateX(-14px);
+		}
+	}
+
+	.crumb-toc__top {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin-bottom: 2.75rem;
+		color: color-mix(in srgb, var(--f-low) 78%, transparent);
 		font-family: var(--font-mono);
-		font-size: 0.85rem;
+		font-size: 0.95rem;
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+
+	.crumb-toc__top .arw {
+		color: var(--accent);
+		transition: transform 0.2s ease;
+	}
+
+	.crumb-toc__top:hover,
+	.crumb-toc__top.is-focus {
+		color: var(--accent);
+	}
+
+	.crumb-toc__top:hover .arw,
+	.crumb-toc__top.is-focus .arw {
+		transform: translateY(-2px);
+	}
+
+	.crumb-toc__list {
+		display: flex;
+		flex-direction: column;
 	}
 
 	.crumb-toc__item {
 		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.55rem 0.6rem;
-		border-radius: 0.5rem;
-		color: var(--f-low);
+		align-items: baseline;
+		gap: 0.9rem;
+		padding: 0.32rem 0;
+		color: var(--f-high);
 		text-decoration: none;
+		line-height: 1.32;
 	}
 
-	.crumb-toc__item .ic {
+	.crumb-toc__item .num {
 		flex-shrink: 0;
-		color: var(--accent);
+		width: 2.1rem;
+		color: color-mix(in srgb, var(--f-low) 42%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.82rem;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.crumb-toc__item .lb {
-		flex: 1;
 		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		font-size: clamp(1.12rem, 2.4vw, 1.5rem);
+		transition: color 0.15s ease;
 	}
 
-	.crumb-toc__item.lvl-h3 {
-		padding-left: 1.5rem;
+	.crumb-toc__item.lvl-h3 .lb {
+		padding-left: 1.4rem;
 	}
 
-	.crumb-toc__item.lvl-h4 {
-		padding-left: 2.4rem;
+	.crumb-toc__item.lvl-h4 .lb {
+		padding-left: 2.8rem;
 	}
 
-	.crumb-toc__item.is-current {
-		background: color-mix(in srgb, var(--accent) 12%, transparent);
-		color: var(--f-high);
+	/* hover / keyboard focus: cross the entry off, cmrg-style */
+	.crumb-toc__item:hover .lb,
+	.crumb-toc__item.is-focus .lb {
+		color: color-mix(in srgb, var(--f-low) 68%, transparent);
+		text-decoration: line-through;
+		text-decoration-color: color-mix(in srgb, var(--accent) 65%, transparent);
+		text-decoration-thickness: 2px;
 	}
 
-	/* the desktop sibling-picker card */
-	.crumb-pick {
-		position: fixed;
-		z-index: 60;
-		min-width: 12rem;
-		max-width: 22rem;
-		max-height: 16rem;
-		overflow-y: auto;
-		padding: 0.3rem;
-		border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
-		border-radius: 0.7rem;
-		background: color-mix(in srgb, var(--b-med) 86%, transparent);
-		backdrop-filter: blur(14px) saturate(1.4);
-		-webkit-backdrop-filter: blur(14px) saturate(1.4);
-		box-shadow: 0 16px 44px -20px color-mix(in srgb, var(--f-high) 80%, transparent);
-		font-family: var(--font-mono);
-		font-size: 0.82rem;
+	/* the section you're currently reading */
+	.crumb-toc__item.is-current .num {
+		color: var(--accent);
 	}
 
-	.crumb-pick a {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.4rem 0.6rem;
-		border-radius: 0.45rem;
-		color: var(--f-low);
-		text-decoration: none;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		outline: none;
+	.crumb-toc__item.is-current .lb {
+		color: var(--accent);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.crumb-toc {
+			animation: none;
+		}
+
+		.crumb-toc__inner {
+			animation: none;
+		}
+
+		.crumb-toc__top .arw {
+			transition: none;
+		}
 	}
 </style>
 
@@ -203,158 +312,143 @@
 		) as HTMLElement[];
 		if (!headings.length) return;
 
-		const scroller = ul.closest('.overflow-x-auto') as HTMLElement | null;
 		const mq = window.matchMedia('(max-width: 720px)');
 		let isMobile = mq.matches;
 
-		let crumbs: { wrap: HTMLElement; heading: HTMLElement }[] = [];
+		// the single appended section chip (rebuilt as you scroll)
+		let chip: { wrap: HTMLElement } | null = null;
 
-		// ---------- desktop sibling picker ----------
-		let activePicker: HTMLElement | null = null;
-		let activeCrumbIdx = -1;
-		let pickerFocusIdx = -1;
-		let pickerItems: HTMLAnchorElement[] = [];
+		// ---------- the numbered TOC menu ----------
+		let toc: HTMLElement | null = null;
+		let tocItems: HTMLAnchorElement[] = [];
+		let focusIdx = -1;
 		let leaderPending = false;
 		let leaderTimer: ReturnType<typeof setTimeout> | null = null;
 
-		function closePicker() {
-			activePicker?.remove();
-			activePicker = null;
-			pickerItems = [];
-			pickerFocusIdx = -1;
-			activeCrumbIdx = -1;
+		function currentId(): string {
+			const active = getActiveHeadings();
+			return active.length ? active[active.length - 1].id : '';
 		}
 
-		function getSiblings(target: HTMLElement): HTMLElement[] {
-			const tag = target.tagName;
-			if (tag === 'H2') return headings.filter((h) => h.tagName === 'H2');
+		function buildToc() {
+			const overlay = document.createElement('div');
+			overlay.className = 'crumb-toc';
+			overlay.setAttribute('role', 'menu');
 
-			const parentTag = tag === 'H3' ? 'H2' : 'H3';
-			let parent: HTMLElement | null = null;
-			for (const h of headings) {
-				if (h === target) break;
-				if (h.tagName === parentTag) parent = h;
-			}
+			const inner = document.createElement('div');
+			inner.className = 'crumb-toc__inner';
+			overlay.appendChild(inner);
 
-			const siblings: HTMLElement[] = [];
-			let inScope = !parent;
-			for (const h of headings) {
-				if (h === parent) {
-					inScope = true;
-					continue;
-				}
-				if (inScope && h.tagName === parentTag) break;
-				if (inScope && h.tagName === tag) siblings.push(h);
-			}
-			return siblings;
-		}
+			const cur = currentId();
+			tocItems = [];
 
-		function highlightItem(idx: number) {
-			pickerItems.forEach((item, i) => {
-				const indicator = item.querySelector('span:first-child') as HTMLElement;
-				const label = item.querySelector('span:last-child') as HTMLElement;
-				const active = i === idx;
-				item.style.background = active ? 'var(--b-high)' : 'transparent';
-				if (indicator)
-					indicator.style.color = active ? 'var(--accent)' : 'transparent';
-				if (label) label.style.color = active ? 'var(--accent)' : 'var(--f-low)';
-				if (active) item.scrollIntoView({ block: 'nearest' });
-			});
-		}
-
-		function openPickerAt(crumbIdx: number) {
-			closePicker();
-			if (crumbIdx < 0 || crumbIdx >= crumbs.length) return;
-
-			activeCrumbIdx = crumbIdx;
-			const { wrap, heading: target } = crumbs[crumbIdx];
-			const siblings = getSiblings(target);
-			if (siblings.length <= 1) return;
-
-			const picker = document.createElement('div');
-			picker.className = 'crumb-pick';
-			const btnRect = wrap.getBoundingClientRect();
-			picker.style.top = btnRect.bottom + 8 + 'px';
-			picker.style.left = btnRect.left + 'px';
-
-			pickerFocusIdx = -1;
-			pickerItems = [];
-
-			siblings.forEach((h, si) => {
-				if (h === target) pickerFocusIdx = si;
-
-				const text = h.textContent?.trim() || '';
-				const item = document.createElement('a');
-				item.href = h.id ? `#${h.id}` : '#';
-				item.title = text;
-
-				const indicator = document.createElement('span');
-				indicator.textContent = SEP;
-				indicator.style.cssText =
-					'flex-shrink: 0; font-weight: bold; color: transparent; width: 0.75rem;';
-
-				const iconSpan = document.createElement('span');
-				iconSpan.textContent = ICONS[h.tagName] || ICONS.H4;
-				iconSpan.style.cssText = 'flex-shrink: 0; color: var(--accent);';
-
-				const label = document.createElement('span');
-				label.textContent = text;
-				label.style.cssText =
-					'overflow: hidden; text-overflow: ellipsis; color: var(--f-low);';
-
-				item.append(indicator, iconSpan, label);
-
-				item.addEventListener('mouseenter', () => {
-					pickerFocusIdx = si;
-					highlightItem(pickerFocusIdx);
+			// ↑ back to top
+			const top = document.createElement('a');
+			top.className = 'crumb-toc__top';
+			top.href = '#';
+			top.innerHTML = '<span class="arw">↑</span><span>back to top</span>';
+			top.addEventListener('click', (e) => {
+				e.preventDefault();
+				closeToc();
+				window.scrollTo({
+					top: 0,
+					behavior: prefersReduced() ? 'auto' : 'smooth',
 				});
-				item.addEventListener('click', (e) => {
+			});
+			inner.appendChild(top);
+			tocItems.push(top);
+
+			const list = document.createElement('nav');
+			list.className = 'crumb-toc__list';
+			inner.appendChild(list);
+
+			headings.forEach((h, i) => {
+				const text = h.textContent?.trim() || '';
+				const a = document.createElement('a');
+				a.href = h.id ? `#${h.id}` : '#';
+				a.className =
+					'crumb-toc__item lvl-' +
+					h.tagName.toLowerCase() +
+					(h.id && h.id === cur ? ' is-current' : '');
+				a.dataset.hid = h.id || '';
+				a.title = text; // full section name on hover when truncated
+
+				const num = document.createElement('span');
+				num.className = 'num';
+				num.textContent = String(i + 1).padStart(2, '0') + '.';
+
+				const lb = document.createElement('span');
+				lb.className = 'lb';
+				lb.textContent = text;
+
+				a.append(num, lb);
+				a.addEventListener('click', (e) => {
 					e.preventDefault();
-					closePicker();
+					closeToc();
 					if (h.id)
 						document
 							.getElementById(h.id)
-							?.scrollIntoView({ behavior: 'smooth' });
+							?.scrollIntoView({
+								behavior: prefersReduced() ? 'auto' : 'smooth',
+							});
 				});
-
-				picker.appendChild(item);
-				pickerItems.push(item);
+				a.addEventListener('mouseenter', () => setFocus(tocItems.indexOf(a)));
+				list.appendChild(a);
+				tocItems.push(a);
 			});
 
-			document.body.appendChild(picker);
-			highlightItem(pickerFocusIdx);
-			activePicker = picker;
+			// click on the empty backdrop (outside the list column) closes
+			overlay.addEventListener('click', (e) => {
+				if (e.target === overlay || e.target === inner) closeToc();
+			});
+
+			return overlay;
 		}
 
-		function handlePickerKeys(e: KeyboardEvent) {
-			if (!activePicker) return;
+		function setFocus(idx: number) {
+			focusIdx = idx;
+			tocItems.forEach((it, i) => it.classList.toggle('is-focus', i === idx));
+			if (idx >= 0) tocItems[idx]?.scrollIntoView({ block: 'nearest' });
+		}
 
+		function openToc() {
+			if (toc) return;
+			toc = buildToc();
+			document.body.appendChild(toc);
+			document.documentElement.style.overflow = 'hidden'; // lock background
+			ul!.classList.add('toc-open');
+
+			// start focus on the current section
+			const curEl = toc.querySelector('.is-current') as HTMLElement | null;
+			setFocus(curEl ? tocItems.indexOf(curEl as HTMLAnchorElement) : 0);
+		}
+
+		function closeToc() {
+			toc?.remove();
+			toc = null;
+			tocItems = [];
+			focusIdx = -1;
+			document.documentElement.style.overflow = '';
+			ul!.classList.remove('toc-open');
+		}
+
+		function toggleToc() {
+			if (toc) closeToc();
+			else openToc();
+		}
+
+		// ---------- keyboard: leader + in-menu nav ----------
+		function handleTocKeys(e: KeyboardEvent) {
+			if (!toc) return;
 			const actions: Record<string, () => void> = {
-				j: () => {
-					pickerFocusIdx = (pickerFocusIdx + 1) % pickerItems.length;
-					highlightItem(pickerFocusIdx);
-				},
+				j: () => setFocus((focusIdx + 1) % tocItems.length),
 				ArrowDown: () => actions.j(),
-				k: () => {
-					pickerFocusIdx =
-						(pickerFocusIdx - 1 + pickerItems.length) % pickerItems.length;
-					highlightItem(pickerFocusIdx);
-				},
+				k: () => setFocus((focusIdx - 1 + tocItems.length) % tocItems.length),
 				ArrowUp: () => actions.k(),
-				h: () => {
-					if (activeCrumbIdx > 0) openPickerAt(activeCrumbIdx - 1);
-				},
-				ArrowLeft: () => actions.h(),
-				l: () => {
-					if (activeCrumbIdx < crumbs.length - 1)
-						openPickerAt(activeCrumbIdx + 1);
-				},
-				ArrowRight: () => actions.l(),
-				Enter: () => pickerItems[pickerFocusIdx]?.click(),
-				Escape: () => closePicker(),
-				q: () => closePicker(),
+				Enter: () => tocItems[focusIdx]?.click(),
+				Escape: () => closeToc(),
+				q: () => closeToc(),
 			};
-
 			const action = actions[e.key];
 			if (action) {
 				e.preventDefault();
@@ -362,7 +456,7 @@
 			}
 		}
 
-		document.addEventListener('keydown', handlePickerKeys);
+		document.addEventListener('keydown', handleTocKeys);
 
 		document.addEventListener('keydown', (e) => {
 			const tag = (e.target as HTMLElement).tagName;
@@ -386,98 +480,11 @@
 				e.preventDefault();
 				leaderPending = false;
 				if (leaderTimer) clearTimeout(leaderTimer);
-				if (activePicker) closePicker();
-				else if (!isMobile && crumbs.length > 0)
-					openPickerAt(crumbs.length - 1);
+				if (chip) toggleToc();
 				return;
 			}
 
 			leaderPending = false;
-		});
-
-		document.addEventListener('click', (e) => {
-			if (!activePicker) return;
-			const target = e.target as Node;
-			if (activePicker.contains(target)) return;
-			if (crumbs.some((c) => c.wrap.contains(target))) return;
-			closePicker();
-		});
-
-		// ---------- mobile table of contents ----------
-		let toc: HTMLElement | null = null;
-
-		function buildToc() {
-			const panel = document.createElement('div');
-			panel.className = 'crumb-toc';
-			headings.forEach((h) => {
-				const a = document.createElement('a');
-				a.href = h.id ? `#${h.id}` : '#';
-				a.className = 'crumb-toc__item lvl-' + h.tagName.toLowerCase();
-				a.dataset.hid = h.id || '';
-
-				const ic = document.createElement('span');
-				ic.className = 'ic';
-				ic.textContent = ICONS[h.tagName] || ICONS.H4;
-
-				const lb = document.createElement('span');
-				lb.className = 'lb';
-				lb.textContent = h.textContent?.trim() || '';
-
-				a.append(ic, lb);
-				a.addEventListener('click', (e) => {
-					e.preventDefault();
-					closeToc();
-					if (h.id)
-						document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' });
-				});
-				panel.appendChild(a);
-			});
-			return panel;
-		}
-
-		function positionToc() {
-			if (!toc) return;
-			const header = document.querySelector('.site-header');
-			const top = header ? header.getBoundingClientRect().bottom : 56;
-			toc.style.top = top + 6 + 'px';
-			toc.style.left = '0.6rem';
-			toc.style.right = '0.6rem';
-		}
-
-		function highlightToc() {
-			if (!toc) return;
-			const active = getActiveHeadings();
-			const currentId = active.length ? active[active.length - 1].id : '';
-			toc.querySelectorAll('.crumb-toc__item').forEach((el) => {
-				el.classList.toggle(
-					'is-current',
-					!!currentId && (el as HTMLElement).dataset.hid === currentId,
-				);
-			});
-		}
-
-		function openToc() {
-			if (toc) return;
-			toc = buildToc();
-			document.body.appendChild(toc);
-			positionToc();
-			highlightToc();
-			ul!.classList.add('toc-open');
-		}
-
-		function closeToc() {
-			toc?.remove();
-			toc = null;
-			ul!.classList.remove('toc-open');
-		}
-
-		document.addEventListener('click', (e) => {
-			if (!toc) return;
-			const t = e.target as Node;
-			if (toc.contains(t)) return;
-			const currentBtn = ul!.querySelector('.crumb-current button');
-			if (currentBtn && currentBtn.contains(t)) return;
-			closeToc();
 		});
 
 		// ---------- active section detection ----------
@@ -504,7 +511,7 @@
 			return active;
 		}
 
-		function renderMobile(active: HTMLElement[]) {
+		function renderChip(active: HTMLElement[]) {
 			ul!.classList.add('has-active-section');
 			const h = active[active.length - 1];
 			const text = h.textContent?.trim() || '';
@@ -521,6 +528,7 @@
 			icon.textContent = ICONS[h.tagName] || ICONS.H4;
 
 			const btn = document.createElement('button');
+			btn.type = 'button';
 			const lbl = document.createElement('span');
 			lbl.className = 'lbl';
 			lbl.textContent = text;
@@ -528,77 +536,40 @@
 			chev.className = 'chev';
 			chev.textContent = '▾';
 			btn.append(lbl, chev);
-			btn.setAttribute('aria-label', 'Jump to section');
+			btn.setAttribute('aria-label', 'Jump to a section');
+			btn.setAttribute('aria-haspopup', 'menu');
 			btn.addEventListener('click', (e) => {
 				e.stopPropagation();
-				if (toc) closeToc();
-				else openToc();
+				toggleToc();
 			});
 
 			li.append(sep, icon, btn);
 			ul!.appendChild(li);
-			crumbs.push({ wrap: btn, heading: h });
+			chip = { wrap: btn };
 
+			// keep an open menu's current marker fresh as you scroll
 			if (toc) {
-				positionToc();
-				highlightToc();
-			}
-		}
-
-		function renderDesktop(active: HTMLElement[]) {
-			ul!.classList.remove('has-active-section');
-			active.forEach((h) => {
-				const text = h.textContent?.trim() || '';
-
-				const li = document.createElement('li');
-				li.className = 'crumb-section';
-
-				const sep = document.createElement('span');
-				sep.className = 'sep';
-				sep.textContent = SEP;
-
-				const icon = document.createElement('span');
-				icon.className = 'cicon';
-				icon.textContent = ICONS[h.tagName] || ICONS.H4;
-
-				const btn = document.createElement('button');
-				btn.textContent = text.length > 34 ? text.slice(0, 34) + '…' : text;
-				if (text.length > 34) btn.title = text;
-
-				const idx = crumbs.length;
-				btn.addEventListener('click', (e) => {
-					e.stopPropagation();
-					if (activePicker && activeCrumbIdx === idx) closePicker();
-					else openPickerAt(idx);
+				const cur = currentId();
+				toc.querySelectorAll('.crumb-toc__item').forEach((el) => {
+					el.classList.toggle(
+						'is-current',
+						!!cur && (el as HTMLElement).dataset.hid === cur,
+					);
 				});
-
-				li.append(sep, icon, btn);
-				ul!.appendChild(li);
-				crumbs.push({ wrap: btn, heading: h });
-			});
-
-			if (scroller) scroller.scrollLeft = scroller.scrollWidth;
+			}
 		}
 
 		function render() {
 			ul!.querySelectorAll('.crumb-section').forEach((n) => n.remove());
-			crumbs = [];
+			chip = null;
 
 			const active = getActiveHeadings();
 			if (!active.length) {
 				ul!.classList.remove('has-active-section');
-				if (activePicker) closePicker();
-				if (toc) closeToc();
+				closeToc();
 				return;
 			}
-
-			if (isMobile) {
-				if (activePicker) closePicker();
-				renderMobile(active);
-			} else {
-				if (toc) closeToc();
-				renderDesktop(active);
-			}
+			renderChip(active);
 		}
 
 		let ticking = false;
@@ -620,13 +591,16 @@
 			'resize',
 			() => {
 				isMobile = mq.matches;
-				positionToc();
 				render();
 			},
 			{ passive: true },
 		);
 
 		render();
+	}
+
+	function prefersReduced() {
+		return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	}
 
 	initCrumbs();

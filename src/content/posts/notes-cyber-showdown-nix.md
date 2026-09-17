@@ -11,6 +11,10 @@ So this is two things at once. It is a practical guide to running a CTF lab on N
 
 If you have never touched Nix, do not worry. I will explain the mental model before the machinery, and every command has a reason attached.
 
+Before any of the technical detail: my team, **TU-2026-Team-08** (team motto, "win win win"), finished first, 17 of 24 flags for 12150 points. Every one of those flags came out of the Nix shell this post is about, so take the rest as proof the setup holds up under real competition pressure and not just on a quiet afternoon.
+
+![Cyber Showdown scoreboard with TU-2026-Team-08 in first place, 12150 points and 17 of 24 flags](/images/cyber-showdown/scoreboard-first.jpeg)
+
 ## Why bother? The problem Nix actually solves
 
 Every CTF player knows the ritual. A challenge drops, you clone an exploit, and then:
@@ -199,6 +203,10 @@ Use this when you need the binary to run from anywhere, not just its own folder.
 
 And the quieter Nix lesson from this challenge: `pwntools` was not something I wanted to negotiate with nixpkgs about mid event, so it is not in the flake. `uv` is, and `uv pip install pwntools` in the challenge folder solved it in seconds. The rule from earlier, proven under fire.
 
+Here is what a solve actually looked like from inside that shell. This reversing challenge shipped a loader that dropped an embedded `.so` and `LD_PRELOAD`ed it into `/bin/true`, and the `.so` constructor built the flag with a run of `mov byte [rip+x], imm` before raising a signal to trip up debuggers. No need to run it: just carve the `.so` out and scrape the immediate bytes. Editor, notes, and shell, all one `direnv allow` away.
+
+![A reversing solve in progress, solve.py carving immediate bytes out of an embedded .so to recover the flag](/images/cyber-showdown/solve-workspace.jpeg)
+
 ### Gotcha 2: the toolchain that only speaks x86
 
 Later there was a reversing challenge whose binary was ARM64 while I was on x86:
@@ -342,3 +350,9 @@ Every challenge folder becomes reproducible, disposable, and identical across my
 The tools being missing by default felt like friction in the moment. By the end of Cyber Showdown it felt like the entire point.
 
 If you are starting out, you do not need to "learn Nix" first. Copy a `flake.nix`, add an `.envrc` with `use flake`, run `direnv allow`, and keep this cheat sheet open. That gets you ninety percent of the value on day one. The rabbit hole is deep, but the entrance is a two-line file, and now you know exactly what bites.
+
+And, for the record, we took first. Here is the final team board and the sticker haul to prove we showed up.
+
+![HackTheBox team page for TU-2026-Team-08, per-player points and flags](/images/cyber-showdown/team-stats.jpeg)
+
+![HackTheBox stickers and patches collected at Cyber Showdown](/images/cyber-showdown/htb-swag.jpeg)

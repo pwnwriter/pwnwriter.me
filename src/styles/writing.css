@@ -261,21 +261,65 @@
   background-size: min(100%, 17rem) auto;
 }
 
-.writing-copy .prose.prose-custom table {
-  overflow: hidden;
+/* wide tables get their own horizontal scroll (see rehype-wrap-tables) so they
+   never push the article column off the edge of the page. */
+.writing-copy .prose.prose-custom .table-scroll {
+  margin: 1.75rem 0;
+  overflow-x: auto;
   border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-  border-radius: 6px;
-  font-size: 0.92rem;
+  border-radius: 8px;
+  /* a soft fade on the right hints there's more to scroll to */
+  background:
+    linear-gradient(to right, var(--background) 30%, transparent),
+    linear-gradient(to right, transparent, var(--background) 70%) 100% 0,
+    radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--f-high) 12%, transparent), transparent),
+    radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--f-high) 12%, transparent), transparent) 100% 0;
+  background-repeat: no-repeat;
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+  background-attachment: local, local, scroll, scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.writing-copy .prose.prose-custom .table-scroll:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.writing-copy .prose.prose-custom .table-scroll table {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  font-size: 0.9rem;
 }
 
 .writing-copy .prose.prose-custom th {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--f-high);
+  white-space: nowrap;
 }
 
 .writing-copy .prose.prose-custom td,
 .writing-copy .prose.prose-custom th {
   border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+  vertical-align: top;
+}
+
+/* let long commands wrap and break instead of forcing the column ultra-wide */
+.writing-copy .prose.prose-custom td {
+  min-width: 8rem;
+}
+
+.writing-copy .prose.prose-custom td code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .writing-copy .prose.prose-custom .table-scroll table {
+    font-size: 0.82rem;
+  }
 }
 
 .writing-copy .prose.prose-custom p:has(> img) {

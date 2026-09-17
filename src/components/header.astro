@@ -36,23 +36,23 @@ let subpathList = subpaths.reduce(
 			<Wrapper>
 				<ul
 					id="breadcrumbs"
-					class="inline-grid grid-flow-col items-center space-x-2"
+					class="flex min-w-0 items-center gap-2"
 				>
 					{
 						!isHome &&
 							subpathList.map((subpath) => (
 								<>
-									<li>
+									<li class="shrink-0">
 										<Link href={subpath.link} scheme="f-low">
 											{subpath.text}
 										</Link>
 									</li>
-									<span>›</span>
+									<span class="shrink-0">›</span>
 								</>
 							))
 					}
-					<li class="shrink-0 whitespace-nowrap">
-						<Link href="#">
+					<li class="crumb-title min-w-0 shrink">
+						<Link href="#" title={title}>
 							{title}
 						</Link>
 					</li>
@@ -82,5 +82,20 @@ let subpathList = subpaths.reduce(
 		.site-header {
 			background: var(--background);
 		}
+	}
+
+	/* the current-page crumb can be a long post title. it's the flex child that
+	   shrinks, so it ellipsizes to give the section chip room — no overlap, full
+	   title on hover. */
+	.site-header :global(#breadcrumbs .crumb-title) {
+		min-width: 0;
+	}
+
+	.site-header :global(#breadcrumbs .crumb-title a) {
+		display: block;
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 </style>
