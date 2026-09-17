@@ -273,7 +273,7 @@ the other time on any changes.
 
 You can use `justfile` to make this script running easy
 
-```Makefile
+```makefile
 set shell := ["zsh", "-c"]
 
 _default:
