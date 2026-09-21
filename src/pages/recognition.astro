@@ -1,0 +1,54 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Wrapper from "~/components/wrapper.astro";
+import { recognition } from "~/data/recognition";
+---
+
+<Layout
+  title="recognition"
+  description="Wins, placements, talks, and rooms i got invited into."
+>
+  <Wrapper>
+    <header class="page-head">
+      <h1 class="page-title">recognition</h1>
+      <p class="page-lede">
+        wins, placements, talks, and rooms i got invited into. newest first.
+      </p>
+    </header>
+
+    <ul role="list" class="rows recognition">
+      {
+        recognition.map((item) => {
+          const Tag = item.href ? "a" : "div";
+          const context = [item.where, item.year].filter(Boolean).join(", ");
+          const summary = [context, item.note].filter(Boolean).join(". ");
+          return (
+            <li>
+              <Tag class="row" href={item.href}>
+                <span class="row-title">{item.title}</span>
+                <span class="row-leader" aria-hidden="true" />
+                <span class="row-date result">{item.result}</span>
+              </Tag>
+              {summary && <p class="row-sum">{summary}</p>}
+            </li>
+          );
+        })
+      }
+    </ul>
+  </Wrapper>
+</Layout>
+
+<style>
+  .recognition li + li {
+    margin-top: 0.9rem;
+  }
+
+  .recognition .row {
+    padding-bottom: 0.1rem;
+  }
+
+  /* the one place the accent speaks: what was actually won */
+  .result {
+    color: var(--accent);
+  }
+</style>

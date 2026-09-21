@@ -4,24 +4,24 @@ import Wrapper from '~/components/wrapper.astro';
 ---
 
 <Layout title="404" description="page not found, definitely a bug.">
-	<Wrapper class="py-24 font-mono text-sm">
-		<div class="space-y-4 text-left">
-			<p class="text-red-500">
-				error[E404]: route not found
+	<Wrapper>
+		<header class="page-head">
+			<p class="meta">error[E404]: route not found</p>
+			<h1 class="page-title">nothing lives here.</h1>
+			<p class="page-lede">
+				looks like a bug, or maybe a broken bookmark.
 			</p>
-
-			<div class="text-foreground pl-4">
-				<span class="text-red-400">↳</span> tried to access <span class="text-blue-400 underline">/404</span><br />
-				<span class="text-red-400">╰─</span> nothing lives here.
-			</div>
-
-			<p class="text-purple-400">
-				↑ maybe try <a href="/" class="underline text-blue-400">home</a> instead
-			</p>
-
-			<p class="text-gray-400">
-				help: looks like a bug — or maybe a broken bookmark.
-			</p>
-		</div>
+		</header>
+		<a class="more-link" href="/">back home</a>
 	</Wrapper>
 </Layout>
+
+<style>
+	.meta {
+		margin: 0 0 0.9rem;
+	}
+
+	.more-link {
+		margin-top: 0;
+	}
+</style>

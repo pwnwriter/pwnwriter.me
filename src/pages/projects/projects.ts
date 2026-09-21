@@ -13,6 +13,7 @@ export type Project = {
   slug: string;
   name: string;
   summary: string;
+  tagline?: string; // one short line for the home page; falls back to summary
   blurb: string;
   highlights?: string[];
   tech: string[];
@@ -33,6 +34,7 @@ export const projects: Project[] = [
     name: "tes.chat",
     summary:
       "natural-language course-equivalency explorer for college transfer planning.",
+    tagline: "natural-language course-equivalency explorer.",
     blurb:
       "indexed transfer-equivalency information so students could ask about courses and transcripts without digging through catalogs by hand.",
     highlights: [
@@ -67,6 +69,7 @@ export const projects: Project[] = [
     name: "haylxon",
     summary:
       "high-performance screenshot and web reconnaissance cli written in rust.",
+    tagline: "screenshot and web recon cli, written in rust.",
     blurb:
       "drives local or remote chromium over cdp with async concurrency, reusable tab pools, and bulk url input.",
     highlights: [
@@ -161,6 +164,7 @@ export const projects: Project[] = [
     name: "hysp",
     summary:
       "rust package manager for installing portable tooling in userspace.",
+    tagline: "rust package manager for portable userspace tooling.",
     blurb:
       "fetches statically compiled tool binaries from package metadata without requiring root access.",
     highlights: [

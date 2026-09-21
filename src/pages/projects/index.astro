@@ -1,11 +1,9 @@
 ---
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
-import Heading from "~/components/text/heading.astro";
 import ProjectViewer from "~/components/project-viewer.astro";
 import { projects } from "~/pages/projects/projects";
 
-const pad = (n: number) => String(n).padStart(2, "0");
 const externalAttrs = {
   target: "_blank",
   rel: "noopener noreferrer",
@@ -14,24 +12,20 @@ const externalAttrs = {
 
 <Layout
   title="projects"
-  description="Things I've built — tools, configs, and experiments."
+  description="Things I've built: tools, configs, and experiments."
 >
   <Wrapper>
-    <header class="projects-header">
-      <div>
-        <Heading Element="h1">Projects</Heading>
-        <p>
-          small tools, experiments, and systems i kept poking at until they
-          became useful enough to keep around.
-        </p>
-      </div>
+    <header class="page-head">
+      <h1 class="page-title">projects</h1>
+      <p class="page-lede">
+        small tools, experiments, and systems i kept poking at until they became
+        useful enough to keep around.
+      </p>
     </header>
 
     {
       projects.length === 0 ? (
-        <p class="mt-6 text-sm" style="color: var(--f-low); opacity: 0.5;">
-          not yet. soon.
-        </p>
+        <p class="meta">not yet. soon.</p>
       ) : (
         <div class="projects">
           {projects.map((p, i) => {
@@ -39,75 +33,55 @@ const externalAttrs = {
             const isVideo = primary.kind === "video";
             const poster =
               primary.kind === "image" ? primary.src : primary.poster;
-            const extra = p.media.length - 1;
+            const status = p.status ?? (p.archived ? "archived" : undefined);
             return (
-              <article class="project-card">
-                <div
-                  class="pr-media project-open"
-                  data-gallery={i}
-                  role="button"
-                  tabindex="0"
-                  aria-label={`Open ${p.name} media`}
-                >
-                  {isVideo ? (
-                    <video
-                      class="pr-video"
-                      poster={poster ?? undefined}
-                      muted
-                      loop
-                      playsinline
-                      preload="metadata"
-                      src={primary.src}
-                    />
-                  ) : poster ? (
-                    <img
-                      class="pr-img"
-                      src={poster}
-                      alt={p.name}
-                      loading="lazy"
-                    />
-                  ) : null}
-
-                  {isVideo && (
-                    <span class="pr-badge" aria-hidden="true">
-                      preview
-                    </span>
-                  )}
-                  {extra > 0 && (
-                    <span class="pr-count" aria-hidden="true">
-                      +{extra}
-                    </span>
-                  )}
-                </div>
-
-                <div class="pr-body">
-                  <div class="pr-meta-top">
-                    <span class="pr-rank">{pad(i + 1)}</span>
-                    <span>/</span>
-                    <span>{p.year ?? "now"}</span>
-                    {(p.status || p.archived) && (
-                      <span class="pr-archived">{p.status ?? "archived"}</span>
-                    )}
-                  </div>
+              <article class="project" id={p.slug}>
+                <header class="pr-side">
                   <h2 class="pr-name">
                     <button
-                      class="project-open pr-title-button"
+                      class="project-open"
                       data-gallery={i}
                       type="button"
                     >
                       {p.name}
                     </button>
                   </h2>
+                  <p class="meta">
+                    {p.year ?? "now"}
+                    {status && ` · ${status}`}
+                  </p>
+                </header>
+
+                <div class="pr-body">
                   <p class="pr-summary">{p.summary}</p>
                   <p class="pr-blurb">{p.blurb}</p>
 
+                  <div
+                    class="pr-media project-open"
+                    data-gallery={i}
+                    role="button"
+                    tabindex="0"
+                    aria-label={`Open ${p.name} media`}
+                  >
+                    {isVideo ? (
+                      <video
+                        class="pr-video"
+                        poster={poster ?? undefined}
+                        muted
+                        loop
+                        playsinline
+                        preload="metadata"
+                        src={primary.src}
+                      />
+                    ) : poster ? (
+                      <img src={poster} alt={p.name} loading="lazy" />
+                    ) : null}
+                  </div>
+
                   {p.highlights && p.highlights.length > 0 && (
                     <details class="pr-details">
-                      <summary>
-                        <span>engineering notes</span>
-                        <span class="pr-toggle" aria-hidden="true" />
-                      </summary>
-                      <ul class="pr-highlights">
+                      <summary class="meta">engineering notes</summary>
+                      <ul>
                         {p.highlights.map((item) => (
                           <li>{item}</li>
                         ))}
@@ -115,17 +89,11 @@ const externalAttrs = {
                     </details>
                   )}
 
-                  <div class="pr-foot">
-                    {p.tech.length > 0 && (
-                      <ul class="pr-tech">
-                        {p.tech.map((t) => (
-                          <li>{t}</li>
-                        ))}
-                      </ul>
-                    )}
+                  <footer class="pr-foot meta">
+                    {p.tech.length > 0 && <span>{p.tech.join(" · ")}</span>}
 
                     {(p.repo || p.demo || p.readMore || p.reddit) && (
-                      <div class="pr-links">
+                      <span class="pr-links">
                         {p.demo && (
                           <a href={p.demo} {...externalAttrs}>
                             site
@@ -142,9 +110,9 @@ const externalAttrs = {
                             thread
                           </a>
                         )}
-                      </div>
+                      </span>
                     )}
-                  </div>
+                  </footer>
                 </div>
               </article>
             );
@@ -158,369 +126,142 @@ const externalAttrs = {
 </Layout>
 
 <style>
-  .projects-header {
-    max-width: 46rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .projects-header p {
-    max-width: 40rem;
-    margin-top: 0.4rem;
-    color: color-mix(in srgb, var(--f-low) 82%, transparent);
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-
-  .projects {
+  .project {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 0.5rem 1.5rem;
+    scroll-margin-top: 5rem;
   }
 
-  .project-card {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    overflow: hidden;
-    border-radius: 14px;
-    border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
-    background: color-mix(in srgb, var(--f-high) 3.5%, transparent);
-    transition:
-      transform 180ms ease,
-      border-color 180ms ease,
-      box-shadow 180ms ease,
-      background-color 180ms ease;
-  }
-
-  .project-card:hover {
-    transform: translateY(-3px);
-    border-color: color-mix(in srgb, var(--accent) 34%, transparent);
-    background-color: color-mix(in srgb, var(--f-high) 6%, transparent);
-    box-shadow: 0 24px 46px -32px
-      color-mix(in srgb, var(--f-high) 62%, transparent);
-  }
-
-  .pr-media {
-    position: relative;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    cursor: pointer;
-    background: color-mix(in srgb, var(--f-high) 5%, transparent);
-    border-bottom: 1px solid color-mix(in srgb, var(--f-low) 12%, transparent);
-    outline: none;
-  }
-
-  .pr-media:focus-visible {
-    box-shadow: inset 0 0 0 2px
-      color-mix(in srgb, var(--accent) 60%, transparent);
-  }
-
-  .pr-video,
-  .pr-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    filter: saturate(0.9) contrast(0.98);
-    transition:
-      filter 220ms ease,
-      transform 320ms ease;
-  }
-
-  .project-card:hover .pr-video,
-  .project-card:hover .pr-img {
-    transform: scale(1.045);
-    filter: saturate(1.05) contrast(1);
-  }
-
-  .pr-badge {
-    position: absolute;
-    right: 0.45rem;
-    bottom: 0.45rem;
-    display: inline-flex;
-    align-items: center;
-    padding: 0.14rem 0.4rem;
-    font-size: 0.58rem;
-    font-family: var(--font-mono, monospace);
-    letter-spacing: 0;
-    color: white;
-    background: rgba(0, 0, 0, 0.46);
-    border-radius: 4px;
-    backdrop-filter: blur(4px);
-  }
-
-  .pr-count {
-    position: absolute;
-    top: 0.45rem;
-    right: 0.45rem;
-    font-size: 0.58rem;
-    font-family: var(--font-mono, monospace);
-    color: rgba(255, 255, 255, 0.92);
-    background: rgba(0, 0, 0, 0.46);
-    border-radius: 4px;
-    padding: 0.08rem 0.35rem;
-    backdrop-filter: blur(4px);
-  }
-
-  .pr-body {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex: 1;
-    min-width: 0;
-    gap: 0.5rem;
-    padding: 0.95rem 1.05rem 1.05rem;
-  }
-
-  .pr-meta-top {
-    display: flex;
-    align-items: center;
-    gap: 0.34rem;
-    width: 100%;
-    color: color-mix(in srgb, var(--f-low) 60%, transparent);
-    font-size: 0.72rem;
-    font-family: var(--font-mono, monospace);
-    letter-spacing: 0;
-  }
-
-  .pr-rank {
-    color: color-mix(in srgb, var(--accent) 86%, var(--f-high));
-  }
-
-  .pr-archived {
-    margin-left: auto;
-    padding: 0.05em 0.5em;
-    border: 1px solid color-mix(in srgb, var(--f-low) 30%, transparent);
-    border-radius: 999px;
-    color: color-mix(in srgb, var(--f-low) 80%, transparent);
-    font-size: 0.6rem;
-    letter-spacing: 0.04em;
-    text-transform: lowercase;
-    white-space: nowrap;
+  .project + .project {
+    margin-top: 3.5rem;
+    border-top: 1px solid var(--line);
+    padding-top: 3.5rem;
   }
 
   .pr-name {
     margin: 0;
-    font-family: var(--font-serif);
-    font-size: clamp(1.18rem, 2vw, 1.55rem);
-    font-weight: 700;
-    line-height: 1.05;
-    color: var(--f-high);
+    font-size: inherit;
+    font-weight: 400;
+    line-height: 1.6;
   }
 
-  .pr-title-button {
-    display: block;
-    max-width: 100%;
-    padding: 0;
-    color: inherit;
-    overflow: hidden;
+  .pr-name button {
     border: 0;
-    background: transparent;
-    cursor: pointer;
-    font: inherit;
-    letter-spacing: 0;
+    background: none;
+    padding: 0;
+    color: var(--f-high);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
     text-align: left;
-    text-overflow: ellipsis;
+    transition: color 0.15s ease;
   }
 
-  .pr-title-button:hover,
-  .pr-title-button:focus-visible {
+  .pr-name button:hover {
     color: var(--accent);
-    outline: none;
+  }
+
+  .pr-side .meta {
+    margin: 0.15rem 0 0;
   }
 
   .pr-summary {
-    margin: 0.05rem 0 0;
-    color: color-mix(in srgb, var(--f-high) 88%, transparent);
-    font-size: 0.92rem;
-    line-height: 1.45;
+    margin: 0;
+    color: var(--f-high);
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.5;
   }
 
   .pr-blurb {
-    margin: 0;
-    color: color-mix(in srgb, var(--f-low) 84%, transparent);
-    font-size: 0.86rem;
-    line-height: 1.55;
+    margin: 0.6rem 0 0;
+    color: var(--f-low);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .pr-media {
+    margin-top: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--b-med);
+    aspect-ratio: 16 / 10;
+    cursor: zoom-in;
+  }
+
+  .pr-media :is(img, video) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .pr-details {
-    width: 100%;
-    margin-top: 0.15rem;
-    border-top: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
-    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 12%, transparent);
+    margin-top: 1rem;
   }
 
   .pr-details summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    min-height: 2rem;
-    color: color-mix(in srgb, var(--f-low) 72%, transparent);
+    width: fit-content;
     cursor: pointer;
-    font-family: var(--font-mono, monospace);
-    font-size: 0.68rem;
-    letter-spacing: 0;
-    list-style: none;
-    outline: none;
-    user-select: none;
+    transition: color 0.15s ease;
   }
 
-  .pr-details summary::-webkit-details-marker {
-    display: none;
+  .pr-details summary:hover {
+    color: var(--f-high);
   }
 
-  .pr-details summary:hover,
-  .pr-details summary:focus-visible {
-    color: var(--accent);
+  .pr-details ul {
+    margin: 0.6rem 0 0;
+    padding-left: 1.1rem;
+    color: var(--f-low);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    list-style: disc;
   }
 
-  .pr-toggle {
-    position: relative;
-    width: 0.7rem;
-    height: 0.7rem;
-    flex: 0 0 auto;
+  .pr-details li::marker {
+    color: var(--f-mute);
   }
 
-  .pr-toggle::before,
-  .pr-toggle::after {
-    content: "";
-    position: absolute;
-    inset: 50% auto auto 0;
-    width: 100%;
-    height: 1px;
-    background: currentColor;
-    transform: translateY(-50%);
-  }
-
-  .pr-toggle::after {
-    transform: translateY(-50%) rotate(90deg);
-    transition: transform 0.16s ease;
-  }
-
-  .pr-details[open] .pr-toggle::after {
-    transform: translateY(-50%) rotate(0deg);
-  }
-
-  .pr-highlights {
-    display: grid;
-    gap: 0.35rem;
-    width: 100%;
-    margin: 0;
-    padding: 0 0 0.75rem;
-    list-style: none;
-  }
-
-  .pr-highlights li {
-    position: relative;
-    padding-left: 0.95rem;
-    color: color-mix(in srgb, var(--f-low) 78%, transparent);
-    font-size: 0.78rem;
-    line-height: 1.45;
-  }
-
-  .pr-highlights li::before {
-    content: ">";
-    position: absolute;
-    left: 0;
-    color: color-mix(in srgb, var(--accent) 80%, var(--f-high));
-    font-family: var(--font-mono, monospace);
-    font-size: 0.72rem;
-    line-height: 1.45;
+  .pr-details li + li {
+    margin-top: 0.3rem;
   }
 
   .pr-foot {
     display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    width: 100%;
-    margin-top: auto;
-    padding-top: 0.55rem;
-  }
-
-  .pr-tech {
-    display: flex;
     flex-wrap: wrap;
-    gap: 0.34rem;
-  }
-
-  .pr-tech li {
-    max-width: 12rem;
-    overflow: hidden;
-    color: color-mix(in srgb, var(--f-low) 70%, transparent);
-    border: 1px solid color-mix(in srgb, var(--f-low) 18%, transparent);
-    border-radius: 5px;
-    padding: 0.08rem 0.42rem;
-    font-family: var(--font-mono, monospace);
-    font-size: 0.64rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    justify-content: space-between;
+    gap: 0.4rem 1.5rem;
+    margin-top: 1rem;
+    text-transform: none;
   }
 
   .pr-links {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
+    gap: 1rem;
   }
 
   .pr-links a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 1.45rem;
-    padding: 0.08rem 0.46rem;
-    color: color-mix(in srgb, var(--f-low) 78%, transparent);
-    border: 1px solid color-mix(in srgb, var(--f-low) 18%, transparent);
-    border-radius: 5px;
-    font-family: var(--font-mono, monospace);
-    font-size: 0.65rem;
-    line-height: 1;
+    color: var(--f-high);
     text-decoration: none;
-    transition:
-      border-color 0.2s ease,
-      color 0.2s ease,
-      background-color 0.2s ease,
-      transform 0.2s ease;
+    transition: color 0.15s ease;
   }
 
   .pr-links a:hover {
     color: var(--accent);
-    border-color: color-mix(in srgb, var(--accent) 38%, transparent);
-    background: color-mix(in srgb, var(--accent) 8%, transparent);
-    transform: translateY(-2px);
   }
 
-  @media (max-width: 760px) {
-    .projects-header {
-      margin-bottom: 1.5rem;
-    }
-
-    .projects {
+  @media (max-width: 560px) {
+    .project {
       grid-template-columns: 1fr;
+    }
+
+    .pr-side {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
       gap: 1rem;
-    }
-
-    .pr-media {
-      aspect-ratio: 16 / 9;
-    }
-
-    .pr-name {
-      font-size: 1.3rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .project-card,
-    .pr-video,
-    .pr-img {
-      transition: none;
-    }
-    .project-card:hover {
-      transform: none;
-    }
-    .project-card:hover .pr-video,
-    .project-card:hover .pr-img {
-      transform: none;
     }
   }
 </style>

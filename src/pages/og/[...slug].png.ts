@@ -27,12 +27,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const syndications = await getCollection("syndications");
 
   const entries: Entry[] = [
-    { slug: "index", props: { kind: "home", title: "Hi, I'm Nabeen", description: "I break things, fix them, and leave notes so future me has fewer excuses." } },
-    { slug: "about", props: { kind: "about", title: "About", description: "Nabeen Tiwaree, also known as pwnwriter." } },
+    { slug: "index", props: { kind: "home", title: "hi, i'm nabeen", description: "i build things, break things, and keep asking why." } },
     { slug: "notes", props: { kind: "section", label: "notes", title: "Notes", description: "Things I kept thinking about until writing them down was easier than letting them go." } },
     { slug: "notes/tags", props: { kind: "section", label: "tags", title: "Tags", description: "Browse notes by topic." } },
     { slug: "syndications", props: { kind: "section", label: "syndications", title: "Syndications", description: "Personal updates and reflections." } },
-    { slug: "projects", props: { kind: "section", label: "projects", title: "Projects", description: "Things I've built — tools, configs, and experiments." } },
+    { slug: "projects", props: { kind: "section", label: "projects", title: "Projects", description: "Things I've built: tools, configs, and experiments." } },
+    { slug: "recognition", props: { kind: "section", label: "recognition", title: "Recognition", description: "Wins, placements, talks, and rooms i got invited into." } },
     { slug: "photos", props: { kind: "section", label: "photos", title: "Photos", description: "A small archive of my photos." } },
     { slug: "404", props: { kind: "home", label: "404", title: "Page not found", description: "Definitely a bug." } },
   ];

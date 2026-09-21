@@ -1,5 +1,4 @@
 ---
-import "~/styles/syndications.css";
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
@@ -29,102 +28,94 @@ const allTags = [...new Set(syndications.flatMap((s) => s.data.tags || []))].sor
 function excerpt(entry: CollectionEntry<"syndications">): string {
   const cleaned = entry.body
     .replace(/```[\s\S]*?```/g, " ")
+    .replace(/<\/?[^>]+>/g, " ")
     .replace(/`([^`]+)`/g, "$1")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/[#>*_~{}[\]()-]/g, "")
+    .replace(/!?\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/[#>*_~{}[\]()]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 
-  return cleaned.length > 132 ? `${cleaned.slice(0, 132).trim()}...` : cleaned;
+  return cleaned.length > 120
+    ? `${cleaned.slice(0, 120).replace(/\s+\S*$/, "")}...`
+    : cleaned;
 }
 ---
 
 <Layout title="Syndications" description="Personal updates and reflections.">
   <Wrapper>
-    <div class="syn">
-      <div class="syn-header">
-        <h1 class="syn-title">syndications</h1>
-        <p>
-          small traces from the timeline: life, code, school, travel, and things
-          i probably edited later.
-        </p>
-      </div>
+    <header class="page-head">
+      <h1 class="page-title">syndications</h1>
+      <p class="page-lede">
+        small traces from the timeline: life, code, school, travel, and things i
+        probably edited later.
+      </p>
+    </header>
 
-      <div class="syn-filters" role="tablist">
-        <button class="syn-chip syn-chip--active" data-filter="all">all</button>
-        {allTags.map((tag) => (
-          <button class="syn-chip" data-filter={tag}>{tag}</button>
-        ))}
-      </div>
-
-      <div class="syn-search-row">
-        <span class="syn-count" data-syn-count>{syndications.length} entries</span>
-        <label class="syn-search" data-search-shell>
-          <span aria-hidden="true">⌕</span>
-          <input
-            type="search"
-            placeholder="Find it faster"
-            aria-label="Search syndications"
-            autocomplete="off"
-            autocapitalize="off"
-            spellcheck="false"
-            data-syn-search
-          />
-          <button type="button" aria-label="Clear search" data-syn-clear>×</button>
-        </label>
-      </div>
-
-      <div class="syn-log">
-        {years.map((year) => (
-          <div class="syn-year" data-year={year}>
-            <div class="syn-year-label">{year}</div>
-
-            {grouped[year].map((entry) => {
-              const tags = entry.data.tags || [];
-              const summary = excerpt(entry);
-              return (
-                <article
-                  class="syn-entry"
-                  data-tags={tags.join(",")}
-                  data-search={[
-                    entry.data.title,
-                    entry.slug,
-                    tags.join(" "),
-                    entry.body,
-                    formatDate(entry.data.pubDate),
-                    summary,
-                  ].join(" ")}
-                >
-                  <div class="syn-card">
-                    <a href={`/syndications/${entry.slug}`} class="syn-link">
-                      <span class="syn-msg">{entry.data.title}</span>
-                    </a>
-                    <div class="syn-strip">
-                      <time datetime={entry.data.pubDate.toISOString()}>
-                        {entry.data.pubDate.toLocaleDateString(undefined, {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
-                      </time>
-                      <span>{tags[0] ?? "log"}</span>
-                    </div>
-                    <p>{summary}</p>
-                    <div class="syn-meta">
-                      {tags.map((t) => (
-                        <span class="syn-tag">#{t}</span>
-                      ))}
-                      <span class="syn-read">read ↠</span>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-      <p class="syn-empty" data-syn-empty hidden>nothing matched that.</p>
+    <div class="chips" role="group" aria-label="Filter entries by tag">
+      <button class="syn-chip chip chip--active" data-filter="all">all</button>
+      {allTags.map((tag) => (
+        <button class="syn-chip chip" data-filter={tag}>{tag}</button>
+      ))}
     </div>
+
+    <div class="list-tools">
+      <span class="meta" data-syn-count>{syndications.length} entries</span>
+      <label class="search" data-search-shell>
+        <span aria-hidden="true">/</span>
+        <input
+          type="search"
+          placeholder="search"
+          aria-label="Search syndications"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          data-syn-search
+        />
+        <button type="button" aria-label="Clear search" data-syn-clear>×</button>
+      </label>
+    </div>
+
+    {years.map((year) => (
+      <section class="syn-year" data-year={year}>
+        <h2 class="section-label">{year}</h2>
+        <ul role="list" class="rows">
+          {grouped[year].map((entry) => {
+            const tags = entry.data.tags || [];
+            const summary = excerpt(entry);
+            return (
+              <li
+                class="syn-entry"
+                data-tags={tags.join(",")}
+                data-search={[
+                  entry.data.title,
+                  entry.slug,
+                  tags.join(" "),
+                  entry.body,
+                  formatDate(entry.data.pubDate),
+                  summary,
+                ].join(" ")}
+              >
+                <a class="row" href={`/syndications/${entry.slug}`}>
+                  <span class="row-title">{entry.data.title}</span>
+                  <span class="row-leader" aria-hidden="true" />
+                  <time
+                    class="row-date"
+                    datetime={entry.data.pubDate.toISOString()}
+                  >
+                    {entry.data.pubDate.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "2-digit",
+                    })}
+                  </time>
+                </a>
+                <p class="row-sum">{summary}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))}
+    <p class="meta" data-syn-empty hidden>nothing matched that.</p>
   </Wrapper>
 </Layout>
 
@@ -267,8 +258,8 @@ function excerpt(entry: CollectionEntry<"syndications">): string {
 
   chips.forEach((chip) => {
     chip.addEventListener("click", () => {
-      chips.forEach((c) => c.classList.remove("syn-chip--active"));
-      chip.classList.add("syn-chip--active");
+      chips.forEach((c) => c.classList.remove("chip--active"));
+      chip.classList.add("chip--active");
       activeFilter = chip.dataset.filter ?? "all";
       applyFilters();
     });
@@ -306,3 +297,17 @@ function excerpt(entry: CollectionEntry<"syndications">): string {
     applyFilters();
   });
 </script>
+
+<style>
+  .syn-year + .syn-year {
+    margin-top: 3rem;
+  }
+
+  .syn-entry + .syn-entry {
+    margin-top: 0.9rem;
+  }
+
+  .syn-entry .row {
+    padding-bottom: 0.1rem;
+  }
+</style>

@@ -1,6 +1,5 @@
 ---
 import { CollectionEntry, getCollection } from "astro:content";
-import Link from "~/components/link.astro";
 
 interface Props {
   tag?: string;
@@ -21,222 +20,86 @@ const posts: CollectionEntry<"posts">[] = tag
 
 if (!max) max = posts.length + 1;
 
-const ONE_DAY = 1000 * 60 * 60 * 24;
-
-function relativeTime(date: Date): string {
-  const diff = Date.now() - date.getTime();
-  const days = Math.floor(diff / ONE_DAY);
-  if (days < 1) return "updated today";
-  if (days < 30) return `updated ${days}d ago`;
-  const months = Math.floor(days / 30);
-  if (months < 12) return `updated ${months}mo ago`;
-  const years = Math.floor(months / 12);
-  return `updated ${years}y ago`;
-}
-
 function excerpt(post: CollectionEntry<"posts">): string {
   const source = post.data.description || post.body || "";
   const cleaned = source
     .replace(/^---[\s\S]*?---/, "")
     .replace(/```[\s\S]*?```/g, " ")
+    .replace(/<\/?[^>]+>/g, " ")
     .replace(/`([^`]+)`/g, "$1")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/[#>*_~{}[\]()]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 
-  return cleaned.length > 154 ? `${cleaned.slice(0, 154).trim()}...` : cleaned;
+  return cleaned.length > 120
+    ? `${cleaned.slice(0, 120).replace(/\s+\S*$/, "")}...`
+    : cleaned;
+}
+
+// newest first, grouped under their year
+const years = new Map<number, CollectionEntry<"posts">[]>();
+for (const post of posts.slice(0, max)) {
+  const year = post.data.pubDate.getFullYear();
+  years.set(year, [...(years.get(year) ?? []), post]);
 }
 ---
 
-<div class="post-list-shell">
-  <ul role="list" class="post-list">
-    {
-      posts.slice(0, max).map((post, i) => {
-        const wasUpdated =
-          Math.abs(post.data.modDate.getTime() - post.data.pubDate.getTime()) > ONE_DAY;
-        const date = post.data.pubDate.toLocaleDateString(undefined, {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        });
-        const month = post.data.pubDate.toLocaleDateString(undefined, {
-          month: "short",
-          year: "numeric",
-        });
-
-        return (
-          <li
-            class="post-item"
-            data-tags={post.data.tags.join(",")}
-            data-search={[
-              post.data.title,
-              post.data.description ?? "",
-              post.slug,
-              post.data.tags.join(" "),
-              post.body,
-            ].join(" ")}
-            style={`animation-delay: ${i * 50}ms`}
-          >
-            <Link href={`/notes/${post.slug}`}>
-              <article class="post-card">
-                <div class="post-date" aria-label={date}>
-                  <span>{month}</span>
-                </div>
-                <div class="post-copy">
-                  <h2>{post.data.title}</h2>
-                  <p>{excerpt(post)}</p>
-                  <div class="post-meta">
-                    <span>{date}</span>
-                    <span>/</span>
-                    <span>{post.data.tags.join(", ")}</span>
-                  {wasUpdated && (
-                    <span class="post-updated">
-                      {relativeTime(post.data.modDate)}
-                    </span>
-                  )}
-                  </div>
-                </div>
-              </article>
-            </Link>
-          </li>
-        );
-      })
-    }
-  </ul>
+<div class="post-list">
+  {
+    [...years.entries()].map(([year, group]) => (
+      <section class="post-year">
+        <h2 class="section-label">{year}</h2>
+        <ul role="list" class="rows">
+          {group.map((post) => (
+            <li
+              class="post-item"
+              data-tags={post.data.tags.join(",")}
+              data-search={[
+                post.data.title,
+                post.data.description ?? "",
+                post.slug,
+                post.data.tags.join(" "),
+                post.body,
+              ].join(" ")}
+            >
+              <a class="row" href={`/notes/${post.slug}`}>
+                <span class="row-title">{post.data.title}</span>
+                <span class="row-leader" aria-hidden="true" />
+                <time
+                  class="row-date"
+                  datetime={post.data.pubDate.toISOString()}
+                >
+                  {post.data.pubDate.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "2-digit",
+                  })}
+                </time>
+              </a>
+              <p class="row-sum">{excerpt(post)}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
 </div>
 
 <style>
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .post-year + .post-year {
+    margin-top: 3rem;
   }
 
-  .post-list-shell {
-    margin-top: 0.75rem;
+  /* a year whose posts are all filtered out drops its label too */
+  .post-year:not(:has(.post-item:not([data-hidden]))) {
+    display: none;
   }
 
-  .post-list {
-    display: grid;
-    margin: 0 0 1rem;
-    padding: 0;
-    list-style: none;
-    border-top: 1px dashed color-mix(in srgb, var(--f-low) 18%, transparent);
+  .post-item + .post-item {
+    margin-top: 0.9rem;
   }
 
-  .post-item {
-    opacity: 0;
-    border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 14%, transparent);
-    animation: fadeInUp 0.4s ease forwards;
-  }
-
-  .post-item :global(a) {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .post-card {
-    display: grid;
-    grid-template-columns: 7rem minmax(0, 1fr);
-    gap: clamp(0.75rem, 2.6vw, 1.35rem);
-    padding: 0.72rem 0;
-    transition:
-      opacity 180ms ease,
-      transform 180ms ease;
-  }
-
-  .post-item:hover .post-card {
-    transform: translateX(0.18rem);
-  }
-
-  .post-date {
-    color: color-mix(in srgb, var(--f-low) 72%, transparent);
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    line-height: 1.45;
-    white-space: nowrap;
-  }
-
-  .post-copy {
-    min-width: 0;
-  }
-
-  .post-copy h2 {
-    margin: 0;
-    color: var(--f-high);
-    font-family: var(--font-serif);
-    font-size: clamp(0.98rem, 2.15vw, 1.22rem);
-    font-weight: 700;
-    font-style: normal;
-    line-height: 1.12;
-    letter-spacing: 0;
-    transition: color 180ms ease;
-  }
-
-  .post-item:hover .post-copy h2 {
-    color: var(--accent);
-  }
-
-  .post-copy p {
-    max-width: 34rem;
-    margin: 0.25rem 0 0;
-    color: color-mix(in srgb, var(--f-low) 74%, transparent);
-    font-size: clamp(0.76rem, 1.15vw, 0.84rem);
-    font-style: normal;
-    line-height: 1.45;
-  }
-
-  .post-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-top: 0.48rem;
-    color: color-mix(in srgb, var(--f-low) 58%, transparent);
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-    line-height: 1.4;
-  }
-
-  .post-updated {
-    color: color-mix(in srgb, var(--accent) 70%, transparent);
-    font-family: inherit;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .post-item {
-      opacity: 1;
-      animation: none;
-    }
-
-    .post-card {
-      transition: none;
-    }
-
-    .post-item:hover .post-card {
-      transform: none;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .post-card {
-      grid-template-columns: 1fr;
-      gap: 0.28rem;
-      padding: 0.85rem 0;
-    }
-
-    .post-date {
-      font-size: 0.7rem;
-    }
-
-    .post-copy h2 {
-      font-size: clamp(0.98rem, 6vw, 1.18rem);
-    }
+  .post-item .row {
+    padding-bottom: 0.1rem;
   }
 </style>

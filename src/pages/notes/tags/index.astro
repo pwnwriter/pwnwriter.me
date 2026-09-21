@@ -1,37 +1,37 @@
 ---
 import { getCollection } from 'astro:content';
-import Link from '~/components/link.astro';
-import Heading from '~/components/text/heading.astro';
 import Wrapper from '~/components/wrapper.astro';
 import Layout from '~/layouts/Layout.astro';
 
-// get all unique tags
+// every tag with how many notes carry it
 const allPosts = await getCollection('posts');
-const allTags = new Set<string>();
-allPosts.map((post) => {
-	post.data.tags.map((tag) => allTags.add(tag));
-});
+const counts = new Map<string, number>();
+for (const post of allPosts) {
+	for (const tag of post.data.tags) counts.set(tag, (counts.get(tag) ?? 0) + 1);
+}
 
-const sortTags = (tags: string[]) => tags.sort();
-
-const sortedTags = sortTags([...allTags]);
+const tags = [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
 ---
 
 <Layout title="tags" description="list of tags for notes from pwn()">
 	<Wrapper>
-		<Heading Element="h1">Tags</Heading>
-		<ul>
+		<header class="page-head">
+			<h1 class="page-title">tags</h1>
+			<p class="page-lede">every label i've stuck on a note.</p>
+		</header>
+		<ul class="rows">
 			{
-				sortedTags.map((tag: string) => (
-					<li class="mb-1">
-						<Link scheme="accent" underline href={`/notes/tags/${tag}`}>
-							#{tag}
-						</Link>
+				tags.map(([tag, count]) => (
+					<li>
+						<a class="row" href={`/notes/tags/${tag}`}>
+							<span class="row-title">#{tag}</span>
+							<span class="row-leader" aria-hidden="true" />
+							<span class="row-date">{count}</span>
+						</a>
 					</li>
 				))
 			}
 		</ul>
-		<div class="h-xl"></div>
-		<Link href="/notes">&Larr;&nbsp;&nbsp;Back to notes</Link>
+		<a class="more-link" href="/notes">all notes</a>
 	</Wrapper>
 </Layout>

@@ -1,8 +1,7 @@
 @import url("./prism-rose-pine.css");
 @import "katex/dist/katex.min.css";
-@import "@fontsource-variable/fraunces";
-@import "@fontsource/caveat/400.css";
-@import "@fontsource/caveat/700.css";
+@import "@fontsource-variable/newsreader/opsz.css";
+@import "@fontsource-variable/newsreader/opsz-italic.css";
 
 /* Departure Mono — https://departuremono.com (self-hosted) */
 @font-face {
@@ -77,20 +76,26 @@
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  --font-serif: "Fraunces Variable", Fraunces, Georgia, "Times New Roman", serif;
+  --font-serif: "Newsreader Variable", Newsreader, Georgia, "Times New Roman", serif;
   --font-mono:
     "Departure Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     monospace;
 
+  /* derived tones: one hairline and one muted text color, shared by every page
+     so borders and meta text stay consistent. */
+  --line: color-mix(in srgb, var(--f-low) 16%, transparent);
+  --f-mute: color-mix(in srgb, var(--f-low) 62%, transparent);
+
   color-scheme: light dark;
 }
 
-/* Fraunces is a display serif with real character — let it optically size to
-   the heading and dial in a touch of the "soft" axis so it reads warm, not
-   stiff. Applied wherever the serif face is used. */
-:is(h1, h2, h3, .font-serif) {
+/* Newsreader has an optical-size axis: let the browser pick the cut for each
+   size, so small text stays sturdy and big headlines get the fine details. */
+html {
   font-optical-sizing: auto;
-  font-variation-settings: "SOFT" 40, "WONK" 0;
+}
+
+:is(h1, h2, h3) {
   letter-spacing: -0.015em;
 }
 
@@ -126,15 +131,245 @@ body {
 html {
   scroll-behavior: smooth;
   touch-action: manipulation;
-  /* kill the elastic overscroll bounce so the fixed edge-blur never exposes a
-     gap when you fling the page past the top/bottom. */
-  overscroll-behavior-y: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
+}
+
+/* Shared page primitives: every index page opens with the same title + lede,
+   and every piece of meta text (dates, counts, tags) uses the same mono line. */
+.page-head {
+  margin-bottom: 2.75rem;
+}
+
+.page-title {
+  margin: 0;
+  color: var(--f-high);
+  font-family: var(--font-serif);
+  font-size: clamp(1.85rem, 4.6vw, 2.3rem);
+  font-weight: 500;
+  line-height: 1.15;
+  text-transform: lowercase;
+}
+
+.page-lede {
+  max-width: 34rem;
+  margin: 0.7rem 0 0;
+  color: var(--f-low);
+  line-height: 1.65;
+}
+
+.meta {
+  color: var(--f-mute);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: lowercase;
+}
+
+/* section label: small mono caps, with a hairline running out to the right */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 0 0.9rem;
+  color: var(--f-mute);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* leader rows: title ........ date. the whole row is the link. */
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding: 0.4rem 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.row-title {
+  min-width: 0;
+  color: var(--f-high);
+  font-family: var(--font-serif);
+  font-size: 1.17rem;
+  line-height: 1.35;
+  transition: color 0.15s ease;
+}
+
+.row-leader {
+  flex: 1;
+  min-width: 1.5rem;
+  border-bottom: 1px dotted color-mix(in srgb, var(--f-low) 30%, transparent);
+  transform: translateY(-0.28em);
+}
+
+.row-date {
+  flex: none;
+  color: var(--f-mute);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+a.row:hover .row-title,
+a.row:focus-visible .row-title {
+  color: var(--accent);
+}
+
+/* long titles wrap on phones, where the leader would only be a stub */
+@media (max-width: 560px) {
+  .row {
+    justify-content: space-between;
+  }
+
+  .row-leader {
+    display: none;
+  }
+}
+
+/* list tools, shared by notes and syndications: a line of plain-text tag
+   filters, then an entry count with a search field. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.95rem;
+  margin: 0 0 2rem;
+}
+
+.chip {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--f-mute);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.7;
+  transition: color 0.15s ease;
+}
+
+.chip:hover {
+  color: var(--f-high);
+}
+
+.chip--active {
+  color: var(--accent);
+}
+
+.list-tools {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 3rem;
+}
+
+.search {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  width: min(100%, 14rem);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.3rem;
+  color: var(--f-mute);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  transition: border-color 0.15s ease;
+}
+
+.search:focus-within {
+  border-color: color-mix(in srgb, var(--f-low) 60%, transparent);
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--f-high);
+  font: inherit;
+  outline: 0;
+}
+
+.search input::placeholder {
+  color: color-mix(in srgb, var(--f-low) 45%, transparent);
+}
+
+.search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: currentColor;
+  font: inherit;
+  visibility: hidden;
+}
+
+.search button[data-visible] {
+  visibility: visible;
+}
+
+[data-hidden] {
+  display: none !important;
+}
+
+.search-hit {
+  border-radius: 0.2em;
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--f-high);
+  padding: 0 0.08em;
+}
+
+/* row summary: a quiet line under a leader row */
+.row-sum {
+  max-width: 32rem;
+  margin: 0;
+  color: var(--f-mute);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* mono link used under lists: "all notes", "all projects" */
+.more-link {
+  display: inline-block;
+  margin-top: 0.7rem;
+  color: var(--f-mute);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.more-link:hover {
+  color: var(--f-high);
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 /* Animated link underline: draws left-to-right on hover */

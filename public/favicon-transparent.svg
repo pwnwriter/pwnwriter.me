@@ -1,7 +1,1 @@
-<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  <!-- ghost body -->
-  <path fill="black" d="M30 94V54C30 33.4 44.6 19 64 19C83.8 19 98 33.3 98 54V94C98 101.2 90.1 105 84.8 100.3L78.7 94.9L71.4 101.2C67.1 105 60.7 105 56.4 101.2L49.4 94.9L43.2 100.3C37.9 105 30 101.2 30 94Z"/>
-  <!-- eyes -->
-  <ellipse cx="51" cy="55" rx="7.4" ry="8.8" fill="white"/>
-  <ellipse cx="77" cy="55" rx="7.4" ry="8.8" fill="white"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges"><path d="M8 10h4v2h-4zM6 12h8v2h-8zM4 14h4v2h-4zM12 14h4v2h-4zM24 14h4v2h-4zM4 16h4v2h-4zM16 16h4v2h-4zM24 16h4v2h-4zM18 18h8v2h-8zM20 20h4v2h-4z" fill="#000"/></svg>

@@ -3,7 +3,6 @@
 ---
 
 <a href="/" id="home-link" hidden></a>
-<a href="/about" id="about-link" hidden></a>
 <a href="/syndications" id="syndications-link" hidden></a>
 <a href="/notes" id="notes-link" hidden></a>
 <a href="/projects" id="projects-link" hidden></a>
@@ -53,10 +52,9 @@
 
     const scrollAmount = Math.round(window.innerHeight * 0.15);
 
-    const routes: Record<"h" | "~" | "a" | "s" | "n" | "p", string> = {
+    const routes: Record<"h" | "~" | "s" | "n" | "p", string> = {
       h: "home-link",
       "~": "home-link",
-      a: "about-link",
       s: "syndications-link",
       n: "notes-link",
       p: "projects-link",

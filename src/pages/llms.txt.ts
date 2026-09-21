@@ -19,7 +19,6 @@ export const GET: APIRoute = async () => {
     "## Pages",
     "",
     "- [Home](https://pwnwriter.me/)",
-    "- [About](https://pwnwriter.me/about)",
     "- [Notes](https://pwnwriter.me/notes)",
     "- [Syndications](https://pwnwriter.me/syndications)",
     "- [Photos](https://pwnwriter.me/photos)",

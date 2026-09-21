@@ -1,99 +1,90 @@
-/* Shared emphasis treatment for long-form writing. */
+/* Long-form writing: shared by notes and syndication entries. */
 
-.writing-note {
-  --writing-scratch-strong: var(--f-high);
+.writing-head {
+  margin-bottom: 3rem;
 }
 
-.writing-copy {
-  margin-top: 2rem;
+.writing-head h1 {
+  margin: 0;
+  color: var(--f-high);
+  font-family: var(--font-serif);
+  font-size: clamp(1.95rem, 5.4vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.writing-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.6rem;
+  margin: 1rem 0 0;
+}
+
+.writing-meta a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.writing-meta a:hover {
+  color: var(--accent);
+}
+
+.writing-cover {
+  margin: 2.5rem 0 0;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.writing-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 26rem;
+  object-fit: cover;
 }
 
 .writing-copy .prose {
-  font-size: 1.05rem;
+  font-family: var(--font-serif);
+  font-size: 1.22rem;
+}
+
+.writing-copy .prose.prose-custom :is(h2, h3, h4) {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  scroll-margin-top: 5rem;
+}
+
+.writing-copy .prose.prose-custom h2 {
+  margin-top: 3.25rem;
+  font-size: 1.6rem;
+}
+
+.writing-copy .prose.prose-custom h3 {
+  font-size: 1.28rem;
 }
 
 .writing-copy .prose.prose-custom strong {
-  color: var(--writing-scratch-strong);
-  font-weight: 700;
-  text-decoration: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='12' viewBox='0 0 60 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 7 Q15 3 30 7 T60 7' stroke='%23c4a7e7' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-position: 0 100%;
-  background-repeat: repeat-x;
-  background-size: 3.6rem 0.5em;
-  padding-bottom: 0.06em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-}
-
-.light .writing-copy .prose.prose-custom strong,
-.light:root .writing-copy .prose.prose-custom strong {
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='12' viewBox='0 0 60 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 7 Q15 3 30 7 T60 7' stroke='%23b78a7c' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  color: var(--f-high);
+  font-weight: 650;
 }
 
 .writing-copy .prose.prose-custom em {
-  color: color-mix(in srgb, var(--f-high) 78%, var(--accent));
-  font-family: "Caveat", cursive;
-  font-size: 1.16em;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  color: var(--f-high);
 }
 
 .writing-copy .prose.prose-custom a {
   color: var(--f-high);
   font-style: normal;
-  font-weight: 700;
+  font-weight: inherit;
   text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
-  text-decoration-style: dotted;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.25em;
-}
-
-/* internal links get a little paw print (follow the cat deeper in) */
-.writing-copy .prose.prose-custom a:not([data-external])::after {
-  content: "";
-  display: inline-block;
-  width: 0.78em;
-  height: 0.78em;
-  margin-left: 0.22em;
-  vertical-align: -0.05em;
-  background-color: var(--accent);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='%23000'%3E%3Cellipse cx='12' cy='16.6' rx='5.2' ry='4.2'/%3E%3Ccircle cx='5.4' cy='11.4' r='2.1'/%3E%3Ccircle cx='9.5' cy='7.7' r='2.2'/%3E%3Ccircle cx='14.5' cy='7.7' r='2.2'/%3E%3Ccircle cx='18.6' cy='11.4' r='2.1'/%3E%3C/svg%3E") no-repeat center / contain;
-  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='%23000'%3E%3Cellipse cx='12' cy='16.6' rx='5.2' ry='4.2'/%3E%3Ccircle cx='5.4' cy='11.4' r='2.1'/%3E%3Ccircle cx='9.5' cy='7.7' r='2.2'/%3E%3Ccircle cx='14.5' cy='7.7' r='2.2'/%3E%3Ccircle cx='18.6' cy='11.4' r='2.1'/%3E%3C/svg%3E") no-repeat center / contain;
-  transition: transform 0.2s ease;
-}
-
-.writing-copy .prose.prose-custom a:not([data-external]):hover::after {
-  transform: translateY(-0.14em) rotate(-8deg);
-}
-
-.writing-copy .prose.prose-custom a[data-external] {
-  color: var(--f-high);
-  text-decoration-color: color-mix(in srgb, var(--accent) 62%, transparent);
-  text-decoration-style: dotted;
-}
-
-/* external links get a paper plane (this one flies you elsewhere) */
-.writing-copy .prose.prose-custom a[data-external]::after {
-  content: "";
-  display: inline-block;
-  width: 0.82em;
-  height: 0.82em;
-  margin-left: 0.24em;
-  vertical-align: -0.02em;
-  background-color: var(--accent);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='%23000'%3E%3Cpath d='M22 2 15 22 11 13 2 9Z'/%3E%3C/svg%3E") no-repeat center / contain;
-  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='%23000'%3E%3Cpath d='M22 2 15 22 11 13 2 9Z'/%3E%3C/svg%3E") no-repeat center / contain;
-  transition: transform 0.2s ease;
-}
-
-.writing-copy .prose.prose-custom a[data-external]:hover {
-  text-decoration-style: solid;
-}
-
-.writing-copy .prose.prose-custom a[data-external]:hover::after {
-  transform: translate(0.2em, -0.16em) rotate(6deg);
+  text-decoration-color: color-mix(in srgb, var(--f-low) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition:
+    color 0.15s ease,
+    text-decoration-color 0.15s ease;
 }
 
 .writing-copy .prose.prose-custom a:hover {
@@ -102,65 +93,28 @@
 }
 
 .writing-copy .prose.prose-custom del {
-  color: color-mix(in srgb, var(--f-low) 75%, transparent);
-  text-decoration: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='140' height='18' viewBox='0 0 140 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 9.5C18 7.7 31 10.4 47 8.6C65 6.6 81 11.1 98 8.8C113 6.8 125 9.2 138 7.6' stroke='%23eb6f92' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M4 12.7C28 8.2 51 11.5 75 9.3C99 7 117 10.2 136 8.4' stroke='%23eb6f92' stroke-width='1.6' stroke-linecap='round' opacity='.75'/%3E%3C/svg%3E");
-  background-position: 0 52%;
-  background-repeat: repeat-x;
-  background-size: 7.75rem 0.75em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+  color: var(--f-mute);
 }
 
 .writing-copy .prose.prose-custom mark {
+  border-radius: 0.2em;
+  background: color-mix(in srgb, #f6c177 32%, transparent);
   color: var(--f-high);
-  background: linear-gradient(
-    100deg,
-    transparent 0.1em,
-    color-mix(in srgb, #f6c177 36%, transparent) 0.55em 90%,
-    transparent 97%
-  );
-  border-radius: 999px;
-  padding: 0.02em 0.4em 0.08em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+  padding: 0 0.15em;
 }
 
 .writing-copy .prose.prose-custom blockquote {
-  position: relative;
   margin-left: 0;
-  border-left: 0;
-  border-radius: 2px;
-  color: var(--f-high);
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--accent) 22%, transparent),
-    transparent 0.7rem
-  );
-  padding: 0.9rem 1rem 0.9rem 1.35rem;
+  border-left: 2px solid var(--line);
+  padding-left: 1.25rem;
+  color: var(--f-low);
+  font-style: normal;
 }
 
-.writing-copy .prose.prose-custom blockquote::before {
-  content: "note";
-  position: absolute;
-  top: -0.7rem;
-  left: 0.9rem;
-  color: var(--accent);
-  font-family: "Caveat", cursive;
-  font-size: 1.4rem;
-  font-weight: 700;
-  transform: rotate(-4deg);
-}
-
-.writing-copy .prose.prose-custom blockquote p {
-  margin: 0;
-  color: var(--f-high);
-}
-
-/* marginalia: a handwritten note about a paragraph. author it as
+/* marginalia: a side note about a paragraph. author it as
    <aside class="marginalia" data-note="...">  (blank line)  paragraph  (blank
-   line)  </aside>. small screens tuck the note below, right-aligned; wide
-   screens float it into the right gutter with a bracket beside the paragraph. */
+   line)  </aside>. small screens tuck the note below the paragraph; wide
+   screens set it in the right gutter. */
 .writing-copy .prose.prose-custom .marginalia {
   position: relative;
 }
@@ -168,97 +122,54 @@
 .writing-copy .prose.prose-custom .marginalia::after {
   content: attr(data-note);
   display: block;
-  width: fit-content;
-  max-width: 20rem;
-  margin: 0.35rem 0.1rem 0 auto;
-  color: color-mix(in srgb, var(--f-low) 60%, var(--accent));
-  font-family: "Caveat", cursive;
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1.15;
-  text-align: right;
-  transform: rotate(-1deg);
-  pointer-events: none;
-}
-
-.writing-copy .prose.prose-custom .marginalia::before {
-  display: none;
+  margin-top: -0.6rem;
+  border-left: 2px solid var(--line);
+  padding-left: 0.9rem;
+  color: var(--f-mute);
+  font-size: 0.84rem;
+  line-height: 1.5;
 }
 
 @media (min-width: 1180px) {
-  .writing-copy .prose.prose-custom .marginalia::before {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0.15em;
-    bottom: 0.15em;
-    left: calc(100% + 1.15rem);
-    width: 0.7rem;
-    border: 2px solid color-mix(in srgb, var(--accent) 52%, transparent);
-    border-left: 0;
-    border-radius: 0 10px 10px 0;
-    pointer-events: none;
-  }
-
   .writing-copy .prose.prose-custom .marginalia::after {
     position: absolute;
-    top: -0.1em;
-    left: calc(100% + 2.35rem);
-    width: 10rem;
-    max-width: none;
+    top: 0.35rem;
+    left: calc(100% + 2.5rem);
+    width: 12rem;
     margin: 0;
-    text-align: left;
-    font-size: 1.4rem;
-    transform: rotate(-1.5deg);
+    border-left: 0;
+    padding-left: 0;
   }
 }
 
 .writing-copy .prose.prose-custom :not(pre) > code {
-  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
   border-radius: 4px;
-  background: color-mix(in srgb, var(--b-high) 82%, var(--accent));
+  background: color-mix(in srgb, var(--f-low) 10%, transparent);
+  padding: 0.12em 0.36em;
   color: var(--f-high);
-  font-size: 0.88em;
-  white-space: nowrap;
+  font-size: 0.74em;
+  font-weight: 400;
 }
 
 .writing-copy .prose.prose-custom pre {
-  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
-  box-shadow: inset 0 1.4rem 0
-    color-mix(in srgb, var(--b-high) 66%, transparent);
-}
-
-.writing-copy .prose.prose-custom ul,
-.writing-copy .prose.prose-custom ol {
-  padding-left: 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1.25rem 1.4rem;
 }
 
 .writing-copy .prose.prose-custom li::marker {
-  color: var(--accent);
-  font-family: Menlo, monospace;
-  font-weight: 700;
-}
-
-.writing-copy .prose.prose-custom ul li::marker {
-  content: "+  ";
+  color: var(--f-mute);
 }
 
 .writing-copy .prose.prose-custom input[type="checkbox"] {
   accent-color: var(--accent);
-  width: 0.95rem;
-  height: 0.95rem;
   margin-right: 0.45rem;
-  transform: translateY(0.12rem);
 }
 
 .writing-copy .prose.prose-custom hr {
-  height: 1.25rem;
-  margin: 3rem auto;
+  margin: 3.5rem 0;
   border: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='220' height='24' viewBox='0 0 220 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 12.8C34 8.8 60 14.8 91 11.3C124 7.5 149 15.2 181 10.4C194 8.5 207 9.4 216 11.2' stroke='%23c4a7e7' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M102 5.5L110 18.5L118 5.5' stroke='%23c4a7e7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: min(100%, 17rem) auto;
+  border-top: 1px solid var(--line);
 }
 
 /* wide tables get their own horizontal scroll (see rehype-wrap-tables) so they
@@ -266,42 +177,28 @@
 .writing-copy .prose.prose-custom .table-scroll {
   margin: 1.75rem 0;
   overflow-x: auto;
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-  border-radius: 8px;
-  /* a soft fade on the right hints there's more to scroll to */
-  background:
-    linear-gradient(to right, var(--background) 30%, transparent),
-    linear-gradient(to right, transparent, var(--background) 70%) 100% 0,
-    radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--f-high) 12%, transparent), transparent),
-    radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--f-high) 12%, transparent), transparent) 100% 0;
-  background-repeat: no-repeat;
-  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
-  background-attachment: local, local, scroll, scroll;
   -webkit-overflow-scrolling: touch;
-}
-
-.writing-copy .prose.prose-custom .table-scroll:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  outline-offset: 2px;
 }
 
 .writing-copy .prose.prose-custom .table-scroll table {
   width: 100%;
   margin: 0;
-  border: 0;
-  border-radius: 0;
   font-size: 0.9rem;
 }
 
 .writing-copy .prose.prose-custom th {
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--f-high);
+  font-weight: 600;
   white-space: nowrap;
+}
+
+.writing-copy .prose.prose-custom thead,
+.writing-copy .prose.prose-custom tbody tr {
+  border-color: var(--line);
 }
 
 .writing-copy .prose.prose-custom td,
 .writing-copy .prose.prose-custom th {
-  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
   vertical-align: top;
 }
 
@@ -313,13 +210,6 @@
 .writing-copy .prose.prose-custom td code {
   white-space: normal;
   overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-@media (max-width: 640px) {
-  .writing-copy .prose.prose-custom .table-scroll table {
-    font-size: 0.82rem;
-  }
 }
 
 .writing-copy .prose.prose-custom p:has(> img) {
@@ -327,14 +217,20 @@
 }
 
 .writing-copy .prose.prose-custom img {
-  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  border: 1px solid var(--line);
   border-radius: 6px;
-  box-shadow: 0.6rem 0.6rem 0 color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.writing-copy .prose.prose-custom figcaption {
+  color: var(--f-mute);
+  font-family: var(--font-mono);
+  text-transform: lowercase;
 }
 
 .writing-copy .prose.prose-custom .footnotes {
-  margin-top: 3rem;
-  border-top: 1px dashed color-mix(in srgb, var(--accent) 35%, transparent);
+  margin-top: 3.5rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.5rem;
   font-size: 0.88rem;
 }
 
@@ -350,50 +246,8 @@
   border: 0;
 }
 
-.writing-copy .prose.prose-custom .footnotes::before {
-  content: "afterthoughts";
-  display: block;
-  margin-top: 0.8rem;
-  color: var(--accent);
-  font-family: "Caveat", cursive;
-  font-size: 1.45rem;
-  font-weight: 700;
-}
-
-.writing-copy .prose.prose-custom sup a::after,
-.writing-copy .prose.prose-custom .footnotes a::after {
-  content: "";
-  display: none;
-}
-
 @media (max-width: 480px) {
   .writing-copy .prose {
-    font-size: 1rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .writing-copy .prose.prose-custom * {
-    transition: none;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .writing-copy .prose.prose-custom strong {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='12' viewBox='0 0 60 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 7 Q15 3 30 7 T60 7' stroke='%23b78a7c' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
-  }
-
-  .writing-copy .prose.prose-custom hr {
-    background-image: url("data:image/svg+xml,%3Csvg width='220' height='24' viewBox='0 0 220 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 12.8C34 8.8 60 14.8 91 11.3C124 7.5 149 15.2 181 10.4C194 8.5 207 9.4 216 11.2' stroke='%23b78a7c' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M102 5.5L110 18.5L118 5.5' stroke='%23b78a7c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  }
-
-  .dark .writing-copy .prose.prose-custom strong,
-  .dark:root .writing-copy .prose.prose-custom strong {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='12' viewBox='0 0 60 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 7 Q15 3 30 7 T60 7' stroke='%23c4a7e7' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
-  }
-
-  .dark .writing-copy .prose.prose-custom hr,
-  .dark:root .writing-copy .prose.prose-custom hr {
-    background-image: url("data:image/svg+xml,%3Csvg width='220' height='24' viewBox='0 0 220 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 12.8C34 8.8 60 14.8 91 11.3C124 7.5 149 15.2 181 10.4C194 8.5 207 9.4 216 11.2' stroke='%23c4a7e7' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M102 5.5L110 18.5L118 5.5' stroke='%23c4a7e7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    font-size: 1.14rem;
   }
 }

@@ -1,0 +1,466 @@
+---
+// A generative vine that sits on the footer's hairline: two strands of hanging
+// leaves, with a small cat sitting underneath them. It is drawn on a canvas so
+// it can grow in (left to right, once, when scrolled into view), rustle under
+// the pointer, and let the cat watch the cursor, blink, and flick its tail.
+// The plant is seeded from the page path, so every page grows its own (and
+// seats the cat somewhere different), the same way each time you come back.
+// Idle, it costs nothing: the frame loop only runs while something is moving.
+---
+
+<div class="vine" aria-hidden="true">
+  <canvas></canvas>
+</div>
+
+<style>
+  .vine {
+    height: 88px;
+    /* melt into the page at both ends instead of stopping at a hard edge */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 14%,
+      #000 86%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 14%,
+      #000 86%,
+      transparent 100%
+    );
+  }
+
+  .vine canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+  type Leaf = {
+    x: number;
+    y: number;
+    ang: number;
+    len: number;
+    wid: number;
+    phase: number;
+    energy: number;
+    layer: number;
+  };
+  type Strand = { base: number; a1: number; a2: number; k1: number; k2: number; p1: number; p2: number };
+
+  const H = 88;
+  const GROW_MS = 1900;
+  const BLINK_MS = 190;
+  const FLICK_MS = 1300;
+  const TAU = Math.PI * 2;
+
+  // small seeded prng so a page always grows the same plant
+  function mulberry32(seed: number) {
+    let a = seed;
+    return () => {
+      a |= 0;
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function hash(text: string) {
+    let h = 2166136261;
+    for (let i = 0; i < text.length; i++) {
+      h ^= text.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function rgba(hex: string, alpha: number) {
+    let h = hex.replace("#", "").trim();
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    const n = parseInt(h, 16) || 0;
+    return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+  }
+
+  const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
+  const clamp01 = (v: number) => clamp(v, 0, 1);
+  const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+
+  function setup(root: HTMLElement) {
+    const canvas = root.querySelector("canvas");
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const seed = hash(window.location.pathname.replace(/\/+$/, "") || "/");
+
+    let W = 0;
+    let strands: Strand[] = [];
+    let leaves: Leaf[] = [];
+    let ink = "#575279";
+    let nose = "#d7827e";
+    let paper = "#faf4ed";
+    let grow = reduce ? 1 : 0;
+    let growStart = 0;
+    let frame = 0;
+
+    // the cat: where it sits, which way it faces, and what it is up to
+    let catX = 0;
+    let catFlip = 1;
+    let gazeX = 0;
+    let gazeY = 0;
+    let lookX = 0;
+    let lookY = 0;
+    let blinkStart = -Infinity;
+    let flickStart = -Infinity;
+    let visible = false;
+    let idleTimer = 0;
+
+    const strandY = (s: Strand, x: number) =>
+      s.base + s.a1 * Math.sin(x * s.k1 + s.p1) + s.a2 * Math.sin(x * s.k2 + s.p2);
+
+    function build() {
+      const rand = mulberry32(seed);
+      const between = (lo: number, hi: number) => lo + rand() * (hi - lo);
+
+      // back strand sits higher and quieter than the front one
+      strands = [24, 42].map((base, layer) => ({
+        base,
+        a1: layer ? 8 : 6,
+        a2: layer ? 3.2 : 2.4,
+        k1: (TAU * between(1.0, 1.5)) / W,
+        k2: (TAU * between(2.3, 3.3)) / W,
+        p1: between(0, TAU),
+        p2: between(0, TAU),
+      }));
+
+      // tail trails toward whichever side has more room
+      catX = W * between(0.24, 0.76);
+      catFlip = catX < W / 2 ? 1 : -1;
+
+      leaves = [];
+      strands.forEach((s, layer) => {
+        let x = between(6, 18);
+        while (x < W - 6) {
+          const y = strandY(s, x);
+          const len = layer ? between(24, 40) : between(14, 22);
+          const splay = between(0.16, 0.42);
+          const angles =
+            rand() < 0.72
+              ? [Math.PI / 2 - splay, Math.PI / 2 + splay * between(0.7, 1.2)]
+              : [Math.PI / 2 + between(-0.3, 0.3)];
+
+          // keep the front leaves from hanging right over the cat
+          const crowding = layer === 1 && Math.abs(x - catX) < 24;
+
+          (crowding ? [] : angles).forEach((ang, i) => {
+            const l = len * (i ? between(0.78, 1) : 1);
+            leaves.push({
+              x,
+              y,
+              ang,
+              len: l,
+              wid: l * between(0.42, 0.56),
+              phase: between(0, TAU),
+              energy: 0,
+              layer,
+            });
+          });
+
+          x += layer ? between(22, 36) : between(26, 42);
+        }
+      });
+    }
+
+    function readColors() {
+      const cs = getComputedStyle(root);
+      ink = cs.getPropertyValue("--f-low").trim() || ink;
+      nose = cs.getPropertyValue("--accent").trim() || nose;
+      paper = cs.getPropertyValue("--b-low").trim() || paper;
+    }
+
+    function resize() {
+      const width = Math.round(root.clientWidth);
+      if (!width || width === W) return;
+      W = width;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas!.width = W * dpr;
+      canvas!.height = H * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      build();
+      draw(performance.now());
+    }
+
+    function drawLeaf(leaf: Leaf, scale: number, time: number) {
+      const sway = leaf.energy * 0.42 * Math.sin(time * 0.007 + leaf.phase);
+      const len = leaf.len * scale;
+      const wid = leaf.wid * scale;
+      const front = leaf.layer === 1;
+
+      ctx!.save();
+      ctx!.translate(leaf.x, leaf.y);
+      ctx!.rotate(leaf.ang + sway);
+
+      ctx!.beginPath();
+      ctx!.moveTo(0, 0);
+      ctx!.quadraticCurveTo(len * 0.42, -wid, len, 0);
+      ctx!.quadraticCurveTo(len * 0.42, wid, 0, 0);
+      ctx!.fillStyle = rgba(ink, front ? 0.1 : 0.05);
+      ctx!.fill();
+      ctx!.strokeStyle = rgba(ink, front ? 0.55 : 0.28);
+      ctx!.stroke();
+
+      ctx!.beginPath();
+      ctx!.moveTo(0, 0);
+      ctx!.lineTo(len * 0.9, 0);
+      ctx!.strokeStyle = rgba(ink, front ? 0.3 : 0.16);
+      ctx!.stroke();
+
+      ctx!.restore();
+    }
+
+    // solid paper first so the leaves behind don't show through, then the same
+    // faint ink wash and outline the leaves use
+    function inkShape() {
+      ctx!.fillStyle = paper;
+      ctx!.fill();
+      ctx!.fillStyle = rgba(ink, 0.1);
+      ctx!.fill();
+      ctx!.strokeStyle = rgba(ink, 0.7);
+      ctx!.stroke();
+    }
+
+    // drawn around an origin at the cat's feet, y going up into the negatives
+    function drawCat(scale: number, time: number) {
+      const flick = clamp01((time - flickStart) / FLICK_MS);
+      const swing = flick < 1 ? Math.sin(flick * TAU * 1.5) * (1 - flick) : 0;
+      const blink = clamp01((time - blinkStart) / BLINK_MS);
+      const lid = blink < 1 ? Math.abs(1 - blink * 2) : 1;
+
+      ctx!.save();
+      ctx!.translate(catX, H - 0.5);
+      ctx!.scale(scale, scale);
+      ctx!.lineJoin = "round";
+
+      // tail, curled along the ground; the tip is what flicks
+      ctx!.save();
+      ctx!.scale(catFlip, 1);
+      ctx!.beginPath();
+      ctx!.moveTo(8, -2.5);
+      ctx!.bezierCurveTo(17, -1, 23 + swing * 2, -3, 22 + swing * 4, -10);
+      ctx!.quadraticCurveTo(21.5 + swing * 5, -14.5, 18 + swing * 6, -13);
+      ctx!.lineWidth = 2.4;
+      ctx!.strokeStyle = rgba(ink, 0.6);
+      ctx!.stroke();
+      ctx!.restore();
+      ctx!.lineWidth = 1;
+
+      // body
+      ctx!.beginPath();
+      ctx!.moveTo(-6, -20);
+      ctx!.bezierCurveTo(-12, -14, -12.5, -4, -10, 0);
+      ctx!.lineTo(10, 0);
+      ctx!.bezierCurveTo(12.5, -4, 12, -14, 6, -20);
+      ctx!.closePath();
+      inkShape();
+
+      // front legs
+      ctx!.beginPath();
+      ctx!.moveTo(-3, -10);
+      ctx!.lineTo(-3, 0);
+      ctx!.moveTo(3, -10);
+      ctx!.lineTo(3, 0);
+      ctx!.strokeStyle = rgba(ink, 0.4);
+      ctx!.stroke();
+
+      // head and ears in one outline, turned a touch toward the pointer
+      ctx!.translate(lookX * 0.5, lookY * 0.3);
+      ctx!.beginPath();
+      ctx!.moveTo(-8.5, -26);
+      ctx!.lineTo(-8, -38);
+      ctx!.lineTo(-3, -33.5);
+      ctx!.quadraticCurveTo(0, -34.5, 3, -33.5);
+      ctx!.lineTo(8, -38);
+      ctx!.lineTo(8.5, -26);
+      ctx!.bezierCurveTo(8.5, -20, 4, -18, 0, -18);
+      ctx!.bezierCurveTo(-4, -18, -8.5, -20, -8.5, -26);
+      ctx!.closePath();
+      inkShape();
+
+      // face follows the gaze a little further than the head does
+      ctx!.translate(lookX, lookY * 0.7);
+
+      ctx!.fillStyle = rgba(ink, 0.85);
+      for (const side of [-1, 1]) {
+        ctx!.beginPath();
+        ctx!.ellipse(side * 3.3, -27, 1.1, Math.max(0.25, 1.6 * lid), 0, 0, TAU);
+        ctx!.fill();
+      }
+
+      ctx!.beginPath();
+      ctx!.moveTo(-1.1, -24);
+      ctx!.lineTo(1.1, -24);
+      ctx!.lineTo(0, -22.7);
+      ctx!.closePath();
+      ctx!.fillStyle = rgba(nose, 0.95);
+      ctx!.fill();
+
+      ctx!.beginPath();
+      for (const side of [-1, 1]) {
+        ctx!.moveTo(side * 5, -23.6);
+        ctx!.lineTo(side * 13, -25.2);
+        ctx!.moveTo(side * 5, -22.6);
+        ctx!.lineTo(side * 13, -21.8);
+      }
+      ctx!.strokeStyle = rgba(ink, 0.32);
+      ctx!.stroke();
+
+      ctx!.restore();
+    }
+
+    function draw(time: number) {
+      ctx!.clearRect(0, 0, W, H);
+      ctx!.lineWidth = 1;
+      ctx!.lineCap = "round";
+
+      // the growing tip runs a little past the edge so the last leaves finish
+      const tip = easeOut(grow) * (W + 90);
+
+      strands.forEach((s, layer) => {
+        const end = Math.min(W, tip);
+        if (end <= 0) return;
+        ctx!.beginPath();
+        for (let x = 0; x <= end; x += 4) {
+          const y = strandY(s, x);
+          if (x === 0) ctx!.moveTo(x, y);
+          else ctx!.lineTo(x, y);
+        }
+        ctx!.strokeStyle = rgba(ink, layer ? 0.5 : 0.26);
+        ctx!.stroke();
+
+        for (const leaf of leaves) {
+          if (leaf.layer !== layer) continue;
+          const t = clamp01((tip - leaf.x) / 80);
+          if (t > 0) drawLeaf(leaf, easeOut(t), time);
+        }
+      });
+
+      // the cat pops up a beat after the vine has grown past its spot
+      const up = clamp01((tip - catX - 40) / 90);
+      if (up > 0) drawCat(easeOut(up) * 1.18, time);
+    }
+
+    function tick(time: number) {
+      frame = 0;
+      let moving = false;
+
+      if (grow < 1 && growStart) {
+        grow = clamp01((time - growStart) / GROW_MS);
+        moving = true;
+      }
+
+      for (const leaf of leaves) {
+        if (leaf.energy <= 0) continue;
+        leaf.energy *= 0.965;
+        if (leaf.energy < 0.01) leaf.energy = 0;
+        else moving = true;
+      }
+
+      // ease the cat's gaze toward where the pointer last was
+      lookX += (gazeX - lookX) * 0.12;
+      lookY += (gazeY - lookY) * 0.12;
+      if (Math.abs(gazeX - lookX) + Math.abs(gazeY - lookY) > 0.02) moving = true;
+
+      if (time - blinkStart < BLINK_MS || time - flickStart < FLICK_MS) moving = true;
+
+      draw(time);
+      if (moving) frame = requestAnimationFrame(tick);
+    }
+
+    const wake = () => {
+      if (!frame) frame = requestAnimationFrame(tick);
+    };
+
+    readColors();
+    resize();
+    new ResizeObserver(resize).observe(root);
+
+    // repaint in the new ink when the theme flips
+    const repaint = () => {
+      readColors();
+      draw(performance.now());
+    };
+    new MutationObserver(repaint).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", repaint);
+
+    if (reduce) return;
+
+    // now and then, while it is on screen, the cat blinks or flicks its tail
+    function idle() {
+      idleTimer = window.setTimeout(() => {
+        const now = performance.now();
+        if (Math.random() < 0.6) blinkStart = now;
+        else flickStart = now;
+        wake();
+        idle();
+      }, 2600 + Math.random() * 4200);
+    }
+
+    new IntersectionObserver(
+      (entries) => {
+        const onScreen = entries.some((entry) => entry.isIntersecting);
+        if (onScreen === visible) return;
+        visible = onScreen;
+        window.clearTimeout(idleTimer);
+        if (!visible) return;
+        if (!growStart) growStart = performance.now();
+        wake();
+        idle();
+      },
+      { threshold: 0.5 },
+    ).observe(root);
+
+    // the cat watches the pointer wherever it is on the page
+    window.addEventListener(
+      "pointermove",
+      (event) => {
+        if (!visible) return;
+        const box = root.getBoundingClientRect();
+        const dx = event.clientX - (box.left + catX);
+        const dy = event.clientY - (box.bottom - 27);
+        gazeX = clamp(dx / 90, -1, 1) * 1.3;
+        gazeY = clamp(dy / 90, -1, 1) * 1.1;
+        wake();
+      },
+      { passive: true },
+    );
+
+    // leaves rustle under the pointer, and coming close earns a slow blink
+    root.addEventListener("pointermove", (event) => {
+      const box = root.getBoundingClientRect();
+      const px = event.clientX - box.left;
+      for (const leaf of leaves) {
+        const d = Math.abs(leaf.x - px);
+        if (d < 46) leaf.energy = Math.min(1, leaf.energy + (1 - d / 46) * 0.4);
+      }
+
+      const now = performance.now();
+      if (Math.abs(px - catX) < 26 && now - flickStart > FLICK_MS + 600) {
+        flickStart = now;
+        blinkStart = now;
+      }
+      wake();
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>(".vine").forEach(setup);
+</script>

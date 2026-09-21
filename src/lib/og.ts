@@ -3,61 +3,64 @@ import { Resvg } from "@resvg/resvg-js";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
+import { vineSvg } from "~/lib/og-vine";
 
 const require = createRequire(import.meta.url);
 
-// ---- one-time asset loading (fonts + avatar) --------------------------------
-const fontFile = (pkg: string, file: string) =>
-  readFile(join(dirname(require.resolve(`${pkg}/package.json`)), "files", file));
+// ---- one-time font loading --------------------------------------------------
+// the same faces the site uses: Newsreader for words, Departure Mono for labels.
+// satori wants static files, hence @fontsource/newsreader next to the variable one.
+const newsreader = (weight: number) =>
+  readFile(
+    join(
+      dirname(require.resolve("@fontsource/newsreader/package.json")),
+      "files",
+      `newsreader-latin-${weight}-normal.woff`,
+    ),
+  );
 
-const avatarFile = () =>
-  readFile(join(process.cwd(), "public", "favicon.png"));
+const departure = () =>
+  readFile(join(process.cwd(), "public", "fonts", "DepartureMono-Regular.woff"));
 
-let assets: {
-  fonts: Awaited<ReturnType<typeof loadAssets>>["fonts"];
-  avatar: string;
-} | null = null;
-
-async function loadAssets() {
-  const [gelasio, gelasioBold, caveat, avatar] = await Promise.all([
-    fontFile("@fontsource/gelasio", "gelasio-latin-400-normal.woff"),
-    fontFile("@fontsource/gelasio", "gelasio-latin-700-normal.woff"),
-    fontFile("@fontsource/caveat", "caveat-latin-700-normal.woff"),
-    avatarFile(),
-  ]);
-  return {
-    fonts: [
-      { name: "Gelasio", data: gelasio, weight: 400 as const, style: "normal" as const },
-      { name: "Gelasio", data: gelasioBold, weight: 700 as const, style: "normal" as const },
-      { name: "Caveat", data: caveat, weight: 700 as const, style: "normal" as const },
-    ],
-    avatar: `data:image/png;base64,${avatar.toString("base64")}`,
-  };
+async function loadFonts() {
+  const [light, regular, mono] = await Promise.all([newsreader(300), newsreader(400), departure()]);
+  return [
+    { name: "Newsreader", data: light, weight: 300 as const, style: "normal" as const },
+    { name: "Newsreader", data: regular, weight: 400 as const, style: "normal" as const },
+    { name: "Departure Mono", data: mono, weight: 400 as const, style: "normal" as const },
+  ];
 }
 
-// ---- palette / per-section flavour (Rosé Pine Dawn) -------------------------
+let fonts: Awaited<ReturnType<typeof loadFonts>> | null = null;
+
+// ---- palette (Rosé Pine Dawn, the site's light theme) -----------------------
 const rp = {
   base: "#faf4ed",
-  overlay: "#f2e9e1",
-  text: "#575279",
+  high: "#413c60",
+  low: "#575279",
   subtle: "#797593",
   muted: "#9893a5",
+  line: "rgba(87, 82, 121, 0.16)",
+  accent: "#d7827e",
 };
 
-export type OgKind = "home" | "note" | "syndication" | "about" | "section" | "tag";
+export type OgKind = "home" | "note" | "syndication" | "section" | "tag";
 
-const flavour: Record<OgKind, { accent: string; label: string }> = {
-  home: { accent: "#907aa9", label: "~" }, // iris
-  note: { accent: "#56949f", label: "note" }, // foam
-  syndication: { accent: "#b4637a", label: "syndication" }, // love
-  about: { accent: "#ea9d34", label: "about" }, // gold
-  section: { accent: "#907aa9", label: "index" }, // iris
-  tag: { accent: "#d7827e", label: "tag" }, // rose
+// the path shown top-left, the way the site header shows where you are
+const trail: Record<OgKind, (label?: string) => string> = {
+  home: () => "~",
+  note: () => "~/notes",
+  syndication: () => "~/syndications",
+  section: (label) => `~/${label ?? ""}`,
+  tag: () => "~/notes/tags",
 };
 
-const hexToRgba = (hex: string, a: number) => {
-  const n = parseInt(hex.slice(1), 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+const kindLabel: Record<OgKind, string> = {
+  home: "pwn::musings",
+  note: "note",
+  syndication: "syndication",
+  section: "index",
+  tag: "tag",
 };
 
 const clamp = (s: string, max: number) =>
@@ -80,99 +83,104 @@ const h = (
   extra: Record<string, unknown> = {},
 ): Node => ({ type, props: { style, ...extra, ...(children !== undefined ? { children } : {}) } });
 
-// ---- template ---------------------------------------------------------------
-function markup(input: OgInput, avatar: string): Node {
-  const { accent, label: defLabel } = flavour[input.kind];
-  const label = input.label ?? defLabel;
-  const title = clamp(input.title, 92);
-  const desc = input.description ? clamp(input.description, 150) : "";
-  const titleSize = title.length < 32 ? 78 : title.length < 64 ? 62 : 50;
+const mono = (size: number, color: string, extra: Record<string, unknown> = {}) => ({
+  display: "flex",
+  fontFamily: "Departure Mono",
+  fontSize: size,
+  color,
+  ...extra,
+});
 
-  const chips = (input.chips ?? []).slice(0, 4).map((c) =>
-    h(
-      "div",
-      {
-        display: "flex",
-        padding: "8px 16px",
-        borderRadius: 999,
-        background: rp.overlay,
-        color: rp.subtle,
-        fontSize: 24,
-      },
-      c,
-    ),
-  );
+// ---- template ---------------------------------------------------------------
+// the same grammar as the pages: a mono trail up top, serif words in the middle,
+// then the vine, a hairline, and a mono label line underneath.
+const WIDTH = 1200;
+const HEIGHT = 630;
+const PAD = 80;
+const INNER = WIDTH - PAD * 2;
+const VINE_H = 104;
+
+function markup(input: OgInput): Node {
+  const title = clamp(input.title, 84);
+  const long = title.length >= 48;
+  const titleSize = title.length < 24 ? 88 : long ? 56 : 70;
+  const desc = input.description ? clamp(input.description, long ? 96 : 108) : "";
+
+  const vine = vineSvg(input.title, {
+    width: INNER,
+    height: VINE_H,
+    ink: rp.low,
+    paper: rp.base,
+    nose: rp.accent,
+  });
+  const vineSrc = `data:image/svg+xml;base64,${Buffer.from(vine).toString("base64")}`;
+
+  // sections and the home card are labelled by kind; everything else by its own label
+  const label =
+    input.kind === "section" || input.kind === "home"
+      ? kindLabel[input.kind]
+      : (input.label ?? kindLabel[input.kind]);
+  const meta = (input.chips ?? []).slice(0, 3).join("  ·  ").toLowerCase();
 
   return h(
     "div",
     {
       display: "flex",
       flexDirection: "column",
-      width: 1200,
-      height: 630,
-      position: "relative",
+      width: WIDTH,
+      height: HEIGHT,
+      padding: `${PAD - 14}px ${PAD}px ${PAD - 22}px`,
       background: rp.base,
-      color: rp.text,
-      fontFamily: "Gelasio",
-      padding: "66px 74px",
+      color: rp.high,
+      fontFamily: "Newsreader",
     },
     [
-      // accent side bar + soft glow
-      h("div", { display: "flex", position: "absolute", top: 0, left: 0, width: 14, height: 630, background: accent }),
-      h("div", {
-        display: "flex",
-        position: "absolute",
-        top: -120,
-        right: -120,
-        width: 420,
-        height: 420,
-        borderRadius: 999,
-        background: hexToRgba(accent, 0.12),
-      }),
-
-      // header row: label pill + wordmark
-      h("div", { display: "flex", alignItems: "center", gap: 18 }, [
-        h(
-          "div",
-          {
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            padding: "9px 22px",
-            borderRadius: 999,
-            background: hexToRgba(accent, 0.16),
-            border: `1px solid ${hexToRgba(accent, 0.5)}`,
-          },
-          [
-            h("div", { display: "flex", width: 12, height: 12, borderRadius: 999, background: accent }),
-            h("div", { display: "flex", color: accent, fontSize: 28, fontWeight: 700 }, label),
-          ],
-        ),
-        h("div", { display: "flex", fontFamily: "Caveat", fontSize: 34, color: rp.muted }, "pwnwriter.me"),
+      h("div", { display: "flex", justifyContent: "space-between" }, [
+        h("div", mono(24, rp.subtle), trail[input.kind](input.label)),
+        h("div", mono(24, rp.muted), "pwnwriter.me"),
       ]),
 
-      // title + description
       h(
         "div",
-        { display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "center", gap: 22 },
+        { display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "center", gap: 20 },
         [
-          h("div", { display: "flex", fontWeight: 700, fontSize: titleSize, lineHeight: 1.12, color: rp.text }, title),
-          ...(desc ? [h("div", { display: "flex", fontSize: 30, lineHeight: 1.45, color: rp.subtle }, desc)] : []),
+          h(
+            "div",
+            {
+              display: "flex",
+              fontWeight: 400,
+              fontSize: titleSize,
+              lineHeight: 1.1,
+              letterSpacing: -1.5,
+              color: rp.high,
+            },
+            title,
+          ),
+          ...(desc
+            ? [
+                h(
+                  "div",
+                  {
+                    display: "flex",
+                    maxWidth: 900,
+                    fontWeight: 300,
+                    fontSize: 30,
+                    lineHeight: 1.4,
+                    color: rp.subtle,
+                  },
+                  desc,
+                ),
+              ]
+            : []),
         ],
       ),
 
-      // footer: avatar + name + chips
-      h("div", { display: "flex", alignItems: "center", justifyContent: "space-between" }, [
-        h("div", { display: "flex", alignItems: "center", gap: 18 }, [
-          h("div", { display: "flex", padding: 3, borderRadius: 22, background: accent }, [
-            h("img", { width: 90, height: 90, borderRadius: 19 }, undefined, { src: avatar }),
-          ]),
-          h("div", { display: "flex", flexDirection: "column" }, [
-            h("div", { display: "flex", fontWeight: 700, fontSize: 30, color: rp.text }, "Nabeen Tiwaree"),
-            h("div", { display: "flex", fontFamily: "Caveat", fontSize: 34, color: accent }, "Coffee. Code. Pwn."),
-          ]),
-        ]),
-        h("div", { display: "flex", alignItems: "center", gap: 12 }, chips),
+      h("img", { display: "flex" }, undefined, { src: vineSrc, width: INNER, height: VINE_H }),
+      h("div", { display: "flex", height: 1, background: rp.line }),
+
+      h("div", { display: "flex", justifyContent: "space-between", marginTop: 22 }, [
+        h("div", mono(20, rp.accent, { letterSpacing: 4 }), label.toUpperCase()),
+        h("div", mono(20, rp.muted), meta),
       ]),
     ],
   );
@@ -180,14 +188,7 @@ function markup(input: OgInput, avatar: string): Node {
 
 // ---- public API -------------------------------------------------------------
 export async function generateOg(input: OgInput): Promise<Buffer> {
-  assets ??= await loadAssets();
-  const svg = await satori(markup(input, assets.avatar) as any, {
-    width: 1200,
-    height: 630,
-    fonts: assets.fonts,
-  });
-  const png = new Resvg(svg, { fitTo: { mode: "width", value: 1200 } })
-    .render()
-    .asPng();
-  return png;
+  fonts ??= await loadFonts();
+  const svg = await satori(markup(input) as any, { width: WIDTH, height: HEIGHT, fonts });
+  return new Resvg(svg, { fitTo: { mode: "width", value: WIDTH } }).render().asPng();
 }

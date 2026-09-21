@@ -3,8 +3,6 @@ import Layout from '~/layouts/Layout.astro';
 import '~/styles/writing.css';
 import Wrapper from '~/components/wrapper.astro';
 import Prose from '~/components/prose.astro';
-import Link from '~/components/link.astro';
-import Heading from '~/components/text/heading.astro';
 import { Image } from 'astro:assets';
 import type { Post } from '~/content/config';
 import { formatDate } from '~/lib/utils';
@@ -24,58 +22,37 @@ const formattedPubDate = formatDate(pubDate);
 const formattedModDate = formatDate(modDate);
 ---
 
-<Layout {title} {description} showRuler>
+<Layout {title} {description}>
 	<Wrapper>
 		<article class="writing-note">
-			<Heading Element="h1">{title}</Heading>
-			<div class="flex items-center text-sm font-bold">
-				<p
-					class="inline-flex pr-2 italic text-f-high after:-mt-px after:pl-2 after:text-f-low after:content-['|']"
-				>
-					Note
-				</p>
-
-				<div class="flex flex-wrap items-center gap-1.5">
-					<p class="tabular-nums text-f-high">{formattedPubDate}</p>
-
+			<header class="writing-head">
+				<h1>{title}</h1>
+				<p class="writing-meta meta">
+					<time datetime={pubDate.toISOString()}>{formattedPubDate}</time>
 					{
 						formattedModDate !== formattedPubDate && (
-							<p class="tabular-nums">(modified {formattedModDate})</p>
+							<span>· edited {formattedModDate}</span>
 						)
 					}
-
-					<span class="font-mono text-f-low">&middot; ~{readingTime} min read</span>
-				</div>
-			</div>
-
-			<div class="h-xs"></div>
-
-			<ul class="flex flex-wrap gap-2 text-sm">
+					<span>· {readingTime} min read</span>
+					{
+						tags.map((tag: string, i: number) => (
+							<span>
+								{i === 0 && '· '}
+								<a href={`/notes/tags/${tag}`}>#{tag}</a>
+							</span>
+						))
+					}
+				</p>
 				{
-					tags.map((tag: string) => (
-						<li class="shrink-0">
-							<Link href={`/notes/tags/${tag}`} scheme="accent" underline>
-								#{tag}
-							</Link>
-						</li>
-					))
+					cover && cover.src && (
+						<figure class="writing-cover">
+							<Image src={cover.src} alt={cover.alt} />
+						</figure>
+					)
 				}
-			</ul>
-			{
-				cover && cover.src && (
-					<>
-						<div class="h-lg" />
-						<div class="flex max-h-[600px] max-w-full items-center overflow-hidden rounded-xl">
-							<Image
-								class="h-auto max-w-full rounded-xl"
-								src={cover.src}
-								alt={cover.alt}
-							/>
-						</div>
-					</>
-				)
-			}
-			<div class="h-lg"></div>
+			</header>
+
 			<div class="writing-copy">
 				<Prose>
 					<slot />

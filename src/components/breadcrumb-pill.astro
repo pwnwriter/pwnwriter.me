@@ -22,11 +22,6 @@
 		color: color-mix(in srgb, var(--f-low) 38%, transparent);
 	}
 
-	#breadcrumbs .crumb-section .cicon {
-		margin-right: 0.3rem;
-		color: var(--accent);
-		font-size: 0.9em;
-	}
 
 	#breadcrumbs .crumb-section button {
 		display: inline-flex;
@@ -101,14 +96,12 @@
 		max-height: min(62vh, 24rem);
 		overflow-y: auto;
 		padding: 0.3rem;
-		border: 1px solid color-mix(in srgb, var(--f-low) 14%, transparent);
-		border-radius: 0.7rem;
-		background: color-mix(in srgb, var(--b-med) 92%, transparent);
-		backdrop-filter: blur(14px) saturate(1.4);
-		-webkit-backdrop-filter: blur(14px) saturate(1.4);
-		box-shadow: 0 16px 44px -20px color-mix(in srgb, var(--f-high) 80%, transparent);
+		border: 1px solid var(--line);
+		border-radius: 6px;
+		background: var(--b-med);
+		box-shadow: 0 12px 32px -18px color-mix(in srgb, #000 45%, transparent);
 		font-family: var(--font-mono);
-		font-size: 0.8rem;
+		font-size: 0.74rem;
 		animation: crumb-toc-in 0.15s ease;
 	}
 
@@ -126,7 +119,7 @@
 		gap: 0.5rem;
 		padding: 0.42rem 0.55rem;
 		margin-bottom: 0.2rem;
-		border-bottom: 1px dashed color-mix(in srgb, var(--f-low) 16%, transparent);
+		border-bottom: 1px solid var(--line);
 		color: color-mix(in srgb, var(--f-low) 78%, transparent);
 		text-decoration: none;
 		white-space: nowrap;
@@ -204,9 +197,9 @@
 
 <script>
 	const ICONS: Record<string, string> = {
-		H2: '✦',
-		H3: '✧',
-		H4: '∙',
+		H2: '',
+		H3: '',
+		H4: '',
 	};
 	const SEP = '›';
 	const LEADER_TIMEOUT = 300;

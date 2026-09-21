@@ -3,8 +3,6 @@ import { getCollection } from 'astro:content';
 import Layout from '~/layouts/Layout.astro';
 import PostList from '~/components/post-list.astro';
 import Wrapper from '~/components/wrapper.astro';
-import Heading from '~/components/text/heading.astro';
-import Link from '~/components/link.astro';
 
 export async function getStaticPaths() {
 	const allPosts = await getCollection('posts');
@@ -24,15 +22,18 @@ export async function getStaticPaths() {
 }
 
 const { tag = '' } = Astro.params;
+const { posts } = Astro.props;
 ---
 
 <Layout title={tag} description={`Posts tagged with #${tag}`}>
 	<Wrapper>
-		<main>
-			<Heading>#{tag}</Heading>
-			<PostList tag={tag} />
-			<div class="h-xl"></div>
-			<Link href="/notes/tags">&Larr;&nbsp;&nbsp;All tags</Link>
-		</main>
+		<header class="page-head">
+			<h1 class="page-title">#{tag}</h1>
+			<p class="page-lede">
+				{posts.length} {posts.length === 1 ? 'note' : 'notes'} filed under this tag.
+			</p>
+		</header>
+		<PostList tag={tag} />
+		<a class="more-link" href="/notes/tags">all tags</a>
 	</Wrapper>
 </Layout>
