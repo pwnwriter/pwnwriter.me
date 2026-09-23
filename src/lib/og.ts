@@ -33,15 +33,15 @@ async function loadFonts() {
 
 let fonts: Awaited<ReturnType<typeof loadFonts>> | null = null;
 
-// ---- palette (Rosé Pine Dawn, the site's light theme) -----------------------
+// ---- palette (evergarden summer, the site's light theme) --------------------
 const rp = {
-  base: "#faf4ed",
-  high: "#413c60",
-  low: "#575279",
-  subtle: "#797593",
-  muted: "#9893a5",
-  line: "rgba(87, 82, 121, 0.16)",
-  accent: "#d7827e",
+  base: "#f5efe6",
+  high: "#2b3034",
+  low: "#455355",
+  subtle: "#576869",
+  muted: "#829084",
+  line: "rgba(69, 83, 85, 0.16)",
+  accent: "#91a77a",
 };
 
 export type OgKind = "home" | "note" | "syndication" | "section" | "tag";

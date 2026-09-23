@@ -98,7 +98,7 @@
 
 .writing-copy .prose.prose-custom mark {
   border-radius: 0.2em;
-  background: color-mix(in srgb, #f6c177 32%, transparent);
+  background: color-mix(in srgb, var(--highlight) 34%, transparent);
   color: var(--f-high);
   padding: 0 0.15em;
 }

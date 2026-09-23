@@ -1,4 +1,4 @@
-@import url("./prism-rose-pine.css");
+@import url("./prism.css");
 @import "katex/dist/katex.min.css";
 @import "@fontsource-variable/newsreader/opsz.css";
 @import "@fontsource-variable/newsreader/opsz-italic.css";
@@ -18,57 +18,59 @@
 @tailwind components;
 @tailwind utilities;
 
-/* dark by default */
+/* evergarden (https://evergarden.moe): winter by default, summer in the light.
+   --highlight is the yellow used for <mark> and the odd warm touch. */
 :root {
-  --f-high: #e0def4;
-  --f-low: #b0acc8;
+  --f-high: #f8f9e8;
+  --f-low: #adc9bc;
 
-  --b-high: #26233a;
-  --b-med: #1f1d2e;
-  --b-low: #191724;
+  --b-high: #374145;
+  --b-med: #262f33;
+  --b-low: #1e2528;
 
+  --accent: #cbe3b3;
+  --highlight: #f5d098;
   --background: var(--b-low);
-  --accent: #c4a7e7;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --f-high: #413c60;
-    --f-low: #575279;
+    --f-high: #2b3034;
+    --f-low: #455355;
 
-    --b-high: #fffcf8;
-    --b-med: #fffaf3;
-    --b-low: #faf4ed;
+    --b-high: #e6e1d3;
+    --b-med: #ede8dd;
+    --b-low: #f5efe6;
 
-    --accent: #d7827e;
-    --border: var(--b-low);
+    --accent: #91a77a;
+    --highlight: #c4aa80;
     --background: var(--b-low);
   }
 }
 
 .dark:root {
-  --f-high: #e0def4;
-  --f-low: #b0acc8;
+  --f-high: #f8f9e8;
+  --f-low: #adc9bc;
 
-  --b-high: #26233a;
-  --b-med: #1f1d2e;
-  --b-low: #191724;
+  --b-high: #374145;
+  --b-med: #262f33;
+  --b-low: #1e2528;
 
-  --accent: #c4a7e7;
-  --border: var(--b-low);
+  --accent: #cbe3b3;
+  --highlight: #f5d098;
   --background: var(--b-low);
 }
 
 .light:root {
-  --f-high: #413c60;
-  --f-low: #575279;
+  --f-high: #2b3034;
+  --f-low: #455355;
 
-  --b-high: #fffcf8;
-  --b-med: #fffaf3;
-  --b-low: #faf4ed;
+  --b-high: #e6e1d3;
+  --b-med: #ede8dd;
+  --b-low: #f5efe6;
 
-  --accent: #d7827e;
-  --border: var(--b-low);
+  --accent: #91a77a;
+  --highlight: #c4aa80;
   --background: var(--b-low);
 }
 

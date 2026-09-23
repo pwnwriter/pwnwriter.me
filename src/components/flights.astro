@@ -226,10 +226,10 @@ const flData = JSON.stringify({ airports: AP, legs });
 
     const cs = getComputedStyle(root);
     const cvar = (n: string, f: string) => cs.getPropertyValue(n).trim() || f;
-    const C_HIGH = cvar("--f-high", "#e0def4");
-    const C_LOW = cvar("--f-low", "#b0acc8");
-    const C_ACC = cvar("--accent", "#c4a7e7");
-    const GOLD = "#f6c177";
+    const C_HIGH = cvar("--f-high", "#f8f9e8");
+    const C_LOW = cvar("--f-low", "#adc9bc");
+    const C_ACC = cvar("--accent", "#cbe3b3");
+    const GOLD = cvar("--highlight", "#f5d098");
 
     // dotted sphere (lat/lon list)
     const DOTS: LL[] = [];

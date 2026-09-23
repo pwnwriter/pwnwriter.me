@@ -1,63 +1,65 @@
+/* syntax colours: evergarden winter (dark) and summer (light), on top of the
+   rosé pine token rules below. */
 :root {
-  --text: #575279;
-  --surface: #fffaf3;
-  --highlightMed: #dfdad9;
-  --subtle: #797593;
-  --pine: #286983;
-  --foam: #56949f;
-  --rose: #d7827e;
-  --gold: #ea9d34;
-  --iris: #907aa9;
-  --love: #b4637a;
-  --foamHighlight: #56949f1f;
-  --loveHighlight: #b4637a1f;
+  --text: #f8f9e8;
+  --surface: #262f33;
+  --highlightMed: #4a585c;
+  --subtle: #839e9a;
+  --pine: #b2caed;
+  --foam: #b3e3ca;
+  --rose: #f7a182;
+  --gold: #f5d098;
+  --iris: #d2bdf3;
+  --love: #f57f82;
+  --foamHighlight: #b3e3ca1f;
+  --loveHighlight: #f57f821f;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --text: #e0def4;
-    --surface: #1f1d2e;
-    --highlightMed: #403d52;
-    --subtle: #908caa;
-    --pine: #31748f;
-    --foam: #9ccfd8;
-    --rose: #ebbcba;
-    --gold: #f6c177;
-    --iris: #c4a7e7;
-    --love: #eb6f92;
-    --foamHighlight: #9ccfd81f;
-    --loveHighlight: #eb6f921f;
+    --text: #2b3034;
+    --surface: #ede8dd;
+    --highlightMed: #ceccbd;
+    --subtle: #707d76;
+    --pine: #8294ad;
+    --foam: #74a48b;
+    --rose: #c69883;
+    --gold: #c4aa80;
+    --iris: #a897b8;
+    --love: #c58687;
+    --foamHighlight: #74a48b1f;
+    --loveHighlight: #c586871f;
   }
 }
 
 .light:root {
-  --text: #575279;
-  --surface: #fffaf3;
-  --highlightMed: #dfdad9;
-  --subtle: #797593;
-  --pine: #286983;
-  --foam: #56949f;
-  --rose: #d7827e;
-  --gold: #ea9d34;
-  --iris: #907aa9;
-  --love: #b4637a;
-  --foamHighlight: #56949f1f;
-  --loveHighlight: #b4637a1f;
+  --text: #2b3034;
+  --surface: #ede8dd;
+  --highlightMed: #ceccbd;
+  --subtle: #707d76;
+  --pine: #8294ad;
+  --foam: #74a48b;
+  --rose: #c69883;
+  --gold: #c4aa80;
+  --iris: #a897b8;
+  --love: #c58687;
+  --foamHighlight: #74a48b1f;
+  --loveHighlight: #c586871f;
 }
 
 .dark:root {
-  --text: #e0def4;
-  --surface: #1f1d2e;
-  --highlightMed: #403d52;
-  --subtle: #908caa;
-  --pine: #31748f;
-  --foam: #9ccfd8;
-  --rose: #ebbcba;
-  --gold: #f6c177;
-  --iris: #c4a7e7;
-  --love: #eb6f92;
-  --foamHighlight: #9ccfd81f;
-  --loveHighlight: #eb6f921f;
+  --text: #f8f9e8;
+  --surface: #262f33;
+  --highlightMed: #4a585c;
+  --subtle: #839e9a;
+  --pine: #b2caed;
+  --foam: #b3e3ca;
+  --rose: #f7a182;
+  --gold: #f5d098;
+  --iris: #d2bdf3;
+  --love: #f57f82;
+  --foamHighlight: #b3e3ca1f;
+  --loveHighlight: #f57f821f;
 }
 
 /**
