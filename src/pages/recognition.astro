@@ -30,6 +30,11 @@ import { recognition } from "~/data/recognition";
                 <span class="row-date result">{item.result}</span>
               </Tag>
               {summary && <p class="row-sum">{summary}</p>}
+              {item.image && (
+                <a class="proof" href={item.image.src} target="_blank" rel="noopener">
+                  <img src={item.image.src} alt={item.image.alt} loading="lazy" />
+                </a>
+              )}
             </li>
           );
         })
@@ -45,6 +50,28 @@ import { recognition } from "~/data/recognition";
 
   .recognition .row {
     padding-bottom: 0.1rem;
+  }
+
+  /* a scan of the thing itself, small, full size on click */
+  .proof {
+    display: block;
+    width: 11rem;
+    margin-top: 0.8rem;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+  }
+
+  .proof img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: opacity 0.2s ease;
+  }
+
+  .proof:hover img {
+    opacity: 0.88;
   }
 
   /* the one place the accent speaks: what was actually won */

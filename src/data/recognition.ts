@@ -9,10 +9,24 @@ export type Recognition = {
   result: string;
   note?: string;
   href?: string;
+  image?: { src: string; alt: string }; // a scan or photo, shown on /recognition
   featured?: boolean;
 };
 
 export const recognition: Recognition[] = [
+  {
+    title: "Drexel University Bug Bounty",
+    where: "Drexel University",
+    year: 2026,
+    result: "letter of appreciation",
+    note: "from the university's ciso, for vulnerabilities reported through their bug bounty program.",
+    href: "/images/recognition/drexel-letter.png",
+    image: {
+      src: "/images/recognition/drexel-letter.png",
+      alt: "letter of appreciation from Drexel University Information Technology",
+    },
+    featured: true,
+  },
   {
     title: "Maryland Air Cyber Showdown CTF",
     where: "Towson University",
