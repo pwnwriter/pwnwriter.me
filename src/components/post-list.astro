@@ -65,7 +65,6 @@ for (const post of posts.slice(0, max)) {
             >
               <a class="row" href={`/notes/${post.slug}`}>
                 <span class="row-title">{post.data.title}</span>
-                <span class="row-leader" aria-hidden="true" />
                 <time
                   class="row-date"
                   datetime={post.data.pubDate.toISOString()}

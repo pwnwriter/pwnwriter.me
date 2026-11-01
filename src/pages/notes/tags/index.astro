@@ -25,7 +25,6 @@ const tags = [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
 					<li>
 						<a class="row" href={`/notes/tags/${tag}`}>
 							<span class="row-title">#{tag}</span>
-							<span class="row-leader" aria-hidden="true" />
 							<span class="row-date">{count}</span>
 						</a>
 					</li>

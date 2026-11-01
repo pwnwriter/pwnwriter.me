@@ -1,0 +1,241 @@
+---
+// Everything i have to show, on one page: the things i built, what they got,
+// and the photos i kept. Each row scrolls sideways, and anything you click
+// opens in the preview rather than another page.
+import Layout from "~/layouts/Layout.astro";
+import Wrapper from "~/components/wrapper.astro";
+import Rail from "~/components/rail.astro";
+import Preview from "~/components/preview.astro";
+import { projects } from "~/data/projects";
+import { recognition } from "~/data/recognition";
+import { photos } from "~/data/photos";
+
+const things = projects;
+const wins = recognition;
+const shots = [...photos].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+// everything the preview needs, keyed by the id the card carries
+const previews: Record<string, unknown> = {};
+
+for (const p of things) {
+  const media = p.media?.length ? p.media : p.cover ? [p.cover] : [];
+  previews[`p:${p.slug}`] = {
+    title: p.name,
+    sub: [p.year, p.status, p.archived ? "archived" : null].filter(Boolean).join(" · "),
+    blurb: p.blurb ?? p.summary,
+    points: p.highlights ?? [],
+    tech: p.tech ?? [],
+    links: [
+      p.repo && { label: "repo", href: p.repo },
+      p.demo && { label: "demo", href: p.demo },
+      p.readMore && { label: "write-up", href: p.readMore },
+      p.reddit && { label: "discussion", href: p.reddit },
+    ].filter(Boolean),
+    media,
+  };
+}
+
+for (const [n, w] of wins.entries()) {
+  const pic = w.photo ?? w.image;
+  previews[`r:${n}`] = {
+    title: w.result,
+    sub: [w.title, w.where, w.year].filter(Boolean).join(" · "),
+    blurb: w.note ?? "",
+    scan: !w.photo && !!w.image,
+    links: w.href && !w.href.endsWith(".png") ? [{ label: "read more", href: w.href }] : [],
+    media: pic ? [{ kind: "image", src: pic.src, alt: pic.alt }] : [],
+  };
+}
+
+for (const [n, ph] of shots.entries()) {
+  previews[`f:${n}`] = {
+    title: ph.alt || "photo",
+    sub: ph.year,
+    media: [{ kind: "image", src: ph.src, alt: ph.alt }],
+  };
+}
+---
+
+<Layout title="work" description="What i built, what it got, and what i photographed.">
+  <Wrapper>
+    <header class="page-head">
+      <h1 class="page-title">work</h1>
+      <p class="page-lede">
+        what i built, what it got, and what i pointed a camera at. click
+        anything to open it.
+      </p>
+    </header>
+
+    <Rail label="Things">
+      {
+        things.map((p) => {
+          const cover = p.cover ?? p.media?.[0];
+          const art = cover?.kind === "image" ? cover : undefined;
+          const poster = cover?.kind === "video" ? cover.poster : undefined;
+          const img = art?.src ?? poster;
+          return (
+            <button class="card" type="button" data-pv-open={`p:${p.slug}`}>
+              <span class={"well" + (img ? "" : " well--text")}>
+                {img ? (
+                  <img src={img} alt={art?.alt ?? p.name} loading="lazy" />
+                ) : (
+                  <span class="well-mark">{p.name}</span>
+                )}
+                {cover?.kind === "video" && (
+                  <span class="play" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
+                  </span>
+                )}
+              </span>
+              <span class="card-title">{p.name}</span>
+              <span class="card-sub">{p.tagline ?? p.summary}</span>
+            </button>
+          );
+        })
+      }
+    </Rail>
+
+    <Rail label="Recognition">
+      {
+        wins.map((w, n) => {
+          const pic = w.photo ?? w.image;
+          return (
+            <button class="card" type="button" data-pv-open={`r:${n}`}>
+              <span
+                class={"well" + (pic ? "" : " well--text") + (!w.photo && w.image ? " well--scan" : "")}
+              >
+                {pic ? (
+                  <img src={pic.src} alt={pic.alt} loading="lazy" />
+                ) : (
+                  <span class="well-mark">{w.result}</span>
+                )}
+              </span>
+              <span class="card-title">{w.result}</span>
+              <span class="card-sub">{[w.title, w.year].filter(Boolean).join(" · ")}</span>
+            </button>
+          );
+        })
+      }
+    </Rail>
+
+    <Rail label="Photos">
+      {
+        shots.map((ph, n) => (
+          <button class="card" type="button" data-pv-open={`f:${n}`}>
+            <span class="well well--photo">
+              <img src={ph.src} alt={ph.alt} loading="lazy" />
+            </span>
+            <span class="card-sub">{ph.year}</span>
+          </button>
+        ))
+      }
+    </Rail>
+  </Wrapper>
+
+  <Preview />
+  <script type="application/json" id="preview-data" set:html={JSON.stringify(previews)} is:inline />
+</Layout>
+
+<style>
+  .card {
+    display: block;
+    border: 0;
+    background: none;
+    padding: 0;
+    color: inherit;
+    text-align: left;
+    text-decoration: none;
+  }
+
+  .well {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 16px;
+    background: var(--b-med);
+    padding: 1rem;
+    transition: background 0.2s ease;
+  }
+
+  .well--photo {
+    padding: 0;
+  }
+
+  .card:hover .well {
+    background: var(--b-high);
+  }
+
+  .well img {
+    width: 100%;
+    height: 100%;
+    border-radius: 9px;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .well--photo img {
+    border-radius: 16px;
+  }
+
+  .card:hover .well img {
+    transform: scale(1.03);
+  }
+
+  /* a scanned letter is paper: show it whole, on white */
+  .well--scan img {
+    object-fit: contain;
+    background: #fff;
+  }
+
+  .well--text .well-mark {
+    color: var(--f-high);
+    font-size: 1.2rem;
+    font-weight: 650;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  /* a corner badge on anything with a video behind it */
+  .play {
+    position: absolute;
+    right: 0.6rem;
+    bottom: 0.6rem;
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--background) 85%, transparent);
+    backdrop-filter: blur(6px);
+    color: var(--f-high);
+  }
+
+  .card-title {
+    display: block;
+    margin-top: 0.7rem;
+    color: var(--f-high);
+    font-size: 0.98rem;
+    font-weight: 600;
+    transition: color 0.15s ease;
+  }
+
+  .card:hover .card-title {
+    color: var(--accent);
+  }
+
+  .card-sub {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--f-mute);
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card:hover .well img {
+      transform: none;
+    }
+  }
+</style>

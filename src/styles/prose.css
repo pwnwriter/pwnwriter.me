@@ -1,0 +1,40 @@
+/* Article typography. Built from @tailwindcss/typography in its own layer so
+   only pages that render markdown load it; the global sheet stays small. */
+@config "../../tailwind.prose.cjs";
+@tailwind components;
+
+/* Literata (https://fonts.google.com/specimen/Literata), drawn for reading on
+   screen. The interface stays in Hanken Grotesk; only article body text gets
+   this, and the file is only fetched on pages that render an article. */
+@font-face {
+  font-family: "Literata Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url("@fontsource-variable/literata/files/literata-latin-wght-normal.woff2") format("woff2-variations");
+}
+
+@font-face {
+  font-family: "Literata Variable";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url("@fontsource-variable/literata/files/literata-latin-wght-italic.woff2") format("woff2-variations");
+}
+
+.prose-custom {
+  --tw-prose-body: var(--f-low);
+  --tw-prose-headings: var(--f-high);
+  --tw-prose-lead: var(--f-high);
+  --tw-prose-links: var(--f-high);
+  --tw-prose-bold: var(--f-high);
+  --tw-prose-counters: var(--f-high);
+  --tw-prose-bullets: var(--f-low);
+  --tw-prose-hr: var(--f-high);
+  --tw-prose-quotes: var(--f-high);
+  --tw-prose-quote-borders: var(--f-high);
+  --tw-prose-captions: var(--f-high);
+  --tw-prose-code: var(--f-high);
+  --tw-prose-th-borders: var(--f-high);
+  --tw-prose-td-borders: var(--f-high);
+}

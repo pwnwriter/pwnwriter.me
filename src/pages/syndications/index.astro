@@ -97,7 +97,6 @@ function excerpt(entry: CollectionEntry<"syndications">): string {
               >
                 <a class="row" href={`/syndications/${entry.slug}`}>
                   <span class="row-title">{entry.data.title}</span>
-                  <span class="row-leader" aria-hidden="true" />
                   <time
                     class="row-date"
                     datetime={entry.data.pubDate.toISOString()}

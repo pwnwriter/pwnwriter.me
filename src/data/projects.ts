@@ -196,30 +196,4 @@ export const projects: Project[] = [
       },
     ],
   },
-  {
-    slug: "setup",
-    name: "the setup",
-    summary: "the linux-heavy workspace i actually build from.",
-    blurb:
-      "nix-based daily environment, terminal workflow, mechanical keyboard, and hardware setup tuned for long coding sessions.",
-    highlights: [
-      "nix/nixos-centered development workflow",
-      "terminal and neovim first; reproducible tools over manual setup",
-    ],
-    tech: ["Nix", "NixOS", "Neovim", "Linux"],
-    year: "2026",
-    cover: {
-      kind: "video",
-      src: "/projects/setup/demo.mp4",
-      poster: "/projects/setup/cover.png",
-    },
-    media: [
-      {
-        kind: "video",
-        src: "/projects/setup/demo.mp4",
-        poster: "/projects/setup/cover.png",
-        alt: "a slow pan across my desk setup",
-      },
-    ],
-  },
 ];

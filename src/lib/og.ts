@@ -8,14 +8,15 @@ import { vineSvg } from "~/lib/og-vine";
 const require = createRequire(import.meta.url);
 
 // ---- one-time font loading --------------------------------------------------
-// the same faces the site uses: Newsreader for words, Departure Mono for labels.
-// satori wants static files, hence @fontsource/newsreader next to the variable one.
-const newsreader = (weight: number) =>
+// the same faces the site uses: Hanken Grotesk for words, Departure Mono for
+// labels. satori wants static files, hence @fontsource/hanken-grotesk next to
+// the variable one.
+const hanken = (weight: number) =>
   readFile(
     join(
-      dirname(require.resolve("@fontsource/newsreader/package.json")),
+      dirname(require.resolve("@fontsource/hanken-grotesk/package.json")),
       "files",
-      `newsreader-latin-${weight}-normal.woff`,
+      `hanken-grotesk-latin-${weight}-normal.woff`,
     ),
   );
 
@@ -23,10 +24,16 @@ const departure = () =>
   readFile(join(process.cwd(), "public", "fonts", "DepartureMono-Regular.woff"));
 
 async function loadFonts() {
-  const [light, regular, mono] = await Promise.all([newsreader(300), newsreader(400), departure()]);
+  const [regular, medium, bold, mono] = await Promise.all([
+    hanken(400),
+    hanken(500),
+    hanken(700),
+    departure(),
+  ]);
   return [
-    { name: "Newsreader", data: light, weight: 300 as const, style: "normal" as const },
-    { name: "Newsreader", data: regular, weight: 400 as const, style: "normal" as const },
+    { name: "Hanken Grotesk", data: regular, weight: 400 as const, style: "normal" as const },
+    { name: "Hanken Grotesk", data: medium, weight: 500 as const, style: "normal" as const },
+    { name: "Hanken Grotesk", data: bold, weight: 700 as const, style: "normal" as const },
     { name: "Departure Mono", data: mono, weight: 400 as const, style: "normal" as const },
   ];
 }
@@ -132,7 +139,7 @@ function markup(input: OgInput): Node {
       padding: `${PAD - 14}px ${PAD}px ${PAD - 22}px`,
       background: rp.base,
       color: rp.high,
-      fontFamily: "Newsreader",
+      fontFamily: "Hanken Grotesk",
     },
     [
       h("div", { display: "flex", justifyContent: "space-between" }, [

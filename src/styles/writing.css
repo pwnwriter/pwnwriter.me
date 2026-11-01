@@ -46,12 +46,13 @@
 }
 
 .writing-copy .prose {
-  font-family: var(--font-serif);
-  font-size: 1.22rem;
+  font-family: var(--font-read);
+  font-size: 1.14rem;
+  line-height: 1.72;
 }
 
 .writing-copy .prose.prose-custom :is(h2, h3, h4) {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-weight: 600;
   scroll-margin-top: 5rem;
 }

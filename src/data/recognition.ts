@@ -9,7 +9,8 @@ export type Recognition = {
   result: string;
   note?: string;
   href?: string;
-  image?: { src: string; alt: string }; // a scan or photo, shown on /recognition
+  image?: { src: string; alt: string }; // a scan, shown whole on white
+  photo?: { src: string; alt: string; focus?: string }; // a photo, cropped to fill
   featured?: boolean;
 };
 
@@ -31,6 +32,7 @@ export const recognition: Recognition[] = [
     title: "Maryland Air Cyber Showdown CTF",
     where: "Towson University",
     year: 2026,
+    photo: { src: "/images/recognition/cyber-showdown.jpg", alt: "at the Maryland Air Cyber Showdown" },
     result: "1st place",
     note: "team TU-2026-Team-08, 20,951 points. every flag came out of a pure nix shell.",
     href: "/notes/notes-cyber-showdown-nix",
@@ -40,6 +42,7 @@ export const recognition: Recognition[] = [
     title: "HopHacks",
     where: "Johns Hopkins University",
     year: 2026,
+    photo: { src: "/images/recognition/hophacks.jpg", alt: "on stage at HopHacks" },
     result: "2nd place",
     featured: true,
   },
@@ -47,6 +50,7 @@ export const recognition: Recognition[] = [
     title: "Black Hat USA",
     where: "Las Vegas",
     year: 2026,
+    photo: { src: "/images/recognition/blackhat.jpg", alt: "at Black Hat USA" },
     result: "scholarship",
     note: "got into the room on a scholarship.",
     href: "/syndications/summer-scholarships",

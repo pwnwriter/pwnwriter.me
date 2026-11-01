@@ -29,27 +29,7 @@ module.exports = {
         accent: "var(--accent)",
         background: "var(--background)",
       },
-      typography: ({ theme }) => ({
-        custom: {
-          css: {
-            "--tw-prose-body": theme("colors.f-low"),
-            "--tw-prose-headings": theme("colors.f-high"),
-            "--tw-prose-lead": theme("colors.f-high"),
-            "--tw-prose-links": theme("colors.f-high"),
-            "--tw-prose-bold": theme("colors.f-high"),
-            "--tw-prose-counters": theme("colors.f-high"),
-            "--tw-prose-bullets": theme("colors.f-low"),
-            "--tw-prose-hr": theme("colors.f-high"),
-            "--tw-prose-quotes": theme("colors.f-high"),
-            "--tw-prose-quote-borders": theme("colors.f-high"),
-            "--tw-prose-captions": theme("colors.f-high"),
-            "--tw-prose-code": theme("colors.f-high"),
-            "--tw-prose-th-borders": theme("colors.f-high"),
-            "--tw-prose-td-borders": theme("colors.f-high"),
-          },
-        },
-      }),
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [],
 };

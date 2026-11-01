@@ -1,8 +1,8 @@
 ---
 import '~/styles/global.css';
+import fontUrl from "@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url";
 import Header from '~/components/header.astro';
 import Footer from '~/components/footer.astro';
-import KeyboardNav from '~/components/keyboard.astro';
 import BreadcrumbPill from '~/components/breadcrumb-pill.astro';
 
 export interface Props {
@@ -24,6 +24,15 @@ const pageTitle = `${title} · pwn`;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
+
+		<script is:inline>
+			// pick up a saved theme before the first paint, so there is no flash
+			try {
+				var t = localStorage.getItem("theme");
+				if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+			} catch (e) {}
+		</script>
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="mask-icon" href="/favicon-transparent.svg" color="#1e2528" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -47,15 +56,8 @@ const pageTitle = `${title} · pwn`;
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImage} />
 
-		<script is:inline>
-			var theme = localStorage.getItem('theme');
-			if (theme && theme !== 'system') {
-				document.documentElement.classList.add(theme);
-			}
-		</script>
-
 		<script
-			defer
+			async
 			src="https://cloud.umami.is/script.js"
 			data-website-id="ba6c60e5-68de-45c5-b4a9-6520b565d5f7"
 		></script>
@@ -63,13 +65,12 @@ const pageTitle = `${title} · pwn`;
 	<body class="flex min-h-screen flex-col">
 		<Header title={title} />
 
-		<main class="relative flex-1 pb-sm pt-sm">
+		<main class="relative flex-1 pt-6 sm:pt-10">
 			<slot />
 		</main>
 
 		<Footer />
 
 		<BreadcrumbPill />
-		<KeyboardNav />
 	</body>
 </html>

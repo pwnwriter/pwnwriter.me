@@ -1,9 +1,24 @@
 @import url("./prism.css");
-@import "katex/dist/katex.min.css";
-@import "@fontsource-variable/newsreader/opsz.css";
-@import "@fontsource-variable/newsreader/opsz-italic.css";
+@font-face {
+  font-family: "Hanken Grotesk Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2") format("woff2-variations");
+}
 
-/* Departure Mono — https://departuremono.com (self-hosted) */
+/* Pirata One (https://fonts.google.com/specimen/Pirata+One). The one piece of
+   character on the page: the wordmark, and nothing else. */
+@font-face {
+  font-family: "Pirata One";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("@fontsource/pirata-one/files/pirata-one-latin-400-normal.woff2") format("woff2");
+}
+
+/* Departure Mono, https://departuremono.com (self-hosted). Only the favicon
+   and share cards still use it. */
 @font-face {
   font-family: "Departure Mono";
   src:
@@ -18,96 +33,89 @@
 @tailwind components;
 @tailwind utilities;
 
-/* evergarden (https://evergarden.moe): winter by default, summer in the light.
-   --highlight is the yellow used for <mark> and the odd warm touch. */
+/* evergarden (https://evergarden.moe): summer by day, winter by night. the
+   page is one narrow column of text, so the palette only needs a ground, an
+   ink, a quieter ink, a hairline, and one accent. */
 :root {
-  --f-high: #f8f9e8;
-  --f-low: #adc9bc;
-
-  --b-high: #374145;
-  --b-med: #262f33;
-  --b-low: #1e2528;
-
-  --accent: #cbe3b3;
-  --highlight: #f5d098;
-  --background: var(--b-low);
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --f-high: #2b3034;
-    --f-low: #455355;
-
-    --b-high: #e6e1d3;
-    --b-med: #ede8dd;
-    --b-low: #f5efe6;
-
-    --accent: #91a77a;
-    --highlight: #c4aa80;
-    --background: var(--b-low);
-  }
-}
-
-.dark:root {
-  --f-high: #f8f9e8;
-  --f-low: #adc9bc;
-
-  --b-high: #374145;
-  --b-med: #262f33;
-  --b-low: #1e2528;
-
-  --accent: #cbe3b3;
-  --highlight: #f5d098;
-  --background: var(--b-low);
-}
-
-.light:root {
   --f-high: #2b3034;
-  --f-low: #455355;
+  --f-low: #576869;
+  --f-mute: #829084;
 
   --b-high: #e6e1d3;
   --b-med: #ede8dd;
   --b-low: #f5efe6;
 
-  --accent: #91a77a;
+  --accent: #74a48b;
+  --accent-2: #8294ad;
   --highlight: #c4aa80;
-  --background: var(--b-low);
+  --background: #fbf9f4;
+  --line: #e8e2d6;
+  --on-accent: #ffffff;
+}
+
+
+/* the dark set: used when the system asks for it and the reader has not
+   overridden it, and again when they have picked dark by hand */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --f-high: #f8f9e8;
+    --f-low: #adc9bc;
+    --f-mute: #839e9a;
+
+    --b-high: #374145;
+    --b-med: #262f33;
+    --b-low: #1e2528;
+
+    --accent: #b3e3ca;
+    --accent-2: #b2caed;
+    --highlight: #f5d098;
+    --background: #1e2528;
+    --line: #2b353a;
+    --on-accent: #1e2528;
+  }
+}
+
+:root[data-theme="dark"] {
+  --f-high: #f8f9e8;
+  --f-low: #adc9bc;
+  --f-mute: #839e9a;
+
+  --b-high: #374145;
+  --b-med: #262f33;
+  --b-low: #1e2528;
+
+  --accent: #b3e3ca;
+  --accent-2: #b2caed;
+  --highlight: #f5d098;
+  --background: #1e2528;
+  --line: #2b353a;
+  --on-accent: #1e2528;
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 :root {
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  --font-serif: "Newsreader Variable", Newsreader, Georgia, "Times New Roman", serif;
-  --font-mono:
-    "Departure Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    monospace;
+  --font-sans: "Hanken Grotesk Variable", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Pirata One", "Hanken Grotesk Variable", serif;
+  --font-serif: var(--font-sans);
+  /* long-form reading only, loaded with the article styles */
+  --font-read: "Literata Variable", Charter, Georgia, serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --accent-ink: var(--accent);
 
-  /* derived tones: one hairline and one muted text color, shared by every page
-     so borders and meta text stay consistent. */
-  --line: color-mix(in srgb, var(--f-low) 16%, transparent);
-  --f-mute: color-mix(in srgb, var(--f-low) 62%, transparent);
+  /* the column */
+  --measure: 36rem;
 
   color-scheme: light dark;
 }
 
-/* Newsreader has an optical-size axis: let the browser pick the cut for each
-   size, so small text stays sturdy and big headlines get the fine details. */
-html {
-  font-optical-sizing: auto;
-}
-
-:is(h1, h2, h3) {
-  letter-spacing: -0.015em;
-}
-
 ::selection {
-  background-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background-color: color-mix(in srgb, var(--accent) 30%, transparent);
   color: var(--f-high);
-}
-
-* {
-  @apply underline-offset-2;
 }
 
 a,
@@ -119,20 +127,19 @@ select {
 }
 
 html {
-  @apply bg-background;
+  background: var(--background);
+  scroll-behavior: smooth;
+  touch-action: manipulation;
 }
 
 body {
   background: transparent;
-}
-
-body {
-  @apply font-sans text-base text-f-low antialiased;
-}
-
-html {
-  scroll-behavior: smooth;
-  touch-action: manipulation;
+  color: var(--f-high);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01";
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -141,8 +148,25 @@ html {
   }
 }
 
-/* Shared page primitives: every index page opens with the same title + lede,
-   and every piece of meta text (dates, counts, tags) uses the same mono line. */
+/* ---------- the column ---------- */
+
+/* every page is one column of text, centred */
+.col {
+  width: 100%;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ---------- type ---------- */
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.015em;
+}
+
+/* a page opens with a short, heavy title and one line under it */
 .page-head {
   margin-bottom: 2.75rem;
 }
@@ -150,50 +174,36 @@ html {
 .page-title {
   margin: 0;
   color: var(--f-high);
-  font-family: var(--font-serif);
-  font-size: clamp(1.85rem, 4.6vw, 2.3rem);
-  font-weight: 500;
+  font-size: 2rem;
+  font-weight: 650;
   line-height: 1.15;
-  text-transform: lowercase;
 }
 
 .page-lede {
   max-width: 34rem;
-  margin: 0.7rem 0 0;
+  margin: 0.6rem 0 0;
   color: var(--f-low);
-  line-height: 1.65;
+  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
 .meta {
   color: var(--f-mute);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0;
-  text-transform: lowercase;
+  font-size: 0.86rem;
 }
 
-/* section label: small mono caps, with a hairline running out to the right */
+/* the small tracked label above each section, like WRITING / STUFF */
 .section-label {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin: 0 0 0.9rem;
+  margin: 0 0 1rem;
   color: var(--f-mute);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 400;
-  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.section-label::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--line);
-}
+/* ---------- lists ---------- */
 
-/* leader rows: title ........ date. the whole row is the link. */
 .rows {
   margin: 0;
   padding: 0;
@@ -203,8 +213,9 @@ html {
 .row {
   display: flex;
   align-items: baseline;
-  gap: 0.9rem;
-  padding: 0.4rem 0;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.55rem 0;
   color: inherit;
   text-decoration: none;
 }
@@ -212,24 +223,16 @@ html {
 .row-title {
   min-width: 0;
   color: var(--f-high);
-  font-family: var(--font-serif);
-  font-size: 1.17rem;
-  line-height: 1.35;
+  font-size: 1.05rem;
+  font-weight: 450;
+  line-height: 1.4;
   transition: color 0.15s ease;
-}
-
-.row-leader {
-  flex: 1;
-  min-width: 1.5rem;
-  border-bottom: 1px dotted color-mix(in srgb, var(--f-low) 30%, transparent);
-  transform: translateY(-0.28em);
 }
 
 .row-date {
   flex: none;
   color: var(--f-mute);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   white-space: nowrap;
 }
 
@@ -238,68 +241,72 @@ a.row:focus-visible .row-title {
   color: var(--accent);
 }
 
-/* long titles wrap on phones, where the leader would only be a stub */
-@media (max-width: 560px) {
-  .row {
-    justify-content: space-between;
-  }
-
-  .row-leader {
-    display: none;
-  }
+.row-sum {
+  max-width: 34rem;
+  margin: -0.3rem 0 0.75rem;
+  color: var(--f-mute);
+  font-size: 0.92rem;
+  line-height: 1.55;
 }
 
-/* list tools, shared by notes and syndications: a line of plain-text tag
-   filters, then an entry count with a search field. */
+/* ---------- controls ---------- */
+
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem 0.95rem;
-  margin: 0 0 2rem;
+  gap: 0.35rem 0.5rem;
+  margin: 0 0 1.75rem;
 }
 
 .chip {
-  border: 0;
-  background: none;
-  padding: 0;
-  color: var(--f-mute);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  line-height: 1.7;
-  transition: color 0.15s ease;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.25rem 0.75rem;
+  color: var(--f-low);
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .chip:hover {
   color: var(--f-high);
+  border-color: var(--f-mute);
 }
 
 .chip--active {
-  color: var(--accent);
+  color: var(--on-accent);
+  background: var(--f-high);
+  border-color: var(--f-high);
 }
 
 .list-tools {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin: 0 0 3rem;
+  margin: 0 0 2.25rem;
 }
 
 .search {
   display: flex;
-  align-items: baseline;
-  gap: 0.4rem;
-  width: min(100%, 14rem);
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 0.3rem;
+  align-items: center;
+  gap: 0.5rem;
+  width: min(100%, 15rem);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
   color: var(--f-mute);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.88rem;
   transition: border-color 0.15s ease;
 }
 
 .search:focus-within {
-  border-color: color-mix(in srgb, var(--f-low) 60%, transparent);
+  border-color: var(--f-mute);
 }
 
 .search input {
@@ -313,7 +320,7 @@ a.row:focus-visible .row-title {
 }
 
 .search input::placeholder {
-  color: color-mix(in srgb, var(--f-low) 45%, transparent);
+  color: var(--f-mute);
 }
 
 .search input::-webkit-search-cancel-button {
@@ -324,7 +331,7 @@ a.row:focus-visible .row-title {
   border: 0;
   background: transparent;
   padding: 0;
-  color: currentColor;
+  color: var(--f-mute);
   font: inherit;
   visibility: hidden;
 }
@@ -338,67 +345,31 @@ a.row:focus-visible .row-title {
 }
 
 .search-hit {
-  border-radius: 0.2em;
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--highlight) 40%, transparent);
   color: var(--f-high);
-  padding: 0 0.08em;
 }
 
-/* row summary: a quiet line under a leader row */
-.row-sum {
-  max-width: 32rem;
-  margin: 0;
-  color: var(--f-mute);
-  font-size: 0.88rem;
-  line-height: 1.5;
-}
-
-/* mono link used under lists: "all notes", "all projects" */
+/* "all writing →" */
 .more-link {
   display: inline-block;
-  margin-top: 0.7rem;
-  color: var(--f-mute);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  margin-top: 0.9rem;
+  color: var(--f-high);
+  font-size: 0.95rem;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
+.more-link::after {
+  content: " →";
+}
+
 .more-link:hover {
-  color: var(--f-high);
+  color: var(--accent);
 }
 
 :focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
   outline-offset: 3px;
-  border-radius: 2px;
-}
-
-/* Animated link underline: draws left-to-right on hover */
-.link-animated {
-  text-decoration: none;
-  background-image: linear-gradient(currentColor, currentColor);
-  background-position: 0% 100%;
-  background-repeat: no-repeat;
-  background-size: 0% 1px;
-  transition: background-size 0.3s ease;
-}
-
-.link-animated:hover {
-  background-size: 100% 1px;
-}
-
-/* Links that start with an underline: reverse the animation on hover */
-.link-animated.link-underlined {
-  background-size: 100% 1px;
-}
-
-.link-animated.link-underlined:hover {
-  background-size: 0% 1px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .link-animated {
-    transition: none;
-  }
+  border-radius: 4px;
 }

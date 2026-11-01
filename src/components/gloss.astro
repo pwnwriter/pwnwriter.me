@@ -1,0 +1,131 @@
+---
+// A word with a note behind it. Hover or focus the word and a small card
+// explains where it comes from. Used on the two names in the intro.
+interface Props {
+  term: string;
+  ipa?: string;
+  script?: string;
+}
+const { term, ipa, script } = Astro.props;
+---
+
+<span class="gloss"><button type="button" class="gloss-term">{term}</button><span class="gloss-card" role="tooltip">
+    <span class="gloss-head">
+      <b>{term}</b>
+      {ipa && <i>{ipa}</i>}
+    </span>
+    {script && <span class="gloss-script">{script}</span>}
+    <span class="gloss-body"><slot /></span>
+  </span></span><style>
+  .gloss {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* the word itself reads as part of the sentence, not as a control */
+  .gloss-term {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--accent);
+    font: inherit;
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+  }
+
+  .gloss-card {
+    position: absolute;
+    top: calc(100% + 0.7rem);
+    left: 50%;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    width: max-content;
+    max-width: min(24rem, 80vw);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--background);
+    padding: 0.9rem 1.1rem 1rem;
+    box-shadow:
+      0 1px 2px color-mix(in srgb, var(--f-high) 6%, transparent),
+      0 12px 28px color-mix(in srgb, var(--f-high) 12%, transparent);
+    opacity: 0;
+    transform: translate(-50%, -4px);
+    transition:
+      opacity 0.16s ease,
+      transform 0.16s ease;
+    pointer-events: none;
+  }
+
+  .gloss:hover .gloss-card,
+  .gloss:focus-within .gloss-card {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  .gloss-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    color: var(--f-high);
+    font-size: 0.98rem;
+    line-height: 1.2;
+  }
+
+  .gloss-head b {
+    font-weight: 600;
+  }
+
+  .gloss-head i {
+    color: var(--f-mute);
+    font-size: 0.88rem;
+    font-style: normal;
+  }
+
+  /* the name in its own script, given room to breathe */
+  .gloss-script {
+    color: var(--f-high);
+    font-family: "Noto Sans Devanagari", "Kohinoor Devanagari", "Devanagari Sangam MN", serif;
+    font-size: 1.6rem;
+    line-height: 1.25;
+  }
+
+  .gloss-body {
+    color: var(--f-low);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .gloss-body :global(b) {
+    color: var(--f-high);
+    font-weight: 600;
+  }
+
+  .gloss-body :global(i) {
+    font-style: italic;
+  }
+
+  /* near the left edge the card would run off, so pin it to the word */
+  @media (max-width: 560px) {
+    .gloss-card {
+      left: 0;
+      transform: translate(0, -4px);
+    }
+
+    .gloss:hover .gloss-card,
+    .gloss:focus-within .gloss-card {
+      transform: translate(0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gloss-card {
+      transition: opacity 0.16s ease;
+    }
+  }
+</style>

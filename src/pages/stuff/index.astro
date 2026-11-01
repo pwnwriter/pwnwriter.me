@@ -1,13 +1,7 @@
 ---
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
-import { wallpapers } from "~/data/wallpapers";
 import { devices, software } from "~/data/uses";
-import { bookmarks } from "~/data/bookmarks";
-import { snippets } from "~/data/snippets";
-import { bookshelf } from "~/data/bookshelf";
-import { music } from "~/data/music";
-import { movies } from "~/data/movies";
 import { ossSummary, highlights, nixpkgs, fetchOssStats } from "~/data/oss";
 
 const externalAttrs = { target: "_blank", rel: "noopener noreferrer" };
@@ -32,27 +26,21 @@ const domain = (url: string) => {
 };
 
 const tabs = [
-  { id: "wallpapers", label: "wallpapers", count: wallpapers.length, blurb: "the walls i actually run. click one to grab the full-res file." },
   { id: "uses", label: "uses", count: devices.length + count(software), blurb: "the machines and tools i actually run, all declared in nix." },
   { id: "oss", label: "oss", count: oss.merged, blurb: "patches i've sent upstream. small fixes, ci, nix, and docs." },
-  { id: "bookmarks", label: "bookmarks", count: count(bookmarks), blurb: "a blogroll in the old sense. go read them, then find theirs." },
-  { id: "snippets", label: "snippets", count: count(snippets), blurb: "commands i re-google until my fingers learn them. click to copy." },
-  { id: "bookshelf", label: "bookshelf", count: count(bookshelf), blurb: "books, papers, and writeups that earned a permanent spot." },
-  { id: "music", label: "music", count: count(music), blurb: "what's in my ears while the code compiles." },
-  { id: "movies", label: "movies", count: count(movies), blurb: "films and shows i keep coming back to." },
 ];
 ---
 
 <Layout
   title="stuff"
-  description="A grab-bag: wallpapers, rice, bookmarks, snippets, and a bookshelf."
+  description="The machines i run and the patches i send upstream."
 >
   <Wrapper>
     <header class="page-head">
       <h1 class="page-title">stuff</h1>
       <p class="page-lede">
-        the miscellaneous drawer: things i collect, reuse, and keep meaning to
-        share. nothing load-bearing, all of it fair game to take.
+        the machines and tools i actually run, and the patches i have sent
+        upstream. all of it declared in nix.
       </p>
     </header>
 
@@ -85,45 +73,6 @@ const tabs = [
     }
 
     <div class="panels">
-      {/* ---------------- wallpapers ---------------- */}
-      <section
-        class="panel"
-        role="tabpanel"
-        id="panel-wallpapers"
-        aria-labelledby="tab-wallpapers"
-        data-panel="wallpapers"
-        hidden
-      >
-        <div class="wp-grid">
-          {wallpapers.map((w) => {
-            const preview = w.thumb ?? w.file;
-            const gradient = w.colors
-              ? `linear-gradient(135deg, ${w.colors[0]}, ${w.colors[1]})`
-              : "linear-gradient(135deg, var(--b-high), var(--accent))";
-            const Tag = w.file ? "a" : "div";
-            const dl = w.file ? { href: w.file, download: "" } : {};
-            return (
-              <Tag class="wp-card" {...dl} aria-label={w.name}>
-                <div class="wp-thumb" style={`background-image:${gradient}`}>
-                  {preview && (
-                    <img class="wp-img" src={preview} alt={w.name} loading="lazy" />
-                  )}
-                  {!w.file && <span class="wp-soon">soon</span>}
-                  {w.file && <span class="wp-dl">↓ download</span>}
-                </div>
-                <div class="wp-meta">
-                  <span class="wp-name">{w.name}</span>
-                  <span class="wp-info">
-                    {w.tag}
-                    {w.size ? ` · ${w.size}` : ""}
-                  </span>
-                </div>
-              </Tag>
-            );
-          })}
-        </div>
-      </section>
-
       {/* ---------------- uses ---------------- */}
       <section
         class="panel"
@@ -228,174 +177,6 @@ const tabs = [
         </p>
       </section>
 
-      {/* ---------------- bookmarks ---------------- */}
-      <section
-        class="panel"
-        role="tabpanel"
-        id="panel-bookmarks"
-        aria-labelledby="tab-bookmarks"
-        data-panel="bookmarks"
-        hidden
-      >
-        <div class="bm-groups">
-          {bookmarks.map((group) => (
-            <section class="bm-group">
-              <p class="col-label">{group.label}</p>
-              <ul class="bm-list">
-                {group.items.map((b) => (
-                  <li>
-                    <a href={b.url} {...externalAttrs}>
-                      <span class="bm-title">{b.title}</span>
-                      <span class="bm-domain">{domain(b.url)}</span>
-                      {b.note && <span class="bm-note">{b.note}</span>}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------------- snippets ---------------- */}
-      <section
-        class="panel"
-        role="tabpanel"
-        id="panel-snippets"
-        aria-labelledby="tab-snippets"
-        data-panel="snippets"
-        hidden
-      >
-        <div class="sn-groups">
-          {snippets.map((group) => (
-            <section class="sn-group">
-              <p class="col-label">{group.label}</p>
-              <ul class="sn-list">
-                {group.items.map((s) => (
-                  <li class="sn-item">
-                    <div class="sn-text">
-                      <span class="sn-title">{s.title}</span>
-                      {s.note && <span class="sn-note">{s.note}</span>}
-                    </div>
-                    <button class="sn-code" type="button" data-copy={s.code}>
-                      <code>{s.code}</code>
-                      <span class="sn-copy">copy</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------------- bookshelf ---------------- */}
-      <section
-        class="panel"
-        role="tabpanel"
-        id="panel-bookshelf"
-        aria-labelledby="tab-bookshelf"
-        data-panel="bookshelf"
-        hidden
-      >
-        <div class="bs-groups">
-          {bookshelf.map((group) => (
-            <section class="bs-group">
-              <p class="col-label">{group.label}</p>
-              <ul class="bs-list">
-                {group.items.map((b) => {
-                  const Tag = b.url ? "a" : "div";
-                  const attrs = b.url ? { href: b.url, ...externalAttrs } : {};
-                  return (
-                    <li>
-                      <Tag class="bs-item" {...attrs}>
-                        <div class="bs-line">
-                          <span class="bs-title">{b.title}</span>
-                          {b.status && <span class="bs-status">{b.status}</span>}
-                        </div>
-                        {b.author && <span class="bs-author">{b.author}</span>}
-                        {b.note && <span class="bs-note">{b.note}</span>}
-                      </Tag>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------------- music ---------------- */}
-      <section
-        class="panel"
-        role="tabpanel"
-        id="panel-music"
-        aria-labelledby="tab-music"
-        data-panel="music"
-        hidden
-      >
-        <div class="bs-groups">
-          {music.map((group) => (
-            <section class="bs-group">
-              <p class="col-label">{group.label}</p>
-              <ul class="bs-list">
-                {group.items.map((m) => {
-                  const Tag = m.url ? "a" : "div";
-                  const attrs = m.url ? { href: m.url, ...externalAttrs } : {};
-                  return (
-                    <li>
-                      <Tag class="bs-item" {...attrs}>
-                        <div class="bs-line">
-                          <span class="bs-title">{m.title}</span>
-                          {m.status && <span class="bs-status">{m.status}</span>}
-                        </div>
-                        {m.artist && <span class="bs-author">{m.artist}</span>}
-                        {m.note && <span class="bs-note">{m.note}</span>}
-                      </Tag>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------------- movies ---------------- */}
-      <section
-        class="panel"
-        role="tabpanel"
-        id="panel-movies"
-        aria-labelledby="tab-movies"
-        data-panel="movies"
-        hidden
-      >
-        <div class="bs-groups">
-          {movies.map((group) => (
-            <section class="bs-group">
-              <p class="col-label">{group.label}</p>
-              <ul class="bs-list">
-                {group.items.map((m) => {
-                  const Tag = m.url ? "a" : "div";
-                  const attrs = m.url ? { href: m.url, ...externalAttrs } : {};
-                  return (
-                    <li>
-                      <Tag class="bs-item" {...attrs}>
-                        <div class="bs-line">
-                          <span class="bs-title">{m.title}</span>
-                          {m.status && <span class="bs-status">{m.status}</span>}
-                        </div>
-                        {m.year && <span class="bs-author">{m.year}</span>}
-                        {m.note && <span class="bs-note">{m.note}</span>}
-                      </Tag>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ))}
-        </div>
-      </section>
     </div>
   </Wrapper>
 </Layout>
@@ -501,80 +282,6 @@ const tabs = [
 
   .uses-foot a:hover {
     color: var(--accent);
-  }
-
-  /* wallpapers */
-  .wp-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.75rem 1.25rem;
-  }
-
-  .wp-card {
-    display: block;
-  }
-
-  .wp-thumb {
-    position: relative;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background-size: cover;
-  }
-
-  .wp-img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: opacity 0.2s ease;
-  }
-
-  .wp-card:hover .wp-img {
-    opacity: 0.88;
-  }
-
-  .wp-dl,
-  .wp-soon {
-    position: absolute;
-    right: 0.5rem;
-    bottom: 0.5rem;
-    border-radius: 3px;
-    background: color-mix(in srgb, #000 55%, transparent);
-    padding: 0.15rem 0.45rem;
-    color: #fff;
-    font-family: var(--font-mono);
-    font-size: 0.64rem;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-  }
-
-  .wp-soon,
-  .wp-card:hover .wp-dl,
-  .wp-card:focus-visible .wp-dl {
-    opacity: 1;
-  }
-
-  .wp-meta {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-top: 0.6rem;
-  }
-
-  .wp-name {
-    color: var(--f-high);
-    font-family: var(--font-serif);
-    font-size: 1.1rem;
-  }
-
-  .wp-info {
-    flex: none;
-    color: var(--f-mute);
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
   }
 
   /* uses */
@@ -707,100 +414,6 @@ const tabs = [
     font-family: var(--font-mono);
     font-size: 0.74rem;
     transition: color 0.15s ease;
-  }
-
-  /* bookmarks */
-  .bm-list a {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.15rem 1rem;
-    align-items: baseline;
-    padding: 0.55rem 0;
-  }
-
-  .bm-title,
-  .bs-title,
-  .sn-title {
-    color: var(--f-high);
-    font-family: var(--font-serif);
-    font-size: 1.14rem;
-    line-height: 1.4;
-    transition: color 0.15s ease;
-  }
-
-  .bm-note {
-    grid-column: 1 / -1;
-  }
-
-  a.oss-item:hover .oss-repo,
-  .oss-pill:hover,
-  .bm-list a:hover .bm-title,
-  a.bs-item:hover .bs-title {
-    color: var(--accent);
-  }
-
-  /* snippets */
-  .sn-item {
-    padding: 0.7rem 0;
-  }
-
-  .sn-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  .sn-code {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-    margin-top: 0.55rem;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: var(--b-med);
-    padding: 0.6rem 0.8rem;
-    color: var(--f-high);
-    text-align: left;
-    transition: border-color 0.15s ease;
-  }
-
-  .sn-code code {
-    min-width: 0;
-    overflow-x: auto;
-    font-family: var(--font-mono);
-    font-size: 0.76rem;
-    white-space: pre;
-    scrollbar-width: none;
-  }
-
-  .sn-copy {
-    flex: none;
-    color: var(--f-mute);
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-  }
-
-  .sn-code:hover {
-    border-color: color-mix(in srgb, var(--f-low) 45%, transparent);
-  }
-
-  .sn-code.is-copied .sn-copy {
-    color: var(--accent);
-  }
-
-  /* bookshelf, music, movies */
-  .bs-author {
-    display: block;
-    color: var(--f-mute);
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-  }
-
-  .bs-note {
-    display: block;
-    margin-top: 0.25rem;
   }
 
   @media (max-width: 560px) {

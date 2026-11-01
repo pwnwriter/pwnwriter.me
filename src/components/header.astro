@@ -1,6 +1,7 @@
 ---
-import Wrapper from '~/components/wrapper.astro';
-
+// The bar: a blackletter wordmark on the left, the five words on the right.
+// On long posts breadcrumb-pill appends the live section into #breadcrumbs,
+// a small line under the bar.
 const { title } = Astro.props;
 let path = Astro.url.pathname;
 if (path.charAt(path.length - 1) == '/') {
@@ -21,107 +22,206 @@ let subpathList = subpaths.reduce(
 );
 
 const nav = [
-	{ text: 'notes', href: '/notes' },
-	{ text: 'projects', href: '/projects' },
-	{ text: 'stuff', href: '/stuff' },
+	{ text: 'notes', href: '/notes', current: path.startsWith('/notes') },
+	{
+		text: 'work',
+		href: '/work',
+		current:
+			path.startsWith('/work') ||
+			path.startsWith('/projects') ||
+			path.startsWith('/recognition'),
+	},
+	{ text: 'stuff', href: '/stuff', current: path.startsWith('/stuff') },
 ];
 ---
 
-<header class="site-header sticky top-0 z-20">
-	<Wrapper>
-		<nav class="site-nav" aria-label="site">
-			<ul id="breadcrumbs" class="crumbs">
-				{
-					!isHome &&
-						subpathList.map((subpath) => (
-							<>
-								<li class="shrink-0">
-									<a href={subpath.link}>{subpath.text}</a>
-								</li>
-								<span class="sep shrink-0" aria-hidden="true">›</span>
-							</>
-						))
-				}
-				<li class="crumb-title min-w-0 shrink">
-					<a href="#" title={title} aria-current="page">{title}</a>
-				</li>
-			</ul>
-
-			<ul class="links">
-				{
-					nav.map(({ text, href }) => (
-						<li>
-							<a
-								href={href}
-								aria-current={path.startsWith(href) ? 'true' : undefined}
-							>
-								{text}
-							</a>
-						</li>
-					))
-				}
-			</ul>
-		</nav>
-	</Wrapper>
+<header class="topbar col">
+	<a class="mark" href="/" aria-label="home" aria-current={isHome ? 'page' : undefined}>pwn()</a>
+	<nav aria-label="site">
+		<ul class="links">
+			{
+				nav.map(({ text, href, current }) => (
+					<li>
+						<a href={href} aria-current={current ? 'page' : undefined}>
+							{text}
+						</a>
+					</li>
+				))
+			}
+			<li>
+				<button type="button" class="theme" data-theme-toggle aria-label="switch theme">
+					<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<circle class="sun-core" cx="12" cy="12" r="4.1"></circle>
+						<path class="sun-rays" d="M12 2.6v2.1M12 19.3v2.1M4.7 12H2.6M21.4 12h-2.1M6.3 6.3l1.5 1.5M16.2 16.2l1.5 1.5M17.7 6.3l-1.5 1.5M7.8 16.2l-1.5 1.5"></path>
+						<path class="moon" d="M20 13.4A8 8 0 0 1 10.6 4a7.2 7.2 0 1 0 9.4 9.4Z"></path>
+					</svg>
+				</button>
+			</li>
+		</ul>
+	</nav>
 </header>
 
-<style>
-	.site-header {
-		background: var(--background);
-	}
+{/* the breadcrumb trail, only shown once a long post reports a live section */}
+<div class="crumb-bar col">
+	<ul id="breadcrumbs" class="crumbs">
+		{
+			!isHome &&
+				subpathList.map((subpath) => (
+					<>
+						<li class="shrink-0">
+							<a href={subpath.link}>{subpath.text}</a>
+						</li>
+						<span class="sep shrink-0" aria-hidden="true">/</span>
+					</>
+				))
+		}
+		<li class="crumb-title min-w-0 shrink">
+			<a href="#" title={title} aria-current="page">{title}</a>
+		</li>
+	</ul>
+</div>
 
-	.site-nav {
+<style>
+	.topbar {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		justify-content: space-between;
 		gap: 1.5rem;
-		height: 3.25rem;
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
+		padding-top: 1.75rem;
+		padding-bottom: 0.25rem;
 	}
 
-	.crumbs,
+	/* the wordmark: the one piece of lettering on the site */
+	.mark {
+		flex: none;
+		color: var(--f-high);
+		font-family: var(--font-display);
+		font-size: 1.45rem;
+		font-weight: 400;
+		letter-spacing: 0.01em;
+		line-height: 1;
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+
+	.mark:hover {
+		color: var(--accent);
+	}
+
 	.links {
 		display: flex;
-		align-items: center;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.2rem 1.15rem;
 		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
 
-	.crumbs {
-		flex: 1;
-		min-width: 0;
-		gap: 0.5rem;
+	.links a {
+		display: inline-block;
 		color: var(--f-mute);
-		text-transform: lowercase;
-	}
-
-	.links {
-		flex: none;
-		gap: 1.4rem;
-		font-size: 0.68rem;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-	}
-
-	.site-nav a {
-		color: var(--f-mute);
+		font-size: 0.92rem;
+		font-weight: 450;
 		text-decoration: none;
 		transition: color 0.15s ease;
 	}
 
-	.site-nav a:hover,
-	.site-nav a[aria-current] {
+	.links a:hover,
+	.links a:focus-visible {
+		color: var(--f-high);
+	}
+
+	/* the page you are on: inked, with a wavy accent line under it */
+	.links a[aria-current] {
+		color: var(--f-high);
+		text-decoration: underline;
+		text-decoration-style: wavy;
+		text-decoration-color: var(--accent);
+		text-decoration-thickness: 1.5px;
+		text-underline-offset: 0.4em;
+	}
+
+	/* the theme switch: a sun in the light, a moon in the dark */
+	.theme {
+		display: grid;
+		place-items: center;
+		width: 1.65rem;
+		height: 1.65rem;
+		margin-bottom: -0.35rem;
+		border: 0;
+		border-radius: 999px;
+		background: none;
+		padding: 0;
+		color: var(--f-mute);
+		transition: color 0.15s ease;
+	}
+
+	.theme:hover,
+	.theme:focus-visible {
+		color: var(--f-high);
+	}
+
+	.theme .moon {
+		display: none;
+	}
+
+	:global(:root[data-theme='dark']) .theme .sun-core,
+	:global(:root[data-theme='dark']) .theme .sun-rays {
+		display: none;
+	}
+
+	:global(:root[data-theme='dark']) .theme .moon {
+		display: block;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not([data-theme='light'])) .theme .sun-core,
+		:global(:root:not([data-theme='light'])) .theme .sun-rays {
+			display: none;
+		}
+
+		:global(:root:not([data-theme='light'])) .theme .moon {
+			display: block;
+		}
+	}
+
+	.crumb-bar {
+		display: none;
+		position: sticky;
+		top: 0;
+		z-index: 15;
+		padding-top: 0.75rem;
+		padding-bottom: 0.5rem;
+		background: color-mix(in srgb, var(--background) 88%, transparent);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+	}
+
+	.crumbs {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		color: var(--f-mute);
+		font-size: 0.82rem;
+	}
+
+	.crumbs a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.crumbs a:hover {
 		color: var(--f-high);
 	}
 
 	.sep {
-		color: color-mix(in srgb, var(--f-low) 35%, transparent);
+		color: var(--line);
 	}
 
-	/* the current-page crumb can be a long post title. it's the flex child that
-	   shrinks, so it ellipsizes to give the section chip room. */
 	.crumb-title a {
 		display: block;
 		max-width: 100%;
@@ -129,25 +229,61 @@ const nav = [
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
+
+	@media (max-width: 560px) {
+		.topbar {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+			padding-top: 1.25rem;
+		}
+
+		.links {
+			justify-content: flex-start;
+			gap: 0.2rem 1rem;
+		}
+
+		.links a {
+			font-size: 0.88rem;
+		}
+	}
 </style>
 
 <style is:global>
-	/* global because the section chip is created at runtime, outside astro's
-	   style scoping. once you're inside an article the trail (~ › notes › title
-	   › section) takes the whole row and the nav steps aside. */
-	.site-nav:has(.has-active-section) .links {
-		display: none;
+	/* once breadcrumb-pill reports a live section, the crumb bar appears */
+	.crumb-bar:has(.has-active-section) {
+		display: block;
 	}
 
-	/* small screens: the trail collapses to the home crumb so the nav fits */
 	@media (max-width: 600px) {
-		.site-nav .links {
-			gap: 1rem;
-		}
-
 		#breadcrumbs > .sep,
-		#breadcrumbs > li:not(:first-child):not(.crumb-section) {
+		#breadcrumbs > li:not(.crumb-section) {
 			display: none;
 		}
 	}
 </style>
+
+<script>
+	// the theme switch: flip between light and dark, and remember the choice.
+	// with nothing saved the page follows the system, which is the default.
+	const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+	if (btn) {
+		const root = document.documentElement;
+		const systemDark = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
+		const current = () => root.dataset.theme ?? (systemDark() ? "dark" : "light");
+
+		btn.addEventListener("click", () => {
+			const next = current() === "dark" ? "light" : "dark";
+			root.dataset.theme = next;
+			try {
+				// back to following the system once the pick matches it again
+				if ((next === "dark") === systemDark()) {
+					localStorage.removeItem("theme");
+					delete root.dataset.theme;
+				} else {
+					localStorage.setItem("theme", next);
+				}
+			} catch (e) {}
+		});
+	}
+</script>

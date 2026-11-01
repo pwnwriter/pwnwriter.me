@@ -1,0 +1,137 @@
+---
+// A row that scrolls sideways instead of down. The cards run off the right
+// edge of the column so it reads as a strip that continues, with a pair of
+// arrows for people who would rather click than swipe.
+interface Props {
+  label: string;
+  more?: string;
+  moreHref?: string;
+}
+const { label, more, moreHref } = Astro.props;
+---
+
+<section class="rail-sec">
+  <div class="rail-head">
+    <h2 class="section-label">{label}</h2>
+    {more && moreHref && <a class="more-link" href={moreHref}>{more}</a>}
+  </div>
+
+  <div class="rail" data-rail tabindex="0" role="group" aria-label={label}>
+    <slot />
+  </div>
+
+  <div class="rail-nav">
+    <button type="button" data-rail-prev aria-label={`scroll ${label} left`} disabled>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button type="button" data-rail-next aria-label={`scroll ${label} right`}>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+</section>
+
+<style>
+  .rail-sec {
+    margin-top: 3.25rem;
+  }
+
+  .rail-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .rail-head .section-label {
+    margin-bottom: 0.9rem;
+  }
+
+  .rail-head .more-link {
+    margin-top: 0;
+    font-size: 0.88rem;
+  }
+
+  /* the strip runs past the right edge of the column to the window edge */
+  .rail {
+    display: flex;
+    gap: 1rem;
+    margin-right: calc(50% - 50vw);
+    padding: 0.25rem 1.5rem 0.25rem 0;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail > :global(*) {
+    flex: 0 0 min(68%, 15.5rem);
+    scroll-snap-align: start;
+  }
+
+  .rail-nav {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+  }
+
+  .rail-nav button {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--f-low);
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      opacity 0.15s ease;
+  }
+
+  .rail-nav button:hover:not(:disabled) {
+    color: var(--f-high);
+    border-color: var(--f-mute);
+  }
+
+  .rail-nav button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+</style>
+
+<script>
+  // the arrows move the strip by roughly one card, and grey out at the ends
+  document.querySelectorAll<HTMLElement>(".rail-sec").forEach((sec) => {
+    const rail = sec.querySelector<HTMLElement>("[data-rail]");
+    const prev = sec.querySelector<HTMLButtonElement>("[data-rail-prev]");
+    const next = sec.querySelector<HTMLButtonElement>("[data-rail-next]");
+    if (!rail || !prev || !next) return;
+
+    const step = () => {
+      const card = rail.firstElementChild as HTMLElement | null;
+      return card ? card.offsetWidth + 16 : rail.clientWidth * 0.8;
+    };
+
+    const sync = () => {
+      const max = rail.scrollWidth - rail.clientWidth - 1;
+      prev.disabled = rail.scrollLeft <= 0;
+      next.disabled = rail.scrollLeft >= max;
+    };
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const go = (dir: number) =>
+      rail.scrollBy({ left: dir * step(), behavior: reduce ? "auto" : "smooth" });
+
+    prev.addEventListener("click", () => go(-1));
+    next.addEventListener("click", () => go(1));
+    rail.addEventListener("scroll", sync, { passive: true });
+    new ResizeObserver(sync).observe(rail);
+    sync();
+  });
+</script>

@@ -1,8 +1,6 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import remarkMarkHighlight from "./src/lib/remark-mark-highlight.mjs";
 import rehypeExternalLinks from "./src/lib/rehype-external-links.mjs";
 import rehypeWrapTables from "./src/lib/rehype-wrap-tables.mjs";
@@ -17,8 +15,8 @@ export default defineConfig({
   },
   integrations: [tailwind({ config: { applyBaseStyles: false } })],
   markdown: {
-    remarkPlugins: [remarkGfm, remarkMarkHighlight, remarkMath],
-    rehypePlugins: [rehypeKatex, rehypeExternalLinks, rehypeWrapTables],
+    remarkPlugins: [remarkGfm, remarkMarkHighlight],
+    rehypePlugins: [rehypeExternalLinks, rehypeWrapTables],
     syntaxHighlight: "prism",
   },
   site: "https://pwnwriter.me",
