@@ -1,8 +1,7 @@
 ---
 // Lungta, the way they are strung over Boudhanath: one garland in the five
 // colours, in order, each flag carrying a syllable of ॐ मणि पद्मे हूँ with a
-// lotus border along its hem, and a cat sitting on the hairline underneath
-// with its tail over the edge. Drawn on a canvas so the string can sag, the
+// lotus border along its hem. Drawn on a canvas so the string can sag, the
 // cloth can lift, and the run can string itself left to right when it shows.
 // Seeded from the page path, so every page hangs its own, the same each visit.
 ---
@@ -13,7 +12,7 @@
 
 <style>
   .flags {
-    height: 162px;
+    height: 76px;
     /* melt into the page at both ends instead of stopping at a hard edge */
     -webkit-mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
     mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
@@ -27,10 +26,8 @@
 </style>
 
 <script>
-  const H = 162;
-  const GROUND = 138; // the hairline the cat sits on
+  const H = 76;
   const HANG_MS = 1500;
-  const BLINK_MS = 190;
   const TAU = Math.PI * 2;
 
   const FLAG_W = 32;
@@ -87,10 +84,9 @@
     };
 
     let W = 0, dpr = 1;
-    let ink = "#576869", paper = "#fbf9f4", line = "#e8e2d6";
+    let ink = "#576869", paper = "#fbf9f4";
     let palette = LIGHT;
     let flags: Flag[] = [];
-    let figX = 0.5, figFlip = 1;
 
     const strand = { y: 0.1, sag: 0.09, tilt: -0.02, p: rnd() * TAU };
 
@@ -105,7 +101,6 @@
       const v = (n: string, d: string) => cs.getPropertyValue(n).trim() || d;
       ink = v("--f-low", ink);
       paper = v("--background", paper);
-      line = v("--line", line);
       palette = window.matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
     };
 
@@ -213,78 +208,7 @@
       ctx.restore();
     };
 
-    // the cat: one thin stroke up the back and over the head, sitting on the
-    // hairline with its chin up, and a tail that drops under the line and
-    // curls back on itself
-    const drawCat = (t: number, blink: number) => {
-      const x = figX * W;
-      const breathe = Math.sin(t * 1.4) * 0.45;
-      const curl = Math.sin(t * 0.8) * 1.3;
-      const ear = t % 7 < 0.2 ? 1 : 0;
-
-      ctx.save();
-      ctx.translate(x, GROUND);
-      ctx.scale(figFlip, 1);
-      ctx.strokeStyle = ink;
-      ctx.lineWidth = 1.6;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-
-      // the tail: out of the rump, under the line, and hooked back up
-      ctx.beginPath();
-      ctx.moveTo(-10.6, -1.5);
-      ctx.bezierCurveTo(-15.4, 1 + curl * 0.1, -15.6, 8 + curl * 0.2, -11, 8.8 + curl * 0.25);
-      ctx.bezierCurveTo(-7, 9.5 + curl * 0.25, -6.6, 4.8 + curl * 0.15, -9.6, 4 + curl * 0.15);
-      ctx.stroke();
-
-      // the silhouette: rump, the long rise of the back, both ears, the face
-      // tipped up to a nose, then the chest straight down to the line
-      ctx.beginPath();
-      ctx.moveTo(-10.8, 0);
-      ctx.bezierCurveTo(-15, -10, -13.6, -24.5, -7, -33 + breathe);
-      ctx.bezierCurveTo(-5.2, -36 + breathe, -4.2, -38.4 + breathe, -3.4, -40.2 + breathe);
-      // the far ear
-      ctx.lineTo(-5.2, -47.4 - ear * 1.4 + breathe);
-      ctx.lineTo(-0.4, -44.2 + breathe);
-      // the near ear
-      ctx.lineTo(1.6, -49.6 - ear * 1.2 + breathe);
-      ctx.lineTo(4.2, -44.6 + breathe);
-      // the face sloping down to the nose
-      ctx.bezierCurveTo(5.4, -43.6 + breathe, 6.4, -42.8 + breathe, 6.8, -42 + breathe);
-      ctx.bezierCurveTo(7.4, -40.8 + breathe, 6.4, -40 + breathe, 5 + 0, -39.8 + breathe);
-      // the chin, then the chest down to the line
-      ctx.bezierCurveTo(4.2, -39.6 + breathe, 3.8, -38 + breathe, 3.8, -36 + breathe);
-      ctx.bezierCurveTo(3.8, -26, 3.4, -12, 3.2, 0);
-      ctx.stroke();
-
-      // two front legs
-      ctx.lineWidth = 1.4;
-      for (const dx of [-1.4, 1.2]) {
-        ctx.beginPath();
-        ctx.moveTo(dx, -14);
-        ctx.lineTo(dx - 0.2, -0.8);
-        ctx.stroke();
-      }
-
-      // one eye, which blinks
-      ctx.lineWidth = 1.5;
-      if (blink > 0) {
-        ctx.beginPath();
-        ctx.moveTo(0.4, -44 + breathe);
-        ctx.lineTo(2.4, -44.6 + breathe);
-        ctx.stroke();
-      } else {
-        ctx.beginPath();
-        ctx.arc(1.5, -44.3 + breathe, 0.95, 0, TAU);
-        ctx.fillStyle = ink;
-        ctx.fill();
-      }
-
-      ctx.restore();
-    };
-
-
-    const render = (t: number, grow: number, blink: number) => {
+    const render = (t: number, grow: number) => {
       ctx.clearRect(0, 0, W, H);
 
       // the string first, so the flags hang off it
@@ -307,46 +231,25 @@
         if (g > 0) drawFlag(f, t, g);
       }
 
-      // the hairline the cat sits on, which is also the footer's rule
-      ctx.globalAlpha = 1;
-      ctx.strokeStyle = line;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, GROUND + 0.5);
-      ctx.lineTo(W, GROUND + 0.5);
-      ctx.stroke();
-
-      if (grow > 0.7) drawCat(t, blink);
     };
 
     const start = () => {
       readColors();
       layout();
-      figX = 0.3 + rnd() * 0.4;
-      figFlip = rnd() > 0.5 ? 1 : -1;
 
       if (reduce) {
-        render(0, 1, 0);
+        render(0, 1);
         return;
       }
 
       let t0 = 0;
-      let nextBlink = 1200 + rnd() * 3000;
-      let blinkUntil = -1;
       let visible = false;
       new IntersectionObserver((e) => (visible = e[0].isIntersecting), { threshold: 0 }).observe(root);
 
       const loop = (now: number) => {
         if (!t0) t0 = now;
         const ms = now - t0;
-        if (visible) {
-          const grow = Math.min(1, ms / HANG_MS);
-          if (ms > nextBlink) {
-            blinkUntil = ms + BLINK_MS;
-            nextBlink = ms + 2200 + rnd() * 4000;
-          }
-          render(ms / 1000, grow, ms < blinkUntil ? 1 : 0);
-        }
+        if (visible) render(ms / 1000, Math.min(1, ms / HANG_MS));
         requestAnimationFrame(loop);
       };
       requestAnimationFrame(loop);

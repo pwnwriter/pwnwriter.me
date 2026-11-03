@@ -1,16 +1,13 @@
 ---
-// One quiet line under the prayer flags. The contact icons live in the intro, so they
-// are not repeated here.
+// The footer: the flags and the cat sitting on the rule, then two quiet
+// lines. Where else to go on the left, who made it and how on the right.
 import Wrapper from "~/components/wrapper.astro";
 import PrayerFlags from "~/components/prayer-flags.astro";
 
-const site = [
+const elsewhere = [
   { text: "syndications", href: "/syndications" },
   { text: "tags", href: "/notes/tags" },
-  {
-    text: "rss",
-    href: import.meta.env.DEV ? `/rss.xml?${Date.now()}` : "/rss.xml",
-  },
+  { text: "rss", href: import.meta.env.DEV ? `/rss.xml?${Date.now()}` : "/rss.xml" },
   {
     text: "stats",
     href: "https://cloud.umami.is/share/tNl4j2DN3BMN3xwq/pwnwriter.me",
@@ -22,11 +19,10 @@ const year = new Date().getFullYear();
 
 <Wrapper>
   <PrayerFlags />
-  <footer class="site-footer meta">
-    <span>© {year} pwnwriter</span>
-    <nav aria-label="footer">
+  <footer class="site-footer">
+    <nav class="foot-nav" aria-label="elsewhere on this site">
       {
-        site.map(({ text, href }) => (
+        elsewhere.map(({ text, href }) => (
           <a
             href={href}
             rel={href.startsWith("http") ? "external noopener" : undefined}
@@ -37,35 +33,85 @@ const year = new Date().getFullYear();
         ))
       }
     </nav>
+
+    <p class="colophon">
+      <span>© {year} pwnwriter</span>
+      <span class="sep" aria-hidden="true">·</span>
+      <a
+        class="fpr"
+        href="https://github.com/pwnwriter.gpg"
+        rel="external noopener"
+        target="_blank"
+        title="my OpenPGP key">B681763F9B5BDF27</a
+      >
+      <span class="sep" aria-hidden="true">·</span>
+      <a
+        href="https://github.com/pwnwriter/pwnwriter.me"
+        rel="external noopener"
+        target="_blank">source</a
+      >
+    </p>
   </footer>
 </Wrapper>
 
 <style>
   .site-footer {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.8rem 2rem;
-    padding: 0.9rem 0 1.5rem;
+    flex-direction: column;
+    gap: 0.55rem;
+    border-top: 1px solid var(--line);
+    padding: 1rem 0 1.75rem;
   }
 
-  .site-footer nav {
+  .foot-nav {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.3rem 1.1rem;
+    gap: 0.3rem 1.2rem;
+    color: var(--f-low);
+    font-size: 0.92rem;
+  }
+
+  /* who made it and how, set quieter than the links */
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.5rem;
+    margin: 0;
+    color: var(--f-mute);
+    font-size: 0.8rem;
+  }
+
+  .colophon .sep {
+    color: var(--line);
+  }
+
+  /* the key id, set in mono so it reads as a fingerprint */
+  .fpr {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    letter-spacing: 0.02em;
   }
 
   .site-footer a {
-    display: inline-flex;
     color: inherit;
     text-decoration: none;
     transition: color 0.15s ease;
+  }
+
+  .foot-nav a {
+    text-underline-offset: 0.3em;
+  }
+
+  .colophon a {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--f-mute) 45%, transparent);
+    text-underline-offset: 0.2em;
   }
 
   .site-footer a:hover,
   .site-footer a:focus-visible {
     color: var(--f-high);
   }
+
 </style>
