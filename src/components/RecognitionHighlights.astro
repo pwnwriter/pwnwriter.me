@@ -1,0 +1,74 @@
+---
+import Preview from "~/components/preview.astro";
+import { recognition } from "~/data/recognition";
+const selected = [recognition[1], recognition[2], recognition[0]];
+const previews = Object.fromEntries(selected.map((item, i) => {
+  const pic = item.photo ?? item.image;
+  return [`highlight:${i}`, {
+    title: item.result,
+    sub: [item.title, item.where, item.year].filter(Boolean).join(" · "),
+    blurb: item.note ?? "",
+    scan: !!item.image,
+    links: [],
+    media: pic ? [{ kind: "image", src: pic.src, alt: pic.alt }] : [],
+  }];
+}));
+---
+<section class="recognition" aria-labelledby="recognition-title">
+  <header><h2 id="recognition-title">a few highlights</h2><span>2026</span></header>
+  <div class="highlights" id="recognition-highlights">
+    {selected.map((item, i) => {
+      const pic = item.photo ?? item.image;
+      return <button class="highlight" type="button" data-pv-open={`highlight:${i}`} aria-label={`View ${item.title}: ${item.result}`}>
+        <span class:list={["picture", { "letter": !!item.image }]}>
+          {pic && <img src={pic.src} alt={pic.alt} loading="lazy" width="480" height="360" style={i === 1 ? "object-position:50% 59%;transform:scale(1.7);transform-origin:50% 85%;" : undefined} />}
+          <span class="expand" aria-hidden="true">↗</span>
+        </span>
+        <span class="result">{i === 1 ? "2nd best" : item.result}</span>
+        <span class="title">{item.title}</span>
+        {i === 1 && <span class="detail">DSAI + marimo track</span>}
+      </button>;
+    })}
+  </div>
+  <nav class="arrows" aria-label="Browse highlights">
+    <button type="button" aria-label="Previous highlight" aria-controls="recognition-highlights" data-highlight-step="-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5h3v8a3 3 0 0 1-3 3H5m4-4-4 4 4 4"/></svg></button>
+    <button type="button" aria-label="Next highlight" aria-controls="recognition-highlights" data-highlight-step="1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H6v8a3 3 0 0 0 3 3h10m-4-4 4 4-4 4"/></svg></button>
+  </nav>
+</section>
+<script>
+  const rail = document.querySelector<HTMLElement>('#recognition-highlights');
+  const arrows = [...document.querySelectorAll<HTMLButtonElement>('[data-highlight-step]')];
+  if (rail) {
+    const update = () => arrows.forEach(button => {
+      button.disabled = Number(button.dataset.highlightStep) < 0
+        ? rail.scrollLeft <= 2
+        : rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 2;
+    });
+    arrows.forEach(button => button.addEventListener('click', () => {
+      const card = rail.querySelector<HTMLElement>('.highlight');
+      rail.scrollBy({left: Number(button.dataset.highlightStep) * ((card?.offsetWidth ?? 260) + 16), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+    }));
+    rail.addEventListener('scroll', update, {passive:true});
+    new ResizeObserver(update).observe(rail);
+    update();
+  }
+</script>
+<Preview />
+<script type="application/json" id="preview-data" set:html={JSON.stringify(previews)} is:inline />
+<style>
+.recognition{margin-top:3.2rem;}
+.arrows{display:flex;gap:.55rem;margin-top:.7rem;}.arrows button{display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;border-radius:12px;background:#efefeb;color:#7c847f;cursor:pointer;transition:background .2s,color .2s;}.arrows button:hover:enabled{background:#e5e7e0;color:var(--f-high);}.arrows button:disabled{opacity:.4;cursor:default;}.arrows button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem;color:var(--f-mute);font-size:.78rem;}
+h2{font-size:inherit;font-weight:400;margin:0;}
+.highlights{width:calc(100% + (100vw - 100%)/2 - 16px);display:flex;align-items:flex-start;overflow-x:auto;gap:1rem;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:0 0 .85rem;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#c7cdc3 transparent;}
+.highlight{flex:0 0 260px;scroll-snap-align:start;min-width:0;text-align:left;border:0;padding:0;background:none;color:inherit;cursor:pointer;border-radius:14px;}
+.picture{position:relative;display:block;aspect-ratio:1.15;overflow:hidden;border-radius:14px;background:#eeeee8;}
+.picture img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease;}
+.letter{padding:1rem;}.letter img{object-fit:contain;filter:drop-shadow(0 3px 5px #00000012);}
+.expand{position:absolute;right:.6rem;bottom:.6rem;width:1.5rem;height:1.5rem;border-radius:50%;display:grid;place-items:center;background:#ffffffdf;color:#48514d;opacity:0;transform:translateY(3px);transition:opacity .2s,transform .2s;font-size:.85rem;}
+.highlight:hover img{transform:scale(1.035);}.highlight:hover .expand,.highlight:focus-visible .expand{opacity:1;transform:none;}
+.highlight:focus-visible{outline:2px solid var(--accent);outline-offset:5px;}
+.result,.title,.detail{display:block;line-height:1.45;}.result{margin-top:.75rem;font-weight:600;font-size:.95rem;color:var(--f-high);}.title{margin-top:.15rem;color:var(--f-low);font-size:.8rem;}.detail{font-size:.75rem;color:var(--f-mute);margin-top:.1rem;}
+@media(max-width:560px){.highlights{width:calc(100% + (100vw - 100%)/2 - 16px);display:flex;align-items:flex-start;overflow-x:auto;gap:.85rem;scroll-snap-type:x mandatory;padding:0 0 .7rem;}.highlight{flex:0 0 72%;scroll-snap-align:start;}.recognition{margin-top:2.5rem;}}
+@media(prefers-reduced-motion:reduce){.highlights{scroll-behavior:auto;}.picture img,.expand{transition:none;}.highlight:hover img{transform:none;}}
+</style>

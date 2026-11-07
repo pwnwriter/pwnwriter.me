@@ -1,0 +1,15 @@
+<div class="nepal-trail">
+ <div class="mountain-scene">
+  <img src="/images/nepal-mountain-trail.webp" alt="A snowy Himalayan ridge inspired by Sagarmatha, with ice, exposed rock, and a winding mountain trail" width="1800" height="600" loading="lazy" decoding="async" />
+  <span class="ridge-mist" aria-hidden="true"></span>
+ </div>
+</div>
+<style>
+.nepal-trail{width:100%;margin:2rem 0 .15rem;}
+.mountain-scene{position:relative;isolation:isolate;}
+.mountain-scene img{display:block;width:100%;height:auto;transform-origin:50% 75%;transition:transform 1.6s cubic-bezier(.2,.8,.2,1);}
+.ridge-mist{position:absolute;left:8%;right:8%;bottom:5%;height:19%;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(251,249,244,.35),transparent);filter:blur(12px);animation:ridge-mist 18s ease-in-out infinite;}
+@media(hover:hover){.mountain-scene:hover img{transform:translateY(-2px) scale(1.012);}}
+@keyframes ridge-mist{0%,100%{transform:translateX(-3%);opacity:.4;}50%{transform:translateX(3%);opacity:.8;}}
+@media(prefers-reduced-motion:reduce){.mountain-scene img{transition:none;}.mountain-scene:hover img{transform:none;}.ridge-mist{animation:none;}}
+</style>

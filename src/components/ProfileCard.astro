@@ -1,0 +1,67 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '~/assets/sf-golden-gate.jpg';
+const { profiles } = Astro.props;
+---
+<span class="profile-trigger-wrap">
+  <button class="profile-handle" type="button" aria-expanded="false" aria-controls="profile-card" aria-haspopup="dialog">@pwnwriter</button>
+</span>
+<div id="profile-card" class="profile-card" popover="auto" role="dialog" aria-label="Find pwnwriter online">
+  <div class="card-head">
+    <Image src={portrait} alt="Nabeen" width={88} height={88} class="avatar" />
+    <div><strong>Nabeen</strong><span>@pwnwriter</span></div>
+    <button class="close-card" type="button" aria-label="Close profile card"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
+  </div>
+  <p class="card-bio">security research &amp; interfaces.</p>
+  <nav class="profile-platforms" aria-label="Social profiles">
+    {profiles.filter((p: {label:string})=>p.label!=='Email').map((profile: {label:string;href:string;d:string})=><a class={`platform platform-${profile.label.toLowerCase()}`} href={profile.href} target="_blank" rel="me noopener noreferrer"><svg class="brand" width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={profile.d}/></svg><span>{profile.label}</span><svg class="arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6H7m11 0v11"/></svg></a>)}
+  </nav>
+</div>
+<style>
+.profile-trigger-wrap{display:inline;}
+.profile-handle {display:inline-block;font:inherit;line-height:inherit;background:color-mix(in srgb,var(--f-low) 7%,transparent);color:var(--f-low);padding:.02em .5em;margin:0 .1em;border:0;border-radius:9px;cursor:pointer;transition:background .2s,color .2s;}
+.profile-handle:hover,.profile-handle[aria-expanded="true"]{background:color-mix(in srgb,var(--accent) 13%,transparent);color:var(--f-high);}
+.profile-card {position:fixed;inset:auto;margin:0;box-sizing:border-box;width:min(320px,calc(100vw - 32px));border:1px solid #e9e7e0;border-radius:15px;padding:15px;background:#fffefb;color:var(--f-high);box-shadow:0 16px 50px #272c2618,0 3px 10px #272c2608;overflow:visible;}
+.profile-card:popover-open {animation:profile-in .22s cubic-bezier(.2,.8,.2,1);}
+.profile-card::backdrop {pointer-events:none;background:rgb(251 249 244 / .12);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);}
+.card-head{display:flex;align-items:center;gap:7px;}.avatar{width:34px;height:34px;object-fit:cover;object-position:40% 50%;border-radius:10px;}.card-head strong{display:block;font-size:15px;font-weight:550;line-height:1.4;}.card-head>div>span{display:block;font-size:11px;color:var(--f-mute);}
+.close-card{align-self:flex-start;margin-left:auto;display:grid;place-items:center;width:27px;height:27px;border:0;border-radius:50%;background:#f3f2ee;color:var(--f-mute);cursor:pointer;}.close-card:hover{color:var(--f-high);}
+.card-bio{font-size:12px;line-height:1.6;color:var(--f-low);margin:12px 0 13px;}
+.profile-platforms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;}
+.platform{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0;padding:12px 10px 10px;border:1px solid #e9e7e0;border-radius:10px;color:#303832;background:#f5f6f1;text-decoration:none;transition:transform .2s,background .2s,border-color .2s;}
+.platform-x{background:#f5f4f2;color:#303332;}.platform-linkedin{background:#f0f4f7;color:#476b81;}
+.platform>span{font-size:11px;font-weight:500;}.arrow{position:absolute;right:8px;bottom:12px;opacity:.55;}.brand{opacity:.85;}.platform:hover,.platform:focus-visible{transform:translateY(-3px);border-color:#c8d4c8;background:#edf1e8;}.platform-x:hover{background:#ecebe8;}.platform-linkedin:hover{background:#e7eff4;}
+@keyframes profile-in{from{opacity:0;transform:translateY(6px) scale(.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+@media(max-width:420px){.profile-card{padding:14px;}.platform{padding:12px 10px 10px;gap:10px;}}
+@media(prefers-reduced-motion:reduce){.profile-card:popover-open{animation:none;}.profile-handle,.platform{transition:none;}}
+</style>
+<script>
+const trigger=document.querySelector<HTMLButtonElement>('.profile-handle');
+const card=document.getElementById('profile-card');
+if(trigger&&card){
+ let timer:ReturnType<typeof setTimeout>|undefined;
+ let pinned=false;
+ const cancel=()=>{if(timer)clearTimeout(timer);};
+ const position=()=>{
+  const rect=trigger.getBoundingClientRect();
+  const width=card.offsetWidth;
+  const left=Math.max(16,Math.min(rect.left+rect.width/2-width/2,innerWidth-width-16));
+  const above=rect.top-card.offsetHeight-13;
+  const top=above>=16?above:Math.min(rect.bottom+13,innerHeight-card.offsetHeight-16);
+  card.style.left=`${left}px`;card.style.top=`${Math.max(16,top)}px`;
+ };
+ const open=()=>{cancel();if(!card.matches(':popover-open'))card.showPopover();position();trigger.setAttribute('aria-expanded','true');};
+ const close=()=>{cancel();if(card.matches(':popover-open'))card.hidePopover();};
+ const deferClose=()=>{cancel();if(!pinned)timer=setTimeout(close,180);};
+ trigger.addEventListener('pointerenter',()=>{if(matchMedia('(hover:hover)').matches)open();});
+ trigger.addEventListener('pointerleave',deferClose);
+ card.addEventListener('pointerenter',cancel);card.addEventListener('pointerleave',deferClose);
+ trigger.addEventListener('click',()=>{if(pinned&&card.matches(':popover-open')){pinned=false;close();}else{pinned=true;open();}});
+ trigger.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){event.preventDefault();pinned=true;open();card.querySelector<HTMLAnchorElement>('a')?.focus();}});
+ card.addEventListener('toggle',()=>{const visible=card.matches(':popover-open');trigger.setAttribute('aria-expanded',String(visible));if(!visible)pinned=false;});
+ card.querySelector('.close-card')?.addEventListener('click',()=>{close();trigger.focus();});
+ card.addEventListener('keydown',event=>{if(event.key==='Escape'){close();trigger.focus();}});
+ window.addEventListener('resize',()=>{if(card.matches(':popover-open'))position();});
+ window.addEventListener('scroll',()=>{if(card.matches(':popover-open'))position();},{passive:true});
+}
+</script>

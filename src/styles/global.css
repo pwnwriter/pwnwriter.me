@@ -54,50 +54,6 @@
 }
 
 
-/* the dark set: used when the system asks for it and the reader has not
-   overridden it, and again when they have picked dark by hand */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --f-high: #f8f9e8;
-    --f-low: #adc9bc;
-    --f-mute: #839e9a;
-
-    --b-high: #374145;
-    --b-med: #262f33;
-    --b-low: #1e2528;
-
-    --accent: #b3e3ca;
-    --accent-2: #b2caed;
-    --highlight: #f5d098;
-    --background: #1e2528;
-    --line: #2b353a;
-    --on-accent: #1e2528;
-  }
-}
-
-:root[data-theme="dark"] {
-  --f-high: #f8f9e8;
-  --f-low: #adc9bc;
-  --f-mute: #839e9a;
-
-  --b-high: #374145;
-  --b-med: #262f33;
-  --b-low: #1e2528;
-
-  --accent: #b3e3ca;
-  --accent-2: #b2caed;
-  --highlight: #f5d098;
-  --background: #1e2528;
-  --line: #2b353a;
-  --on-accent: #1e2528;
-
-  color-scheme: dark;
-}
-
-:root[data-theme="light"] {
-  color-scheme: light;
-}
-
 :root {
   --font-sans: "Hanken Grotesk Variable", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Pirata One", "Hanken Grotesk Variable", serif;
@@ -110,7 +66,7 @@
   /* the column */
   --measure: 36rem;
 
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
 ::selection {

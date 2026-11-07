@@ -4,6 +4,8 @@
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import Gloss from "~/components/gloss.astro";
+import ProfileCard from "~/components/ProfileCard.astro";
+import RecognitionHighlights from "~/components/RecognitionHighlights.astro";
 import { Image } from "astro:assets";
 import sf from "~/assets/sf-golden-gate.jpg";
 
@@ -34,48 +36,25 @@ const socials = [
 
     <section class="intro" aria-label="about me">
       <h1 class="sr-only">pwnwriter</h1>
-      <p>
+      <p class="hello">Hey,</p>
+      <p class="intro-line">
         I'm <Gloss term="Nabeen" ipa="/na·veen/" script="नवीन">
-          Sanskrit <i>navīna</i>, <b>new</b>: renewal, and the habit of rebuilding
-          things that already work.
-          <span class="names">
-            <span><b>Nabin</b> on paper, and on anything official.</span>
-            <span><b>Nabeen</b> online, which is how it is said out loud.</span>
-            <span><b>pwnwriter</b> wherever a username is asked for. <i>pwn</i>, to
-              break into a thing and own it, and <i>writer</i>, for the part after.</span>
-          </span>
-        </Gloss>, a <strong>CS student</strong> and hacker in the older
-        sense: Linux, security, and
-        <a href="https://github.com/NixOS/nixpkgs" target="_blank" rel="noopener noreferrer">nixpkgs</a>,
-        mostly from a terminal.
+          Nabin on paper, Nabeen online. <b>pwnwriter</b> wherever a username is asked for.
+        </Gloss>, 22, based in Baltimore. Originally from Nepal.
       </p>
-      <p>
-        I am <span class="age" data-born="2004-07-12T00:00:00+05:45">22</span> and I
-        <strong>break things</strong> to see how they work, then write it down. The
-        rest of it is on <a href="/work">work</a>.
+      <p class="intro-line">
+        I do <strong class="security-word">security research <svg class="word-icon shield-icon" width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V5z"/><path d="m8.5 11.5 2.3 2.3 4.7-5" fill="none" stroke="var(--background)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></strong>
+        and <a class="ink interface-word" href="/work">build interfaces <svg class="word-icon cursor-icon" width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3.5a.8.8 0 0 1 1.2-.7l14 9.1a.8.8 0 0 1-.4 1.5l-6 .6-3.1 5.2a.8.8 0 0 1-1.5-.2z"/><path d="m15 4 1-2m3 6 2-.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>.
       </p>
-      <p class="socials">
-        {
-          socials.map((s) => (
-            <a
-              href={s.href}
-              aria-label={s.label}
-              title={s.label}
-              target={s.href.startsWith("http") ? "_blank" : undefined}
-              rel={s.href.startsWith("http") ? "me noopener noreferrer" : undefined}
-            >
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
-                <path d={s.d} />
-              </svg>
-            </a>
-          ))
-        }
-      </p>
+      <div class="contact-line">Find me <ProfileCard profiles={socials} />, or <a href="mailto:hi@pwnwriter.me">say hello <span aria-hidden="true">↗</span></a>.</div>
+
     </section>
+    <RecognitionHighlights />
   </Wrapper>
 </Layout>
 
 <style>
+  @font-face {font-family:"Caveat";src:url("/fonts/Caveat-Variable.ttf") format("truetype");font-style:normal;font-weight:400 700;font-display:swap;}
   /* the photograph up top, with one line under it */
   .shot {
     margin: 0.5rem 0 0;
@@ -177,22 +156,28 @@ const socials = [
       transform: none;
     }
   }
+
+  .intro {padding-top:3rem;}
+  .intro p {font-size:clamp(1.12rem,2.3vw,1.3rem);line-height:1.85;max-width:35rem;margin:0 0 1.9rem;letter-spacing:-.015em;}
+  .intro .hello {margin-bottom:2.1rem;color:var(--f-low);}
+  .intro-line strong,.intro .ink {font-weight:500;color:var(--f-high);}
+  .intro .ink {text-decoration:none;}
+  .inline-icon {display:inline-block;width:1em;height:1em;vertical-align:-.13em;margin-left:.1em;}
+  .handwritten {position:relative;display:inline-block;margin:0 .05em;padding:0 .12em;color:#4b7063;font-family:"Caveat",cursive;font-style:normal;font-weight:600;font-size:1.2em;transform:rotate(-2deg);white-space:nowrap;}
+  .handwritten::after {content:"";position:absolute;left:0;right:0;bottom:.08em;height:.2em;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:50%;transform:rotate(-1deg);}
+  .intro .contact-line {font-size:1.05rem;margin-bottom:1rem;}
+  .intro .handle {display:inline-block;background:color-mix(in srgb,var(--f-low) 7%,transparent);padding:.02em .5em;margin:0 .1em;border-radius:9px;text-decoration:none;color:var(--f-low);}
+  .intro .handle:hover {color:var(--f-high);background:color-mix(in srgb,var(--accent) 12%,transparent);}
+  .intro .socials {margin:0;gap:.9rem;}
+  .socials svg {width:17px;height:17px;}
+  @media(max-width:560px){.intro {padding-top:2.2rem;}.intro p{font-size:1.15rem;margin-bottom:1.6rem;line-height:1.8;}.intro .contact-line{font-size:1rem;}.intro .hello{margin-bottom:1.5rem;}}
+
+  .word-icon {display:inline-block;vertical-align:-.18em;margin-left:.13em;flex:none;transition:transform .25s cubic-bezier(.2,.8,.2,1);}
+  .security-word {color:#537b68!important;font-weight:500!important;}
+  .shield-icon {color:#719a80;}
+  .intro .interface-word {color:#627a99;font-weight:500;white-space:nowrap;}
+  .cursor-icon {color:#879ebc;transform-origin:35% 35%;}
+  .security-word:hover .shield-icon {transform:translateY(-2px) rotate(-7deg);}
+  .interface-word:hover .cursor-icon,.interface-word:focus-visible .cursor-icon {transform:translate(2px,-2px) rotate(-8deg);}
+  @media(prefers-reduced-motion:reduce){.word-icon{transition:none;}.security-word:hover .shield-icon,.interface-word:hover .cursor-icon{transform:none;}}
 </style>
-
-<script>
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  // the age: years since birth, to nine decimals, ticking every frame-ish.
-  // a year here is the mean tropical year, which is what a birthday counts.
-  const age = document.querySelector<HTMLElement>(".age");
-  if (age && age.dataset.born) {
-    const born = new Date(age.dataset.born).getTime();
-    const YEAR = 365.2422 * 24 * 60 * 60 * 1000;
-    const tick = () => {
-      age.textContent = ((Date.now() - born) / YEAR).toFixed(9);
-    };
-    tick();
-    if (!reduce) setInterval(tick, 50);
-  }
-
-</script>

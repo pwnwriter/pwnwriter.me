@@ -42,8 +42,8 @@ export const recognition: Recognition[] = [
     title: "HopHacks",
     where: "Johns Hopkins University",
     year: 2026,
-    photo: { src: "/images/recognition/hophacks.jpg", alt: "on stage at HopHacks" },
-    result: "2nd place",
+    photo: { src: "/images/recognition/hophacks-award.jpeg", alt: "HopHacks award slide announcing BMore.Casa as second place in Best Data Visualization", focus: "50% 59%" },
+    result: "2nd best · DSAI + marimo",
     featured: true,
   },
   {

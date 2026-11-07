@@ -21,46 +21,21 @@ let subpathList = subpaths.reduce(
 	[] as { text: string; link: string }[],
 );
 
-const nav = [
-	{ text: 'notes', href: '/notes', current: path.startsWith('/notes') },
-	{
-		text: 'work',
-		href: '/work',
-		current:
-			path.startsWith('/work') ||
-			path.startsWith('/projects') ||
-			path.startsWith('/recognition'),
-	},
-	{ text: 'stuff', href: '/stuff', current: path.startsWith('/stuff') },
+const items = [
+ {label:'home',href:'/',icon:'M10.8 3.1a2 2 0 0 1 2.4 0l6 4.5a2 2 0 0 1 .8 1.6V19a2 2 0 0 1-2 2h-4v-6h-4v6H6a2 2 0 0 1-2-2V9.2a2 2 0 0 1 .8-1.6z'},
+ {label:'notes',href:'/notes',icon:'m16 3 5 5L8 21H3v-5z M14 5l5 5 M3 21l5-1'},
+ {label:'work',href:'/work',icon:'M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2 M3 8h18v11H3z M3 12q9 5 18 0 M11 12h2v4h-2z'},
+ {label:'syndications',href:'/syndications',icon:'M12 3a9 9 0 1 1-6.4 2.7 M3 3v6h6 M12 7v5l3 2'},
 ];
+const selected = Math.max(0,items.findIndex(item => item.href==='/' ? isHome : path.startsWith(item.href) || (item.label==='work' && (path.startsWith('/projects') || path.startsWith('/recognition')))));
+const centers = items.map((_,i)=>42+i*58);
+const dockWidth = 84 + (items.length - 1) * 58;
+
 ---
-
-<header class="topbar col">
-	<a class="mark" href="/" aria-label="home" aria-current={isHome ? 'page' : undefined}>pwn()</a>
-	<nav aria-label="site">
-		<ul class="links">
-			{
-				nav.map(({ text, href, current }) => (
-					<li>
-						<a href={href} aria-current={current ? 'page' : undefined}>
-							{text}
-						</a>
-					</li>
-				))
-			}
-			<li>
-				<button type="button" class="theme" data-theme-toggle aria-label="switch theme">
-					<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<circle class="sun-core" cx="12" cy="12" r="4.1"></circle>
-						<path class="sun-rays" d="M12 2.6v2.1M12 19.3v2.1M4.7 12H2.6M21.4 12h-2.1M6.3 6.3l1.5 1.5M16.2 16.2l1.5 1.5M17.7 6.3l-1.5 1.5M7.8 16.2l-1.5 1.5"></path>
-						<path class="moon" d="M20 13.4A8 8 0 0 1 10.6 4a7.2 7.2 0 1 0 9.4 9.4Z"></path>
-					</svg>
-				</button>
-			</li>
-		</ul>
-	</nav>
-</header>
-
+<header class="topbar col"><nav aria-label="site" class="all-dock" data-all-dock style={`--active:${selected};--dock-width:${dockWidth}px`}>
+<svg class="surface" width={dockWidth} height="84" viewBox={`0 0 ${dockWidth} 84`} aria-hidden="true"><defs><filter id="nav-goo" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"/></filter></defs><g filter="url(#nav-goo)">{centers.slice(0,-1).map(cx=><rect x={cx} y="33" width="58" height="18" fill="#f0f0ee"/>)}{items.map((_,i)=><circle class="lobe" cx={centers[i]} cy="42" r={i===selected?30:22}/>)}</g><circle class="active-disc" cx="42" cy="42" r="25"/></svg>
+{items.map((item,i)=><a class="primary" href={item.href} style={`left:${14+i*58}px`} aria-label={item.label} aria-current={i===selected?'page':undefined} data-index={i}><svg width="18" height="18" viewBox="0 0 24 24" fill={i===0?'currentColor':'none'} stroke={i===0?'none':'currentColor'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={item.icon}/></svg><span class="tip">{item.label}</span></a>)}
+</nav></header>
 {/* the breadcrumb trail, only shown once a long post reports a live section */}
 <div class="crumb-bar col">
 	<ul id="breadcrumbs" class="crumbs">
@@ -82,208 +57,18 @@ const nav = [
 </div>
 
 <style>
-	.topbar {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1.5rem;
-		padding-top: 1.75rem;
-		padding-bottom: 0.25rem;
-	}
-
-	/* the wordmark: the one piece of lettering on the site */
-	.mark {
-		flex: none;
-		color: var(--f-high);
-		font-family: var(--font-display);
-		font-size: 1.45rem;
-		font-weight: 400;
-		letter-spacing: 0.01em;
-		line-height: 1;
-		text-decoration: none;
-		transition: color 0.15s ease;
-	}
-
-	.mark:hover {
-		color: var(--accent);
-	}
-
-	.links {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: flex-end;
-		gap: 0.2rem 1.15rem;
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.links a {
-		display: inline-block;
-		color: var(--f-mute);
-		font-size: 0.92rem;
-		font-weight: 450;
-		text-decoration: none;
-		transition: color 0.15s ease;
-	}
-
-	.links a:hover,
-	.links a:focus-visible {
-		color: var(--f-high);
-	}
-
-	/* the page you are on: inked, with a wavy accent line under it */
-	.links a[aria-current] {
-		color: var(--f-high);
-		text-decoration: underline;
-		text-decoration-style: wavy;
-		text-decoration-color: var(--accent);
-		text-decoration-thickness: 1.5px;
-		text-underline-offset: 0.4em;
-	}
-
-	/* the theme switch: a sun in the light, a moon in the dark */
-	.theme {
-		display: grid;
-		place-items: center;
-		width: 1.65rem;
-		height: 1.65rem;
-		margin-bottom: -0.35rem;
-		border: 0;
-		border-radius: 999px;
-		background: none;
-		padding: 0;
-		color: var(--f-mute);
-		transition: color 0.15s ease;
-	}
-
-	.theme:hover,
-	.theme:focus-visible {
-		color: var(--f-high);
-	}
-
-	.theme .moon {
-		display: none;
-	}
-
-	:global(:root[data-theme='dark']) .theme .sun-core,
-	:global(:root[data-theme='dark']) .theme .sun-rays {
-		display: none;
-	}
-
-	:global(:root[data-theme='dark']) .theme .moon {
-		display: block;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		:global(:root:not([data-theme='light'])) .theme .sun-core,
-		:global(:root:not([data-theme='light'])) .theme .sun-rays {
-			display: none;
-		}
-
-		:global(:root:not([data-theme='light'])) .theme .moon {
-			display: block;
-		}
-	}
-
-	.crumb-bar {
-		display: none;
-		position: sticky;
-		top: 0;
-		z-index: 15;
-		padding-top: 0.75rem;
-		padding-bottom: 0.5rem;
-		background: color-mix(in srgb, var(--background) 88%, transparent);
-		backdrop-filter: blur(10px);
-		-webkit-backdrop-filter: blur(10px);
-	}
-
-	.crumbs {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		margin: 0;
-		padding: 0;
-		list-style: none;
-		color: var(--f-mute);
-		font-size: 0.82rem;
-	}
-
-	.crumbs a {
-		color: inherit;
-		text-decoration: none;
-	}
-
-	.crumbs a:hover {
-		color: var(--f-high);
-	}
-
-	.sep {
-		color: var(--line);
-	}
-
-	.crumb-title a {
-		display: block;
-		max-width: 100%;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	@media (max-width: 560px) {
-		.topbar {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.5rem;
-			padding-top: 1.25rem;
-		}
-
-		.links {
-			justify-content: flex-start;
-			gap: 0.2rem 1rem;
-		}
-
-		.links a {
-			font-size: 0.88rem;
-		}
-	}
-</style>
-
-<style is:global>
-	/* once breadcrumb-pill reports a live section, the crumb bar appears */
-	.crumb-bar:has(.has-active-section) {
-		display: block;
-	}
-
-	@media (max-width: 600px) {
-		#breadcrumbs > .sep,
-		#breadcrumbs > li:not(.crumb-section) {
-			display: none;
-		}
-	}
-</style>
-
+.topbar{display:flex;justify-content:center;padding-top:1.5rem;padding-bottom:.25rem;}.all-dock{position:relative;width:var(--dock-width);height:84px;flex:none;}.surface{display:block;overflow:visible;pointer-events:none;}.lobe{fill:#f0f0ee;transition:r .42s cubic-bezier(.22,.8,.22,1);}.active-disc{fill:white;transform:translateX(calc(var(--active)*58px));}.primary{position:absolute;top:14px;display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;color:#aaa;text-decoration:none;-webkit-tap-highlight-color:transparent;}.primary[aria-current]{color:#101211;}.primary svg{transition:transform .2s;}.primary:hover svg{transform:scale(1.08);}.tip{position:absolute;top:100%;left:50%;transform:translate(-50%,-3px);font:10px var(--font-mono);opacity:0;pointer-events:none;color:var(--f-mute);transition:opacity .15s,transform .2s;}.primary:hover .tip,.primary:focus-visible .tip{opacity:1;transform:translate(-50%,0);}.crumb-bar{display:none;position:sticky;top:0;z-index:15;background:var(--background);padding:.75rem 0 .5rem;}.crumbs{display:flex;align-items:center;gap:.5rem;list-style:none;margin:0;padding:0;color:var(--f-mute);font-size:.82rem;}.crumbs a{color:inherit;text-decoration:none;}.crumb-title{min-width:0;}.crumb-title a{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+@media(max-width:380px){.all-dock{transform:scale(.9);transform-origin:center;}}
+@media(prefers-reduced-motion:reduce){.lobe,.primary svg,.tip{transition:none;}}
+</style><style is:global>.crumb-bar:has(.has-active-section){display:block;}@media(max-width:600px){#breadcrumbs>.sep,#breadcrumbs>li:not(.crumb-section){display:none;}}</style>
 <script>
-	// the theme switch: flip between light and dark, and remember the choice.
-	// with nothing saved the page follows the system, which is the default.
-	const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
-	if (btn) {
-		const root = document.documentElement;
-		const systemDark = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
-		const current = () => root.dataset.theme ?? (systemDark() ? "dark" : "light");
-
-		btn.addEventListener("click", () => {
-			const next = current() === "dark" ? "light" : "dark";
-			root.dataset.theme = next;
-			try {
-				// back to following the system once the pick matches it again
-				if ((next === "dark") === systemDark()) {
-					localStorage.removeItem("theme");
-					delete root.dataset.theme;
-				} else {
-					localStorage.setItem("theme", next);
-				}
-			} catch (e) {}
-		});
-	}
+const dock=document.querySelector<HTMLElement>('[data-all-dock]');let busy=false;
+dock?.querySelectorAll<HTMLAnchorElement>('a.primary').forEach(link=>link.addEventListener('click',async event=>{
+if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||link.hasAttribute('aria-current')||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+event.preventDefault();if(busy||!dock)return;busy=true;const index=Number(link.dataset.index);const disc=dock.querySelector('.active-disc')!;
+const animation=disc.animate([{transform:getComputedStyle(disc).transform},{transform:`translateX(${index*58}px)`}],{duration:420,easing:'cubic-bezier(.22,.8,.22,1)',fill:'forwards'});
+dock.querySelectorAll('.lobe').forEach((circle,i)=>circle.setAttribute('r',i===index?'30':'22'));
+dock.querySelectorAll<HTMLElement>('.primary').forEach(item=>item.style.color=item===link?'#101211':'#aaa');
+try{await animation.finished;}catch{}location.assign(link.href);
+}));
 </script>

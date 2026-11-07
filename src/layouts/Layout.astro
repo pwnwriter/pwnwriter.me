@@ -27,12 +27,8 @@ const pageTitle = `${title} · pwn`;
 		<link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
 
 		<script is:inline>
-			// pick up a saved theme before the first paint, so there is no flash
-			try {
-				var t = localStorage.getItem("theme");
-				if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
-			} catch (e) {}
-		</script>
+          document.documentElement.dataset.theme = 'light';
+        </script>
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="mask-icon" href="/favicon-transparent.svg" color="#1e2528" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
