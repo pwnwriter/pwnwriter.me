@@ -4,10 +4,15 @@ import { photos } from '~/data/photos';
 <dialog class="story-dialog" aria-label="Photo stories">
   <div class="story-frame">
     <nav class="story-progress" aria-label="Story progress"></nav>
-    <header class="story-header"><div><span class="story-counter"></span><span class="story-caption"></span></div><div class="story-actions"><button type="button" class="story-music" aria-label="Play ambient music" aria-pressed="false">♫</button><button type="button" class="story-pause" aria-label="Pause stories">Ⅱ</button><button type="button" class="story-close" aria-label="Close stories">×</button></div></header>
+    <header class="story-header"><div><span class="story-counter"></span><span class="story-caption"></span></div><div class="story-actions"><button type="button" class="story-music" aria-label="Play music" aria-pressed="false">♫</button><button type="button" class="story-pause" aria-label="Pause stories">Ⅱ</button><button type="button" class="story-close" aria-label="Close stories">×</button></div></header>
     <div class="story-loading" aria-hidden="true">Loading…</div>
     <img class="story-image" alt="" />
     <div class="story-taps"><button type="button" class="story-previous" aria-label="Previous photo"></button><button type="button" class="story-next" aria-label="Next photo"></button></div>
+    <aside class="story-track" aria-label="Story soundtrack">
+      <button type="button" class="story-track-sticker" aria-label="Play HIGHEST IN THE ROOM" aria-pressed="false"><span class="story-track-note" aria-hidden="true">♫</span><span><strong>HIGHEST IN THE ROOM</strong><small>Travis Scott</small></span><span class="story-track-state" aria-hidden="true">▶</span></button>
+      <span class="story-audio-status sr-only" role="status"></span>
+      <audio class="story-audio" src="/audio/highest-in-the-room.mp3" preload="none" loop></audio>
+    </aside>
     <footer class="story-footer"><span class="story-description"></span><span class="story-help">← → to explore</span></footer>
   </div>
 </dialog>
@@ -26,29 +31,41 @@ const personal:Story[]=JSON.parse(document.querySelector('#personal-story-data')
 let stories:Story[]=[],index=0,elapsed=0,last=0,raf=0,paused=false,holding=false,loading=true;
 let trigger:HTMLElement|null=null,oldOverflow='',pointerX=0,swiped=false;
 const musicButton=dialog.querySelector<HTMLButtonElement>('.story-music')!;
-let audio:AudioContext|undefined,master:GainNode|undefined,musicTimer:ReturnType<typeof setInterval>|undefined,musicOn=false,noteIndex=0;
-const melody=[261.63,329.63,392,440,392,329.63,293.66,329.63];
-const voices=new Set<OscillatorNode>();
-function playTone(frequency:number,start:number,length:number,level:number){
-  if(!audio||!master)return;
-  const oscillator=audio.createOscillator(),gain=audio.createGain();
-  oscillator.type='sine';oscillator.frequency.value=frequency;
-  gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(level,start+.4);gain.gain.exponentialRampToValueAtTime(.0001,start+length);
-  oscillator.connect(gain);gain.connect(master);voices.add(oscillator);oscillator.onended=()=>{voices.delete(oscillator);oscillator.disconnect();gain.disconnect();};oscillator.start(start);oscillator.stop(start+length+.1);
+const trackSticker=dialog.querySelector<HTMLButtonElement>('.story-track-sticker')!;
+const soundtrack=dialog.querySelector<HTMLAudioElement>('.story-audio')!;
+const audioStatus=dialog.querySelector<HTMLElement>('.story-audio-status')!;
+soundtrack.volume=.45;
+const soundtrackStart=40;
+function cueMusic(){if(soundtrack.currentTime<soundtrackStart)soundtrack.currentTime=soundtrackStart;}
+soundtrack.addEventListener('loadedmetadata',()=>{if(dialog.open&&index===0)cueMusic();});
+function updateMusic(){
+  const playing=!soundtrack.paused&&!soundtrack.ended;
+  musicButton.setAttribute('aria-pressed',String(playing));
+  musicButton.setAttribute('aria-label',playing?'Pause music':'Play music');
+  trackSticker.setAttribute('aria-pressed',String(playing));
+  trackSticker.setAttribute('aria-label',`${playing?'Pause':'Play'} HIGHEST IN THE ROOM`);
+  dialog.querySelector('.story-track-state')!.textContent=playing?'Ⅱ':'▶';
+  frame.classList.toggle('music-playing',playing);
 }
-function musicPhrase(){if(!audio||!musicOn)return;const now=audio.currentTime;playTone(melody[noteIndex%melody.length],now,3.4,.12);if(noteIndex%4===0){[130.81,196,246.94].forEach(frequency=>playTone(frequency,now,9,.06));}noteIndex++;}
-function stopMusic(){musicOn=false;clearInterval(musicTimer);musicButton.setAttribute('aria-pressed','false');musicButton.setAttribute('aria-label','Play ambient music');if(audio&&master){master.gain.cancelScheduledValues(audio.currentTime);master.gain.setTargetAtTime(0,audio.currentTime,.12);voices.forEach(voice=>voice.stop(audio!.currentTime+.65));}}
-musicButton.addEventListener('click',async()=>{
-  if(musicOn){stopMusic();return;}
-  audio??=new AudioContext();master??=audio.createGain();master.connect(audio.destination);await audio.resume();
-  musicOn=true;master.gain.cancelScheduledValues(audio.currentTime);master.gain.setTargetAtTime(.32,audio.currentTime,.3);
-  musicButton.setAttribute('aria-pressed','true');musicButton.setAttribute('aria-label','Mute ambient music');musicPhrase();musicTimer=setInterval(musicPhrase,2400);
-});
+function stopMusic(){soundtrack.pause();soundtrack.currentTime=0;updateMusic();}
+async function playMusic(){
+  try{if(soundtrack.readyState>=1)cueMusic();await soundtrack.play();audioStatus.textContent='';if(!dialog.open)stopMusic();}
+  catch{audioStatus.textContent='Tap the music sticker to play the soundtrack.';updateMusic();}
+}
+function toggleMusic(){if(soundtrack.paused)void playMusic();else soundtrack.pause();}
+soundtrack.addEventListener('play',updateMusic);
+soundtrack.addEventListener('pause',updateMusic);
+soundtrack.addEventListener('error',()=>{audioStatus.textContent='The soundtrack could not load.';updateMusic();});
+musicButton.addEventListener('click',toggleMusic);
+trackSticker.addEventListener('click',toggleMusic);
 
 const duration=8000;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function render(){
   const story=stories[index];if(!story)return;
+  const hasSoundtrack=index===0;
+  dialog.querySelector<HTMLElement>('.story-track')!.hidden=!hasSoundtrack;musicButton.hidden=!hasSoundtrack;
+  if(!hasSoundtrack)stopMusic();else if(dialog.open)void playMusic();
   loading=true;elapsed=0;frame.classList.add('is-loading');image.src=story.src;image.alt=story.caption;if(image.complete&&image.naturalWidth>0){loading=false;frame.classList.remove('is-loading');}
   dialog.querySelector('.story-counter')!.textContent=`${String(index+1).padStart(2,'0')} / ${String(stories.length).padStart(2,'0')}`;
   dialog.querySelector('.story-caption')!.textContent=story.detail??'A moment kept';
@@ -57,12 +74,12 @@ function render(){
   progress.replaceChildren(...stories.map((_,i)=>{const button=document.createElement('button');button.type='button';button.setAttribute('aria-label',`View photo ${i+1}`);if(i===index)button.setAttribute('aria-current','step');const fill=document.createElement('span');fill.style.transform=`scaleX(${i<index?1:0})`;button.append(fill);button.addEventListener('click',()=>{index=i;render();});return button;}));
   if(stories[index+1]){const preload=new Image();preload.src=stories[index+1].src;}
 }
-function close(){trigger?.setAttribute('data-story-restored','');if(dialog.open)dialog.close();}
+function close(){stopMusic();trigger?.setAttribute('data-story-restored','');if(dialog.open)dialog.close();}
 dialog.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close();}},true);
 dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
 function step(direction:number){if(index+direction>=stories.length){close();return;}index=Math.max(0,index+direction);render();}
 function tick(time:number){const delta=last?time-last:0;last=time;if(!paused&&!holding&&!loading&&!document.hidden){elapsed+=delta;const fill=progress.children[index]?.firstElementChild as HTMLElement|undefined;if(fill)fill.style.transform=`scaleX(${Math.min(1,elapsed/duration)})`;if(elapsed>=duration)step(1);}if(dialog.open)raf=requestAnimationFrame(tick);}
-function open(items:Story[],start:number,element:HTMLElement){stories=items;index=start;trigger=element;paused=reduced;holding=false;last=0;pauseButton.textContent=paused?'▶':'Ⅱ';pauseButton.setAttribute('aria-label',paused?'Play stories':'Pause stories');oldOverflow=document.body.style.overflow;document.body.style.overflow='hidden';render();dialog.showModal();cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);}
+function open(items:Story[],start:number,element:HTMLElement){stories=items;index=start;trigger=element;paused=reduced;holding=false;last=0;pauseButton.textContent=paused?'▶':'Ⅱ';pauseButton.setAttribute('aria-label',paused?'Play stories':'Pause stories');oldOverflow=document.body.style.overflow;document.body.style.overflow='hidden';render();dialog.showModal();if(index===0)void playMusic();cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);}
 image.addEventListener('load',()=>{loading=false;frame.classList.remove('is-loading');});
 image.addEventListener('error',()=>{loading=false;frame.classList.remove('is-loading');dialog.querySelector('.story-description')!.textContent='This photo could not load. Try the next one.';});
 pauseButton.addEventListener('click',()=>{paused=!paused;pauseButton.textContent=paused?'▶':'Ⅱ';pauseButton.setAttribute('aria-label',paused?'Play stories':'Pause stories');});
@@ -71,8 +88,8 @@ previous.addEventListener('click',()=>{if(!swiped)step(-1);swiped=false;});next.
 dialog.addEventListener('click',event=>{if(event.target===dialog)close();});
 dialog.addEventListener('close',()=>{cancelAnimationFrame(raf);stopMusic();document.body.style.overflow=oldOverflow;image.removeAttribute('src');trigger?.setAttribute('data-story-restored','');trigger?.focus({preventScroll:true});});
 dialog.addEventListener('keydown',event=>{if(event.key==='ArrowRight'){event.preventDefault();step(1);}if(event.key==='ArrowLeft'){event.preventDefault();step(-1);}if(event.code==='Space'&&event.target===dialog){event.preventDefault();pauseButton.click();}});
-frame.addEventListener('pointerdown',event=>{if((event.target as HTMLElement).closest('.story-header,.story-progress'))return;holding=true;swiped=false;pointerX=event.clientX;});
-frame.addEventListener('pointerup',event=>{holding=false;const diff=event.clientX-pointerX;if(Math.abs(diff)>45){event.preventDefault();swiped=true;step(diff<0?1:-1);}});
+frame.addEventListener('pointerdown',event=>{if((event.target as HTMLElement).closest('.story-header,.story-progress,.story-track'))return;holding=true;swiped=false;pointerX=event.clientX;});
+frame.addEventListener('pointerup',event=>{if((event.target as HTMLElement).closest('.story-header,.story-progress,.story-track'))return;holding=false;const diff=event.clientX-pointerX;if(Math.abs(diff)>45){event.preventDefault();swiped=true;step(diff<0?1:-1);}});
 frame.addEventListener('pointercancel',()=>holding=false);frame.addEventListener('pointerleave',()=>holding=false);
 // Native links retain their original destination without JavaScript.
 const pageImages=[...document.querySelectorAll<HTMLImageElement>('main img')].filter(img=>!img.closest('[data-no-story]'));
@@ -107,4 +124,8 @@ for(const img of pageImages){
 .story-image{position:absolute;width:100%;height:100%;inset:0;object-fit:contain;margin:0;}
 .story-frame::after{content:'';position:absolute;inset:0;background:linear-gradient(#0008,transparent 26%,transparent 75%,#0008);pointer-events:none;z-index:1;}
 .story-header{position:absolute;z-index:4;top:35px;left:20px;right:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;}.story-header>div:first-child{display:flex;gap:10px;align-items:center;min-width:0;}.story-counter{font:10px var(--font-mono);color:#fff;white-space:nowrap;}.story-caption{font-size:12px;color:#ffffffb0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.story-actions{display:flex;gap:3px;}.story-actions button{border:0;background:transparent;color:white;width:32px;height:34px;font-size:24px;padding:0;}.story-actions .story-pause{font-size:15px;}.story-actions .story-music{font-size:19px;color:#ffffff80;}.story-music[aria-pressed="true"]{color:white;background:#ffffff18;border-radius:50%;}.story-progress{position:absolute;top:15px;left:18px;right:18px;display:flex;gap:4px;z-index:5;}.story-progress button{flex:1;min-width:0;border:0;padding:0;height:3px;background:#ffffff40;position:relative;overflow:hidden;border-radius:2px;}.story-progress button::after{content:'';position:absolute;inset:-7px 0;}.story-progress span{display:block;position:absolute;inset:0;background:#fff;transform-origin:left;}.story-taps{position:absolute;inset:85px 0 60px;display:flex;z-index:2;}.story-taps button{border:0;background:none;width:50%;padding:0;}.story-taps button:disabled{cursor:default;}.story-footer{position:absolute;bottom:23px;left:20px;right:20px;z-index:3;display:flex;flex-direction:column;gap:6px;pointer-events:none;}.story-description{font-size:14px;line-height:1.4;}.story-help{font:9px var(--font-mono);color:#ffffff80;}.story-loading{display:none;position:absolute;inset:0;place-items:center;font:11px var(--font-mono);color:#ffffff70;}.is-loading .story-loading{display:grid;}.is-loading .story-image{opacity:.2;}@media(max-width:560px){.story-dialog[open]{padding:8px;}.story-frame{width:100%;height:calc(100dvh - 16px);border-radius:20px;}.story-header{left:16px;}.story-description{font-size:13px;}.story-help{display:none;}}
+.story-track[hidden],.story-actions .story-music[hidden]{display:none;}.story-track{position:absolute;z-index:6;left:20px;right:20px;bottom:88px;}
+.story-track-sticker{display:flex;align-items:center;gap:9px;max-width:100%;padding:9px 12px;border:1px solid #ffffff40;border-radius:11px;background:#f8f8faed;color:#25262c;text-align:left;box-shadow:0 3px 14px #0002;backdrop-filter:blur(12px);cursor:pointer;transition:transform .18s,background .18s;}
+.story-track-sticker:hover{transform:translateY(-2px);background:#fff;}.story-track-sticker>span:nth-child(2){min-width:0;}.story-track-sticker strong{display:block;font-size:10px;letter-spacing:.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.story-track-sticker small{display:block;margin-top:2px;font-size:10px;color:#737581;}.story-track-note{font-size:24px;line-height:1;}.story-track-sticker>span:last-child{font-size:13px;margin-left:6px;color:#737581;}
+.story-track-sticker:focus-visible{outline:2px solid #a6b4d1;outline-offset:3px;}.story-track-state{width:12px;text-align:center;}.music-playing .story-track-note{animation:music-note 2.5s ease-in-out infinite;}@keyframes music-note{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}@media(prefers-reduced-motion:reduce){.music-playing .story-track-note{animation:none}.story-track-sticker{transition:none}}
 </style>
