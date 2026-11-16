@@ -1,72 +1,78 @@
 ---
-import '~/styles/global.css';
+import "~/styles/global.css";
 import fontUrl from "@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url";
-import Header from '~/components/header.astro';
-import Footer from '~/components/footer.astro';
-import BreadcrumbPill from '~/components/breadcrumb-pill.astro';
+import StoryViewer from "~/components/StoryViewer.astro";
+import Footer from "~/components/footer.astro";
 
 export interface Props {
-	title: string;
-	description: string;
-	image?: string;
+  title: string;
+  description: string;
+  image?: string;
 }
 
 const { title, description, image } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogSlug = Astro.url.pathname.replace(/^\/+|\/+$/g, '') || 'index';
+const ogSlug = Astro.url.pathname.replace(/^\/+|\/+$/g, "") || "index";
 const ogImage = new URL(image ?? `/og/${ogSlug}.png`, Astro.site).href;
 const pageTitle = `${title} · pwn`;
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="preload"
+      href={fontUrl}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
 
-		<script is:inline>
-          document.documentElement.dataset.theme = 'light';
-        </script>
-		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-		<link rel="mask-icon" href="/favicon-transparent.svg" color="#1e2528" />
-		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{pageTitle}</title>
-		<meta name="description" content={description} />
-		<link rel="canonical" href={canonical} />
+    <script is:inline>
+      document.documentElement.dataset.theme = "light";
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="mask-icon" href="/favicon-transparent.svg" color="#1e2528" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
 
-		<meta property="og:type" content="website" />
-		<meta property="og:site_name" content="pwnwriter" />
-		<meta property="og:title" content={pageTitle} />
-		<meta property="og:description" content={description} />
-		<meta property="og:url" content={canonical} />
-		<meta property="og:image" content={ogImage} />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content={`${title} · pwnwriter.me`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="pwnwriter" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${title} · pwnwriter.me`} />
 
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content={pageTitle} />
-		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
-		<script
-			async
-			src="https://cloud.umami.is/script.js"
-			data-website-id="ba6c60e5-68de-45c5-b4a9-6520b565d5f7"
-		></script>
-	</head>
-	<body class="flex min-h-screen flex-col">
-		<Header title={title} />
-
-		<main class="relative flex-1 pt-6 sm:pt-10">
-			<slot />
-		</main>
-
-		<Footer />
-
-		<BreadcrumbPill />
-	</body>
+    <script
+      async
+      src="https://cloud.umami.is/script.js"
+      data-website-id="ba6c60e5-68de-45c5-b4a9-6520b565d5f7"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <main id="main">
+      {Astro.url.pathname !== '/' && <div class="shell page-return"><a href="/">← Home</a></div>}
+      <slot />
+    </main>
+    <Footer />
+    <StoryViewer />
+  </body>
 </html>
+
+<style>
+.page-return{margin-bottom:30px;}.page-return a{display:inline-flex;align-items:center;font:10px var(--font-mono);color:var(--f-mute);text-decoration:none;transition:color .18s;}.page-return a:hover{color:var(--f-high);}
+</style>

@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import "~/styles/writing.css";
+
 import Layout from "~/layouts/Layout.astro";
 import Wrapper from "~/components/wrapper.astro";
 import Prose from "~/components/prose.astro";
@@ -24,8 +24,8 @@ const tags = entry.data.tags ?? [];
   description={`Syndication: ${entry.data.title}`}
 >
   <Wrapper>
-    <article class="writing-note">
-      <header class="writing-head">
+    <article class="reading">
+      <header class="reading-head">
         <h1>{entry.data.title}</h1>
         <p class="writing-meta meta">
           <time datetime={entry.data.pubDate.toISOString()}>
@@ -35,7 +35,7 @@ const tags = entry.data.tags ?? [];
         </p>
       </header>
 
-      <div class="writing-copy">
+      <div class="prose">
         <Prose>
           <Content />
         </Prose>

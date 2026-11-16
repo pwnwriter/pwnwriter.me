@@ -1,37 +1,14 @@
 ---
-import Wrapper from "~/components/wrapper.astro";
-const links = [
- {label:'tags',href:'/notes/tags',icon:'M20 13 13 20 3 10V3h7z M7 7h.01'},
- {label:'rss',href:import.meta.env.DEV ? `/rss.xml?${Date.now()}` : '/rss.xml',icon:'M5 11a8 8 0 0 1 8 8 M5 5a14 14 0 0 1 14 14 M5 18h.01'},
- {label:'stats',href:'https://cloud.umami.is/share/tNl4j2DN3BMN3xwq/pwnwriter.me',icon:'M5 20v-5 M12 20V9 M19 20V3'},
-];
-const year = new Date().getFullYear();
+import SiteDirectory from './SiteDirectory.astro';
 ---
-<Wrapper>
-  <footer class="site-footer">
-    <nav class="footer-links" aria-label="More to explore">
-      {links.map(({label,href,icon})=><a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icon}/></svg><span>{label}</span></a>)}
-    </nav>
-    <div class="footer-bottom">
-      <span class="credit">© {year} <span class="author">pwnwriter</span></span>
-      <nav class="footer-tools" aria-label="Site details">
-        <a href="https://github.com/pwnwriter.gpg" title="OpenPGP key · B681763F9B5BDF27" aria-label="OpenPGP public key" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5"/><path d="m12 12 9 9m-4-4 3-3m-6 0 3-3"/></svg><span>public key</span></a>
-        <a href="https://github.com/pwnwriter/pwnwriter.me" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 20"/></svg><span>source</span></a>
-      </nav>
-    </div>
-  </footer>
-</Wrapper>
+<footer class="site-footer shell compact-footer">
+  <span class="footer-copyright">© {new Date().getFullYear()} pwnwriter</span>
+  <span class="jump-hint">Press <kbd>/</kbd> to jump anywhere</span>
+  <SiteDirectory />
+</footer>
 <style>
-.flags-note{text-align:center;margin:0 0 1.6rem;font-size:11px;line-height:1.6;color:var(--f-mute);}
-.site-footer {border-top:1px solid var(--line);padding:1.25rem 0 1.75rem;margin-top:1.1rem;}
-.footer-links {display:flex;align-items:center;gap:1.5rem;}
-.site-footer a {display:inline-flex;align-items:center;gap:.45rem;color:var(--f-mute);text-decoration:none;transition:color .18s;min-height:30px;}
-.footer-links a {font-size:13px;color:var(--f-low);}
-.site-footer a:hover,.site-footer a:focus-visible {color:var(--f-high);}
-.site-footer svg {flex:none;opacity:.75;}
-.footer-bottom {display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:1rem;font-size:11px;color:var(--f-mute);}
-.author {color:var(--f-low);}
-.footer-tools {display:flex;gap:1.15rem;align-items:center;}
-@media(max-width:420px){.footer-bottom{font-size:10px;}.footer-tools{gap:.8rem;}.footer-tools a{gap:.3rem;}.footer-links{gap:1.3rem;}}
-@media(prefers-reduced-motion:reduce){.site-footer a{transition:none;}}
+.compact-footer{justify-content:space-between;align-items:center;padding-block:20px 100px;}
+.footer-copyright{font:10px var(--font-mono);color:var(--f-mute);}
+.jump-hint{font:12px var(--font-sans);color:var(--f-mute);display:flex;align-items:center;gap:7px;}.jump-hint kbd{font:10px var(--font-mono);padding:4px 7px;border-radius:6px;background:#e7e8ed;color:#7a7f90;}
+@media(max-width:640px){.compact-footer{flex-direction:row;gap:15px;}.jump-hint{font-size:11px;}}
 </style>

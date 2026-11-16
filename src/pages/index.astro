@@ -1,183 +1,60 @@
 ---
-// The front page: one photograph, a few lines on who i am, and where to find
-// me. Everything else is a word in the bar at the top.
+import SocialLinks from "~/components/SocialLinks.astro";
+import NameCard from "~/components/NameCard.astro";
+import HelloTheme from "~/components/HelloTheme.astro";
+import AccentText from "~/components/AccentText.astro";
 import Layout from "~/layouts/Layout.astro";
-import Wrapper from "~/components/wrapper.astro";
-import Gloss from "~/components/gloss.astro";
-import ProfileCard from "~/components/ProfileCard.astro";
-import RecognitionHighlights from "~/components/RecognitionHighlights.astro";
 import { Image } from "astro:assets";
 import sf from "~/assets/sf-golden-gate.jpg";
 
-
-const socials = [
-  { label: "GitHub", href: "https://github.com/pwnwriter", d: "M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.9 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3" },
-  { label: "X", href: "https://x.com/pwnwriter", d: "M18.9 1.2h3.7l-8 9.2L24 22.8h-7.4l-5.8-7.6-6.6 7.6H.5l8.6-9.8L0 1.2h7.6l5.2 6.9 6.1-6.9Zm-1.3 19.5h2L6.5 3.2H4.3l13.3 17.5Z" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/pwnwriter", d: "M20.4 20.5h-3.5v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9v5.7H9.4V9h3.4v1.6c.5-.9 1.6-1.9 3.4-1.9 3.6 0 4.3 2.4 4.3 5.5v6.3ZM5.3 7.4a2.1 2.1 0 1 1 0-4.1 2.1 2.1 0 0 1 0 4.1Zm1.8 13.1H3.6V9h3.5v11.5ZM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 .9.8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7c0-.9-.8-1.7-1.8-1.7Z" },
-  { label: "Email", href: "mailto:hi@pwnwriter.me", d: "M1.5 8.7v8.6a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.7l-8.9 5.5a3 3 0 0 1-3.2 0L1.5 8.7Zm21-1.8v-.2a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.2l9.7 6a1.5 1.5 0 0 0 1.6 0l9.7-6Z" },
-];
 ---
 
-<Layout title="~" description="pwn::musings.">
-  <Wrapper>
-    <figure class="shot">
-      <Image
-        src={sf}
-        alt="me at the Golden Gate Bridge at dusk, San Francisco"
-        widths={[560, 880, 1180]}
-        sizes="(max-width: 640px) 100vw, 33rem"
-        loading="eager"
-        fetchpriority="high"
-      />
-      <figcaption class="meta">
-        the golden gate, on a trip to san francisco for openai devday.
-      </figcaption>
-    </figure>
-
-    <section class="intro" aria-label="about me">
-      <h1 class="sr-only">pwnwriter</h1>
-      <p class="hello">Hey,</p>
-      <p class="intro-line">
-        I'm <Gloss term="Nabeen" ipa="/na·veen/" script="नवीन">
-          Nabin on paper, Nabeen online. <b>pwnwriter</b> wherever a username is asked for.
-        </Gloss>, 22, based in Baltimore. Originally from Nepal.
-      </p>
-      <p class="intro-line">
-        I do <strong class="security-word">security research <svg class="word-icon shield-icon" width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V5z"/><path d="m8.5 11.5 2.3 2.3 4.7-5" fill="none" stroke="var(--background)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></strong>
-        and <a class="ink interface-word" href="/work">build interfaces <svg class="word-icon cursor-icon" width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3.5a.8.8 0 0 1 1.2-.7l14 9.1a.8.8 0 0 1-.4 1.5l-6 .6-3.1 5.2a.8.8 0 0 1-1.5-.2z"/><path d="m15 4 1-2m3 6 2-.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>.
-      </p>
-      <div class="contact-line">Find me <ProfileCard profiles={socials} />, or <a href="mailto:hi@pwnwriter.me">say hello <span aria-hidden="true">↗</span></a>.</div>
-
+<Layout
+  title="Nabeen · pwnwriter"
+  description="Nabeen, a security researcher and interface builder in Baltimore. Originally from Nepal."
+>
+  <div class="shell home-shell">
+    <section class="hero">
+      <div class="identity">
+        <figure class="portrait"><Image src={sf} alt="Nabeen at the Golden Gate Bridge at dusk" widths={[200,700]} sizes="88px" loading="eager" data-personal-stories data-story-src={sf.src} /><figcaption class="sr-only">San Francisco / OpenAI DevDay</figcaption></figure>
+        <div class="identity-label"><span>Nabeen / pwnwriter</span><span>Baltimore, MD · from Nepal</span></div>
+      </div>
+      <div class="hero-copy">
+        <h1 class="sr-only">Nabeen, security research and interfaces</h1>
+        <p class="hello">Hey,</p>
+        <p class="intro">I'm <NameCard />, 22, a <AccentText /> based in Baltimore. Originally from Nepal.</p>
+        <p class="intro">I do <strong>security research <svg class="inline-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V5z"/><path d="m8 12 2.5 2.5L16 9" fill="none" stroke="var(--background)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></strong> and <a class="inline-work" href="/work">build interfaces <svg class="inline-icon cursor-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3.5a.7.7 0 0 1 1.1-.6l15 9a.7.7 0 0 1-.3 1.3l-6.5.8-3.7 5.7a.7.7 0 0 1-1.3-.2z"/><path d="m16 3 1-2m3 6 2-.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>. Mostly Linux, Rust, and Nix.</p>
+        <div class="contact"><span>Find me</span><SocialLinks /><span class="hello-embed"><script src="https://whoami.cards/embed.js" data-username="pwnwriter" data-placement="inline" data-accent="#627d91" defer is:inline></script><noscript><a href="https://whoami.cards/pwnwriter/connect?via=link">Say hello ↗</a></noscript></span></div>
+      </div>
     </section>
-    <RecognitionHighlights />
-  </Wrapper>
-</Layout>
-
+    <HelloTheme />
+  </div></Layout
+>
 <style>
-  @font-face {font-family:"Caveat";src:url("/fonts/Caveat-Variable.ttf") format("truetype");font-style:normal;font-weight:400 700;font-display:swap;}
-  /* the photograph up top, with one line under it */
-  .shot {
-    margin: 0.5rem 0 0;
-  }
-
-  .shot img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-  }
-
-  .shot figcaption {
-    margin-top: 0.6rem;
-    font-size: 0.8rem;
-  }
-
-  /* who i am: a few quiet paragraphs. the words that matter are inked, the
-     names carry a note, links are underlined and nothing else. */
-  .intro {
-    padding-top: 2.75rem;
-  }
-
-  .intro p {
-    max-width: 34rem;
-    margin: 0 0 1rem;
-    color: var(--f-low);
-    font-size: 1.02rem;
-    line-height: 1.75;
-  }
-
-  .intro strong {
-    color: var(--f-high);
-    font-weight: 600;
-  }
-
-  .intro a {
-    color: var(--f-high);
-    text-decoration: underline;
-    text-decoration-color: color-mix(in srgb, var(--f-low) 45%, transparent);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.25em;
-    transition: color 0.15s ease, text-decoration-color 0.15s ease;
-  }
-
-  .intro a:hover {
-    color: var(--accent);
-    text-decoration-color: currentColor;
-  }
-
-  /* the three names, inside the card behind my name */
-  .names {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    margin-top: 0.55rem;
-    border-top: 1px solid var(--line);
-    padding-top: 0.6rem;
-    font-size: 0.88rem;
-    line-height: 1.45;
-  }
-
-  /* the live age: tabular digits so the ticking decimals don't jiggle */
-  .age {
-    color: var(--f-high);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  .socials {
-    display: flex;
-    gap: 1.1rem;
-    margin: 1.4rem 0 0;
-  }
-
-  .socials a {
-    color: var(--f-mute);
-    transition: color 0.15s ease, transform 0.15s ease;
-  }
-
-  .socials a:hover {
-    color: var(--f-high);
-    transform: translateY(-2px);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .socials a:hover {
-      transform: none;
-    }
-  }
-
-  .intro {padding-top:3rem;}
-  .intro p {font-size:clamp(1.12rem,2.3vw,1.3rem);line-height:1.85;max-width:35rem;margin:0 0 1.9rem;letter-spacing:-.015em;}
-  .intro .hello {margin-bottom:2.1rem;color:var(--f-low);}
-  .intro-line strong,.intro .ink {font-weight:500;color:var(--f-high);}
-  .intro .ink {text-decoration:none;}
-  .inline-icon {display:inline-block;width:1em;height:1em;vertical-align:-.13em;margin-left:.1em;}
-  .handwritten {position:relative;display:inline-block;margin:0 .05em;padding:0 .12em;color:#4b7063;font-family:"Caveat",cursive;font-style:normal;font-weight:600;font-size:1.2em;transform:rotate(-2deg);white-space:nowrap;}
-  .handwritten::after {content:"";position:absolute;left:0;right:0;bottom:.08em;height:.2em;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:50%;transform:rotate(-1deg);}
-  .intro .contact-line {font-size:1.05rem;margin-bottom:1rem;}
-  .intro .handle {display:inline-block;background:color-mix(in srgb,var(--f-low) 7%,transparent);padding:.02em .5em;margin:0 .1em;border-radius:9px;text-decoration:none;color:var(--f-low);}
-  .intro .handle:hover {color:var(--f-high);background:color-mix(in srgb,var(--accent) 12%,transparent);}
-  .intro .socials {margin:0;gap:.9rem;}
-  .socials svg {width:17px;height:17px;}
-  @media(max-width:560px){.intro {padding-top:2.2rem;}.intro p{font-size:1.15rem;margin-bottom:1.6rem;line-height:1.8;}.intro .contact-line{font-size:1rem;}.intro .hello{margin-bottom:1.5rem;}}
-
-  .word-icon {display:inline-block;vertical-align:-.18em;margin-left:.13em;flex:none;transition:transform .25s cubic-bezier(.2,.8,.2,1);}
-  .security-word {color:#537b68!important;font-weight:500!important;}
-  .shield-icon {color:#719a80;}
-  .intro .interface-word {color:#627a99;font-weight:500;white-space:nowrap;}
-  .cursor-icon {color:#879ebc;transform-origin:35% 35%;}
-  .security-word:hover .shield-icon {transform:translateY(-2px) rotate(-7deg);}
-  .interface-word:hover .cursor-icon,.interface-word:focus-visible .cursor-icon {transform:translate(2px,-2px) rotate(-8deg);}
-  @media(prefers-reduced-motion:reduce){.word-icon{transition:none;}.security-word:hover .shield-icon,.interface-word:hover .cursor-icon{transform:none;}}
+  @font-face {font-family:Caveat;src:url('/fonts/Caveat-Variable.ttf') format('truetype');font-weight:400 700;font-display:swap;}
+  .home-shell {max-width:600px;}
+  .hero {max-width:540px;padding:0 0 6px;}
+  .identity {display:flex;align-items:center;gap:18px;margin-bottom:32px;}
+  .portrait {width:72px;margin:0;border:2px solid #b6b8c0;border-radius:21px;padding:4px;background:var(--surface);flex:none;}
+  .portrait img {width:60px;height:60px;object-fit:cover;object-position:20% 72%;border-radius:14px;cursor:pointer;}
+  .identity-label {display:flex;flex-direction:column;font-size:13px;line-height:1.6;color:var(--f-mute);}
+  .identity-label span:first-child {color:var(--f-high);}
+  .hero-copy .hello,.intro {font-size:clamp(19px,1.8vw,21px);font-weight:400;line-height:1.65;letter-spacing:-.018em;color:#777981;margin:0 0 27px;}
+  .hero-copy .hello {margin-bottom:27px;}
+  .name {text-decoration:underline dotted #b8bac3;text-underline-offset:7px;}
+  .handwritten {font-family:Caveat,cursive;font-size:1.15em;font-weight:600;color:#5f788d;display:inline-block;transform:rotate(-2deg);white-space:nowrap;margin:0 .1em;}
+  .intro strong,.intro .inline-work {font-weight:500;color:var(--f-high);text-decoration:none;}
+  .inline-icon {width:.85em;height:.85em;display:inline-block;vertical-align:-.08em;margin-left:.1em;color:#818a88;transition:transform .2s;}
+  .cursor-icon {color:#78859d;}
+  .inline-work:hover .cursor-icon {transform:translate(2px,-2px);}
+  .contact {display:flex;align-items:baseline;flex-wrap:wrap;gap:7px;font:400 clamp(17px,1.6vw,19px)/1.6 var(--font-sans);color:#777981;margin-top:28px;}
+  .hello-embed {display:inline-flex;align-self:center;margin-left:8px;line-height:1;}
+  .contact a {text-decoration-color:#b7b9c1;}
+  .contact details {position:relative;}
+  .contact summary {list-style:none;padding:0 11px;background:#e6e6eb;border-radius:12px;}
+  .contact summary::-webkit-details-marker {display:none;}
+  .social-menu {position:absolute;top:calc(100% + 8px);left:0;min-width:170px;padding:8px;background:var(--surface);border:1px solid var(--line);border-radius:13px;box-shadow:0 12px 30px #22223912;z-index:4;font:14px/1.5 var(--font-sans);}
+  .social-menu a {display:block;padding:10px;text-decoration:none;border-radius:7px;}
+  .social-menu a:hover {background:var(--b-med);}
+  @media(max-width:640px){.identity{margin-bottom:32px;}.hero-copy .hello,.intro{margin-bottom:27px;line-height:1.65;}.contact{margin-top:28px;}}
 </style>

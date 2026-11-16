@@ -1,104 +1,31 @@
 ---
-import { CollectionEntry, getCollection } from "astro:content";
-
-interface Props {
-  tag?: string;
-  max?: number;
-}
-
-let { tag, max } = Astro.props;
-
-const allPosts = await getCollection("posts");
-
-const sortPosts = (posts: CollectionEntry<"posts">[]) =>
-  posts.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
-
-// get posts for current tag
-const posts: CollectionEntry<"posts">[] = tag
-  ? sortPosts(allPosts.filter(({ data }) => data.tags.includes(tag)))
-  : sortPosts(allPosts);
-
-if (!max) max = posts.length + 1;
-
-function excerpt(post: CollectionEntry<"posts">): string {
-  const source = post.data.description || post.body || "";
-  const cleaned = source
-    .replace(/^---[\s\S]*?---/, "")
-    .replace(/```[\s\S]*?```/g, " ")
-    .replace(/<\/?[^>]+>/g, " ")
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/[#>*_~{}[\]()]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  return cleaned.length > 120
-    ? `${cleaned.slice(0, 120).replace(/\s+\S*$/, "")}...`
-    : cleaned;
-}
-
-// newest first, grouped under their year
-const years = new Map<number, CollectionEntry<"posts">[]>();
-for (const post of posts.slice(0, max)) {
-  const year = post.data.pubDate.getFullYear();
-  years.set(year, [...(years.get(year) ?? []), post]);
-}
+import { getCollection } from "astro:content";
+const { tag } = Astro.props;
+const posts = (await getCollection("posts"))
+  .filter((post) => !tag || post.data.tags.includes(tag))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 ---
 
-<div class="post-list">
+<ul class="rows">
   {
-    [...years.entries()].map(([year, group]) => (
-      <section class="post-year">
-        <h2 class="section-label">{year}</h2>
-        <ul role="list" class="rows">
-          {group.map((post) => (
-            <li
-              class="post-item"
-              data-tags={post.data.tags.join(",")}
-              data-search={[
-                post.data.title,
-                post.data.description ?? "",
-                post.slug,
-                post.data.tags.join(" "),
-                post.body,
-              ].join(" ")}
-            >
-              <a class="row" href={`/notes/${post.slug}`}>
-                <span class="row-title">{post.data.title}</span>
-                <time
-                  class="row-date"
-                  datetime={post.data.pubDate.toISOString()}
-                >
-                  {post.data.pubDate.toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "2-digit",
-                  })}
-                </time>
-              </a>
-              <p class="row-sum">{excerpt(post)}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
+    posts.map((post) => (
+      <li
+        class="post-item"
+        data-tags={post.data.tags.join(",")}
+        data-search={`${post.data.title} ${post.data.description ?? ""} ${post.body}`.toLowerCase()}
+      >
+        <a class="row" href={`/notes/${post.slug}`}>
+          <>
+            <span class="row-title">{post.data.title}</span>
+            <time class="row-date" datetime={post.data.pubDate.toISOString()}>
+              {post.data.pubDate.toLocaleDateString("en-US", {
+                month: "short",
+                year: "numeric",
+              })}
+            </time>
+          </>
+        </a>
+      </li>
     ))
   }
-</div>
-
-<style>
-  .post-year + .post-year {
-    margin-top: 3rem;
-  }
-
-  /* a year whose posts are all filtered out drops its label too */
-  .post-year:not(:has(.post-item:not([data-hidden]))) {
-    display: none;
-  }
-
-  .post-item + .post-item {
-    margin-top: 0.9rem;
-  }
-
-  .post-item .row {
-    padding-bottom: 0.1rem;
-  }
-</style>
+</ul>

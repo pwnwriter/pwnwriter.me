@@ -1,63 +1,53 @@
 ---
-import Layout from '~/layouts/Layout.astro';
-import '~/styles/writing.css';
-import Wrapper from '~/components/wrapper.astro';
-import Prose from '~/components/prose.astro';
-import { Image } from 'astro:assets';
-import type { Post } from '~/content/config';
-import { formatDate } from '~/lib/utils';
-
-type Props = {
-	frontmatter: Post;
-	body?: string;
-};
-
-const { title, pubDate, modDate, description, cover, tags } =
-	Astro.props.frontmatter;
-
-const words = Astro.props.body?.trim().split(/\s+/).length ?? 0;
-const readingTime = Math.max(1, Math.round(words / 200));
-
-const formattedPubDate = formatDate(pubDate);
-const formattedModDate = formatDate(modDate);
+import Layout from "~/layouts/Layout.astro";
+import { Image } from "astro:assets";
+const { frontmatter: data, body = "" } = Astro.props;
+const minutes = Math.max(1, Math.ceil(body.split(/\s+/).length / 220));
 ---
 
-<Layout {title} {description}>
-	<Wrapper>
-		<article class="writing-note">
-			<header class="writing-head">
-				<h1>{title}</h1>
-				<p class="writing-meta meta">
-					<time datetime={pubDate.toISOString()}>{formattedPubDate}</time>
-					{
-						formattedModDate !== formattedPubDate && (
-							<span>· edited {formattedModDate}</span>
-						)
-					}
-					<span>· {readingTime} min read</span>
-					{
-						tags.map((tag: string, i: number) => (
-							<span>
-								{i === 0 && '· '}
-								<a href={`/notes/tags/${tag}`}>#{tag}</a>
-							</span>
-						))
-					}
-				</p>
-				{
-					cover && cover.src && (
-						<figure class="writing-cover">
-							<Image src={cover.src} alt={cover.alt} />
-						</figure>
-					)
-				}
-			</header>
-
-			<div class="writing-copy">
-				<Prose>
-					<slot />
-				</Prose>
-			</div>
-		</article>
-	</Wrapper>
-</Layout>
+<Layout title={data.title} description={data.description ?? data.title}
+  ><article class="shell reading">
+    <a class="back-link" href="/notes">← All notes</a><header
+      class="reading-head"
+    >
+      <p class="eyebrow">
+        <time datetime={data.pubDate.toISOString()}
+          >{
+            data.pubDate.toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })
+          }</time
+        ><span>/ {minutes} min read</span>
+      </p><h1>{data.title}</h1>{
+        data.description && <p class="page-lede">{data.description}</p>
+      }<div class="reading-tags">
+        {
+          data.tags.map((tag: string) => (
+            <a href={`/notes/tags/${tag}`}>#{tag}</a>
+          ))
+        }
+      </div>{data.cover && <Image src={data.cover.src} alt={data.cover.alt} />}
+    </header><div class="prose"><slot /></div>{
+      data.links?.length > 0 && (
+        <aside class="references">
+          <h2>Further reading</h2>
+          {data.links.map((link: { name: string; url: string }) => (
+            <p>
+              <a href={link.url}>{link.name} ↗</a>
+            </p>
+          ))}
+        </aside>
+      )
+    }<p class="meta edited">
+      Last edited {
+        data.modDate.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      }
+    </p>
+  </article></Layout
+>

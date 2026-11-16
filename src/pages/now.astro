@@ -1,0 +1,140 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import { getCollection } from "astro:content";
+const entries = (await getCollection("syndications")).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+const rendered = await Promise.all(
+  entries.map(async (entry) => ({ entry, ...(await entry.render()) })),
+);
+---
+
+<Layout
+  title="Now"
+  description="A personal timeline of life, school, travel, and things shipped."
+  ><div class="shell timeline-shell">
+    <header class="page-head">
+      <p class="eyebrow">A living archive</p><h1>Life, in little updates.</h1><p
+        class="page-lede"
+      >
+        Code, school, travel, and the moments in between. Newest first.
+      </p>
+    </header><div class="timeline">
+      {
+        rendered.map(({ entry, Content }, i) => (
+          <article class:list={["timeline-entry", { latest: i === 0 }]}>
+            <>
+              <div class="timeline-date">
+                <time datetime={entry.data.pubDate.toISOString()}>
+                  {entry.data.pubDate.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </time>
+                {i === 0 && <span>Latest entry</span>}
+              </div>
+              <details open={i === 0}>
+                <>
+                  <summary>
+                    <>
+                      <h2>{entry.data.title}</h2>
+                      <span class="toggle" aria-hidden="true">
+                        +
+                      </span>
+                    </>
+                  </summary>
+                  <div class="prose">
+                    <>
+                      <Content />
+                      <a
+                        class="entry-permalink"
+                        href={`/syndications/${entry.slug}`}
+                      >
+                        Permalink ↗
+                      </a>
+                    </>
+                  </div>
+                </>
+              </details>
+            </>
+          </article>
+        ))
+      }
+    </div>
+  </div></Layout
+>
+<style>
+  .timeline-shell {
+    max-width: 800px;
+  }
+  .timeline-entry {
+    position: relative;
+    border-left: 1px solid #cdd0da;
+    padding: 0 0 36px 28px;
+  }
+  .timeline-entry::before {
+    content: "";
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: #b7bac8;
+    left: -4px;
+    top: 5px;
+  }
+  .timeline-entry.latest::before {
+    background: #626886;
+    box-shadow: 0 0 0 5px #62688612;
+  }
+  .timeline-date {
+    display: flex;
+    gap: 18px;
+    font: 10px/1.7 var(--font-mono);
+    color: var(--f-mute);
+    margin-bottom: 12px;
+  }
+  .timeline-date > span {
+    color: var(--accent);
+  }
+  .timeline-entry summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    list-style: none;
+    gap: 20px;
+  }
+  .timeline-entry summary::-webkit-details-marker {
+    display: none;
+  }
+  .timeline-entry h2 {
+    font-size: 22px;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    margin: 0;
+  }
+  .toggle {
+    font: 18px var(--font-mono);
+    color: var(--f-mute);
+  }
+  .timeline-entry[open] .toggle,
+  details[open] .toggle {
+    transform: rotate(45deg);
+  }
+  .timeline-entry .prose {
+    padding-top: 12px;
+  }
+  .entry-permalink {
+    font: 10px var(--font-mono);
+    display: inline-block;
+    margin-top: 10px;
+  }
+  @media (max-width: 640px) {
+    .timeline-entry {
+      padding-left: 20px;
+    }
+    .timeline-entry h2 {
+      font-size: 19px;
+    }
+  }
+</style>

@@ -30,6 +30,30 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "whoami-cards",
+    name: "whoami.cards",
+    summary: "shareable profile cards for the different sides of you.",
+    tagline: "one identity, different modes, a card in your Wallet.",
+    blurb: "a permanent @name, context-specific profiles, and an Apple Wallet card that updates when you switch modes.",
+    tech: [],
+    year: "2026",
+    cover: { kind: "video", src: "/projects/whoami-cards/demo.mp4", poster: "/projects/whoami-cards/cover.jpg" },
+    media: [{ kind: "video", src: "/projects/whoami-cards/demo.mp4", poster: "/projects/whoami-cards/cover.jpg", alt: "whoami.cards demo: profile modes, sharing, and QR card preview" }],
+  },
+  {
+    slug: "wosa-study",
+    name: "wosa.study",
+    summary: "a maths app.",
+    tagline: "a maths app. live and growing.",
+    blurb: "a maths app i'm working on.",
+    tech: [],
+    year: "2026",
+    status: "live",
+    demo: "https://wosa.study",
+    media: [],
+  },
+
+  {
     slug: "tes-chat",
     name: "tes.chat",
     summary:

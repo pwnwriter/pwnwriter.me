@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
 import remarkGfm from "remark-gfm";
 import remarkMarkHighlight from "./src/lib/remark-mark-highlight.mjs";
 import rehypeExternalLinks from "./src/lib/rehype-external-links.mjs";
@@ -13,7 +12,6 @@ export default defineConfig({
       },
     },
   },
-  integrations: [tailwind({ config: { applyBaseStyles: false } })],
   markdown: {
     remarkPlugins: [remarkGfm, remarkMarkHighlight],
     rehypePlugins: [rehypeExternalLinks, rehypeWrapTables],

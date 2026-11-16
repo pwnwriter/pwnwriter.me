@@ -1,241 +1,399 @@
 ---
-// Everything i have to show, on one page: the things i built, what they got,
-// and the photos i kept. Each row scrolls sideways, and anything you click
-// opens in the preview rather than another page.
 import Layout from "~/layouts/Layout.astro";
-import Wrapper from "~/components/wrapper.astro";
-import Rail from "~/components/rail.astro";
-import Preview from "~/components/preview.astro";
 import { projects } from "~/data/projects";
 import { recognition } from "~/data/recognition";
 import { photos } from "~/data/photos";
-
-const things = projects;
-const wins = recognition;
-const shots = [...photos].sort((a, b) => (a.date < b.date ? 1 : -1));
-
-// everything the preview needs, keyed by the id the card carries
-const previews: Record<string, unknown> = {};
-
-for (const p of things) {
-  const media = p.media?.length ? p.media : p.cover ? [p.cover] : [];
-  previews[`p:${p.slug}`] = {
-    title: p.name,
-    sub: [p.year, p.status, p.archived ? "archived" : null].filter(Boolean).join(" · "),
-    blurb: p.blurb ?? p.summary,
-    points: p.highlights ?? [],
-    tech: p.tech ?? [],
-    links: [
-      p.repo && { label: "repo", href: p.repo },
-      p.demo && { label: "demo", href: p.demo },
-      p.readMore && { label: "write-up", href: p.readMore },
-      p.reddit && { label: "discussion", href: p.reddit },
-    ].filter(Boolean),
-    media,
-  };
-}
-
-for (const [n, w] of wins.entries()) {
-  const pic = w.photo ?? w.image;
-  previews[`r:${n}`] = {
-    title: w.result,
-    sub: [w.title, w.where, w.year].filter(Boolean).join(" · "),
-    blurb: w.note ?? "",
-    scan: !w.photo && !!w.image,
-    links: w.href && !w.href.endsWith(".png") ? [{ label: "read more", href: w.href }] : [],
-    media: pic ? [{ kind: "image", src: pic.src, alt: pic.alt }] : [],
-  };
-}
-
-for (const [n, ph] of shots.entries()) {
-  previews[`f:${n}`] = {
-    title: ph.alt || "photo",
-    sub: ph.year,
-    media: [{ kind: "image", src: ph.src, alt: ph.alt }],
-  };
-}
+import { highlights, nixpkgs } from "~/data/oss";
 ---
 
-<Layout title="work" description="What i built, what it got, and what i photographed.">
-  <Wrapper>
+<Layout
+  title="Work"
+  description="Projects, open-source contributions, and recognition."
+  ><div class="shell">
     <header class="page-head">
-      <h1 class="page-title">work</h1>
-      <p class="page-lede">
-        what i built, what it got, and what i pointed a camera at. click
-        anything to open it.
+      <p class="eyebrow">Selected work / 2022 , now</p><h1>
+        Built out of curiosity.
+      </h1><p class="page-lede">
+        Tools, interfaces, and experiments. Some shipped, some retired. All
+        taught me something.
       </p>
     </header>
-
-    <Rail label="Things">
+    <div class="project-grid">
       {
-        things.map((p) => {
-          const cover = p.cover ?? p.media?.[0];
-          const art = cover?.kind === "image" ? cover : undefined;
-          const poster = cover?.kind === "video" ? cover.poster : undefined;
-          const img = art?.src ?? poster;
+        projects.map((project, i) => {
+          const cover = project.cover ?? project.media[0];
           return (
-            <button class="card" type="button" data-pv-open={`p:${p.slug}`}>
-              <span class={"well" + (img ? "" : " well--text")}>
-                {img ? (
-                  <img src={img} alt={art?.alt ?? p.name} loading="lazy" />
-                ) : (
-                  <span class="well-mark">{p.name}</span>
-                )}
-                {cover?.kind === "video" && (
-                  <span class="play" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
-                  </span>
-                )}
-              </span>
-              <span class="card-title">{p.name}</span>
-              <span class="card-sub">{p.tagline ?? p.summary}</span>
-            </button>
+            <article class="project" id={project.slug}>
+              <>
+                <div class="project-media">
+                  {cover ? (
+                    cover.kind === "video" ? (
+                      <video
+                        controls
+                        preload="none"
+                        poster={cover.poster}
+                        aria-label={`${project.name} demo`}
+                      >
+                        <source src={cover.src} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <img
+                        src={cover.src}
+                        alt={cover.alt ?? project.name}
+                        loading="lazy"
+                      />
+                    )
+                  ) : (
+                    <div class="project-placeholder">
+                      <span>∑</span>
+                      <p>{project.name}</p>
+                    </div>
+                  )}
+                </div>
+                <div class="project-top">
+                  <>
+                    <h2>{project.name}</h2>
+                    <span class="meta">{project.status ?? project.year}</span>
+                  </>
+                </div>
+                <p>{project.summary}</p>
+                <details class="project-details">
+                  <summary>Inside the project <span aria-hidden="true">+</span></summary>
+                  <p>{project.blurb}</p>
+                  {project.highlights && (
+                    <ul>
+                      {project.highlights.map((point) => (
+                        <li>{point}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {project.tech.length > 0 && (
+                    <p class="tech">{project.tech.join(" / ")}</p>
+                  )}
+                  <div class="project-links">
+                    {project.repo && <a href={project.repo}>Source ↗</a>}
+                    {project.demo && <a href={project.demo}>Visit ↗</a>}
+                    {project.readMore && (
+                      <a href={project.readMore}>Write-up →</a>
+                    )}
+                    {project.reddit && (
+                      <a href={project.reddit}>Discussion ↗</a>
+                    )}
+                  </div>
+                  {project.media.slice(1).map((media) =>
+                    media.kind === "image" ? (
+                      <img
+                        class="extra-media"
+                        src={media.src}
+                        alt={media.alt ?? project.name}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <video
+                        class="extra-media"
+                        controls
+                        preload="none"
+                        poster={media.poster}
+                      >
+                        <source src={media.src} type="video/mp4" />
+                      </video>
+                    ),
+                  )}
+                </details>
+              </>
+            </article>
           );
         })
       }
-    </Rail>
-
-    <Rail label="Recognition">
-      {
-        wins.map((w, n) => {
-          const pic = w.photo ?? w.image;
-          return (
-            <button class="card" type="button" data-pv-open={`r:${n}`}>
-              <span
-                class={"well" + (pic ? "" : " well--text") + (!w.photo && w.image ? " well--scan" : "")}
-              >
-                {pic ? (
-                  <img src={pic.src} alt={pic.alt} loading="lazy" />
-                ) : (
-                  <span class="well-mark">{w.result}</span>
-                )}
-              </span>
-              <span class="card-title">{w.result}</span>
-              <span class="card-sub">{[w.title, w.year].filter(Boolean).join(" · ")}</span>
-            </button>
-          );
-        })
-      }
-    </Rail>
-
-    <Rail label="Photos">
-      {
-        shots.map((ph, n) => (
-          <button class="card" type="button" data-pv-open={`f:${n}`}>
-            <span class="well well--photo">
-              <img src={ph.src} alt={ph.alt} loading="lazy" />
+    </div>
+    <section class="section-block">
+      <div class="section-head">
+        <h2>Open source / a shared effort</h2><a
+          href="https://github.com/pulls?q=is%3Apr+author%3Apwnwriter"
+          >All contributions ↗</a>
+      </div><div class="contributions">
+        {
+          highlights.map((item) => (
+            <a href={item.url}>
+              <>
+                <span class="contribution-title">
+                  {item.repo}
+                  <span>↗</span>
+                </span>
+                <p>{item.what}</p>
+                <span class="meta">
+                  {item.lang}
+                  {item.count ? ` / ${item.count} merged PRs` : ""}
+                </span>
+              </>
+            </a>
+          ))
+        }
+      </div><p class="nixpkgs">
+        Also in nixpkgs: {
+          nixpkgs.map((pkg, i) => (
+            <span>
+              {i > 0 ? " · " : ""}
+              <a href={pkg.url}>{pkg.name}</a>
             </span>
-            <span class="card-sub">{ph.year}</span>
-          </button>
-        ))
-      }
-    </Rail>
-  </Wrapper>
-
-  <Preview />
-  <script type="application/json" id="preview-data" set:html={JSON.stringify(previews)} is:inline />
-</Layout>
-
+          ))
+        }
+      </p>
+    </section>
+    <section class="section-block" id="recognition">
+      <div class="section-head"><h2>Recognition / along the way</h2></div><div
+        class="recognition-list"
+      >
+        {
+          recognition.map((item) => {
+            const pic = item.photo ?? item.image;
+            return (
+              <article>
+                {pic && (
+                  <a href={pic.src}>
+                    <img
+                      src={pic.src}
+                      alt={pic.alt}
+                      loading="lazy"
+                      class:list={{ letter: !!item.image }}
+                    />
+                  </a>
+                )}
+                <div>
+                  <span class="meta">{item.year}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.result}</p>
+                  {item.note && <p class="muted">{item.note}</p>}
+                  {item.href && (
+                    <a class="meta" href={item.href}>
+                      Read more ↗
+                    </a>
+                  )}
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+    </section>
+    <section class="section-block" id="photos">
+      <div class="section-head">
+        <h2>Photographs / moments kept</h2><span class="meta"
+          >{photos.length} frames</span>
+      </div><div class="photo-grid">
+        {
+          [...photos]
+            .sort((a, b) => b.date.localeCompare(a.date))
+            .map((photo) => (
+              <figure>
+                <>
+                  <a href={photo.src}>
+                    <img src={photo.src} alt={photo.alt} loading="lazy" />
+                  </a>
+                  <figcaption class="meta">
+                    {photo.alt} / {photo.year}
+                  </figcaption>
+                </>
+              </figure>
+            ))
+        }
+      </div>
+    </section>
+  </div></Layout
+>
 <style>
-  .card {
-    display: block;
-    border: 0;
-    background: none;
-    padding: 0;
-    color: inherit;
-    text-align: left;
-    text-decoration: none;
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
   }
-
-  .well {
-    position: relative;
+  .photo-grid figure {
+    margin: 0;
+  }
+  .photo-grid img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+  .photo-grid figcaption {
+    margin-top: 9px;
+  }
+  .project-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px 28px;
+  }
+  .project {
+    min-width: 0;
+  }
+  .project-media {
+    aspect-ratio: 1.6;
+    background: #e1e2e8;
     display: grid;
     place-items: center;
-    aspect-ratio: 4 / 3;
     overflow: hidden;
-    border-radius: 16px;
-    background: var(--b-med);
-    padding: 1rem;
-    transition: background 0.2s ease;
+    border: 1px solid var(--line);
   }
-
-  .well--photo {
-    padding: 0;
-  }
-
-  .card:hover .well {
-    background: var(--b-high);
-  }
-
-  .well img {
+  .project-media video,
+  .project-media img {
     width: 100%;
     height: 100%;
-    border-radius: 9px;
-    object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  .well--photo img {
-    border-radius: 16px;
-  }
-
-  .card:hover .well img {
-    transform: scale(1.03);
-  }
-
-  /* a scanned letter is paper: show it whole, on white */
-  .well--scan img {
     object-fit: contain;
-    background: #fff;
   }
-
-  .well--text .well-mark {
-    color: var(--f-high);
-    font-size: 1.2rem;
-    font-weight: 650;
+  .project-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 15px;
+    margin-top: 18px;
+  }
+  .project h2 {
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .project > p {
+    color: var(--f-low);
+    font-size: 15px;
+    margin: 7px 0 15px;
+  }
+  .project-placeholder {
     text-align: center;
-    text-wrap: balance;
+    font: 13px var(--font-mono);
+    color: #666b85;
   }
-
-  /* a corner badge on anything with a video behind it */
-  .play {
-    position: absolute;
-    right: 0.6rem;
-    bottom: 0.6rem;
-    display: grid;
-    place-items: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--background) 85%, transparent);
-    backdrop-filter: blur(6px);
-    color: var(--f-high);
-  }
-
-  .card-title {
+  .project-placeholder > span {
     display: block;
-    margin-top: 0.7rem;
-    color: var(--f-high);
-    font-size: 0.98rem;
-    font-weight: 600;
-    transition: color 0.15s ease;
+    font-size: 64px;
+    margin-bottom: 15px;
   }
-
-  .card:hover .card-title {
-    color: var(--accent);
+  .project-details {
+    border-top: 1px solid var(--line);
+    font-size: 14px;
   }
-
-  .card-sub {
-    display: block;
-    margin-top: 0.15rem;
+  .project-details summary {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 13px 0;
+    font: 10px var(--font-mono);
     color: var(--f-mute);
-    font-size: 0.88rem;
-    line-height: 1.45;
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    .card:hover .well img {
-      transform: none;
+  .project-details summary::-webkit-details-marker {
+    display: none;
+  }
+  .project-details[open] summary span {
+    transform: rotate(45deg);
+  }
+  .project-details p,
+  .project-details li {
+    color: var(--f-low);
+  }
+  .project-details ul {
+    padding-left: 20px;
+  }
+  .tech {
+    font: 10px/1.8 var(--font-mono);
+  }
+  .project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font: 11px var(--font-mono);
+    margin: 20px 0;
+  }
+  .extra-media {
+    margin-top: 15px;
+  }
+  .contributions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 30px;
+  }
+  .contributions > a {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .contribution-title {
+    display: flex;
+    justify-content: space-between;
+    font-size: 17px;
+  }
+  .contribution-title > span {
+    color: var(--f-mute);
+  }
+  .contributions p {
+    font-size: 14px;
+    color: var(--f-low);
+    margin: 7px 0;
+  }
+  .nixpkgs {
+    font-size: 14px;
+    margin-top: 25px;
+    color: var(--f-low);
+  }
+  .recognition-list {
+    display: grid;
+    gap: 25px;
+  }
+  .recognition-list article {
+    display: flex;
+    align-items: start;
+    gap: 25px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 25px;
+  }
+  .recognition-list article > a {
+    width: 145px;
+    flex: none;
+  }
+  .recognition-list img {
+    width: 145px;
+    height: 115px;
+    object-fit: cover;
+  }
+  .recognition-list img.letter {
+    object-fit: contain;
+    background: var(--b-med);
+    padding: 8px;
+  }
+  .recognition-list h3 {
+    margin: 4px 0;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .recognition-list p {
+    margin: 0;
+    font-size: 15px;
+  }
+  .recognition-list .muted {
+    color: var(--f-low);
+    margin-top: 7px;
+    max-width: 530px;
+  }
+  @media (max-width: 640px) {
+    .photo-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .project-grid,
+    .contributions {
+      grid-template-columns: 1fr;
+    }
+    .recognition-list article {
+      gap: 16px;
+    }
+    .recognition-list article > a,
+    .recognition-list img {
+      width: 85px;
+    }
+    .recognition-list img {
+      height: 85px;
+    }
+    .recognition-list h3 {
+      font-size: 17px;
     }
   }
 </style>

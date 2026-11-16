@@ -1,225 +1,80 @@
 ---
-import Layout from '~/layouts/Layout.astro';
-import Wrapper from '~/components/wrapper.astro';
-import PostList from '~/components/post-list.astro';
-import { getCollection } from 'astro:content';
-
-const posts = await getCollection('posts');
+import Layout from "~/layouts/Layout.astro";
+import PostList from "~/components/post-list.astro";
+import { getCollection } from "astro:content";
+const posts = await getCollection("posts");
 const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 ---
 
-<Layout title="notes" description="Notes from pwn::musings.">
-	<Wrapper>
-		<header class="page-head">
-			<h1 class="page-title">things &amp; notes</h1>
-			<p class="page-lede">
-				a home for ideas i keep rebuilding, breaking, and explaining until
-				the weird parts finally become searchable.
-			</p>
-		</header>
-
-		<div class="chips" role="group" aria-label="Filter notes by tag">
-			<button class="note-chip chip chip--active" data-filter="all">all</button>
-			{
-				tags.map((tag) => (
-					<button class="note-chip chip" data-filter={tag}>{tag}</button>
-				))
-			}
-		</div>
-
-		<div class="list-tools">
-			<span class="meta" data-note-count>{posts.length} posts</span>
-			<label class="search" data-search-shell>
-				<span aria-hidden="true">/</span>
-				<input
-					type="search"
-					placeholder="search"
-					aria-label="Search notes"
-					autocomplete="off"
-					autocapitalize="off"
-					spellcheck="false"
-					data-note-search
-				/>
-				<button type="button" aria-label="Clear search" data-note-clear>×</button>
-			</label>
-		</div>
-
-		<PostList />
-		<p class="meta" data-note-empty hidden>nothing matched that.</p>
-	</Wrapper>
-</Layout>
-
+<Layout
+  title="Notes"
+  description="Field notes on security, Linux, Nix, and building software."
+  ><div class="shell">
+    <header class="page-head">
+      <p class="eyebrow">The notebook</p><h1>Things worth writing down.</h1><p
+        class="page-lede"
+      >
+        Notes from building, breaking, and figuring it out.
+      </p>
+    </header><div class="list-tools">
+      <label class="search"
+        ><span aria-hidden="true">⌕</span><input
+          type="search"
+          aria-label="Search notes"
+          placeholder="Find a note…"
+          data-search-input
+        /></label
+      ><span class="meta" data-result-count aria-live="polite"
+        >{posts.length} notes</span>
+    </div><div class="chips" aria-label="Filter by topic">
+      <button class="chip chip--active" aria-pressed="true" data-topic="all"
+        >All</button
+      >{
+        tags.map((tag) => (
+          <button class="chip" aria-pressed="false" data-topic={tag}>
+            {tag}
+          </button>
+        ))
+      }
+    </div><PostList /><p hidden data-empty>
+      No notes match. Try another word or topic.
+    </p>
+  </div></Layout
+>
 <script>
-	const chips = document.querySelectorAll<HTMLButtonElement>('.note-chip');
-	const posts = document.querySelectorAll<HTMLElement>('.post-item');
-	const search = document.querySelector<HTMLInputElement>('[data-note-search]');
-	const clear = document.querySelector<HTMLButtonElement>('[data-note-clear]');
-	const count = document.querySelector<HTMLElement>('[data-note-count]');
-	const empty = document.querySelector<HTMLElement>('[data-note-empty]');
-	const shell = document.querySelector<HTMLElement>('[data-search-shell]');
-	let activeFilter = 'all';
-
-	function escapeRegExp(value: string) {
-		return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	}
-
-	function getTerms(query: string) {
-		return query
-			.toLowerCase()
-			.split(/\s+/)
-			.map((term) => term.trim())
-			.filter((term) => term.length > 1);
-	}
-
-	function clearHighlights(root: ParentNode = document) {
-		root.querySelectorAll('mark.search-hit').forEach((mark) => {
-			mark.replaceWith(document.createTextNode(mark.textContent ?? ''));
-		});
-	}
-
-	function highlightText(root: HTMLElement, query: string) {
-		const terms = getTerms(query);
-		if (!terms.length) return;
-
-		const pattern = new RegExp(`(${terms.map(escapeRegExp).join('|')})`, 'gi');
-		const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-			acceptNode(node) {
-				const parent = node.parentElement;
-				if (!parent || parent.closest('mark, script, style, input, textarea')) {
-					return NodeFilter.FILTER_REJECT;
-				}
-				pattern.lastIndex = 0;
-				return pattern.test(node.textContent ?? '')
-					? NodeFilter.FILTER_ACCEPT
-					: NodeFilter.FILTER_REJECT;
-			},
-		});
-
-		const nodes: Text[] = [];
-		while (walker.nextNode()) nodes.push(walker.currentNode as Text);
-
-		nodes.forEach((node) => {
-			const fragment = document.createDocumentFragment();
-			const text = node.textContent ?? '';
-			pattern.lastIndex = 0;
-			let lastIndex = 0;
-
-			for (const match of text.matchAll(pattern)) {
-				const index = match.index ?? 0;
-				if (index > lastIndex) {
-					fragment.append(document.createTextNode(text.slice(lastIndex, index)));
-				}
-
-				const mark = document.createElement('mark');
-				mark.className = 'search-hit';
-				mark.textContent = match[0];
-				fragment.append(mark);
-				lastIndex = index + match[0].length;
-			}
-
-			if (lastIndex < text.length) {
-				fragment.append(document.createTextNode(text.slice(lastIndex)));
-			}
-
-			node.replaceWith(fragment);
-		});
-	}
-
-	function openSearch() {
-		shell?.setAttribute('data-open', '');
-		search?.focus();
-	}
-
-	function closeSearch() {
-		if (search?.value) return;
-		shell?.removeAttribute('data-open');
-		search?.blur();
-	}
-
-	function toggleSearch() {
-		if (shell?.hasAttribute('data-open')) {
-			if (search?.value) {
-				search.value = '';
-				applyFilters();
-			}
-			closeSearch();
-		} else {
-			openSearch();
-		}
-	}
-
-	function applyFilters() {
-		const query = search?.value.trim().toLowerCase() ?? '';
-		let visible = 0;
-		clearHighlights();
-
-		posts.forEach((post) => {
-			const tags = post.dataset.tags?.split(',') ?? [];
-			const text = (post.dataset.search || post.textContent || '').toLowerCase();
-			const matchesTag = activeFilter === 'all' || tags.includes(activeFilter);
-			const matchesSearch = !query || text.includes(query);
-			const shouldHide = !matchesTag || !matchesSearch;
-
-			post.toggleAttribute('data-hidden', shouldHide);
-			const link = post.querySelector<HTMLAnchorElement>('a');
-			if (link) {
-				link.dataset.baseHref ??= link.getAttribute('href') ?? '';
-				link.href = query
-					? `${link.dataset.baseHref}?q=${encodeURIComponent(query)}`
-					: link.dataset.baseHref;
-			}
-
-			if (!shouldHide) {
-				visible += 1;
-				if (query) highlightText(post, query);
-			}
-		});
-
-		if (count) count.textContent = `${visible} ${visible === 1 ? 'post' : 'posts'}`;
-		empty?.toggleAttribute('hidden', visible !== 0);
-		clear?.toggleAttribute('data-visible', Boolean(query));
-	}
-
-	chips.forEach((chip) => {
-		chip.addEventListener('click', () => {
-			chips.forEach((c) => c.classList.remove('chip--active'));
-			chip.classList.add('chip--active');
-			activeFilter = chip.dataset.filter ?? 'all';
-			applyFilters();
-		});
-	});
-
-	search?.addEventListener('input', applyFilters);
-	search?.addEventListener('focus', openSearch);
-	search?.addEventListener('keydown', (event) => {
-		if (event.key === 'Escape') {
-			if (search.value) {
-				search.value = '';
-				applyFilters();
-			} else {
-				closeSearch();
-			}
-		}
-	});
-	shell?.addEventListener('click', openSearch);
-	document.addEventListener('keydown', (event) => {
-		const target = event.target as HTMLElement | null;
-		const isTyping =
-			target?.tagName === 'INPUT' ||
-			target?.tagName === 'TEXTAREA' ||
-			target?.isContentEditable;
-
-		if (event.key === '/' && !isTyping) {
-			event.preventDefault();
-			toggleSearch();
-		}
-	});
-	clear?.addEventListener('click', () => {
-		if (!search) return;
-		search.value = '';
-		search.focus();
-		applyFilters();
-	});
-
+  const input = document.querySelector<HTMLInputElement>("[data-search-input]");
+  const buttons = [
+    ...document.querySelectorAll<HTMLButtonElement>("[data-topic]"),
+  ];
+  const entries = [...document.querySelectorAll<HTMLElement>(".post-item")];
+  let topic = "all";
+  function filter() {
+    const terms = (input?.value.toLowerCase().trim() ?? "")
+      .split(/\s+/)
+      .filter(Boolean);
+    let count = 0;
+    entries.forEach((entry) => {
+      const visible =
+        (topic === "all" || entry.dataset.tags?.split(",").includes(topic)) &&
+        terms.every((term) => entry.dataset.search?.includes(term));
+      entry.hidden = !visible;
+      if (visible) count++;
+    });
+    const label = document.querySelector("[data-result-count]");
+    if (label) label.textContent = `${count} ${count === 1 ? "note" : "notes"}`;
+    document
+      .querySelector("[data-empty]")
+      ?.toggleAttribute("hidden", count !== 0);
+  }
+  buttons.forEach((button) =>
+    button.addEventListener("click", () => {
+      topic = button.dataset.topic ?? "all";
+      buttons.forEach((item) => {
+        item.classList.toggle("chip--active", item === button);
+        item.setAttribute("aria-pressed", String(item === button));
+      });
+      filter();
+    }),
+  );
+  input?.addEventListener("input", filter);
 </script>
-

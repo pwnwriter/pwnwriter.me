@@ -1,0 +1,34 @@
+---
+const socials=[
+ {name:'GitHub',hint:'Code & experiments',href:'https://github.com/pwnwriter',path:'M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.9 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3'},
+ {name:'X',hint:'Thoughts & updates',href:'https://x.com/pwnwriter',path:'M18.9 1.2h3.7l-8 9.2L24 22.8h-7.4l-5.8-7.6-6.6 7.6H.5l8.6-9.8L0 1.2h7.6l5.2 6.9 6.1-6.9Zm-1.3 19.5h2L6.5 3.2H4.3l13.3 17.5Z'},
+ {name:'LinkedIn',hint:'Work & connections',href:'https://www.linkedin.com/in/pwnwriter',path:'M20.4 20.5h-3.5v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9v5.7H9.4V9h3.4v1.6c.5-.9 1.6-1.9 3.4-1.9 3.6 0 4.3 2.4 4.3 5.5v6.3ZM5.3 7.4a2.1 2.1 0 1 1 0-4.1 2.1 2.1 0 0 1 0 4.1Zm1.8 13.1H3.6V9h3.5v11.5ZM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 .9.8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7c0-.9-.8-1.7-1.8-1.7Z'},
+];
+---
+<details class="socials-disclosure">
+  <summary>@pwnwriter<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></summary>
+  <nav class="socials-panel" aria-label="Find pwnwriter online"><div class="socials-intro"><strong>Nabeen</strong><span>@pwnwriter</span><p>Security research, interfaces,<br/>and things I am figuring out.</p></div>{socials.map(social=><a href={social.href} rel="me"><span class="social-logo"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={social.path}/></svg></span><span class="social-copy"><span class="social-title">{social.name}</span><span class="social-hint">{social.hint}</span></span><span class="social-arrow" aria-hidden="true">↗</span></a>)}</nav>
+</details>
+<script>
+const details=document.querySelector<HTMLDetailsElement>('.socials-disclosure');
+if(details){const summary=details.querySelector('summary')!;
+  const panel=details.querySelector<HTMLElement>('.socials-panel')!;
+  function place(){if(!details!.open)return;const rect=summary.getBoundingClientRect();panel.style.position='fixed';const width=panel.offsetWidth,height=panel.offsetHeight;panel.style.left=`${Math.max(16,Math.min(rect.left,innerWidth-width-16))}px`;panel.style.top=`${rect.bottom+9+height>innerHeight-16?Math.max(16,rect.top-height-9):rect.bottom+9}px`;}
+  details.addEventListener('toggle',place);window.addEventListener('resize',place);window.addEventListener('scroll',place,{passive:true});let pinned=false;let timer:ReturnType<typeof setTimeout>|undefined;
+  details.addEventListener('pointerenter',event=>{if(event.pointerType==='touch')return;clearTimeout(timer);details.open=true;});
+  details.addEventListener('pointerleave',()=>{clearTimeout(timer);timer=setTimeout(()=>{if(!pinned&&!details.contains(document.activeElement))details.open=false;},160);});
+  summary.addEventListener('click',event=>{event.preventDefault();pinned=!pinned;details.open=pinned;});
+  document.addEventListener('pointerdown',event=>{if(!details.contains(event.target as Node)){details.open=false;pinned=false;}});
+  details.addEventListener('keydown',event=>{if(event.key==='Escape'&&details.open){event.preventDefault();event.stopPropagation();details.open=false;pinned=false;summary.focus();}if(event.key==='ArrowDown'&&event.target===summary){event.preventDefault();details.open=true;details.querySelector('a')?.focus();}});
+  details.addEventListener('focusout',()=>requestAnimationFrame(()=>{if(!details.contains(document.activeElement))details.open=false;}));
+}
+</script>
+<style>
+.socials-disclosure{position:relative;display:inline-block;}.socials-disclosure summary{display:inline-flex;align-items:center;gap:9px;list-style:none;padding:0 10px;background:#e6e6eb;border:1px solid transparent;border-radius:10px;color:#737581;cursor:pointer;transition:background .18s,border-color .18s;}.socials-disclosure summary::-webkit-details-marker{display:none;}.socials-disclosure summary:hover,.socials-disclosure[open] summary{background:#e1e3eb;border-color:#cdd0dc;}.socials-disclosure summary svg{opacity:.6;transition:transform .18s;}.socials-disclosure[open] summary svg{transform:rotate(180deg);}
+.socials-panel{position:absolute;top:calc(100% + 9px);left:0;width:215px;max-width:calc(100vw - 36px);padding:8px;border:1px solid #d1d4df;border-radius:12px;background:var(--surface);box-shadow:0 4px 8px #25273804,0 14px 35px #25273813;z-index:10;}.socials-disclosure[open] .socials-panel{animation:social-arrive .18s ease-out;}.socials-label{display:block;padding:5px 9px 8px;font:8px var(--font-mono);letter-spacing:.04em;color:#9499a9;}
+.socials-panel a{display:flex;align-items:center;gap:11px;text-decoration:none;padding:9px;border-radius:7px;transition:background .15s;}.socials-panel a:hover,.socials-panel a:focus-visible{background:#e9ebf1;}.social-logo{display:grid;place-items:center;width:25px;height:27px;color:#697487;flex:none;}.social-copy{display:flex;flex-direction:column;gap:2px;}.social-title{font:13px/1.4 var(--font-sans);color:var(--f-high);}.social-hint{font:10px/1.4 var(--font-sans);color:var(--f-mute);}.social-arrow{margin-left:auto;font-size:12px;color:#949bad;transition:transform .15s;}.socials-panel a:hover .social-arrow{transform:translate(1px,-1px);}@keyframes social-arrive{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+.socials-panel{width:245px;padding:16px 12px 10px;border-radius:19px;border-color:#dcdee5;background:#fafafc;box-shadow:0 2px 4px #25273804,0 15px 35px #25273813;}
+.socials-intro{padding:1px 8px 12px;}.socials-intro strong{display:block;font:600 17px/1.4 var(--font-sans);color:var(--f-high);}.socials-intro>span{display:block;font:12px/1.5 var(--font-sans);color:#989ba7;margin-top:2px;}.socials-intro p{font:13px/1.6 var(--font-sans);color:var(--f-low);margin:12px 0 0;}
+.socials-panel a{padding:10px 8px;border-radius:9px;}.social-title{font-size:14px;}.social-hint{font-size:11px;}.social-logo{color:#6b7485;}.socials-panel a:hover{background:#eeeff4;}
+</style>
