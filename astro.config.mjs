@@ -15,7 +15,14 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkGfm, remarkMarkHighlight],
     rehypePlugins: [rehypeExternalLinks, rehypeWrapTables],
-    syntaxHighlight: "prism",
+    syntaxHighlight: "shiki",
+    shikiConfig: {
+      theme: "github-light",
+      wrap: false,
+      transformers: [{
+        pre(node) { node.properties["data-language"] = this.options.lang; },
+      }],
+    },
   },
   site: "https://pwnwriter.me",
 });

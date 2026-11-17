@@ -12,9 +12,9 @@ export async function getStaticPaths() {
 }
 // 2. When it's time to render, you can get the entry directly from the prop
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content, headings } = await entry.render();
 ---
 
-<Post frontmatter={entry.data} body={entry.body}>
+<Post frontmatter={entry.data} body={entry.body} headings={headings}>
 	<Content />
 </Post>

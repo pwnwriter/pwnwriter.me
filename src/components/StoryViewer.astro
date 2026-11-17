@@ -1,10 +1,10 @@
 ---
 import { photos } from '~/data/photos';
 ---
-<dialog class="story-dialog" aria-label="Photo stories">
+<dialog class="story-dialog" aria-label="Photo stories" tabindex="-1">
   <div class="story-frame">
     <nav class="story-progress" aria-label="Story progress"></nav>
-    <header class="story-header"><div><span class="story-counter"></span><span class="story-caption"></span></div><div class="story-actions"><button type="button" class="story-music" aria-label="Play music" aria-pressed="false">♫</button><button type="button" class="story-pause" aria-label="Pause stories">Ⅱ</button><button type="button" class="story-close" aria-label="Close stories">×</button></div></header>
+    <header class="story-header"><div><span class="story-counter"></span><span class="story-caption"></span></div><div class="story-actions"><button type="button" class="story-music" aria-label="Play music" aria-pressed="false">♫</button><button type="button" class="story-pause" aria-label="Pause stories"><svg viewBox="0 0 20 20" width="17" height="17" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="3" height="12" rx=".8"/><rect x="12" y="4" width="3" height="12" rx=".8"/></svg></button><button type="button" class="story-close" aria-label="Close stories"><svg viewBox="0 0 20 20" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg></button></div></header>
     <div class="story-loading" aria-hidden="true">Loading…</div>
     <img class="story-image" alt="" />
     <div class="story-taps"><button type="button" class="story-previous" aria-label="Previous photo"></button><button type="button" class="story-next" aria-label="Next photo"></button></div>
@@ -13,13 +13,13 @@ import { photos } from '~/data/photos';
       <span class="story-audio-status sr-only" role="status"></span>
       <audio class="story-audio" src="/audio/highest-in-the-room.mp3" preload="none" loop></audio>
     </aside>
-    <footer class="story-footer"><span class="story-description"></span><span class="story-help">← → to explore</span></footer>
+    <footer class="story-footer"><span class="story-description"></span><a class="story-map-card" hidden target="_blank" rel="noopener noreferrer"><img class="story-map-thumb" alt="" width="44" height="44" /><span class="story-map-copy"><strong class="story-map-name"></strong><small>Open in Apple Maps ↗</small></span><svg class="story-map-pin" viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7m0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg></a><span class="story-help">← → to explore</span></footer>
   </div>
 </dialog>
-<script id="personal-story-data" type="application/json" set:html={JSON.stringify(photos.map(photo=>({src:photo.src,caption:photo.alt,detail:photo.year}))).replaceAll('<','\u003c')} is:inline />
+<script id="personal-story-data" type="application/json" set:html={JSON.stringify(photos.map(photo=>({src:photo.src,caption:photo.alt,detail:photo.year,place:photo.place}))).replaceAll('<','\u003c')} is:inline />
 <script>
 document.addEventListener('keydown',event=>{if(event.key==='Tab')document.querySelectorAll('[data-story-restored]').forEach(element=>element.removeAttribute('data-story-restored'));},true);
-interface Story {src:string;caption:string;detail?:string;}
+interface Story {src:string;caption:string;detail?:string;place?:string;}
 const dialog=document.querySelector<HTMLDialogElement>('.story-dialog')!;
 const frame=dialog.querySelector<HTMLElement>('.story-frame')!;
 const image=dialog.querySelector<HTMLImageElement>('.story-image')!;
@@ -59,6 +59,7 @@ soundtrack.addEventListener('error',()=>{audioStatus.textContent='The soundtrack
 musicButton.addEventListener('click',toggleMusic);
 trackSticker.addEventListener('click',toggleMusic);
 
+function updatePauseControl(){pauseButton.innerHTML=paused?'<svg viewBox="0 0 20 20" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="m6 3 11 7-11 7z"/></svg>':'<svg viewBox="0 0 20 20" width="17" height="17" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="3" height="12" rx=".8"/><rect x="12" y="4" width="3" height="12" rx=".8"/></svg>';pauseButton.setAttribute('aria-label',paused?'Play stories':'Pause stories');}
 const duration=8000;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function render(){
@@ -70,6 +71,9 @@ function render(){
   dialog.querySelector('.story-counter')!.textContent=`${String(index+1).padStart(2,'0')} / ${String(stories.length).padStart(2,'0')}`;
   dialog.querySelector('.story-caption')!.textContent=story.detail??'A moment kept';
   dialog.querySelector('.story-description')!.textContent=story.caption;
+  const map=dialog.querySelector<HTMLAnchorElement>('.story-map-card')!;
+  map.hidden=!story.place;frame.classList.toggle('has-story-location',!!story.place);
+  if(story.place){map.href=`https://maps.apple.com/?q=${encodeURIComponent(story.place)}`;map.setAttribute('aria-label',`Open ${story.place} in Apple Maps`);map.querySelector('.story-map-name')!.textContent=story.place;map.querySelector<HTMLImageElement>('.story-map-thumb')!.src=story.src;}else{map.removeAttribute('href');map.querySelector('img')!.removeAttribute('src');}
   previous.disabled=index===0;next.disabled=false;
   progress.replaceChildren(...stories.map((_,i)=>{const button=document.createElement('button');button.type='button';button.setAttribute('aria-label',`View photo ${i+1}`);if(i===index)button.setAttribute('aria-current','step');const fill=document.createElement('span');fill.style.transform=`scaleX(${i<index?1:0})`;button.append(fill);button.addEventListener('click',()=>{index=i;render();});return button;}));
   if(stories[index+1]){const preload=new Image();preload.src=stories[index+1].src;}
@@ -79,17 +83,17 @@ dialog.addEventListener('keydown',event=>{if(event.key==='Escape'){event.prevent
 dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
 function step(direction:number){if(index+direction>=stories.length){close();return;}index=Math.max(0,index+direction);render();}
 function tick(time:number){const delta=last?time-last:0;last=time;if(!paused&&!holding&&!loading&&!document.hidden){elapsed+=delta;const fill=progress.children[index]?.firstElementChild as HTMLElement|undefined;if(fill)fill.style.transform=`scaleX(${Math.min(1,elapsed/duration)})`;if(elapsed>=duration)step(1);}if(dialog.open)raf=requestAnimationFrame(tick);}
-function open(items:Story[],start:number,element:HTMLElement){stories=items;index=start;trigger=element;paused=reduced;holding=false;last=0;pauseButton.textContent=paused?'▶':'Ⅱ';pauseButton.setAttribute('aria-label',paused?'Play stories':'Pause stories');oldOverflow=document.body.style.overflow;document.body.style.overflow='hidden';render();dialog.showModal();if(index===0)void playMusic();cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);}
+function open(items:Story[],start:number,element:HTMLElement){stories=items;index=start;trigger=element;paused=reduced;holding=false;last=0;updatePauseControl();oldOverflow=document.body.style.overflow;document.body.style.overflow='hidden';render();dialog.showModal();dialog.focus({preventScroll:true});if(index===0)void playMusic();cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);}
 image.addEventListener('load',()=>{loading=false;frame.classList.remove('is-loading');});
 image.addEventListener('error',()=>{loading=false;frame.classList.remove('is-loading');dialog.querySelector('.story-description')!.textContent='This photo could not load. Try the next one.';});
-pauseButton.addEventListener('click',()=>{paused=!paused;pauseButton.textContent=paused?'▶':'Ⅱ';pauseButton.setAttribute('aria-label',paused?'Play stories':'Pause stories');});
+pauseButton.addEventListener('click',()=>{paused=!paused;updatePauseControl();});
 dialog.querySelector('.story-close')!.addEventListener('click',close);
 previous.addEventListener('click',()=>{if(!swiped)step(-1);swiped=false;});next.addEventListener('click',()=>{if(!swiped)step(1);swiped=false;});
 dialog.addEventListener('click',event=>{if(event.target===dialog)close();});
 dialog.addEventListener('close',()=>{cancelAnimationFrame(raf);stopMusic();document.body.style.overflow=oldOverflow;image.removeAttribute('src');trigger?.setAttribute('data-story-restored','');trigger?.focus({preventScroll:true});});
 dialog.addEventListener('keydown',event=>{if(event.key==='ArrowRight'){event.preventDefault();step(1);}if(event.key==='ArrowLeft'){event.preventDefault();step(-1);}if(event.code==='Space'&&event.target===dialog){event.preventDefault();pauseButton.click();}});
-frame.addEventListener('pointerdown',event=>{if((event.target as HTMLElement).closest('.story-header,.story-progress,.story-track'))return;holding=true;swiped=false;pointerX=event.clientX;});
-frame.addEventListener('pointerup',event=>{if((event.target as HTMLElement).closest('.story-header,.story-progress,.story-track'))return;holding=false;const diff=event.clientX-pointerX;if(Math.abs(diff)>45){event.preventDefault();swiped=true;step(diff<0?1:-1);}});
+frame.addEventListener('pointerdown',event=>{if((event.target as HTMLElement).closest('.story-header,.story-progress,.story-track,.story-map-card'))return;holding=true;swiped=false;pointerX=event.clientX;});
+frame.addEventListener('pointerup',event=>{if((event.target as HTMLElement).closest('.story-header,.story-progress,.story-track,.story-map-card'))return;holding=false;const diff=event.clientX-pointerX;if(Math.abs(diff)>45){event.preventDefault();swiped=true;step(diff<0?1:-1);}});
 frame.addEventListener('pointercancel',()=>holding=false);frame.addEventListener('pointerleave',()=>holding=false);
 // Native links retain their original destination without JavaScript.
 const pageImages=[...document.querySelectorAll<HTMLImageElement>('main img')].filter(img=>!img.closest('[data-no-story]'));
@@ -99,16 +103,36 @@ for(const img of pageImages){
   if(anchor&&/\.(jpe?g|png|webp|avif|gif)(?:[?#]|$)/i.test(anchor.href)){control=anchor;}
   else if(!anchor){const button=document.createElement('button');button.type='button';button.className='story-image-trigger';button.setAttribute('aria-label',img.hasAttribute('data-personal-stories')?'View my photo stories':`View photo: ${img.alt||'Photo'}`);img.before(button);button.append(img);control=button;}
   else continue;
+  if(img.hasAttribute('data-personal-stories')){
+    const preview=document.createElement('aside');preview.className='profile-story-preview';preview.setAttribute('popover','manual');preview.setAttribute('aria-label','Latest photo story');
+    const button=document.createElement('button');button.type='button';button.setAttribute('aria-label','Open latest photo story');
+    const photo=document.createElement('img');photo.src=img.dataset.storySrc||img.currentSrc||img.src;photo.alt=img.alt;
+    const label=document.createElement('span');label.className='profile-story-label';label.textContent='Latest story';
+    const caption=document.createElement('span');caption.className='profile-story-caption';caption.textContent='San Francisco / OpenAI DevDay';
+    button.append(photo,label,caption);preview.append(button);document.body.append(preview);
+    let hoverTimer:ReturnType<typeof setTimeout>|undefined;
+    function hidePreview(){clearTimeout(hoverTimer);if(preview.matches(':popover-open'))preview.hidePopover();}
+    function placePreview(){const rect=control.getBoundingClientRect();preview.style.left=`${Math.max(12,Math.min(rect.right+14,innerWidth-preview.offsetWidth-12))}px`;preview.style.top=`${Math.max(12,Math.min(rect.top,innerHeight-preview.offsetHeight-12))}px`;}
+    function showPreview(){clearTimeout(hoverTimer);if(dialog.open)return;if(!preview.matches(':popover-open'))preview.showPopover();placePreview();}
+    function leavePreview(){clearTimeout(hoverTimer);hoverTimer=setTimeout(hidePreview,180);}
+    control.addEventListener('pointerenter',event=>{if(event.pointerType!=='touch')showPreview();});control.addEventListener('pointerleave',leavePreview);
+    control.addEventListener('focus',()=>{if(!control.hasAttribute('data-story-restored'))showPreview();});control.addEventListener('blur',leavePreview);
+    preview.addEventListener('pointerenter',()=>clearTimeout(hoverTimer));preview.addEventListener('pointerleave',leavePreview);
+    button.addEventListener('click',()=>{hidePreview();control.click();});control.addEventListener('click',hidePreview);
+    document.addEventListener('keydown',event=>{if(event.key==='Escape')hidePreview();});
+    document.addEventListener('pointerdown',event=>{if(!control.contains(event.target as Node)&&!preview.contains(event.target as Node))hidePreview();});
+    window.addEventListener('resize',hidePreview);window.addEventListener('scroll',hidePreview,{passive:true});
+  }
   control.setAttribute('aria-haspopup','dialog');
   control.addEventListener('blur',()=>control.removeAttribute('data-story-restored'));
   control.addEventListener('pointerdown',()=>control.removeAttribute('data-story-restored'));
   control.addEventListener('click',event=>{
     if(event instanceof MouseEvent&&(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey))return;
     event.preventDefault();
-    if(img.hasAttribute('data-personal-stories')){open([{src:img.dataset.storySrc||img.currentSrc||img.src,caption:img.alt,detail:'San Francisco / OpenAI DevDay'},...personal],0,control);return;}
+    if(img.hasAttribute('data-personal-stories')){open([{src:img.dataset.storySrc||img.currentSrc||img.src,caption:img.alt,detail:'San Francisco / OpenAI DevDay',place:'Golden Gate Bridge, San Francisco'},...personal],0,control);return;}
     const scope=img.closest('section,.project,.reading')??document.querySelector('main')!;
     const group=pageImages.filter(item=>scope.contains(item));
-    const items=group.map(item=>{const link=item.closest<HTMLAnchorElement>('a');return {src:link&&/\.(jpe?g|png|webp|avif|gif)(?:[?#]|$)/i.test(link.href)?link.href:item.currentSrc||item.src,caption:item.alt||'A moment kept',detail:item.closest('figure')?.querySelector('figcaption')?.textContent?.trim()};});
+    const items=group.map(item=>{const link=item.closest<HTMLAnchorElement>('a');return {src:link&&/\.(jpe?g|png|webp|avif|gif)(?:[?#]|$)/i.test(link.href)?link.href:item.currentSrc||item.src,caption:item.alt||'A moment kept',place:personal.find(photo=>photo.src===new URL(item.currentSrc||item.src,location.href).pathname)?.place,detail:item.closest('figure')?.querySelector('figcaption')?.textContent?.trim()};});
     open(items,group.indexOf(img),control);
   });
 }
@@ -119,13 +143,15 @@ for(const img of pageImages){
 [data-story-restored]:focus-visible{outline:none!important;}
 .story-dialog{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100%;height:100dvh;margin:0;overflow:auto;overscroll-behavior:contain;}
 .story-dialog[open]{display:grid;place-items:center;padding:20px;}
-.story-dialog::backdrop{background:#efeff3dc;backdrop-filter:blur(12px);}
+.story-dialog:focus{outline:none;}.story-dialog::backdrop{background:#efeff3dc;backdrop-filter:blur(12px);}
 .story-frame{position:relative;width:min(460px,calc((100dvh - 40px)*.61));height:min(760px,calc(100dvh - 40px));background:#18191e;border-radius:24px;overflow:hidden;box-shadow:0 20px 65px #25263530;isolation:isolate;color:white;touch-action:pan-y;}
 .story-image{position:absolute;width:100%;height:100%;inset:0;object-fit:contain;margin:0;}
 .story-frame::after{content:'';position:absolute;inset:0;background:linear-gradient(#0008,transparent 26%,transparent 75%,#0008);pointer-events:none;z-index:1;}
-.story-header{position:absolute;z-index:4;top:35px;left:20px;right:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;}.story-header>div:first-child{display:flex;gap:10px;align-items:center;min-width:0;}.story-counter{font:10px var(--font-mono);color:#fff;white-space:nowrap;}.story-caption{font-size:12px;color:#ffffffb0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.story-actions{display:flex;gap:3px;}.story-actions button{border:0;background:transparent;color:white;width:32px;height:34px;font-size:24px;padding:0;}.story-actions .story-pause{font-size:15px;}.story-actions .story-music{font-size:19px;color:#ffffff80;}.story-music[aria-pressed="true"]{color:white;background:#ffffff18;border-radius:50%;}.story-progress{position:absolute;top:15px;left:18px;right:18px;display:flex;gap:4px;z-index:5;}.story-progress button{flex:1;min-width:0;border:0;padding:0;height:3px;background:#ffffff40;position:relative;overflow:hidden;border-radius:2px;}.story-progress button::after{content:'';position:absolute;inset:-7px 0;}.story-progress span{display:block;position:absolute;inset:0;background:#fff;transform-origin:left;}.story-taps{position:absolute;inset:85px 0 60px;display:flex;z-index:2;}.story-taps button{border:0;background:none;width:50%;padding:0;}.story-taps button:disabled{cursor:default;}.story-footer{position:absolute;bottom:23px;left:20px;right:20px;z-index:3;display:flex;flex-direction:column;gap:6px;pointer-events:none;}.story-description{font-size:14px;line-height:1.4;}.story-help{font:9px var(--font-mono);color:#ffffff80;}.story-loading{display:none;position:absolute;inset:0;place-items:center;font:11px var(--font-mono);color:#ffffff70;}.is-loading .story-loading{display:grid;}.is-loading .story-image{opacity:.2;}@media(max-width:560px){.story-dialog[open]{padding:8px;}.story-frame{width:100%;height:calc(100dvh - 16px);border-radius:20px;}.story-header{left:16px;}.story-description{font-size:13px;}.story-help{display:none;}}
+.story-header{position:absolute;z-index:4;top:35px;left:20px;right:16px;height:32px;display:flex;justify-content:space-between;align-items:center;gap:10px;}.story-header>div:first-child{display:flex;gap:10px;align-items:center;min-width:0;}.story-counter{font:10px/1 var(--font-mono);color:#fff;white-space:nowrap;}.story-caption{font-size:12px;line-height:1;color:#ffffffb0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.story-actions{display:flex;align-items:center;gap:3px;flex-shrink:0;}.story-actions button{border:0;background:transparent;color:white;display:grid;place-items:center;width:32px;height:32px;line-height:1;font-size:24px;padding:0;}.story-actions .story-pause{font-size:15px;}.story-actions .story-music{font-size:19px;color:#ffffff80;}.story-music[aria-pressed="true"]{color:white;background:#ffffff18;border-radius:50%;}.story-progress{position:absolute;top:15px;left:18px;right:18px;display:flex;gap:4px;z-index:5;}.story-progress button{flex:1;min-width:0;border:0;padding:0;height:3px;background:#ffffff40;position:relative;overflow:hidden;border-radius:2px;}.story-progress button::after{content:'';position:absolute;inset:-7px 0;}.story-progress span{display:block;position:absolute;inset:0;background:#fff;transform-origin:left;}.story-taps{position:absolute;inset:85px 0 60px;display:flex;z-index:2;}.story-taps button{border:0;background:none;width:50%;padding:0;}.story-taps button:disabled{cursor:default;}.story-footer{position:absolute;bottom:23px;left:20px;right:20px;z-index:3;display:flex;flex-direction:column;gap:6px;pointer-events:none;}.story-description{font-size:14px;line-height:1.4;}.story-help{font:9px var(--font-mono);color:#ffffff80;}.story-loading{display:none;position:absolute;inset:0;place-items:center;font:11px var(--font-mono);color:#ffffff70;}.is-loading .story-loading{display:grid;}.is-loading .story-image{opacity:.2;}@media(max-width:560px){.story-dialog[open]{padding:8px;}.story-frame{width:100%;height:calc(100dvh - 16px);border-radius:20px;}.story-header{left:16px;}.story-description{font-size:13px;}.story-help{display:none;}}
 .story-track[hidden],.story-actions .story-music[hidden]{display:none;}.story-track{position:absolute;z-index:6;left:20px;right:20px;bottom:88px;}
 .story-track-sticker{display:flex;align-items:center;gap:9px;max-width:100%;padding:9px 12px;border:1px solid #ffffff40;border-radius:11px;background:#f8f8faed;color:#25262c;text-align:left;box-shadow:0 3px 14px #0002;backdrop-filter:blur(12px);cursor:pointer;transition:transform .18s,background .18s;}
 .story-track-sticker:hover{transform:translateY(-2px);background:#fff;}.story-track-sticker>span:nth-child(2){min-width:0;}.story-track-sticker strong{display:block;font-size:10px;letter-spacing:.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.story-track-sticker small{display:block;margin-top:2px;font-size:10px;color:#737581;}.story-track-note{font-size:24px;line-height:1;}.story-track-sticker>span:last-child{font-size:13px;margin-left:6px;color:#737581;}
 .story-track-sticker:focus-visible{outline:2px solid #a6b4d1;outline-offset:3px;}.story-track-state{width:12px;text-align:center;}.music-playing .story-track-note{animation:music-note 2.5s ease-in-out infinite;}@keyframes music-note{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}@media(prefers-reduced-motion:reduce){.music-playing .story-track-note{animation:none}.story-track-sticker{transition:none}}
+.profile-story-preview{position:fixed;inset:auto;margin:0;padding:5px;width:220px;max-width:calc(100vw - 24px);border:1px solid #d6d9e2;border-radius:20px;background:#fafafc;box-shadow:0 12px 40px #25273825;overflow:hidden;}.profile-story-preview:popover-open{animation:story-preview-arrive .2s ease-out;}.profile-story-preview button{position:relative;display:block;width:100%;height:285px;padding:0;border:0;border-radius:15px;overflow:hidden;background:#24262d;text-align:left;cursor:pointer;color:#fff;}.profile-story-preview button::after{content:'';position:absolute;inset:0;background:linear-gradient(#0005,transparent 30%,transparent 55%,#0009);pointer-events:none;}.profile-story-preview img{display:block;width:100%;height:100%;object-fit:cover;object-position:35% center;}.profile-story-label{position:absolute;top:13px;left:13px;z-index:1;font:9px var(--font-mono);}.profile-story-caption{position:absolute;bottom:16px;left:13px;right:13px;z-index:1;font:13px/1.4 var(--font-sans);}.profile-story-preview button:focus-visible{outline:2px solid #8293af;outline-offset:-3px;}@keyframes story-preview-arrive{from{opacity:0;transform:translateY(5px) scale(.98)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.profile-story-preview:popover-open{animation:none}}
+.story-map-card{display:flex;align-items:center;gap:9px;width:fit-content;max-width:100%;padding:6px 10px 6px 6px;margin-top:5px;border:1px solid #ffffff55;border-radius:11px;background:#f8f8faed;color:#25262c;text-decoration:none;pointer-events:auto;box-shadow:0 3px 12px #0002;backdrop-filter:blur(10px);}.story-map-card[hidden]{display:none;}.story-map-card:hover{background:#fff;}.story-map-thumb{width:38px;height:38px;object-fit:cover;border-radius:6px;flex:none;margin:0;}.story-map-copy{display:flex;flex-direction:column;gap:3px;min-width:0;}.story-map-copy strong{font:500 11px/1.3 var(--font-sans);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.story-map-copy small{font:9px/1.3 var(--font-sans);color:#7d8492;}.story-map-pin{color:#c36d73;flex:none;margin-left:4px;}.story-map-card:focus-visible{outline:2px solid #a6b4d1;outline-offset:3px;}.has-story-location .story-track{bottom:151px;}.has-story-location .story-taps{bottom:128px;}
 </style>

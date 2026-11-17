@@ -1,13 +1,19 @@
 ---
+import CodeBlocks from "~/components/CodeBlocks.astro";
 import Layout from "~/layouts/Layout.astro";
 import { Image } from "astro:assets";
-const { frontmatter: data, body = "" } = Astro.props;
+const { frontmatter: data, body = "", headings = [] } = Astro.props;
+const sectionDepth = headings.some((heading: {depth: number})=>heading.depth===2)?2:3;
+const sections=headings.filter((heading: {depth:number})=>heading.depth===sectionDepth);
 const minutes = Math.max(1, Math.ceil(body.split(/\s+/).length / 220));
 ---
 
 <Layout title={data.title} description={data.description ?? data.title}
-  ><article class="shell reading">
-    <a class="back-link" href="/notes">← All notes</a><header
+  ><div class="shell writing-layout">
+    <aside class="writing-sidebar"><a class="writing-back" href="/notes">↶ All writings</a>{sections.length>0&&<nav aria-label="Article sections">{sections.map((heading: {slug:string;text:string})=><a class="writing-section" href={`#${heading.slug}`}>{heading.text}</a>)}</nav>}</aside>
+    <article class="reading writing-article">
+    {sections.length>0&&<details class="writing-mobile-contents"><summary>On this page</summary><nav aria-label="Article sections on mobile">{sections.map((heading: {slug:string;text:string})=><a class="writing-section" href={`#${heading.slug}`}>{heading.text}</a>)}</nav></details>}
+    <header
       class="reading-head"
     >
       <p class="eyebrow">
@@ -49,5 +55,25 @@ const minutes = Math.max(1, Math.ceil(body.split(/\s+/).length / 220));
         })
       }
     </p>
-  </article></Layout
+  </article></div><CodeBlocks /></Layout
 >
+
+<script>
+const sectionLinks=[...document.querySelectorAll<HTMLAnchorElement>('.writing-section')];
+const sectionIds=[...new Set(sectionLinks.map(link=>decodeURIComponent(link.hash.slice(1))))];
+const sectionHeadings=sectionIds.map(id=>document.getElementById(id)).filter((heading):heading is HTMLElement=>!!heading);
+if(sectionHeadings.length){
+ let ticking=false;
+ function updateSection(){let current=sectionHeadings[0].id;for(const heading of sectionHeadings){if(heading.getBoundingClientRect().top<=150)current=heading.id;else break;}for(const link of sectionLinks){if(decodeURIComponent(link.hash.slice(1))===current)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');}ticking=false;}
+ window.addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(updateSection);}},{passive:true});window.addEventListener('resize',updateSection);updateSection();
+ sectionLinks.forEach(link=>link.addEventListener('click',()=>{const mobile=link.closest('details');if(mobile)mobile.open=false;}));
+}
+</script>
+<style>
+.writing-layout{display:grid;grid-template-columns:170px minmax(0,640px);gap:75px;max-width:1000px;align-items:start;}.writing-sidebar{position:sticky;top:75px;padding-top:10px;}.writing-back{display:inline-block;font:13px/1.5 var(--font-sans);color:var(--f-mute);text-decoration:none;margin-bottom:28px;}.writing-back:hover{color:var(--f-high);}.writing-sidebar nav{display:flex;flex-direction:column;gap:12px;}.writing-section{font:14px/1.5 var(--font-sans);color:#85858c;text-decoration:none;transition:color .16s;}.writing-section:hover,.writing-section[aria-current="location"]{color:var(--f-high);}.writing-section:focus-visible{outline:2px solid #8293af;outline-offset:4px;border-radius:3px;}.writing-article{width:100%;min-width:0;margin:0;padding:0;max-width:640px;}.writing-article .reading-head{margin:0 0 45px;}.writing-article .reading-head h1{font-family:var(--font-sans);font-weight:500;font-size:clamp(29px,3.6vw,39px);letter-spacing:-.035em;line-height:1.2;margin:17px 0;}.writing-article .page-lede{font-size:18px;line-height:1.6;}.writing-mobile-contents{display:none;}
+@media(max-width:900px){.writing-layout{grid-template-columns:140px minmax(0,1fr);gap:35px;}.writing-section{font-size:13px;}}
+@media(max-width:680px){.writing-layout{display:block;max-width:640px;}.writing-sidebar{position:static;padding:0;}.writing-sidebar>nav{display:none;}.writing-back{margin-bottom:24px;}.writing-mobile-contents{display:block;margin:0 0 27px;font:12px/1.6 var(--font-sans);color:var(--f-mute);}.writing-mobile-contents summary{cursor:pointer;width:fit-content;}.writing-mobile-contents nav{display:flex;flex-direction:column;gap:10px;padding:16px 0 0;}.writing-article .reading-head{margin-bottom:32px;}}
+</style>
+<style is:global>
+.writing-article .prose{font-size:18px;line-height:1.85;color:var(--f-high);}.writing-article .prose :is(h2,h3){scroll-margin-top:60px;}.writing-article .prose h2{font-size:24px;font-weight:500;}.writing-article .prose h3{font-size:20px;font-weight:500;}.writing-article .prose p{margin:1.35em 0;}@media(max-width:680px){.writing-article .prose{font-size:17px;line-height:1.8;}}
+</style>

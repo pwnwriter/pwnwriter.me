@@ -3,7 +3,6 @@ import { Resvg } from "@resvg/resvg-js";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
-import { vineSvg } from "~/lib/og-vine";
 
 const require = createRequire(import.meta.url);
 
@@ -42,13 +41,13 @@ let fonts: Awaited<ReturnType<typeof loadFonts>> | null = null;
 
 // ---- palette (evergarden summer, the site's light theme) --------------------
 const rp = {
-  base: "#f5efe6",
-  high: "#2b3034",
-  low: "#455355",
-  subtle: "#576869",
-  muted: "#829084",
+  base: "#f1f1f3",
+  high: "#25262c",
+  low: "#5e606b",
+  subtle: "#737581",
+  muted: "#737581",
   line: "rgba(69, 83, 85, 0.16)",
-  accent: "#91a77a",
+  accent: "#627d91",
 };
 
 export type OgKind = "home" | "note" | "syndication" | "section" | "tag";
@@ -63,7 +62,7 @@ const trail: Record<OgKind, (label?: string) => string> = {
 };
 
 const kindLabel: Record<OgKind, string> = {
-  home: "pwn::musings",
+  home: "Nabeen / pwnwriter",
   note: "note",
   syndication: "syndication",
   section: "index",
@@ -104,23 +103,12 @@ const mono = (size: number, color: string, extra: Record<string, unknown> = {}) 
 const WIDTH = 1200;
 const HEIGHT = 630;
 const PAD = 80;
-const INNER = WIDTH - PAD * 2;
-const VINE_H = 104;
 
 function markup(input: OgInput): Node {
   const title = clamp(input.title, 84);
   const long = title.length >= 48;
   const titleSize = title.length < 24 ? 88 : long ? 56 : 70;
   const desc = input.description ? clamp(input.description, long ? 96 : 108) : "";
-
-  const vine = vineSvg(input.title, {
-    width: INNER,
-    height: VINE_H,
-    ink: rp.low,
-    paper: rp.base,
-    nose: rp.accent,
-  });
-  const vineSrc = `data:image/svg+xml;base64,${Buffer.from(vine).toString("base64")}`;
 
   // sections and the home card are labelled by kind; everything else by its own label
   const label =
@@ -182,7 +170,6 @@ function markup(input: OgInput): Node {
         ],
       ),
 
-      h("img", { display: "flex" }, undefined, { src: vineSrc, width: INNER, height: VINE_H }),
       h("div", { display: "flex", height: 1, background: rp.line }),
 
       h("div", { display: "flex", justifyContent: "space-between", marginTop: 22 }, [
@@ -193,9 +180,35 @@ function markup(input: OgInput): Node {
   );
 }
 
+function homeMarkup(media: {portrait:string;wosa:string;whoami:string}):Node {
+ const badge=(name:string,logo:string)=>h('div',{display:'flex',alignItems:'center',gap:10,padding:'10px 15px',border:'1px solid #d5d8e1',borderRadius:12,background:'#e9ebf1',fontSize:25,color:rp.high},[h('img',{borderRadius:6},undefined,{src:logo,width:28,height:28}),h('span',{display:'flex'},name)]);
+ return h('div',{display:'flex',flexDirection:'column',width:WIDTH,height:HEIGHT,padding:'58px 72px',background:rp.base,color:rp.high,fontFamily:'Hanken Grotesk'},[
+  h('div',{display:'flex',alignItems:'center',justifyContent:'space-between'},[
+   h('div',{display:'flex',alignItems:'center',gap:18},[h('img',{borderRadius:20,objectFit:'cover',objectPosition:'25% 70%',border:'3px solid #fafafc'},undefined,{src:media.portrait,width:76,height:76}),h('div',{display:'flex',flexDirection:'column',gap:6},[h('span',{fontSize:23},'Nabeen / pwnwriter'),h('span',mono(16,rp.muted),'MD, USA')])]),
+   h('span',mono(18,rp.muted),'pwnwriter.me')
+  ]),
+  h('div',{display:'flex',flexDirection:'column',flexGrow:1,justifyContent:'center',gap:16},[
+   h('div',{fontSize:68,letterSpacing:-2,lineHeight:1.1},'Hey, I’m Nabeen.'),
+   h('div',{display:'flex',alignItems:'baseline',gap:10,fontSize:30,color:rp.subtle},[h('span',{},'22, a'),h('span',{color:rp.accent},'tinkerer at heart.' )]),
+   h('div',{fontSize:29,lineHeight:1.45,color:rp.subtle,maxWidth:900},'I do security research and build interfaces.'),
+  ]),
+  h('div',{display:'flex',alignItems:'center',gap:14,paddingBottom:30},[h('span',{fontSize:22,color:rp.muted,marginRight:4},'Recent work'),badge('wosa.study',media.wosa),badge('whoami.cards',media.whoami)]),
+  h('div',{display:'flex',justifyContent:'space-between',borderTop:'1px solid #d7d8df',paddingTop:20},[h('span',mono(17,rp.muted),'LINUX · RUST · NIX'),h('span',mono(17,rp.accent),'@pwnwriter')]),
+ ]);
+}
+
 // ---- public API -------------------------------------------------------------
 export async function generateOg(input: OgInput): Promise<Buffer> {
   fonts ??= await loadFonts();
-  const svg = await satori(markup(input) as any, { width: WIDTH, height: HEIGHT, fonts });
+  let tree=markup(input);
+  if(input.kind==='home'&&!input.label){
+    const [portrait,wosa,whoami]=await Promise.all([
+      readFile(join(process.cwd(),'src/assets/sf-golden-gate.jpg')),
+      readFile(join(process.cwd(),'public/images/previews/wosa-logo.svg')),
+      readFile(join(process.cwd(),'public/images/previews/whoami-logo.svg')),
+    ]);
+    tree=homeMarkup({portrait:`data:image/jpeg;base64,${portrait.toString('base64')}`,wosa:`data:image/svg+xml;base64,${wosa.toString('base64')}`,whoami:`data:image/svg+xml;base64,${whoami.toString('base64')}`});
+  }
+  const svg = await satori(tree as any, { width: WIDTH, height: HEIGHT, fonts });
   return new Resvg(svg, { fitTo: { mode: "width", value: WIDTH } }).render().asPng();
 }

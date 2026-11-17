@@ -1,4 +1,5 @@
 <script>
+import {playUiSound} from "~/lib/ui-sounds";
 // The official embed uses an open shadow root; theme its launcher without
 // replacing the embed or changing its private-message flow.
 const shell=document.querySelector<HTMLElement>('.hello-embed');
@@ -14,7 +15,7 @@ if(shell){
       .launcher{font:500 17px/1.25 Hanken,Arial,sans-serif;background:#eee8f7;color:#594d6d;border:1px solid #d9cfe8;border-radius:9px;padding:5px 9px;gap:7px;box-shadow:inset 0 1px 0 #ffffffa0;transition:background .18s,border-color .18s;}
       .launcher:hover{transform:none;background:#e8dff3;color:#493a60;border-color:#c9b9dd;box-shadow:inset 0 1px 0 #ffffffa0;}
       .launcher img{display:block;width:21px;height:21px;border-radius:5px;transform:none;}
-      .launcher span:last-child{color:#8c78a6;font-size:12px;margin-left:0;transition:transform .18s;}
+      .launcher span:last-child{display:none;}
       .launcher:hover span:last-child{transform:translate(1px,-1px);}
       .launcher:focus-visible{outline:2px solid #a18abd;outline-offset:4px;}
       dialog{background:#f1f1f3;color:#25262c;border-color:#c8cad4;border-radius:12px;box-shadow:0 18px 60px #24273520;}
@@ -31,22 +32,36 @@ if(shell){
       }
     },true);
     const launcher=root.querySelector<HTMLButtonElement>('.launcher')!;
-    const hover=document.createElement('div');hover.className='hello-hover';hover.setAttribute('popover','manual');hover.setAttribute('role','dialog');hover.setAttribute('aria-label','About saying hello');
-    const title=document.createElement('strong');title.textContent='A little hello.';
-    const description=document.createElement('p');description.textContent='Leave me a private note on whoami.cards.';
-    const note=document.createElement('span');note.className='hello-hover-note';note.textContent='Just between us. No account needed.';
-    const action=document.createElement('button');action.className='hello-hover-action';action.type='button';action.textContent='Say hello ↗';
-    hover.append(title,description);root.append(hover);
+    const hover=document.createElement('div');hover.className='hello-hover';hover.setAttribute('popover','manual');hover.setAttribute('role','dialog');hover.setAttribute('aria-label','whoami profile card preview');
+    const preview=document.createElement('img');preview.src='/images/previews/whoami-pwnwriter.png';preview.alt='Nabeen’s whoami.cards profile card';preview.width=716;preview.height=974;
+    hover.append(preview);root.append(hover);
     const extra=document.createElement('style');extra.textContent=`
-      .hello-hover{position:fixed;inset:auto;margin:0;width:245px;max-width:calc(100vw - 32px);padding:20px;border:1px solid #dcdee5;border-radius:19px;background:#fafafc;color:#25262c;box-shadow:0 2px 4px #25273804,0 15px 35px #25273813;font:13px/1.6 Hanken,Arial,sans-serif;}
-      .hello-hover:popover-open{animation:hello-info .18s ease-out;}.hello-hover::backdrop{background:none;pointer-events:none;}.hello-hover strong{display:block;font-size:17px;font-weight:600;}.hello-hover p{margin:12px 0;color:#636875;}.hello-hover-note{display:block;font-size:11px;color:#979ba6;}.hello-hover-action{border:0;border-bottom:1px solid #c6bdd6;border-radius:0;padding:0;background:none;color:#75618e;font:13px/1.5 Hanken,Arial,sans-serif;margin-top:18px;cursor:pointer;}@keyframes hello-info{from{opacity:0;translate:0 -4px}to{opacity:1;translate:0 0}}
+      .hello-hover{position:fixed;inset:auto;margin:0;width:260px;max-width:calc(100vw - 32px);padding:0;border:1px solid #dcd6e8;border-radius:17px;background:#f5effb;box-shadow:0 2px 4px #25273804,0 15px 35px #25273820;overflow:hidden;}
+      .hello-hover img{display:block;width:100%;height:auto;max-height:calc(100dvh - 40px);object-fit:contain;}.hello-hover:popover-open{animation:hello-card-in .32s cubic-bezier(.16,1,.3,1);will-change:transform,opacity;}.hello-hover.is-closing:popover-open{animation:hello-card-out .18s ease-in forwards;}@keyframes hello-card-in{from{opacity:0;transform:perspective(900px) translateY(10px) rotateX(7deg) rotateY(-5deg) scale(.94)}to{opacity:1;transform:perspective(900px) translateY(0) rotateX(0) rotateY(0) scale(1)}}@keyframes hello-card-out{from{opacity:1;transform:perspective(900px) translateY(0) rotateX(0) rotateY(0) scale(1)}to{opacity:0;transform:perspective(900px) translateY(8px) rotateX(5deg) rotateY(-4deg) scale(.96)}}.hello-hover::backdrop{background:none;pointer-events:none;}@keyframes hello-info{from{opacity:0;translate:0 -4px}to{opacity:1;translate:0 0}}@media(prefers-reduced-motion:reduce){.hello-hover:popover-open{animation:none}}
     `;root.append(extra);
     let hoverTimer:ReturnType<typeof setTimeout>|undefined;
-    const hideHover=()=>{clearTimeout(hoverTimer);if(hover.matches(':popover-open'))hover.hidePopover();};
-    const openHover=()=>{if(root.querySelector<HTMLDialogElement>('dialog')?.open)return;clearTimeout(hoverTimer);if(!hover.matches(':popover-open'))hover.showPopover();const rect=launcher.getBoundingClientRect(),width=hover.offsetWidth,height=hover.offsetHeight;hover.style.left=`${Math.max(16,Math.min(rect.left,innerWidth-width-16))}px`;hover.style.top=`${rect.bottom+10+height>innerHeight-16?Math.max(16,rect.top-height-10):rect.bottom+10}px`;};
+    let closing=false,closeMotionTimer:ReturnType<typeof setTimeout>|undefined;
+    const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hideHover=()=>{
+      clearTimeout(hoverTimer);if(!hover.matches(':popover-open')||closing)return;
+      playUiSound('close');
+      if(reducedMotion){hover.hidePopover();return;}
+      closing=true;hover.classList.add('is-closing');
+      closeMotionTimer=setTimeout(()=>{hover.hidePopover();hover.classList.remove('is-closing');closing=false;},180);
+    };
+    const openHover=()=>{
+      if(root.querySelector<HTMLDialogElement>('dialog')?.open)return;clearTimeout(hoverTimer);
+      if(closing){clearTimeout(closeMotionTimer);hover.classList.remove('is-closing');closing=false;}
+      if(!hover.matches(':popover-open')){hover.showPopover();playUiSound('open');}
+      const rect=launcher.getBoundingClientRect(),width=hover.offsetWidth,height=hover.offsetHeight;const above=rect.bottom+10+height>innerHeight-16;
+      hover.style.left=`${Math.max(16,Math.min(rect.left,innerWidth-width-16))}px`;hover.style.top=`${above?Math.max(16,rect.top-height-10):rect.bottom+10}px`;
+      hover.style.transformOrigin=above?'50% 100%':'50% 0%';
+    };
+    window.addEventListener('scroll',()=>{if(hover.matches(':popover-open')&&!closing)openHover();},{passive:true});
+    window.addEventListener('resize',()=>{if(hover.matches(':popover-open')&&!closing)openHover();});
     const later=()=>{clearTimeout(hoverTimer);hoverTimer=setTimeout(()=>{if(!hover.contains(root.activeElement))hideHover();},160);};
     launcher.addEventListener('pointerenter',event=>{if(event.pointerType!=='touch')openHover();});launcher.addEventListener('pointerleave',later);launcher.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){event.preventDefault();openHover();}});launcher.addEventListener('blur',later);launcher.addEventListener('click',hideHover);
-    hover.addEventListener('pointerenter',()=>clearTimeout(hoverTimer));hover.addEventListener('pointerleave',later);hover.addEventListener('focusout',later);action.addEventListener('click',()=>{hideHover();launcher.click();});
+    hover.addEventListener('pointerenter',()=>{clearTimeout(hoverTimer);if(closing)openHover();});hover.addEventListener('pointerleave',later);hover.addEventListener('focusout',later);
     root.addEventListener('keydown',event=>{if((event as KeyboardEvent).key==='Escape'&&hover.matches(':popover-open')){event.preventDefault();event.stopPropagation();hideHover();}});
     document.addEventListener('pointerdown',event=>{if(!event.composedPath().includes(widget!))hideHover();});
     observer.disconnect();

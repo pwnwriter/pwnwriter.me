@@ -15,6 +15,7 @@ export type Project = {
   summary: string;
   tagline?: string; // one short line for the home page; falls back to summary
   blurb: string;
+  origin?: string;
   highlights?: string[];
   tech: string[];
   year?: string;
@@ -35,6 +36,7 @@ export const projects: Project[] = [
     summary: "shareable profile cards for the different sides of you.",
     tagline: "one identity, different modes, a card in your Wallet.",
     blurb: "a permanent @name, context-specific profiles, and an Apple Wallet card that updates when you switch modes.",
+    origin: "It started at OpenAI DevDay as an Apple Wallet card for my GitHub. A few cofounders I met suggested making it work with other socials. That became whoami.cards.",
     tech: [],
     year: "2026",
     cover: { kind: "video", src: "/projects/whoami-cards/demo.mp4", poster: "/projects/whoami-cards/cover.jpg" },
@@ -46,6 +48,7 @@ export const projects: Project[] = [
     summary: "a maths app.",
     tagline: "a maths app. live and growing.",
     blurb: "a maths app i'm working on.",
+    origin: "My nephews kept uploading photos to ChatGPT whenever they needed help. That sparked Wosa: one place to work through questions and keep their learning together.",
     tech: [],
     year: "2026",
     status: "live",

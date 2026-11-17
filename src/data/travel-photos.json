@@ -1,0 +1,44 @@
+[
+  {
+    "src": "/images/photos/2026/san-francisco-golden-gate-dusk.webp",
+    "alt": "Golden Gate at dusk",
+    "date": "2026-09-28",
+    "year": "2026",
+    "place": "Golden Gate Bridge, San Francisco"
+  },
+  {
+    "src": "/images/photos/2026/new-york-skyline-waterfront.webp",
+    "alt": "Manhattan across the East River",
+    "date": "2026-07-24",
+    "year": "2026",
+    "place": "Domino Park, Brooklyn, New York"
+  },
+  {
+    "src": "/images/recognition/blackhat.jpg",
+    "alt": "Black Hat USA, Las Vegas",
+    "date": "2026",
+    "year": "2026",
+    "place": "Las Vegas, Nevada"
+  },
+  {
+    "src": "/images/photos/2026/san-francisco-fishermans-wharf.webp",
+    "alt": "An afternoon at Fisherman’s Wharf",
+    "date": "2026-09-29",
+    "year": "2026",
+    "place": "Fisherman’s Wharf, San Francisco"
+  },
+  {
+    "src": "/images/photos/2026/brooklyn-architecture.webp",
+    "alt": "Looking up in Brooklyn",
+    "date": "2026-07-24",
+    "year": "2026",
+    "place": "Brooklyn, New York"
+  },
+  {
+    "src": "/images/photos/2026/san-francisco-bay-through-trees.webp",
+    "alt": "The bay through the trees",
+    "date": "2026-09-29",
+    "year": "2026",
+    "place": "Great Meadow Park, San Francisco"
+  }
+]

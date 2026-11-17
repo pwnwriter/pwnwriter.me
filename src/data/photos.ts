@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import travelPhotos from "./travel-photos.json";
+import photoDetails from "./photo-details.json";
 import path from "node:path";
 
 export type Photo = {
@@ -6,6 +8,7 @@ export type Photo = {
   alt: string;
   date: string;
   year: string;
+  place?: string;
 };
 
 const PHOTOS_DIR = path.join(process.cwd(), "public/images/photos");
@@ -31,13 +34,16 @@ function discoverPhotos(): Photo[] {
       const filePath = path.join(dirPath, file.name);
       const stat = fs.statSync(filePath);
       const name = path.basename(file.name, path.extname(file.name));
-      const alt = name.replace(/[-_]/g, " ");
+      const src = `/images/photos/${yearDir.name}/${file.name}`;
+      const detail = (photoDetails as Record<string, {alt:string;date:string;year:string;place?:string}>)[src];
+      const alt = detail?.alt ?? name.replace(/[-_]/g, " ");
 
       photos.push({
-        src: `/images/photos/${yearDir.name}/${file.name}`,
+        src,
+        place: detail?.place,
         alt,
-        date: stat.mtime.toISOString().slice(0, 10),
-        year: yearDir.name,
+        date: detail?.date ?? stat.mtime.toISOString().slice(0, 10),
+        year: detail?.year ?? yearDir.name,
       });
     }
   }
@@ -45,4 +51,9 @@ function discoverPhotos(): Photo[] {
   return photos;
 }
 
-export const photos: Photo[] = discoverPhotos();
+const excludedSources = new Set(["/images/photos/2026/san-francisco-openai-devday.webp"]);
+const curatedSources = new Set(travelPhotos.map(photo => photo.src));
+export const photos: Photo[] = [
+  ...travelPhotos,
+  ...discoverPhotos().filter(photo => !curatedSources.has(photo.src) && !excludedSources.has(photo.src)),
+];

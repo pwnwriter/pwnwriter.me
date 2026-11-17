@@ -1,4 +1,5 @@
 ---
+import ProjectPreview from "~/components/ProjectPreview.astro";
 import SocialLinks from "~/components/SocialLinks.astro";
 import NameCard from "~/components/NameCard.astro";
 import HelloTheme from "~/components/HelloTheme.astro";
@@ -11,20 +12,21 @@ import sf from "~/assets/sf-golden-gate.jpg";
 
 <Layout
   title="Nabeen · pwnwriter"
-  description="Nabeen, a security researcher and interface builder in Baltimore. Originally from Nepal."
+  description="Nabeen, 22, a security researcher and interface builder based in Maryland, USA."
 >
   <div class="shell home-shell">
     <section class="hero">
       <div class="identity">
         <figure class="portrait"><Image src={sf} alt="Nabeen at the Golden Gate Bridge at dusk" widths={[200,700]} sizes="88px" loading="eager" data-personal-stories data-story-src={sf.src} /><figcaption class="sr-only">San Francisco / OpenAI DevDay</figcaption></figure>
-        <div class="identity-label"><span>Nabeen / pwnwriter</span><span>Baltimore, MD · from Nepal</span></div>
+        <div class="identity-label"><span>Nabeen / pwnwriter</span><span>📍 MD</span></div>
       </div>
       <div class="hero-copy">
         <h1 class="sr-only">Nabeen, security research and interfaces</h1>
         <p class="hello">Hey,</p>
-        <p class="intro">I'm <NameCard />, 22, a <AccentText /> based in Baltimore. Originally from Nepal.</p>
+        <p class="intro">I’m <NameCard />, 22, a <AccentText /> based in Maryland.</p>
         <p class="intro">I do <strong>security research <svg class="inline-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V5z"/><path d="m8 12 2.5 2.5L16 9" fill="none" stroke="var(--background)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></strong> and <a class="inline-work" href="/work">build interfaces <svg class="inline-icon cursor-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3.5a.7.7 0 0 1 1.1-.6l15 9a.7.7 0 0 1-.3 1.3l-6.5.8-3.7 5.7a.7.7 0 0 1-1.3-.2z"/><path d="m16 3 1-2m3 6 2-.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>. Mostly Linux, Rust, and Nix.</p>
-        <div class="contact"><span>Find me</span><SocialLinks /><span class="hello-embed"><script src="https://whoami.cards/embed.js" data-username="pwnwriter" data-placement="inline" data-accent="#627d91" defer is:inline></script><noscript><a href="https://whoami.cards/pwnwriter/connect?via=link">Say hello ↗</a></noscript></span></div>
+        <p class="intro recents">Lately, I’ve been building <ProjectPreview name="wosa.study" href="https://wosa.study" image="/images/previews/wosa.jpg" logo="/images/previews/wosa-logo.svg" origin="Inspired by my nephews, who kept uploading photos to ChatGPT for help." /> and <ProjectPreview name="whoami.cards" href="https://whoami.cards" image="/images/previews/whoami.jpg" logo="/images/previews/whoami-logo.svg" origin="Started at OpenAI DevDay as a GitHub card for Apple Wallet. A few cofounders nudged me to bring other socials along." />.</p>
+        <div class="contact"><span>Find me</span><SocialLinks /><span>, or</span><span class="hello-embed"><script src="https://whoami.cards/embed.js" data-username="pwnwriter" data-placement="inline" data-accent="#627d91" defer is:inline></script><noscript><a href="https://whoami.cards/pwnwriter/connect?via=link">Say hello ↗</a></noscript></span></div>
       </div>
     </section>
     <HelloTheme />

@@ -27,7 +27,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const syndications = await getCollection("syndications");
 
   const entries: Entry[] = [
-    { slug: "index", props: { kind: "home", title: "hi, i'm nabeen", description: "i build things, break things, and keep asking why." } },
+    { slug: "work", props: { kind: "section", label: "work", title: "Work", description: "Projects, open-source contributions, and recognition." } },
+    { slug: "now", props: { kind: "section", label: "now", title: "Now", description: "A personal timeline of life, school, travel, and things shipped." } },
+    { slug: "index", props: { kind: "home", title: "Hey, I’m Nabeen.", description: "Security research and interfaces. Based in Maryland, USA. Recent work: wosa.study and whoami.cards." } },
     { slug: "notes", props: { kind: "section", label: "notes", title: "Notes", description: "Things I kept thinking about until writing them down was easier than letting them go." } },
     { slug: "notes/tags", props: { kind: "section", label: "tags", title: "Tags", description: "Browse notes by topic." } },
     { slug: "syndications", props: { kind: "section", label: "syndications", title: "Syndications", description: "Personal updates and reflections." } },

@@ -1,0 +1,27 @@
+---
+interface Props { name: string; href: string; image: string; logo: string; origin?: string; }
+const {name,href,image,logo,origin}=Astro.props;
+const id=`project-preview-${name.replaceAll('.','-')}`;
+---
+<span class="project-preview"><a class="project-preview-link" href={href} target="_blank" rel="noopener noreferrer" aria-describedby={id} data-calm-click><img class="project-app-logo" src={logo} alt="" width="19" height="19" data-no-story />{name}</a><template><aside id={id} class="project-preview-card" popover="manual" aria-label={`${name} website preview`}><div class="preview-browser" aria-hidden="true"><span></span><span></span><span></span><small>{name}</small></div><img src={image} alt={`${name} homepage preview`} width="1280" height="720" loading="lazy" />{origin && <p class="project-preview-origin">{origin}</p>}</aside></template></span>
+<script>
+for(const host of document.querySelectorAll<HTMLElement>('.project-preview')){
+ const link=host.querySelector<HTMLAnchorElement>('.project-preview-link')!;
+ const template=host.querySelector<HTMLTemplateElement>('template')!;
+ const card=template.content.firstElementChild as HTMLElement;document.body.append(card);template.remove();
+ let timer:ReturnType<typeof setTimeout>|undefined;
+ function place(){const r=link.getBoundingClientRect();const width=card.offsetWidth,height=card.offsetHeight;card.style.left=`${Math.max(12,Math.min(r.left,innerWidth-width-12))}px`;card.style.top=`${r.bottom+10+height<innerHeight-12?r.bottom+10:Math.max(12,r.top-height-10)}px`;}
+ function show(){clearTimeout(timer);if(!card.matches(':popover-open'))card.showPopover();place();}
+ function hide(){clearTimeout(timer);if(card.matches(':popover-open'))card.hidePopover();}
+ function later(){clearTimeout(timer);timer=setTimeout(()=>{if(!card.contains(document.activeElement)&&document.activeElement!==link)hide();},160);}
+ host.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')show();});host.addEventListener('pointerleave',later);
+ card.addEventListener('pointerenter',()=>clearTimeout(timer));card.addEventListener('pointerleave',later);
+ link.addEventListener('focus',show);link.addEventListener('blur',later);card.addEventListener('focusout',later);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')hide();});document.addEventListener('pointerdown',e=>{if(!host.contains(e.target as Node)&&!card.contains(e.target as Node))hide();});
+ window.addEventListener('resize',hide);window.addEventListener('scroll',()=>{if(card.matches(':popover-open'))place();},{passive:true});
+}
+</script>
+<style>
+.project-preview{display:inline;}.project-preview-link{display:inline-flex;align-items:center;gap:5px;padding:2px 7px 3px;border:1px solid #d5d8e1;border-radius:8px;background:#e9ebf1;color:var(--f-high);text-decoration:none;line-height:1.35;vertical-align:baseline;box-shadow:inset 0 1px 0 #ffffffa6;white-space:nowrap;transition:color .18s,background .18s,border-color .18s;}.project-preview-link .project-app-logo{display:inline-block;width:19px;height:19px;flex:none;object-fit:contain;border-radius:5px;margin:0 2px 0 0;}.project-preview-link:hover{color:#526d83;background:#e1e5ee;border-color:#bcc5d5;}.project-preview-link:focus-visible{outline:2px solid #8293af;outline-offset:3px;}.project-preview-link svg{color:#8991a0;}
+.project-preview-card{position:fixed;inset:auto;margin:0;padding:0;width:290px;max-width:calc(100vw - 24px);border:1px solid #d8dae2;border-radius:16px;background:#fafafc;color:var(--f-high);box-shadow:0 4px 12px #25273808,0 18px 45px #25273817;overflow:hidden;z-index:30;}.project-preview-card:popover-open{animation:preview-in .18s ease-out;}.preview-browser{display:flex;align-items:center;gap:4px;padding:10px 12px;background:#eeeef2;border-bottom:1px solid #dedfe5;}.preview-browser>span{width:4px;height:4px;border-radius:50%;background:#c0c3ce;}.preview-browser small{font:8px var(--font-mono);margin-left:8px;color:#858999;}.project-preview-card>img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:top;border-bottom:1px solid #e6e7ed;}.project-preview-origin{margin:0;padding:12px 14px 14px;font:13px/1.55 var(--font-sans);color:var(--f-low);text-wrap:pretty;}@keyframes preview-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.project-preview-card:popover-open{animation:none}}
+</style>

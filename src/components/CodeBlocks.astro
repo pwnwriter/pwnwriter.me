@@ -1,0 +1,17 @@
+<script>
+for(const pre of document.querySelectorAll<HTMLElement>('.prose pre')){
+ if(pre.closest('.code-block'))continue;
+ const code=pre.querySelector('code');if(!code)continue;
+ const wrapper=document.createElement('div');wrapper.className='code-block';
+ const header=document.createElement('div');header.className='code-block-header';
+ const language=document.createElement('span');language.className='code-block-language';
+ const lang=pre.dataset.language??'text';
+ const labels:Record<string,string>={bash:'Shell',sh:'Shell','shell-session':'Terminal',text:'Text',plaintext:'Text',nix:'Nix',rust:'Rust',json:'JSON',yaml:'YAML',lua:'Lua',makefile:'Makefile',diff:'Diff'};
+ language.textContent=labels[lang]??lang;
+ const button=document.createElement('button');button.type='button';button.className='code-copy';button.setAttribute('aria-label','Copy code');button.innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="5" y="5" width="8" height="9" rx="1.5"/><path d="M3 11H2.5A1.5 1.5 0 0 1 1 9.5v-7A1.5 1.5 0 0 1 2.5 1h6A1.5 1.5 0 0 1 10 2.5V3"/></svg><span>Copy</span>';
+ const status=document.createElement('span');status.className='sr-only';status.setAttribute('role','status');
+ let reset:ReturnType<typeof setTimeout>;
+ button.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(code.textContent??'');button.querySelector('span')!.textContent='Copied';status.textContent='Code copied.';clearTimeout(reset);reset=setTimeout(()=>{button.querySelector('span')!.textContent='Copy';status.textContent='';},1800);}catch{status.textContent='Could not copy. Select the code to copy it manually.';}});
+ header.append(language,button,status);pre.before(wrapper);wrapper.append(header,pre);
+}
+</script>

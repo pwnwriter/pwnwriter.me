@@ -1,0 +1,35 @@
+<script>
+import {playUiSound,unlockUiSounds} from '~/lib/ui-sounds';
+const unlock=(event:Event)=>{if(event.isTrusted)unlockUiSounds();};
+document.addEventListener('pointerdown',unlock,{capture:true});
+document.addEventListener('keydown',unlock,{capture:true});
+document.addEventListener('click',event=>{
+ if(event.isTrusted&&event.composedPath().some(node=>node instanceof Element&&node.matches('a,button,summary')))playUiSound('tap');
+},{capture:true});
+let hovered:Element|null=null;
+let hoverTimer:ReturnType<typeof setTimeout>|undefined;
+let leaveTimer:ReturnType<typeof setTimeout>|undefined;
+let played=false;
+const selector='a[href],button,summary,select,[role="button"],[data-hover-sound]';
+function hoverTarget(event:PointerEvent){
+ const path=event.composedPath();
+ // The official whoami card plays its own opening and closing chimes.
+ if(path.some(node=>node instanceof Element&&node.hasAttribute('data-whoami-widget')))return null;
+ return path.find((node):node is Element=>node instanceof Element&&node.matches(selector)&&!node.matches(':disabled,[aria-disabled="true"]'))??null;
+}
+document.addEventListener('pointerover',event=>{
+ if(!event.isTrusted||event.pointerType==='touch')return;
+ const target=hoverTarget(event);if(!target||target===hovered)return;
+ clearTimeout(hoverTimer);clearTimeout(leaveTimer);hovered=target;played=false;
+ hoverTimer=setTimeout(()=>{if(hovered===target){playUiSound('open');played=true;}},70);
+},{capture:true,passive:true});
+document.addEventListener('pointerout',event=>{
+ if(!hovered||event.pointerType==='touch')return;
+ const target=hovered,related=event.relatedTarget;
+ if(related instanceof Node&&target.contains(related))return;
+ clearTimeout(hoverTimer);clearTimeout(leaveTimer);
+ const shouldPlay=played;hovered=null;played=false;
+ leaveTimer=setTimeout(()=>{if(!hovered&&shouldPlay)playUiSound('close');},120);
+},{capture:true,passive:true});
+window.addEventListener('blur',()=>{clearTimeout(hoverTimer);clearTimeout(leaveTimer);hovered=null;played=false;});
+</script>

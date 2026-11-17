@@ -2,7 +2,7 @@
 <template id="name-card-template"><div class="name-card" id="name-card" popover="manual" role="dialog" aria-label="The names I go by">
   <header><button class="name-close" type="button" aria-label="Close name card">×</button></header>
   <div class="name-origin"><span class="devanagari" lang="ne">नवीन</span><div><span class="origin-label">Nepali · Sanskrit roots</span><p>new, fresh, young</p></div></div>
-  <dl><div><dt>Nabin</dt><dd>On paper.</dd></div><div><dt>Nabeen</dt><dd>Online, and what I go by.</dd></div><div><dt>pwnwriter</dt><dd>My handle for code and writing.</dd></div></dl>
+  <dl><div><dt>Nabin</dt><dd>On paper</dd></div><div><dt>Nabeen</dt><dd>What I go by</dd></div><div><dt>pwnwriter</dt><dd>Code &amp; writing</dd></div></dl>
 
 </div></template>
 <script>
@@ -11,7 +11,7 @@ document.body.append(template.content);
 const trigger=document.querySelector<HTMLButtonElement>('.name-trigger')!;
 const card=document.querySelector<HTMLElement>('#name-card')!;
 let pinned=false,closeTimer:ReturnType<typeof setTimeout>|undefined;
-function position(){const rect=trigger.getBoundingClientRect();const width=Math.min(300,innerWidth-32);card.style.width=`${width}px`;card.style.left=`${Math.max(16,Math.min(rect.left-14,innerWidth-width-16))}px`;const height=card.offsetHeight;card.style.top=`${rect.bottom+12+height>innerHeight-16?Math.max(16,rect.top-height-12):rect.bottom+12}px`;}
+function position(){const rect=trigger.getBoundingClientRect();const width=Math.min(250,innerWidth-32);card.style.width=`${width}px`;card.style.left=`${Math.max(16,Math.min(rect.left-14,innerWidth-width-16))}px`;const height=card.offsetHeight;card.style.top=`${rect.bottom+12+height>innerHeight-16?Math.max(16,rect.top-height-12):rect.bottom+12}px`;}
 function open(){clearTimeout(closeTimer);if(!card.matches(':popover-open'))card.showPopover();position();trigger.setAttribute('aria-expanded','true');}
 function close(){clearTimeout(closeTimer);pinned=false;if(card.matches(':popover-open'))card.hidePopover();trigger.setAttribute('aria-expanded','false');}
 function later(){clearTimeout(closeTimer);closeTimer=setTimeout(()=>{if(!pinned&&!card.contains(document.activeElement)&&document.activeElement!==trigger)close();},160);}
@@ -26,13 +26,7 @@ window.addEventListener('resize',()=>{if(card.matches(':popover-open'))position(
 </script>
 <style>
 .name-note{display:inline;}.name-trigger{border:0;border-bottom:1px dotted #b8bac3;border-radius:0;background:none;padding:0;color:inherit;font:inherit;line-height:1.2;cursor:pointer;}.name-trigger:hover,.name-trigger[aria-expanded="true"]{color:#566e84;border-color:#879bb0;}
-.name-card{position:fixed;inset:auto;margin:0;padding:17px;border:1px solid #d2d4df;border-radius:12px;background:var(--surface);color:var(--f-high);box-shadow:0 4px 10px #25273806,0 16px 40px #25273819;overflow:visible;}
-.name-card:popover-open{animation:name-arrive .18s ease-out;}.name-card::backdrop{background:transparent;pointer-events:none;}
-.name-card header{display:flex;align-items:start;justify-content:space-between;gap:14px;margin-bottom:17px;}.name-card header>div{display:flex;align-items:baseline;gap:10px;}.name-card strong{font-size:17px;font-weight:500;}.name-card header span{font:10px var(--font-mono);color:var(--f-mute);}.name-close{border:0;background:none;color:#9a9ca8;font-size:18px;line-height:1;padding:0;width:20px;height:20px;}
-.name-origin{display:flex;align-items:center;gap:18px;border-block:1px solid var(--line);padding:14px 0;}.devanagari{font-family:'Kohinoor Devanagari','Devanagari Sangam MN',serif;font-size:34px;color:#6c7f90;line-height:1.4;}.origin-label{font:8px/1.6 var(--font-mono);color:var(--f-mute);}.name-origin p{font:14px/1.5 var(--font-sans);margin:3px 0 0;color:var(--f-low);}
-dl{margin:15px 0;display:grid;gap:10px;}dl>div{display:grid;grid-template-columns:77px 1fr;gap:9px;}dt{font:10px/1.6 var(--font-mono);color:var(--f-high);}dd{margin:0;font:12px/1.6 var(--font-sans);color:var(--f-low);}
-.name-card footer{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:11px;font:10px/1.6 var(--font-sans);color:var(--f-mute);}.name-card footer a{font-size:9px;text-decoration:none;white-space:nowrap;}@keyframes name-arrive{from{opacity:0;translate:0 -4px}to{opacity:1;translate:0 0}}
-
-.name-card{padding:20px;border-radius:19px;border-color:#dcdee5;background:#fafafc;box-shadow:0 2px 4px #25273804,0 15px 35px #25273813;}.name-card strong{font-size:18px;font-weight:600;}.name-card header span{font:12px var(--font-sans);}.name-origin{border:0;padding:3px 0 12px;}.origin-label{font:11px/1.6 var(--font-sans);color:#9498a5;}.name-origin p{font-size:14px;}.devanagari{font-size:33px;}dl{gap:11px;margin:12px 0 18px;}dt{font:500 13px/1.5 var(--font-sans);}dd{font:13px/1.5 var(--font-sans);color:#858995;}.name-card footer{border-color:#e5e6ed;font-size:11px;padding-top:13px;}.name-card footer a{font-size:10px;}
-.name-card header{justify-content:flex-end;margin-bottom:0;height:12px;}.name-origin{padding-top:0;}dl{margin-bottom:0;}
+.name-card{position:fixed;inset:auto;margin:0;padding:16px;border:1px solid #dcdee5;border-radius:14px;background:#fafafc;color:var(--f-high);box-shadow:0 2px 4px #25273804,0 12px 30px #25273813;overflow:visible;}.name-card:popover-open{animation:name-arrive .16s ease-out;}.name-card::backdrop{background:transparent;pointer-events:none;}.name-card header{height:0;margin:0;}.name-close{position:absolute;top:6px;right:6px;display:grid;place-items:center;border:0;background:none;color:#9a9ca8;font:17px/1 var(--font-sans);padding:0;width:22px;height:22px;cursor:pointer;}.name-close:hover{color:#566e84;}
+.name-origin{display:flex;align-items:center;gap:12px;padding:2px 8px 13px 0;}.devanagari{font-family:'Kohinoor Devanagari','Devanagari Sangam MN',serif;font-size:28px;color:#6c7f90;line-height:1.2;}.origin-label{font:9px/1.5 var(--font-sans);color:#9498a5;}.name-origin p{font:12px/1.4 var(--font-sans);margin:3px 0 0;color:var(--f-low);}
+.name-card dl{margin:0;padding-top:12px;border-top:1px solid #e6e7ed;display:grid;gap:7px;}.name-card dl>div{display:grid;grid-template-columns:65px 1fr;gap:9px;}.name-card dt{font:500 12px/1.5 var(--font-sans);color:var(--f-high);}.name-card dd{margin:0;font:12px/1.5 var(--font-sans);color:#858995;}@keyframes name-arrive{from{opacity:0;translate:0 -3px}to{opacity:1;translate:0 0}}@media(prefers-reduced-motion:reduce){.name-card:popover-open{animation:none}}
 </style>

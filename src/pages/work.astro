@@ -59,6 +59,7 @@ import { highlights, nixpkgs } from "~/data/oss";
                 <p>{project.summary}</p>
                 <details class="project-details">
                   <summary>Inside the project <span aria-hidden="true">+</span></summary>
+                  {project.origin && <p>{project.origin}</p>}
                   <p>{project.blurb}</p>
                   {project.highlights && (
                     <ul>
