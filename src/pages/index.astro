@@ -3,7 +3,6 @@ import InlineBadge from "~/components/InlineBadge.astro";
 import { projects } from "~/data/projects";
 import ProjectPreview from "~/components/ProjectPreview.astro";
 import NameCard from "~/components/NameCard.astro";
-import AccentText from "~/components/AccentText.astro";
 import Layout from "~/layouts/Layout.astro";
 import { Image } from "astro:assets";
 import sf from "~/assets/sf-golden-gate.jpg";
@@ -18,16 +17,16 @@ import sf from "~/assets/sf-golden-gate.jpg";
     <section class="hero">
       <div class="identity">
         <figure class="portrait"><Image src={sf} alt="Nabeen at the Golden Gate Bridge at dusk" widths={[200,700]} sizes="48px" loading="eager" data-personal-stories data-story-src={sf.src} /><figcaption class="sr-only">San Francisco / OpenAI DevDay</figcaption></figure>
-        <div class="identity-label"><span>Nabeen / pwnwriter</span><span class="identity-role">Hacker <span class="role-plus">+</span> Builder</span><span class="identity-location">📍 MD</span></div>
+        <div class="identity-label"><span class="identity-role">Hacker <span class="role-plus">+</span> Builder</span><span class="identity-location">📍 MD</span></div>
       </div>
       <div class="hero-copy">
         <h1 class="sr-only">Nabeen, security research and interfaces</h1>
-        <p class="hello">Hi, I’m <NameCard name="Nabin" />, 22.</p>
-        <p class="intro">My first <code class="hello-world">hello world</code> at 14. A <AccentText /> ever since.</p>
-        <p class="intro journey">Linux and Unix led me to <ProjectPreview name="Metis Linux" href="https://github.com/metis-os" image="/projects/metis/cover.png" logo="/images/logos/metis.webp" /> and my window manager, <ProjectPreview name="ewm" href="https://github.com/pwnwriter/ewm" image="/images/previews/ewm.webp" logo="/images/logos/ewm.webp" />. Later came <InlineBadge name="Nix" href="https://github.com/pwnwriter/infra" logo="/images/logos/nix.svg" />. I spent two years in DevOps at <InlineBadge name="Nest Nepal" href="https://nestnepal.com" logo="/images/logos/nest-nepal.webp" />.</p>
-        <p class="intro">I do <strong>security research <svg class="inline-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V5z"/><path d="m8 12 2.5 2.5L16 9" fill="none" stroke="var(--background)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></strong> and <a class="inline-work" href="/work">build interfaces <svg class="inline-icon cursor-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3.5a.7.7 0 0 1 1.1-.6l15 9a.7.7 0 0 1-.3 1.3l-6.5.8-3.7 5.7a.7.7 0 0 1-1.3-.2z"/><path d="m16 3 1-2m3 6 2-.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>. Mostly Linux, Rust, and Nix.</p>
-        <p class="intro recents">Now building <ProjectPreview name="wosa.study" href="https://wosa.study" image="/images/previews/wosa.jpg" logo="/images/previews/wosa-logo.svg" origin="Inspired by my nephews, who kept uploading photos to ChatGPT for help." /> and <ProjectPreview name="whoami.cards" href="https://whoami.cards" image="/images/previews/whoami.jpg" logo="/images/previews/whoami-logo.svg" origin="Started at OpenAI DevDay as a GitHub card for Apple Wallet. A few cofounders nudged me to bring other socials along." />.</p>
-        <p class="whoami-contact">Sign my guestbook at <ProjectPreview name="whoami.cards" href="https://whoami.cards/pwnwriter#guestbook" image="/images/previews/whoami-pwnwriter.png" logo="/images/previews/whoami-logo.svg" whoami />.</p>
+        <p class="hello">Hi, I’m <NameCard name="Nabin" />, 22. I do security research and build interfaces.</p>
+        <p class="intro">I wrote my first <code class="hello-world">hello world</code> at 14.</p>
+        <p class="intro journey">I got into Linux and Unix, worked on <ProjectPreview name="Metis Linux" href="https://github.com/metis-os" image="/projects/metis/cover.png" logo="/images/logos/metis.webp" />, and built a window manager called <ProjectPreview name="ewm" href="https://github.com/pwnwriter/ewm" image="/images/previews/ewm.webp" logo="/images/logos/ewm.webp" />. Then I found <InlineBadge name="Nix" href="https://github.com/pwnwriter/infra" logo="/images/logos/nix.svg" />. Along the way, I spent two years in DevOps at <InlineBadge name="Nest Nepal" href="https://nestnepal.com" logo="/images/logos/nest-nepal.webp" />.</p>
+
+        <p class="intro recents">These days, I’m building <ProjectPreview name="wosa.study" href="https://wosa.study" image="/images/previews/wosa.jpg" logo="/images/previews/wosa-logo.svg" origin="Inspired by my nephews, who kept uploading photos to ChatGPT for help." /> and <ProjectPreview name="whoami.cards" href="https://whoami.cards" image="/images/previews/whoami.jpg" logo="/images/previews/whoami-logo.svg" origin="Started at OpenAI DevDay as a GitHub card for Apple Wallet. A few cofounders nudged me to bring other socials along." />. Both started with a simple idea I wanted to try.</p>
+        <p class="whoami-contact">Have a look at my <a class="work-text-link" href="/work">work</a>, or say hi in my guestbook at <ProjectPreview name="whoami.cards" href="https://whoami.cards/pwnwriter#guestbook" image="/images/previews/whoami-pwnwriter.png" logo="/images/previews/whoami-logo.svg" whoami />.</p>
       </div>
     </section>
     <section class="featured-work" aria-label="Featured projects">
@@ -55,11 +54,10 @@ import sf from "~/assets/sf-golden-gate.jpg";
   @font-face {font-family:Caveat;src:url('/fonts/Caveat-Variable.ttf') format('truetype');font-weight:400 700;font-display:swap;}
   .home-shell {max-width:600px;}
   .hero {max-width:540px;padding:0 0 6px;}
-  .identity {display:flex;align-items:center;gap:18px;margin-bottom:32px;}
+  .identity {display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin-bottom:28px;}
   .portrait {width:60px;margin:0;border:2px solid #b6b8c0;border-radius:18px;padding:4px;background:var(--surface);flex:none;}
   .portrait img {width:48px;height:48px;object-fit:cover;object-position:20% 72%;border-radius:14px;cursor:pointer;}
   .identity-label {display:flex;flex-direction:column;font-size:13px;line-height:1.6;color:var(--f-mute);}
-  .identity-label>span:first-child {color:var(--f-high);font-size:16px;font-weight:500;line-height:1.4;}
   .identity-role{display:flex;align-items:center;gap:6px;font-size:14px;line-height:1.5;color:#85858c;}
   .identity-role .role-plus{color:#ed766b;font-size:15px;font-weight:700;}
   .identity-label .identity-location{font-size:11px;margin-top:3px;}
@@ -67,6 +65,7 @@ import sf from "~/assets/sf-golden-gate.jpg";
   .hero-copy .hello {margin-bottom:18px;}
   .hello-world{font: .8em/1.4 var(--font-mono);color:#65758c;background:#e8ebf2;border-radius:5px;padding:2px 5px;}
   .journey{line-height:1.75;}
+  .work-text-link{color:inherit;text-decoration:underline;text-decoration-color:#bec3ce;text-underline-offset:4px;}
   .name {text-decoration:underline dotted #b8bac3;text-underline-offset:7px;}
   .handwritten {font-family:Caveat,cursive;font-size:1.15em;font-weight:600;color:#5f788d;display:inline-block;transform:rotate(-2deg);white-space:nowrap;margin:0 .1em;}
   .intro strong,.intro .inline-work {font-weight:500;color:var(--f-high);text-decoration:none;}
