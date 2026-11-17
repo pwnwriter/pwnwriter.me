@@ -1,4 +1,8 @@
-<span class="name-note"><button type="button" class="name-trigger" aria-expanded="false" aria-controls="name-card">Nabeen</button></span>
+---
+interface Props { name?: string; }
+const { name = "Nabeen" } = Astro.props;
+---
+<span class="name-note"><button type="button" class="name-trigger" aria-expanded="false" aria-controls="name-card">{name}</button></span>
 <template id="name-card-template"><div class="name-card" id="name-card" popover="manual" role="dialog" aria-label="The names I go by">
   <header><button class="name-close" type="button" aria-label="Close name card">×</button></header>
   <div class="name-origin"><span class="devanagari" lang="ne">नवीन</span><div><span class="origin-label">Nepali · Sanskrit roots</span><p>new, fresh, young</p></div></div>

@@ -12,6 +12,7 @@ export type Recognition = {
   image?: { src: string; alt: string }; // a scan, shown whole on white
   photo?: { src: string; alt: string; focus?: string }; // a photo, cropped to fill
   featured?: boolean;
+  video?: { src: string; poster: string };
 };
 
 export const recognition: Recognition[] = [
@@ -39,7 +40,9 @@ export const recognition: Recognition[] = [
     featured: true,
   },
   {
-    title: "HopHacks",
+    title: "BMore.Casa · HopHacks",
+    href: "https://devpost.com/software/bmore-casa",
+    video: { src: "/projects/bmore-casa/demo.mp4", poster: "/images/recognition/hophacks-award.jpeg" },
     where: "Johns Hopkins University",
     year: 2026,
     photo: { src: "/images/recognition/hophacks-award.jpeg", alt: "HopHacks award slide announcing BMore.Casa as second place in Best Data Visualization", focus: "50% 59%" },
@@ -57,12 +60,13 @@ export const recognition: Recognition[] = [
     featured: true,
   },
   {
-    title: "MorganHacks",
+    title: "InventoryAI · MorganHacks",
+    video: { src: "/projects/inventoryai/demo.mp4", poster: "/projects/inventoryai/cover.jpg" },
     where: "Morgan State University",
     year: 2026,
     result: "best use of elevenlabs",
     note: "built inventoryAi with the team over two mostly sleepless days.",
-    href: "/syndications/morganhacks-26",
+    href: "https://devpost.com/software/inventoryai",
     featured: true,
   },
   {

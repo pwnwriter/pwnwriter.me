@@ -106,9 +106,9 @@ for(const img of pageImages){
   if(img.hasAttribute('data-personal-stories')){
     const preview=document.createElement('aside');preview.className='profile-story-preview';preview.setAttribute('popover','manual');preview.setAttribute('aria-label','Latest photo story');
     const button=document.createElement('button');button.type='button';button.setAttribute('aria-label','Open latest photo story');
-    const photo=document.createElement('img');photo.src=img.dataset.storySrc||img.currentSrc||img.src;photo.alt=img.alt;
+    const photo=document.createElement('img');photo.src=personal[0]?.src||img.dataset.storySrc||img.currentSrc||img.src;photo.alt=personal[0]?.caption||img.alt;
     const label=document.createElement('span');label.className='profile-story-label';label.textContent='Latest story';
-    const caption=document.createElement('span');caption.className='profile-story-caption';caption.textContent='San Francisco / OpenAI DevDay';
+    const caption=document.createElement('span');caption.className='profile-story-caption';caption.textContent=personal[0]?.caption||'San Francisco / OpenAI DevDay';
     button.append(photo,label,caption);preview.append(button);document.body.append(preview);
     let hoverTimer:ReturnType<typeof setTimeout>|undefined;
     function hidePreview(){clearTimeout(hoverTimer);if(preview.matches(':popover-open'))preview.hidePopover();}
@@ -129,7 +129,7 @@ for(const img of pageImages){
   control.addEventListener('click',event=>{
     if(event instanceof MouseEvent&&(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey))return;
     event.preventDefault();
-    if(img.hasAttribute('data-personal-stories')){open([{src:img.dataset.storySrc||img.currentSrc||img.src,caption:img.alt,detail:'San Francisco / OpenAI DevDay',place:'Golden Gate Bridge, San Francisco'},...personal],0,control);return;}
+    if(img.hasAttribute('data-personal-stories')){open([...personal.slice(0,1),{src:img.dataset.storySrc||img.currentSrc||img.src,caption:img.alt,detail:'San Francisco / OpenAI DevDay',place:'Golden Gate Bridge, San Francisco'},...personal.slice(1)],0,control);return;}
     const scope=img.closest('section,.project,.reading')??document.querySelector('main')!;
     const group=pageImages.filter(item=>scope.contains(item));
     const items=group.map(item=>{const link=item.closest<HTMLAnchorElement>('a');return {src:link&&/\.(jpe?g|png|webp|avif|gif)(?:[?#]|$)/i.test(link.href)?link.href:item.currentSrc||item.src,caption:item.alt||'A moment kept',place:personal.find(photo=>photo.src===new URL(item.currentSrc||item.src,location.href).pathname)?.place,detail:item.closest('figure')?.querySelector('figcaption')?.textContent?.trim()};});

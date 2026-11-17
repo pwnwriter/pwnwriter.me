@@ -2,7 +2,6 @@
 import Layout from "~/layouts/Layout.astro";
 import { projects } from "~/data/projects";
 import { recognition } from "~/data/recognition";
-import { photos } from "~/data/photos";
 import { highlights, nixpkgs } from "~/data/oss";
 ---
 
@@ -18,19 +17,20 @@ import { highlights, nixpkgs } from "~/data/oss";
         taught me something.
       </p>
     </header>
-    <div class="project-grid">
+    <div class="project-grid" id="project-gallery" role="region" aria-label="Selected projects" tabindex="0">
       {
         projects.map((project, i) => {
           const cover = project.cover ?? project.media[0];
           return (
-            <article class="project" id={project.slug}>
+            <article class="project" id={project.slug} data-no-story>
               <>
                 <div class="project-media">
                   {cover ? (
                     cover.kind === "video" ? (
                       <video
                         controls
-                        preload="none"
+                        playsinline
+                        preload="metadata"
                         poster={cover.poster}
                         aria-label={`${project.name} demo`}
                       >
@@ -58,7 +58,7 @@ import { highlights, nixpkgs } from "~/data/oss";
                 </div>
                 <p>{project.summary}</p>
                 <details class="project-details">
-                  <summary>Inside the project <span aria-hidden="true">+</span></summary>
+                  <summary aria-label={`More about ${project.name}`}><span aria-hidden="true">+</span></summary>
                   {project.origin && <p>{project.origin}</p>}
                   <p>{project.blurb}</p>
                   {project.highlights && (
@@ -93,7 +93,8 @@ import { highlights, nixpkgs } from "~/data/oss";
                       <video
                         class="extra-media"
                         controls
-                        preload="none"
+                        playsinline
+                        preload="metadata"
                         poster={media.poster}
                       >
                         <source src={media.src} type="video/mp4" />
@@ -107,12 +108,44 @@ import { highlights, nixpkgs } from "~/data/oss";
         })
       }
     </div>
+    <div class="gallery-controls" aria-label="Browse projects"><button type="button" data-gallery-prev aria-label="Previous project" aria-controls="project-gallery">←</button><button type="button" data-gallery-next aria-label="Next project" aria-controls="project-gallery">→</button><span data-gallery-count aria-live="polite">01 / {String(projects.length).padStart(2,"0")}</span></div>
+    <section class="section-block" id="recognition">
+      <div class="section-head"><h2>Recognition / along the way</h2></div><div
+        class="recognition-list" tabindex="0" role="region" aria-label="Recognition"
+      >
+        {
+          recognition.map((item) => {
+            const pic = item.photo ?? item.image;
+            return (
+              <article class:list={{ "has-destination": !!item.href }}>
+                {item.video ? <video class="recognition-video" controls playsinline preload="none" poster={item.video.poster} aria-label={`${item.title} demo`}><source src={item.video.src} type="video/mp4" /></video> : pic && (
+                  <a href={item.href ?? pic.src} data-no-story={!!item.href}>
+                    <img
+                      src={pic.src}
+                      alt={pic.alt}
+                      loading="lazy"
+                      class:list={{ letter: !!item.image }}
+                    />
+                  </a>
+                )}
+                <div>
+                  <span class="meta">{item.year}</span>
+                  <h3>{item.href ? <a class="recognition-destination" href={item.href}>{item.title}</a> : item.title}</h3>
+                  <p>{item.result}</p>
+                  {item.note && <p class="muted">{item.note}</p>}
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+    </section>
     <section class="section-block">
       <div class="section-head">
         <h2>Open source / a shared effort</h2><a
           href="https://github.com/pulls?q=is%3Apr+author%3Apwnwriter"
           >All contributions ↗</a>
-      </div><div class="contributions">
+      </div><div class="contributions" tabindex="0" role="region" aria-label="Open-source contributions">
         {
           highlights.map((item) => (
             <a href={item.url}>
@@ -141,68 +174,33 @@ import { highlights, nixpkgs } from "~/data/oss";
         }
       </p>
     </section>
-    <section class="section-block" id="recognition">
-      <div class="section-head"><h2>Recognition / along the way</h2></div><div
-        class="recognition-list"
-      >
-        {
-          recognition.map((item) => {
-            const pic = item.photo ?? item.image;
-            return (
-              <article>
-                {pic && (
-                  <a href={pic.src}>
-                    <img
-                      src={pic.src}
-                      alt={pic.alt}
-                      loading="lazy"
-                      class:list={{ letter: !!item.image }}
-                    />
-                  </a>
-                )}
-                <div>
-                  <span class="meta">{item.year}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.result}</p>
-                  {item.note && <p class="muted">{item.note}</p>}
-                  {item.href && (
-                    <a class="meta" href={item.href}>
-                      Read more ↗
-                    </a>
-                  )}
-                </div>
-              </article>
-            );
-          })
-        }
-      </div>
-    </section>
-    <section class="section-block" id="photos">
-      <div class="section-head">
-        <h2>Photographs / moments kept</h2><span class="meta"
-          >{photos.length} frames</span>
-      </div><div class="photo-grid">
-        {
-          [...photos]
-            .sort((a, b) => b.date.localeCompare(a.date))
-            .map((photo) => (
-              <figure>
-                <>
-                  <a href={photo.src}>
-                    <img src={photo.src} alt={photo.alt} loading="lazy" />
-                  </a>
-                  <figcaption class="meta">
-                    {photo.alt} / {photo.year}
-                  </figcaption>
-                </>
-              </figure>
-            ))
-        }
-      </div>
-    </section>
+
+
   </div></Layout
 >
+<script>
+ const gallery=document.querySelector<HTMLElement>('#project-gallery')!;
+ const prev=document.querySelector<HTMLButtonElement>('[data-gallery-prev]')!;
+ const next=document.querySelector<HTMLButtonElement>('[data-gallery-next]')!;
+ const count=document.querySelector<HTMLElement>('[data-gallery-count]')!;
+ const cards=Array.from(gallery.querySelectorAll<HTMLElement>('.project'));
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+ const step=()=>cards.length>1?cards[1].offsetLeft-cards[0].offsetLeft:gallery.clientWidth;
+ function update(){const i=Math.round(gallery.scrollLeft/step());prev.disabled=gallery.scrollLeft<4;next.disabled=gallery.scrollLeft>=gallery.scrollWidth-gallery.clientWidth-4;count.textContent=`${String(i+1).padStart(2,'0')} / ${String(cards.length).padStart(2,'0')}`;}
+ function move(direction:number){gallery.scrollBy({left:direction*step(),behavior:reduced.matches?'instant':'smooth'});}
+ prev.addEventListener('click',()=>move(-1));next.addEventListener('click',()=>move(1));
+ gallery.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);
+ gallery.addEventListener('keydown',event=>{if(event.target!==gallery)return;if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();move(event.key==='ArrowRight'?1:-1);}});
+ gallery.addEventListener('play',event=>{gallery.querySelectorAll('video').forEach(video=>{if(video!==event.target)video.pause();});},true);
+ update();
+</script>
 <style>
+  .gallery-controls{display:flex;align-items:center;gap:8px;margin:8px 0 48px;}
+  .gallery-controls button{display:grid;place-items:center;width:34px;height:34px;border:1px solid #e0e1e7;border-radius:11px;background:#e9eaf0;color:#707686;font-size:19px;cursor:pointer;transition:background .2s,transform .2s;}
+  .gallery-controls button:hover:not(:disabled){background:#dfe2eb;transform:translateY(-1px);}
+  .gallery-controls button:disabled{opacity:.35;cursor:default;}
+  .gallery-controls span{margin-left:8px;font:10px var(--font-mono);color:var(--f-mute);}
+
   .photo-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -220,20 +218,35 @@ import { highlights, nixpkgs } from "~/data/oss";
     margin-top: 9px;
   }
   .project-grid {
+    --gallery-inset: max(32px, calc((100vw - 980px) / 2));
+    width: calc(100vw - var(--gallery-inset));
+    margin-inline: 0;
+    box-sizing: border-box;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px 28px;
+    grid-auto-flow: column;
+    grid-auto-columns: min(76vw, 370px);
+    gap: 24px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding: 2px var(--gallery-inset) 16px 0;
+    scroll-padding-inline: 0;
+    align-items: start;
   }
+  .project-grid::-webkit-scrollbar{display:none;}
   .project {
+    scroll-snap-align: start;
     min-width: 0;
   }
   .project-media {
-    aspect-ratio: 1.6;
-    background: #e1e2e8;
+    aspect-ratio: 16 / 9;
+    border-radius: 24px;
+    background: #edeef1;
     display: grid;
     place-items: center;
     overflow: hidden;
-    border: 1px solid var(--line);
+    border: 1px solid #e4e5eb;
   }
   .project-media video,
   .project-media img {
@@ -308,25 +321,51 @@ import { highlights, nixpkgs } from "~/data/oss";
     margin-top: 15px;
   }
   .contributions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 30px;
+    --contribution-inset:max(32px,calc((100vw - 980px)/2));
+    display:grid;
+    grid-auto-flow:column;
+    grid-auto-columns:min(78vw,280px);
+    gap:14px;
+    width:100vw;
+    margin-inline:calc(50% - 50vw);
+    padding:4px var(--contribution-inset) 16px;
+    box-sizing:border-box;
+    overflow-x:auto;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x proximity;
+    scroll-padding-inline:var(--contribution-inset);
+    scrollbar-width:thin;
+    scrollbar-color:#cdd0db transparent;
   }
   .contributions > a {
-    padding: 20px 0;
-    border-bottom: 1px solid var(--line);
-    text-decoration: none;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:18px;
+    border:1px solid #dfe1e8;
+    border-radius:16px;
+    background:#f4f4f8;
+    box-shadow:inset 0 1px 0 #ffffffb0;
+    text-decoration:none;
+    scroll-snap-align:start;
+    transition:background .18s,border-color .18s;
   }
+  .contributions > a:hover{background:#eeeef5;border-color:#c9cedc;}
+  .contributions > a:focus-visible{outline:2px solid #8293af;outline-offset:-3px;}
+  .contributions .meta{margin-top:auto;font-size:10px;}
   .contribution-title {
     display: flex;
     justify-content: space-between;
-    font-size: 17px;
+    font-size: 14px;
+    gap:12px;
+    overflow-wrap:anywhere;
   }
   .contribution-title > span {
     color: var(--f-mute);
   }
   .contributions p {
-    font-size: 14px;
+    font-size: 13px;
+    line-height:1.6;
     color: var(--f-low);
     margin: 7px 0;
   }
@@ -336,65 +375,36 @@ import { highlights, nixpkgs } from "~/data/oss";
     color: var(--f-low);
   }
   .recognition-list {
-    display: grid;
-    gap: 25px;
+    --recognition-inset:max(32px,calc((100vw - 980px)/2));
+    display:grid;grid-auto-flow:column;grid-auto-columns:min(78vw,260px);gap:16px;align-items:start;
+    width:100vw;margin-inline:calc(50% - 50vw);box-sizing:border-box;
+    padding:4px var(--recognition-inset) 16px;overflow-x:auto;
+    overscroll-behavior-x:contain;scroll-snap-type:x proximity;
+    scroll-padding-inline:var(--recognition-inset);scrollbar-width:thin;scrollbar-color:#cdd0db transparent;
   }
-  .recognition-list article {
-    display: flex;
-    align-items: start;
-    gap: 25px;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 25px;
-  }
-  .recognition-list article > a {
-    width: 145px;
-    flex: none;
-  }
-  .recognition-list img {
-    width: 145px;
-    height: 115px;
-    object-fit: cover;
-  }
-  .recognition-list img.letter {
-    object-fit: contain;
-    background: var(--b-med);
-    padding: 8px;
-  }
-  .recognition-list h3 {
-    margin: 4px 0;
-    font-size: 20px;
-    font-weight: 500;
-  }
-  .recognition-list p {
-    margin: 0;
-    font-size: 15px;
-  }
-  .recognition-list .muted {
-    color: var(--f-low);
-    margin-top: 7px;
-    max-width: 530px;
-  }
+  .recognition-list article{position:relative;min-width:0;scroll-snap-align:start;padding:10px;border:1px solid #e3e4eb;border-radius:15px;background:#f1f2f680;}
+  .recognition-destination{color:inherit;text-decoration:none;}
+  .recognition-destination::after{content:"";position:absolute;inset:0;border-radius:15px;z-index:1;}
+  .recognition-destination:focus-visible{outline:none;}
+  .recognition-destination:focus-visible::after{outline:2px solid #8293af;outline-offset:2px;}
+  .recognition-list .has-destination:hover{border-color:#c9cedc;background:#eeeef5;}
+  .recognition-list article>a,.recognition-video{position:relative;z-index:2;}
+  .recognition-video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;border-radius:10px;margin-bottom:10px;background:#e9eaf0;}
+  .recognition-list article>a{display:block;margin-bottom:10px;border-radius:10px;overflow:hidden;}
+  .recognition-list img{display:block;width:100%;height:148px;object-fit:cover;}
+  .recognition-list img.letter{object-fit:contain;background:#e9eaf0;padding:8px;}
+  .recognition-list h3{margin:3px 0 6px;font-size:15px;font-weight:500;line-height:1.35;}
+  .recognition-list p{margin:0;font-size:12px;line-height:1.5;color:var(--f-low);}
+  .recognition-list .meta{font-size:10px;}
+  .recognition-list .muted{margin-top:5px;}
+  .recognition-list div>a{display:inline-block;margin-top:9px;}
   @media (max-width: 640px) {
+    .project-grid{--gallery-inset:18px;gap:18px;}
     .photo-grid {
       grid-template-columns: 1fr 1fr;
       gap: 15px;
     }
-    .project-grid,
-    .contributions {
-      grid-template-columns: 1fr;
-    }
-    .recognition-list article {
-      gap: 16px;
-    }
-    .recognition-list article > a,
-    .recognition-list img {
-      width: 85px;
-    }
-    .recognition-list img {
-      height: 85px;
-    }
-    .recognition-list h3 {
-      font-size: 17px;
-    }
+    .contributions {--contribution-inset:18px;}
+    .recognition-list{--recognition-inset:18px;}
   }
 </style>

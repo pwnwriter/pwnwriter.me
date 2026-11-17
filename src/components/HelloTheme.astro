@@ -1,5 +1,4 @@
 <script>
-import {playUiSound} from "~/lib/ui-sounds";
 // The official embed uses an open shadow root; theme its launcher without
 // replacing the embed or changing its private-message flow.
 const shell=document.querySelector<HTMLElement>('.hello-embed');
@@ -44,7 +43,6 @@ if(shell){
     const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const hideHover=()=>{
       clearTimeout(hoverTimer);if(!hover.matches(':popover-open')||closing)return;
-      playUiSound('close');
       if(reducedMotion){hover.hidePopover();return;}
       closing=true;hover.classList.add('is-closing');
       closeMotionTimer=setTimeout(()=>{hover.hidePopover();hover.classList.remove('is-closing');closing=false;},180);
@@ -52,7 +50,7 @@ if(shell){
     const openHover=()=>{
       if(root.querySelector<HTMLDialogElement>('dialog')?.open)return;clearTimeout(hoverTimer);
       if(closing){clearTimeout(closeMotionTimer);hover.classList.remove('is-closing');closing=false;}
-      if(!hover.matches(':popover-open')){hover.showPopover();playUiSound('open');}
+      if(!hover.matches(':popover-open')){hover.showPopover();}
       const rect=launcher.getBoundingClientRect(),width=hover.offsetWidth,height=hover.offsetHeight;const above=rect.bottom+10+height>innerHeight-16;
       hover.style.left=`${Math.max(16,Math.min(rect.left,innerWidth-width-16))}px`;hover.style.top=`${above?Math.max(16,rect.top-height-10):rect.bottom+10}px`;
       hover.style.transformOrigin=above?'50% 100%':'50% 0%';

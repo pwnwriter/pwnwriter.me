@@ -1,27 +1,49 @@
 ---
-interface Props { name: string; href: string; image: string; logo: string; origin?: string; }
-const {name,href,image,logo,origin}=Astro.props;
-const id=`project-preview-${name.replaceAll('.','-')}`;
+interface Props { name: string; href: string; image: string; logo: string; origin?: string; whoami?: boolean; guestbook?: boolean; }
+const {name,href,image,logo,origin,whoami=false,guestbook=false}=Astro.props;
+const id=`project-preview-${name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${new URL(href).pathname.replace(/[^a-z0-9]+/gi,'-')}`;
 ---
-<span class="project-preview"><a class="project-preview-link" href={href} target="_blank" rel="noopener noreferrer" aria-describedby={id} data-calm-click><img class="project-app-logo" src={logo} alt="" width="19" height="19" data-no-story />{name}</a><template><aside id={id} class="project-preview-card" popover="manual" aria-label={`${name} website preview`}><div class="preview-browser" aria-hidden="true"><span></span><span></span><span></span><small>{name}</small></div><img src={image} alt={`${name} homepage preview`} width="1280" height="720" loading="lazy" />{origin && <p class="project-preview-origin">{origin}</p>}</aside></template></span>
+<span class:list={["project-preview",{"whoami-link":whoami}]}><a class="project-preview-link" href={href} target="_blank" rel="noopener noreferrer" aria-describedby={id} data-project-link={!whoami || undefined} data-calm-click><img class="project-app-logo" src={logo} alt="" width="16" height="16" data-no-story />{name}</a><template><aside id={id} class:list={["project-preview-card",{"is-whoami":whoami,"is-guestbook":guestbook}]} popover="manual" aria-label={`${name} website preview`}><div class="preview-browser" aria-hidden="true"><span></span><span></span><span></span><small>{name}</small></div>{guestbook ? <div class="guestbook-signature-preview"><span class="signature-label">A little hello, in your own hand.</span><svg class="signature-drawing" viewBox="0 0 240 110" fill="none" aria-hidden="true"><path class="signature-ink" d="M31 73C40 48 56 25 58 33C60 42 45 86 48 79C60 54 70 48 68 61C66 78 57 78 65 64C73 49 81 51 77 66C74 81 83 73 92 60C99 49 98 74 108 67C116 62 125 51 125 61C123 77 139 55 144 58C151 63 137 77 153 67C164 58 169 39 163 42C152 49 159 75 176 62C185 54 192 48 194 56C196 64 190 74 204 62M42 91C81 78 156 80 210 75" stroke="#75618e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="signature-rule"></span><span class="signature-prompt">Your signature here <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="m4 13 9-9 3 3-9 9-4 1zM11 6l3 3"/></svg></span></div> : <img src={image} alt={whoami?"Nabeen’s whoami.cards profile card":`${name} homepage preview`} width="1280" height="720" loading="lazy" />}{origin && <p class="project-preview-origin">{origin}</p>}</aside></template></span>
 <script>
 for(const host of document.querySelectorAll<HTMLElement>('.project-preview')){
  const link=host.querySelector<HTMLAnchorElement>('.project-preview-link')!;
  const template=host.querySelector<HTMLTemplateElement>('template')!;
  const card=template.content.firstElementChild as HTMLElement;document.body.append(card);template.remove();
- let timer:ReturnType<typeof setTimeout>|undefined;
- function place(){const r=link.getBoundingClientRect();const width=card.offsetWidth,height=card.offsetHeight;card.style.left=`${Math.max(12,Math.min(r.left,innerWidth-width-12))}px`;card.style.top=`${r.bottom+10+height<innerHeight-12?r.bottom+10:Math.max(12,r.top-height-10)}px`;}
- function show(){clearTimeout(timer);if(!card.matches(':popover-open'))card.showPopover();place();}
- function hide(){clearTimeout(timer);if(card.matches(':popover-open'))card.hidePopover();}
- function later(){clearTimeout(timer);timer=setTimeout(()=>{if(!card.contains(document.activeElement)&&document.activeElement!==link)hide();},160);}
+ let timer:ReturnType<typeof setTimeout>|undefined,exitTimer:ReturnType<typeof setTimeout>|undefined;
+ function place(){
+  const r=link.getBoundingClientRect(),width=card.offsetWidth,height=card.offsetHeight;
+  const content=host.closest('.hero')?.getBoundingClientRect();
+  const sideLeft=content?content.right+28:r.right+20;
+  const onSide=innerWidth>=1000 && sideLeft+width<=innerWidth-20;
+  card.classList.toggle('is-side-preview',onSide);
+  card.style.left=`${onSide?sideLeft:Math.max(12,Math.min(r.left,innerWidth-width-12))}px`;
+  card.style.top=`${onSide?Math.max(16,Math.min(r.top-24,innerHeight-height-16)):(r.bottom+10+height<innerHeight-12?r.bottom+10:Math.max(12,r.top-height-10))}px`;
+ }
+
+ function show(){clearTimeout(timer);clearTimeout(exitTimer);card.classList.remove('is-leaving');if(!card.matches(':popover-open'))card.showPopover();place();}
+ function hide(){clearTimeout(timer);if(!card.matches(':popover-open'))return;if(!matchMedia('(prefers-reduced-motion: reduce)').matches){card.classList.add('is-leaving');clearTimeout(exitTimer);exitTimer=setTimeout(()=>{card.hidePopover();card.classList.remove('is-leaving');},180);}else card.hidePopover();}
+ function later(){clearTimeout(timer);timer=setTimeout(()=>{if(!card.contains(document.activeElement)&&document.activeElement!==link)hide();},300);}
  host.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')show();});host.addEventListener('pointerleave',later);
- card.addEventListener('pointerenter',()=>clearTimeout(timer));card.addEventListener('pointerleave',later);
+ card.addEventListener('pointerenter',()=>{clearTimeout(timer);if(card.classList.contains('is-leaving'))show();});card.addEventListener('pointerleave',later);
  link.addEventListener('focus',show);link.addEventListener('blur',later);card.addEventListener('focusout',later);
  document.addEventListener('keydown',e=>{if(e.key==='Escape')hide();});document.addEventListener('pointerdown',e=>{if(!host.contains(e.target as Node)&&!card.contains(e.target as Node))hide();});
  window.addEventListener('resize',hide);window.addEventListener('scroll',()=>{if(card.matches(':popover-open'))place();},{passive:true});
 }
 </script>
 <style>
-.project-preview{display:inline;}.project-preview-link{display:inline-flex;align-items:center;gap:5px;padding:2px 7px 3px;border:1px solid #d5d8e1;border-radius:8px;background:#e9ebf1;color:var(--f-high);text-decoration:none;line-height:1.35;vertical-align:baseline;box-shadow:inset 0 1px 0 #ffffffa6;white-space:nowrap;transition:color .18s,background .18s,border-color .18s;}.project-preview-link .project-app-logo{display:inline-block;width:19px;height:19px;flex:none;object-fit:contain;border-radius:5px;margin:0 2px 0 0;}.project-preview-link:hover{color:#526d83;background:#e1e5ee;border-color:#bcc5d5;}.project-preview-link:focus-visible{outline:2px solid #8293af;outline-offset:3px;}.project-preview-link svg{color:#8991a0;}
+.project-preview{display:inline;}.project-preview-link{display:inline-flex;align-items:center;gap:5px;padding:2px 7px 3px;border:1px solid #d5d8e1;border-radius:8px;background:#e9ebf1;color:var(--f-high);text-decoration:none;font-size:.88em;line-height:1.35;vertical-align:baseline;box-shadow:inset 0 1px 0 #ffffffa6;white-space:nowrap;transition:color .18s,background .18s,border-color .18s;}.project-preview-link .project-app-logo{display:inline-block;width:16px;height:16px;flex:none;object-fit:contain;border-radius:5px;margin:0 2px 0 0;}.project-preview-link:hover{color:#526d83;background:#e1e5ee;border-color:#bcc5d5;}.project-preview-link:focus-visible{outline:2px solid #8293af;outline-offset:3px;}.project-preview-link svg{color:#8991a0;}
 .project-preview-card{position:fixed;inset:auto;margin:0;padding:0;width:290px;max-width:calc(100vw - 24px);border:1px solid #d8dae2;border-radius:16px;background:#fafafc;color:var(--f-high);box-shadow:0 4px 12px #25273808,0 18px 45px #25273817;overflow:hidden;z-index:30;}.project-preview-card:popover-open{animation:preview-in .18s ease-out;}.preview-browser{display:flex;align-items:center;gap:4px;padding:10px 12px;background:#eeeef2;border-bottom:1px solid #dedfe5;}.preview-browser>span{width:4px;height:4px;border-radius:50%;background:#c0c3ce;}.preview-browser small{font:8px var(--font-mono);margin-left:8px;color:#858999;}.project-preview-card>img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:top;border-bottom:1px solid #e6e7ed;}.project-preview-origin{margin:0;padding:12px 14px 14px;font:13px/1.55 var(--font-sans);color:var(--f-low);text-wrap:pretty;}@keyframes preview-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.project-preview-card:popover-open{animation:none}}
+
+.whoami-link .project-preview-link{background:#eee8f7;border-color:#d9cfe8;color:#594d6d;font-size:16px;padding:5px 8px;gap:6px;box-shadow:inset 0 1px 0 #ffffffa0;}.whoami-link .project-preview-link:hover{background:#e8dff3;border-color:#c9b9dd;color:#493a60;}
+.project-preview-card.is-whoami{width:240px;padding:0;background:#f5effb;border-color:#dcd6e8;border-radius:17px;transform-origin:bottom center;}.is-whoami .preview-browser{display:none;}.project-preview-card.is-whoami>img{aspect-ratio:auto;width:100%;height:auto;max-height:calc(100dvh - 40px);object-fit:contain;border:0;}.project-preview-card.is-whoami:popover-open{animation:whoami-card-enter .3s cubic-bezier(.16,1,.3,1);}.project-preview-card.is-whoami.is-leaving:popover-open{animation:whoami-card-leave .18s ease-in forwards;}
+@keyframes whoami-card-enter{from{opacity:0;transform:perspective(900px) translateY(10px) rotateX(7deg) rotateY(-5deg) scale(.94)}to{opacity:1;transform:none}}@keyframes whoami-card-leave{from{opacity:1;transform:none}to{opacity:0;transform:perspective(900px) translateY(8px) rotateX(5deg) scale(.96)}}@media(prefers-reduced-motion:reduce){.project-preview-card.is-whoami:popover-open{animation:none;}}
+.project-preview-card.is-guestbook{width:270px;background:#fbfafc;border-radius:15px;}.guestbook-signature-preview{padding:17px 19px 15px;}.signature-label{display:block;font:12px/1.5 var(--font-sans);color:#92909c;}.signature-drawing{display:block;width:100%;height:108px;margin:6px 0 0;}.signature-rule{display:block;border-top:1px dashed #dcd6e5;}.signature-prompt{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font:11px/1.4 var(--font-sans);color:#8c7b9e;}.is-guestbook:popover-open .signature-ink{stroke-dasharray:650;stroke-dashoffset:650;animation:signature-write 1.4s ease-out .2s forwards;}@keyframes signature-write{to{stroke-dashoffset:0}}@media(prefers-reduced-motion:reduce){.is-guestbook:popover-open .signature-ink{animation:none;stroke-dashoffset:0;}}
+
+.project-preview-card.is-side-preview:popover-open{animation:side-preview-in .26s cubic-bezier(.16,1,.3,1);transform-origin:left center;}
+.project-preview-card.is-leaving:popover-open{animation:preview-out .18s ease-in forwards;}
+.project-preview-card.is-side-preview.is-leaving:popover-open{animation:side-preview-out .18s ease-in forwards;}
+@keyframes side-preview-in{from{opacity:0;transform:translateX(-10px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes side-preview-out{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-6px) scale(.98)}}
+@keyframes preview-out{to{opacity:0;transform:translateY(4px)}}
+@media(prefers-reduced-motion:reduce){.project-preview-card.is-side-preview:popover-open,.project-preview-card.is-leaving:popover-open{animation:none;}}
 </style>

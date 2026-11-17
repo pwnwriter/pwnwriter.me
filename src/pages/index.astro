@@ -1,8 +1,8 @@
 ---
+import InlineBadge from "~/components/InlineBadge.astro";
+import { projects } from "~/data/projects";
 import ProjectPreview from "~/components/ProjectPreview.astro";
-import SocialLinks from "~/components/SocialLinks.astro";
 import NameCard from "~/components/NameCard.astro";
-import HelloTheme from "~/components/HelloTheme.astro";
 import AccentText from "~/components/AccentText.astro";
 import Layout from "~/layouts/Layout.astro";
 import { Image } from "astro:assets";
@@ -17,19 +17,38 @@ import sf from "~/assets/sf-golden-gate.jpg";
   <div class="shell home-shell">
     <section class="hero">
       <div class="identity">
-        <figure class="portrait"><Image src={sf} alt="Nabeen at the Golden Gate Bridge at dusk" widths={[200,700]} sizes="88px" loading="eager" data-personal-stories data-story-src={sf.src} /><figcaption class="sr-only">San Francisco / OpenAI DevDay</figcaption></figure>
-        <div class="identity-label"><span>Nabeen / pwnwriter</span><span>📍 MD</span></div>
+        <figure class="portrait"><Image src={sf} alt="Nabeen at the Golden Gate Bridge at dusk" widths={[200,700]} sizes="48px" loading="eager" data-personal-stories data-story-src={sf.src} /><figcaption class="sr-only">San Francisco / OpenAI DevDay</figcaption></figure>
+        <div class="identity-label"><span>Nabeen / pwnwriter</span><span class="identity-role">Hacker <span class="role-plus">+</span> Builder</span><span class="identity-location">📍 MD</span></div>
       </div>
       <div class="hero-copy">
         <h1 class="sr-only">Nabeen, security research and interfaces</h1>
-        <p class="hello">Hey,</p>
-        <p class="intro">I’m <NameCard />, 22, a <AccentText /> based in Maryland.</p>
+        <p class="hello">Hi, I’m <NameCard name="Nabin" />, 22.</p>
+        <p class="intro">My first <code class="hello-world">hello world</code> at 14. A <AccentText /> ever since.</p>
+        <p class="intro journey">Linux and Unix led me to <ProjectPreview name="Metis Linux" href="https://github.com/metis-os" image="/projects/metis/cover.png" logo="/images/logos/metis.webp" /> and my window manager, <ProjectPreview name="ewm" href="https://github.com/pwnwriter/ewm" image="/images/previews/ewm.webp" logo="/images/logos/ewm.webp" />. Later came <InlineBadge name="Nix" href="https://github.com/pwnwriter/infra" logo="/images/logos/nix.svg" />. I spent two years in DevOps at <InlineBadge name="Nest Nepal" href="https://nestnepal.com" logo="/images/logos/nest-nepal.webp" />.</p>
         <p class="intro">I do <strong>security research <svg class="inline-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V5z"/><path d="m8 12 2.5 2.5L16 9" fill="none" stroke="var(--background)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></strong> and <a class="inline-work" href="/work">build interfaces <svg class="inline-icon cursor-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3.5a.7.7 0 0 1 1.1-.6l15 9a.7.7 0 0 1-.3 1.3l-6.5.8-3.7 5.7a.7.7 0 0 1-1.3-.2z"/><path d="m16 3 1-2m3 6 2-.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>. Mostly Linux, Rust, and Nix.</p>
-        <p class="intro recents">Lately, I’ve been building <ProjectPreview name="wosa.study" href="https://wosa.study" image="/images/previews/wosa.jpg" logo="/images/previews/wosa-logo.svg" origin="Inspired by my nephews, who kept uploading photos to ChatGPT for help." /> and <ProjectPreview name="whoami.cards" href="https://whoami.cards" image="/images/previews/whoami.jpg" logo="/images/previews/whoami-logo.svg" origin="Started at OpenAI DevDay as a GitHub card for Apple Wallet. A few cofounders nudged me to bring other socials along." />.</p>
-        <div class="contact"><span>Find me</span><SocialLinks /><span>, or</span><span class="hello-embed"><script src="https://whoami.cards/embed.js" data-username="pwnwriter" data-placement="inline" data-accent="#627d91" defer is:inline></script><noscript><a href="https://whoami.cards/pwnwriter/connect?via=link">Say hello ↗</a></noscript></span></div>
+        <p class="intro recents">Now building <ProjectPreview name="wosa.study" href="https://wosa.study" image="/images/previews/wosa.jpg" logo="/images/previews/wosa-logo.svg" origin="Inspired by my nephews, who kept uploading photos to ChatGPT for help." /> and <ProjectPreview name="whoami.cards" href="https://whoami.cards" image="/images/previews/whoami.jpg" logo="/images/previews/whoami-logo.svg" origin="Started at OpenAI DevDay as a GitHub card for Apple Wallet. A few cofounders nudged me to bring other socials along." />.</p>
+        <p class="whoami-contact">Sign my guestbook at <ProjectPreview name="whoami.cards" href="https://whoami.cards/pwnwriter#guestbook" image="/images/previews/whoami-pwnwriter.png" logo="/images/previews/whoami-logo.svg" whoami />.</p>
       </div>
     </section>
-    <HelloTheme />
+    <section class="featured-work" aria-label="Featured projects">
+      <div class="featured-heading"><span>Selected work</span></div>
+      <div class="featured-track" tabindex="0" role="region" aria-label="Featured project videos">
+        {projects.filter(project=>["whoami-cards","wosa-study"].includes(project.slug)).map(project=>{const media=project.cover;return <article data-no-story>
+          {media?.kind==="video" && <video controls playsinline preload="none" poster={media.poster} aria-label={`${project.name} film`}><source src={media.src} type="video/mp4" /></video>}
+          <a class="featured-title" href={`/work#${project.slug}`}>{project.name}</a>
+        </article>;})}
+        <article class="more-projects">
+          <a class="more-projects-card" href="/work" aria-label="View all projects">
+            <span class="project-collage" aria-hidden="true">
+              <img src="/projects/tes-chat/cover.png" alt="" loading="lazy" data-no-story />
+              <img src="/projects/haylxon/cover.png" alt="" loading="lazy" data-no-story />
+              <img src="/projects/metis/cover.png" alt="" loading="lazy" data-no-story />
+              <img src="/projects/hysp/cover.png" alt="" loading="lazy" data-no-story />
+            </span><span class="more-projects-label">View more</span>
+          </a>
+        </article>
+      </div>
+    </section>
   </div></Layout
 >
 <style>
@@ -37,12 +56,17 @@ import sf from "~/assets/sf-golden-gate.jpg";
   .home-shell {max-width:600px;}
   .hero {max-width:540px;padding:0 0 6px;}
   .identity {display:flex;align-items:center;gap:18px;margin-bottom:32px;}
-  .portrait {width:72px;margin:0;border:2px solid #b6b8c0;border-radius:21px;padding:4px;background:var(--surface);flex:none;}
-  .portrait img {width:60px;height:60px;object-fit:cover;object-position:20% 72%;border-radius:14px;cursor:pointer;}
+  .portrait {width:60px;margin:0;border:2px solid #b6b8c0;border-radius:18px;padding:4px;background:var(--surface);flex:none;}
+  .portrait img {width:48px;height:48px;object-fit:cover;object-position:20% 72%;border-radius:14px;cursor:pointer;}
   .identity-label {display:flex;flex-direction:column;font-size:13px;line-height:1.6;color:var(--f-mute);}
-  .identity-label span:first-child {color:var(--f-high);}
-  .hero-copy .hello,.intro {font-size:clamp(19px,1.8vw,21px);font-weight:400;line-height:1.65;letter-spacing:-.018em;color:#777981;margin:0 0 27px;}
-  .hero-copy .hello {margin-bottom:27px;}
+  .identity-label>span:first-child {color:var(--f-high);font-size:16px;font-weight:500;line-height:1.4;}
+  .identity-role{display:flex;align-items:center;gap:6px;font-size:14px;line-height:1.5;color:#85858c;}
+  .identity-role .role-plus{color:#ed766b;font-size:15px;font-weight:700;}
+  .identity-label .identity-location{font-size:11px;margin-top:3px;}
+  .hero-copy .hello,.intro {font-size:clamp(19px,1.8vw,21px);font-weight:400;line-height:1.65;letter-spacing:-.018em;color:#777981;margin:0 0 18px;}
+  .hero-copy .hello {margin-bottom:18px;}
+  .hello-world{font: .8em/1.4 var(--font-mono);color:#65758c;background:#e8ebf2;border-radius:5px;padding:2px 5px;}
+  .journey{line-height:1.75;}
   .name {text-decoration:underline dotted #b8bac3;text-underline-offset:7px;}
   .handwritten {font-family:Caveat,cursive;font-size:1.15em;font-weight:600;color:#5f788d;display:inline-block;transform:rotate(-2deg);white-space:nowrap;margin:0 .1em;}
   .intro strong,.intro .inline-work {font-weight:500;color:var(--f-high);text-decoration:none;}
@@ -50,7 +74,7 @@ import sf from "~/assets/sf-golden-gate.jpg";
   .cursor-icon {color:#78859d;}
   .inline-work:hover .cursor-icon {transform:translate(2px,-2px);}
   .contact {display:flex;align-items:baseline;flex-wrap:wrap;gap:7px;font:400 clamp(17px,1.6vw,19px)/1.6 var(--font-sans);color:#777981;margin-top:28px;}
-  .hello-embed {display:inline-flex;align-self:center;margin-left:8px;line-height:1;}
+  .whoami-contact{margin:28px 0 0;font:400 clamp(17px,1.6vw,19px)/1.9 var(--font-sans);letter-spacing:-.018em;color:#777981;}.guestbook-link{color:inherit;text-decoration:underline;text-decoration-color:#b8bbc7;text-underline-offset:4px;}.guestbook-link:hover{color:#594d6d;}
   .contact a {text-decoration-color:#b7b9c1;}
   .contact details {position:relative;}
   .contact summary {list-style:none;padding:0 11px;background:#e6e6eb;border-radius:12px;}
@@ -58,5 +82,23 @@ import sf from "~/assets/sf-golden-gate.jpg";
   .social-menu {position:absolute;top:calc(100% + 8px);left:0;min-width:170px;padding:8px;background:var(--surface);border:1px solid var(--line);border-radius:13px;box-shadow:0 12px 30px #22223912;z-index:4;font:14px/1.5 var(--font-sans);}
   .social-menu a {display:block;padding:10px;text-decoration:none;border-radius:7px;}
   .social-menu a:hover {background:var(--b-med);}
-  @media(max-width:640px){.identity{margin-bottom:32px;}.hero-copy .hello,.intro{margin-bottom:27px;line-height:1.65;}.contact{margin-top:28px;}}
+  @media(max-width:640px){.identity{margin-bottom:32px;}.hero-copy .hello,.intro{margin-bottom:18px;line-height:1.65;}.contact{margin-top:28px;}}
+  .featured-work{margin-top:52px;max-width:none;}
+  .featured-heading{max-width:540px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;font:10px var(--font-mono);color:var(--f-mute);}
+  .featured-heading a{color:inherit;text-decoration:none;}.featured-heading a:hover{color:var(--f-high);}
+  .featured-track{--featured-inset:max(32px,calc((100vw - 600px)/2));display:grid;grid-auto-flow:column;grid-template-columns:repeat(2,min(78vw,380px)) 160px;grid-auto-columns:min(78vw,380px);gap:20px;width:100vw;margin-left:calc(-1 * var(--featured-inset));box-sizing:border-box;padding:2px var(--featured-inset) 18px;overflow-x:auto;scroll-snap-type:x proximity;scroll-padding-inline:var(--featured-inset);overscroll-behavior-x:contain;scrollbar-width:none;}
+  .featured-track::-webkit-scrollbar{display:none;}
+  @media(max-width:640px){.featured-track{--featured-inset:18px;gap:18px;}}
+
+  .featured-track article{min-width:0;scroll-snap-align:start;}
+  .featured-track video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;border-radius:22px;background:#e9eaf0;border:1px solid #e0e1e8;}
+  .featured-title{display:inline-block;margin-top:10px;font:500 14px var(--font-sans);color:var(--f-high);text-decoration:none;}.featured-title:hover{color:#627d91;}
+  .more-projects{align-self:center;padding-bottom:27px;}
+  .more-projects-card{position:relative;display:block;width:160px;height:130px;overflow:hidden;border:1px solid #dfe1e8;border-radius:16px;background:#e9ebf1;text-decoration:none;box-shadow:0 3px 12px #25273808;}
+  .project-collage{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;width:100%;height:100%;padding:5px;box-sizing:border-box;transform:rotate(-5deg) scale(1.12);transition:transform .25s;}
+  .project-collage img{display:block;width:100%;height:100%;min-height:0;object-fit:cover;border-radius:5px;}
+  .more-projects-label{position:absolute;inset:auto 0 0;padding:22px 8px 10px;background:linear-gradient(transparent,#f4f4f8f5 55%);color:#454b5c;text-align:center;font:500 12px var(--font-sans);}
+  .more-projects-card:hover .project-collage{transform:rotate(-2deg) scale(1.16);}
+  @media(prefers-reduced-motion:reduce){.project-collage{transition:none;}}
+  .more-projects-card:focus-visible{outline:2px solid #8293af;outline-offset:3px;}
 </style>

@@ -39,8 +39,8 @@ export const projects: Project[] = [
     origin: "It started at OpenAI DevDay as an Apple Wallet card for my GitHub. A few cofounders I met suggested making it work with other socials. That became whoami.cards.",
     tech: [],
     year: "2026",
-    cover: { kind: "video", src: "/projects/whoami-cards/demo.mp4", poster: "/projects/whoami-cards/cover.jpg" },
-    media: [{ kind: "video", src: "/projects/whoami-cards/demo.mp4", poster: "/projects/whoami-cards/cover.jpg", alt: "whoami.cards demo: profile modes, sharing, and QR card preview" }],
+    cover: { kind: "video", src: "/projects/whoami-cards/whoami-film-latest.mp4", poster: "/projects/whoami-cards/cover-light.jpg" },
+    media: [{ kind: "video", src: "/projects/whoami-cards/whoami-film-latest.mp4", poster: "/projects/whoami-cards/cover-light.jpg", alt: "whoami.cards demo: profile modes, sharing, and QR card preview" }],
   },
   {
     slug: "wosa-study",
@@ -53,8 +53,11 @@ export const projects: Project[] = [
     year: "2026",
     status: "live",
     demo: "https://wosa.study",
-    media: [],
+    cover: { kind: "video", src: "/projects/wosa-study/showcase-v2.mp4", poster: "/projects/wosa-study/cover-light-v2.jpg" },
+    media: [{ kind: "video", src: "/projects/wosa-study/showcase-v2.mp4", poster: "/projects/wosa-study/cover-light-v2.jpg", alt: "Wosa Study showcase: graphs, code, and a connected infinite board" }],
   },
+
+
 
   {
     slug: "tes-chat",
@@ -124,29 +127,6 @@ export const projects: Project[] = [
         kind: "image",
         src: "/projects/haylxon/cover.png",
         alt: "haylxon CLI output",
-      },
-    ],
-  },
-  {
-    slug: "eipi-boo",
-    name: "eipi.boo",
-    summary: "anonymous confession board that runs over ssh.",
-    blurb:
-      "not a website: users connect from a terminal and post/read confession cards through an ssh-native interface.",
-    highlights: [
-      "rust network application exposed through ssh instead of a browser ui",
-      "terminal-first interaction model: no account signup, no web form",
-      "shipped publicly as `ssh eipi.boo` with a small project page",
-    ],
-    tech: ["Rust", "SSH", "Terminal UI", "Networking"],
-    year: "2026",
-    demo: "https://eipi.boo",
-    readMore: "/syndications/eipi-boo-ssh",
-    media: [
-      {
-        kind: "image",
-        src: "/projects/eipi-boo/cover.png",
-        alt: "eipi.boo confession TUI over SSH",
       },
     ],
   },

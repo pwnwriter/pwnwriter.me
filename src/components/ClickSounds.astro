@@ -10,10 +10,9 @@ let hovered:Element|null=null;
 let hoverTimer:ReturnType<typeof setTimeout>|undefined;
 let leaveTimer:ReturnType<typeof setTimeout>|undefined;
 let played=false;
-const selector='a[href],button,summary,select,[role="button"],[data-hover-sound]';
+const selector='[data-project-link],.project';
 function hoverTarget(event:PointerEvent){
  const path=event.composedPath();
- // The official whoami card plays its own opening and closing chimes.
  if(path.some(node=>node instanceof Element&&node.hasAttribute('data-whoami-widget')))return null;
  return path.find((node):node is Element=>node instanceof Element&&node.matches(selector)&&!node.matches(':disabled,[aria-disabled="true"]'))??null;
 }

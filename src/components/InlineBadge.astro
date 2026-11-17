@@ -1,0 +1,12 @@
+---
+interface Props { name: string; href: string; logo: string; }
+const { name, href, logo } = Astro.props;
+---
+<a class="inline-badge" href={href} target="_blank" rel="noopener noreferrer" data-project-link><img src={logo} alt="" width="16" height="16" data-no-story />{name}</a>
+<style>
+.inline-badge{display:inline-flex;align-items:center;gap:6px;padding:2px 7px 3px;border:1px solid #d5d8e1;border-radius:8px;background:#e9ebf1;color:var(--f-high);text-decoration:none;font-size:.88em;line-height:1.35;vertical-align:baseline;box-shadow:inset 0 1px 0 #ffffffa6;white-space:nowrap;transition:background .18s,border-color .18s,transform .18s;}
+.inline-badge img{width:16px;height:16px;object-fit:contain;flex:none;}
+.inline-badge:hover{background:#e1e5ee;border-color:#bcc5d5;transform:translateY(-1px);}
+.inline-badge:focus-visible{outline:2px solid #8293af;outline-offset:3px;}
+@media(prefers-reduced-motion:reduce){.inline-badge{transition:none;}}
+</style>
